@@ -1,0 +1,49 @@
+{
+    "name": "signatur",
+    "version": "0.1.0",
+    "description": "Simple Web App for Signatures",
+    "keywords": [
+        "signatures",
+        "html",
+        "vector"
+    ],
+    "homepage": "https://github.com/hivesolutions/signatur#readme",
+    "bugs": {
+        "url": "https://github.com/hivesolutions/signatur/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hivesolutions/signatur.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Hive Solutions",
+    "files": [
+        "app.js",
+        "lib/**/*.js",
+        "test/**/*.js"
+    ],
+    "main": "app.js",
+    "scripts": {
+        "lint": "eslint \"./lib/**/*.js\"",
+        "prettier": "prettier \"./**/*.{js,json}\" --write",
+        "start": "node app.js",
+        "test": "mocha --recursive",
+        "upgrade": "npx sort-package-json && ncu -u"
+    },
+    "dependencies": {
+        "consola": "^2.9.0",
+        "express": "^4.17.1",
+        "hive-js-util": "^0.2.1",
+        "node-html-parser": "^1.1.16",
+        "request": "^2.88.0"
+    },
+    "devDependencies": {
+        "eslint": "^6.1.0",
+        "eslint-config-hive": "^0.1.21",
+        "mocha": "^6.2.0",
+        "npm-check-updates": "^3.1.20",
+        "prettier": "^1.18.2",
+        "prettier-config-hive": "^0.1.1",
+        "sort-package-json": "^1.22.1"
+    }
+}
