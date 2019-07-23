@@ -28,7 +28,7 @@ app.get("/", (req, res, next) => {
         const engine = req.query.engine || "crawler";
         const engineModule = lib.ENGINES[engine];
         const engineInstance = engineModule.singleton();
-        await engineInstance.track(req, res, next);
+        await engineInstance.convert(req, res, next);
     }
     clojure().catch(next);
 });
