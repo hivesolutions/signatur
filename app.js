@@ -25,7 +25,7 @@ process.on("exit", () => {
 app.get("/", (req, res, next) => {
     async function clojure() {
         lib.verifyKey(req);
-        const engine = req.query.engine || "crawler";
+        const engine = req.query.engine || "inkscape";
         const engineModule = lib.ENGINES[engine];
         const engineInstance = engineModule.singleton();
         await engineInstance.convert(req, res, next);
