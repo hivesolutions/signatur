@@ -20,6 +20,8 @@
     "files": [
         "app.js",
         "lib/**/*.js",
+        "static/**/*.html",
+        "static/**/*.js",
         "test/**/*.js"
     ],
     "main": "app.js",

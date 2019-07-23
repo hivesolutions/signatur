@@ -1,5 +1,6 @@
 // requires the multiple libraries
 const express = require("express");
+const path = require("path");
 const process = require("process");
 const util = require("hive-js-util");
 const info = require("./package");
@@ -21,6 +22,8 @@ process.on("exit", () => {
     util.Logging.info("Exiting on user's request");
     lib.destroy();
 });
+
+app.use("/static", express.static(path.join(__dirname, "static")));
 
 app.get("/", (req, res, next) => {
     async function clojure() {
