@@ -4,6 +4,12 @@ Simple vector signature service to be used to convert signatures.
 
 Signatures from the client-side into beautiful files ready to be downloaded.
 
+Supported file format include:
+
+* [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) - Scalable Vector Graphics
+* [PDF](https://en.wikipedia.org/wiki/PDF) - Portable Document Format
+* [HPGL](https://en.wikipedia.org/wiki/HP-GL) - Hewlett-Packard Graphics Language
+
 ## License
 
 Signatur is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
