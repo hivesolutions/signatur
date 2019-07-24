@@ -1,4 +1,4 @@
-FROM hivesolutions/alpine_dev:latest
+FROM hivesolutions/ubuntu_dev:latest
 
 LABEL version="1.0"
 LABEL maintainer="Hive Solutions <development@hive.pt>"
@@ -16,7 +16,10 @@ ADD static /app/static
 
 WORKDIR /app
 
-RUN apk update && apk add nodejs npm
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
+RUN apt-get update && apt-get install -y nodejs g++ ghostscript inkscape
 RUN npm install
+RUN wget https://sourceforge.net/projects/pstoedit/files/pstoedit/3.73/pstoedit-3.73.tar.gz/download &&\
+    tar -zxvf download && cd pstoedit-3.73 && ./configure --prefix /usr && make && make install
 
 CMD ["/usr/bin/node", "/app/app.js"]
