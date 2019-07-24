@@ -2,6 +2,7 @@
 const express = require("express");
 const path = require("path");
 const process = require("process");
+const bodyParser = require("body-parser");
 const util = require("hive-js-util");
 const info = require("./package");
 const lib = require("./lib");
@@ -24,8 +25,20 @@ process.on("exit", () => {
 });
 
 app.use("/static", express.static(path.join(__dirname, "static")));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
+    async function clojure() {
+        lib.verifyKey(req);
+        const engine = req.query.engine || "inkscape";
+        const engineModule = lib.ENGINES[engine];
+        const engineInstance = engineModule.singleton();
+        await engineInstance.info(req, res, next);
+    }
+    clojure().catch(next);
+});
+
+app.post("/convert", (req, res, next) => {
     async function clojure() {
         lib.verifyKey(req);
         const engine = req.query.engine || "inkscape";
