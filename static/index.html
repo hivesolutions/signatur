@@ -32,13 +32,14 @@
                 height: 30px;
             }
 
-            .header > .button {
+            .header > .button.button-download {
                 right: 0px;
                 margin-right: 22px;
                 position: absolute;
             }
 
-            .button {
+            .button,
+            .signature > div:last-child > input[type=button] {
                 display: inline-block;
                 min-width: 160px;
                 height: 32px;
@@ -53,7 +54,8 @@
                 border-radius: 4px 4px 4px 4px;
             }
 
-            .button:hover {
+            .button:hover,
+            .signature > div:last-child > input[type=button]:hover {
                 background-color: #6d6d6d;
             }
 
@@ -61,6 +63,20 @@
                 width: 100%;
                 height: 100%;
                 background: #f6f6f6;
+            }
+
+            .signature > div:last-child {
+                position: absolute !important;
+                top: 0px;
+                left: 0px;
+            }
+
+            .signature > div:last-child > input[type=button] {
+                position: relative !important;
+                left: 22px !important;
+                top: 16px !important;
+                border: none;
+                outline: none;
             }
         </style>
         <script>
@@ -74,7 +90,7 @@
                     formInput.attr("value", svgBase64[1]);
                     form.submit();
                 });
-                signature.jSignature({ width: "100%", height: "100%" });
+                signature.jSignature({ width: "100%", height: "100%", UndoButton: true });
             });
         </script>
     </head>
