@@ -43,7 +43,7 @@
                 display: inline-block;
                 min-width: 160px;
                 height: 32px;
-                background-color: #2d2d2d;
+                background-color: rgba(24, 24, 24, 1.0);
                 color: #ffffff;
                 line-height: 32px;
                 font-size: 12px;
@@ -56,7 +56,7 @@
 
             .button:hover,
             .signature > div:last-child > input[type=button]:hover {
-                background-color: #6d6d6d;
+                background-color: rgba(24, 24, 24, 0.85);
             }
 
             .signature {
@@ -78,6 +78,16 @@
                 border: none;
                 outline: none;
             }
+
+            body.ldj .button,
+            body.ldj .signature > div:last-child > input[type=button] {
+                background-color: rgba(151, 120, 211, 1.0);
+            }
+
+            body.ldj .button:hover,
+            body.ldj .signature > div:last-child > input[type=button]:hover {
+                background-color: rgba(151, 120, 211, 0.85);
+            }
         </style>
         <script>
             jQuery(document).ready(function() {
@@ -94,7 +104,7 @@
             });
         </script>
     </head>
-    <body>
+    <body class="ldj">
         <div class="header">
             <span class="button button-download">Download</span>
             <img class="logo" src="/static/images/logo.svg" />
