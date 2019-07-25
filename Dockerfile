@@ -19,7 +19,7 @@ WORKDIR /app
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get update && apt-get install -y nodejs g++ ghostscript inkscape
 RUN npm install
-RUN wget https://sourceforge.net/projects/pstoedit/files/pstoedit/3.73/pstoedit-3.73.tar.gz/download &&\
-    tar -zxvf download && cd pstoedit-3.73 && ./configure --prefix /usr && make && make install
+RUN wget https://sourceforge.net/projects/pstoedit/files/pstoedit/3.74/pstoedit-3.74.tar.gz/download &&\
+    tar -zxvf download && cd pstoedit-3.74 && ./configure --prefix /usr && make && make install
 
 CMD ["/usr/bin/node", "/app/app.js"]
