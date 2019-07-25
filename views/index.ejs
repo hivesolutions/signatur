@@ -29,6 +29,7 @@
             }
 
             .header > .logo {
+                display: inline-block;
                 height: 30px;
             }
 
@@ -104,10 +105,14 @@
             });
         </script>
     </head>
-    <body class="ldj">
+    <body class="<%= theme %>">
         <div class="header">
             <span class="button button-download">Download</span>
-            <img class="logo" src="/static/images/logo.svg" />
+            <% if (theme === "ldj") { %>
+                <img class="logo" src="/static/images/logo.svg" />
+            <% } else { %>
+                <span class="logo"></span>
+            <% } %>
             <form class="form" action="/convert" method="post">
                 <input type="hidden" name="svg_base64" />
             </form>

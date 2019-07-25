@@ -3,8 +3,8 @@
     "version": "0.1.0",
     "description": "Simple Web App for Signatures",
     "keywords": [
-        "signatures",
         "html",
+        "signatures",
         "vector"
     ],
     "homepage": "https://github.com/hivesolutions/signatur#readme",
@@ -22,7 +22,8 @@
         "lib/**/*.js",
         "static/**/*.html",
         "static/**/*.js",
-        "test/**/*.js"
+        "test/**/*.js",
+        "views/**/*.ejs"
     ],
     "main": "app.js",
     "scripts": {
@@ -34,8 +35,11 @@
     },
     "dependencies": {
         "consola": "^2.9.0",
+        "ejs": "^2.6.2",
         "express": "^4.17.1",
+        "express-ejs-layouts": "^2.5.0",
         "hive-js-util": "^0.2.1",
+        "mustache-express": "^1.2.8",
         "uuid": "^3.3.2"
     },
     "devDependencies": {

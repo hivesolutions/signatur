@@ -13,6 +13,7 @@ ADD app.js /app/
 ADD package.json /app/
 ADD lib /app/lib
 ADD static /app/static
+ADD views /app/views
 
 WORKDIR /app
 

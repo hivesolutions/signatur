@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const process = require("process");
 const bodyParser = require("body-parser");
+const expressLayouts = require("express-ejs-layouts");
 const util = require("hive-js-util");
 const info = require("./package");
 const lib = require("./lib");
@@ -24,11 +25,15 @@ process.on("exit", () => {
     lib.destroy();
 });
 
+app.set("view engine", "ejs");
+app.use(expressLayouts);
+
 app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
-    res.sendFile(path.join(__dirname, "static", "index.html"));
+    const theme = req.query.theme || "";
+    res.render("index", { theme: theme });
 });
 
 app.get("/engine", (req, res, next) => {
