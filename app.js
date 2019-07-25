@@ -28,6 +28,10 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
+    res.sendFile(path.join(__dirname, "static", "index.html"));
+});
+
+app.get("/engine", (req, res, next) => {
     async function clojure() {
         lib.verifyKey(req);
         const engine = req.query.engine || "inkscape";
