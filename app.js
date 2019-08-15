@@ -32,8 +32,12 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
+    const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || "";
-    res.render("index", { theme: theme });
+    res.render("index", {
+        fullscreen: fullscreen,
+        theme: theme
+    });
 });
 
 app.get("/engine", (req, res, next) => {
