@@ -81,7 +81,7 @@ app.use((err, req, res, next) => {
     }
     const result = { error: err.message, code: 500 };
     if (process.env.NODE_ENV !== "production") {
-        result["stack"] = err.stack ? err.stack.split("\n") : [];
+        result.stack = err.stack ? err.stack.split("\n") : [];
     }
     res.status(500);
     res.json(result);
