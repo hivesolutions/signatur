@@ -43,6 +43,14 @@
                 position: absolute;
             }
 
+            .line {
+                top: calc(50% + 30px);
+                height: 4px;
+                width: 100%;
+                background: #000000;
+                position: absolute;
+            }
+
             .button,
             .signature > div:last-child > input[type=button] {
                 display: inline-block;
@@ -122,6 +130,7 @@
                 <input type="hidden" name="svg_base64" />
             </form>
         </div>
+        <div class="line"></div>
         <div class="signature"></div>
     </body>
 </html>
