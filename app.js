@@ -87,8 +87,8 @@ app.use((err, req, res, next) => {
     res.json(result);
 });
 
-app.listen(lib.PORT, lib.HOSTNAME, () => {
+app.listen(lib.PORT, lib.HOST, () => {
     lib.startLogging();
-    util.Logging.info("Listening on " + lib.HOSTNAME + ":" + String(lib.PORT));
+    util.Logging.info("Listening on " + lib.HOST + ":" + String(lib.PORT));
     lib.init();
 });
