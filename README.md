@@ -10,6 +10,10 @@ Supported file format include:
 * [PDF](https://en.wikipedia.org/wiki/PDF) - Portable Document Format
 * [HPGL](https://en.wikipedia.org/wiki/HP-GL) - Hewlett-Packard Graphics Language
 
+| Name | Type | Description |
+| ----- | ----- | ----- |
+| `SIGNATUR_KEY` | `str` | Secret key that should be passed in protected calls so that the server side "trusts" the client side (authentication) (defaults to `None`). |
+
 ## License
 
 Signatur is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
