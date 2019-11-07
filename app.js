@@ -87,12 +87,18 @@ app.use((err, req, res, next) => {
     res.json(result);
 });
 
-app.listen(lib.PORT, lib.HOST, () => {
+(async () => {
+    await lib.start();
     try {
-        lib.startLogging();
-        util.Logging.info("Listening on " + lib.HOST + ":" + String(lib.PORT));
-        lib.init();
-    } catch (err) {
-        util.Logging.error(err);
+        app.listen(lib.conf.PORT, lib.conf.HOST, () => {
+            try {
+                util.Logging.info("Listening on " + lib.conf.HOST + ":" + String(lib.conf.PORT));
+                lib.init();
+            } catch (err) {
+                util.Logging.error(err);
+            }
+        });
+    } finally {
+        await lib.stop();
     }
-});
+})();
