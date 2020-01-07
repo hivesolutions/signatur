@@ -37,6 +37,13 @@
                 height: 30px;
             }
 
+            .header > .button.button-clear {
+                left: 0px;
+                margin-left: 22px;
+                position: absolute;
+                display: none;
+            }
+
             .header > .button.button-download {
                 right: 0px;
                 margin-right: 22px;
@@ -87,7 +94,7 @@
 
             .signature > div:last-child > input[type=button] {
                 position: relative !important;
-                left: 22px !important;
+                left: 200px !important;
                 top: 16px !important;
                 border: none;
                 outline: none;
@@ -130,20 +137,34 @@
                 var body = jQuery("body");
                 var form = jQuery(".form");
                 var formInput = jQuery(".form > input");
+                var buttonClear = jQuery(".button-clear");
                 var buttonDownload = jQuery(".button-download");
                 var signature = jQuery(".signature");
                 var theme = body.attr("data-theme") || "default";
+                buttonClear.click(function() {
+                    signature.jSignature("reset");
+                });
                 buttonDownload.click(function() {
                     var svgBase64 = signature.jSignature("getData", "svgbase64");
                     formInput.attr("value", svgBase64[1]);
                     form.submit();
                 });
                 signature.jSignature(getOptions(theme));
+                signature.bind("change", function(){
+                    var data = signature.jSignature("getData", "base30");
+                    var hasData = Boolean(data[1]);
+                    if (hasData) {
+                        buttonClear.show();
+                    } else {
+                        buttonClear.hide();
+                    }
+                });
             });
         </script>
     </head>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="header">
+            <span class="button button-clear">Clear</span>
             <span class="button button-download">Download</span>
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />
