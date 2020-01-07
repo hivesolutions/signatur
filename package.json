@@ -36,7 +36,7 @@
         "upgrade": "npx sort-package-json && ncu -u"
     },
     "dependencies": {
-        "consola": "^2.11.1",
+        "consola": "^2.11.3",
         "ejs": "^3.0.1",
         "express": "^4.17.1",
         "express-ejs-layouts": "^2.5.0",
@@ -48,10 +48,10 @@
     "devDependencies": {
         "eslint": "^6.8.0",
         "eslint-config-hive": "^0.2.2",
-        "mocha": "^6.2.2",
+        "mocha": "^7.0.0",
         "npm-check-updates": "^4.0.1",
         "prettier": "^1.19.1",
         "prettier-config-hive": "^0.1.1",
-        "sort-package-json": "^1.31.0"
+        "sort-package-json": "^1.37.0"
     }
 }
