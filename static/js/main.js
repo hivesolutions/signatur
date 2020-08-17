@@ -27,15 +27,28 @@ jQuery(document).ready(function() {
     var buttonDownload = jQuery(".button-download");
     var signature = jQuery(".signature");
     var theme = body.attr("data-theme") || "default";
+
+    // registers for the click operation on the clear button
+    // that sends the "reset" event to the jsignature
     buttonClear.click(function() {
         signature.jSignature("reset");
     });
+
+    // registers for the download button click operation so that
+    // we obtain the SVG version and submit the current form with it
+    // effectively converting the data into HPGL
     buttonDownload.click(function() {
         var svgBase64 = signature.jSignature("getData", "svgbase64");
         formInput.attr("value", svgBase64[1]);
         form.submit();
     });
+
+    // starts the jsignature "inside" the signature area
+    // allowing proper interactive operations to be performed
     signature.jSignature(getOptions(theme));
+
+    // registers for any change in the signature so that the
+    // button clear visibility may be controlled
     signature.bind("change", function() {
         var data = signature.jSignature("getData", "base30");
         var hasData = Boolean(data[1]);
