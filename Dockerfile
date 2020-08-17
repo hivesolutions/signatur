@@ -19,7 +19,7 @@ ADD views /app/views
 WORKDIR /app
 
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get update && apt-get install -y nodejs g++ ghostscript inkscape
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs g++ ghostscript inkscape
 RUN npm install
 RUN wget https://sourceforge.net/projects/pstoedit/files/pstoedit/3.74/pstoedit-3.74.tar.gz/download &&\
     tar -zxvf download && cd pstoedit-3.74 && ./configure --prefix /usr && make && make install
