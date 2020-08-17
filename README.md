@@ -10,9 +10,16 @@ Supported file format include:
 * [PDF](https://en.wikipedia.org/wiki/PDF) - Portable Document Format
 * [HPGL](https://en.wikipedia.org/wiki/HP-GL) - Hewlett-Packard Graphics Language
 
-| Name | Type | Default | Description |
-| ----- | ----- | ----- | ----- |
-| `SIGNATUR_KEY` | `str` | `None` | Secret key that should be passed in protected calls so that the server side "trusts" the client side (authentication). |
+## Features
+
+* Canvas based drawing, to be used in signatures
+* Viewport for drawing of text
+
+## Configuration
+
+| Name           | Type  | Default | Description                                                                                                            |
+| -------------- | ----- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `SIGNATUR_KEY` | `str` | `None`  | Secret key that should be passed in protected calls so that the server side "trusts" the client side (authentication). |
 
 ## License
 
