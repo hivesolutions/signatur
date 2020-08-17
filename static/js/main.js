@@ -1,5 +1,13 @@
 var jQuery = window.jQuery ? window.jQuery : null;
 
+/**
+ * Gathers the series of UI and canvas options according to
+ * the requested theme.
+ *
+ * @param {String} theme The name of the theme to retrieve the target
+ * options, that change thickness and global UI.
+ * @returns {Object} An object with the setting for the current theme.
+ */
 var getOptions = function(theme) {
     switch (theme) {
         case "ldj":
@@ -17,6 +25,11 @@ var getOptions = function(theme) {
                 UndoButton: true
             };
     }
+};
+
+var drawText = function(ctx) {
+    ctx.font = "30px Arial";
+    ctx.fillText("Hello World", 10, 500);
 };
 
 jQuery(document).ready(function() {
@@ -58,4 +71,10 @@ jQuery(document).ready(function() {
             buttonClear.hide();
         }
     });
+
+    // gathers the canvas from the current viewport and then
+    // runs the drawing of the text in it
+    var canvas = document.getElementsByClassName("jSignature")[0];
+    var ctx = canvas.getContext("2d");
+    drawText(ctx);
 });
