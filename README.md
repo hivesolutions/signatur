@@ -14,6 +14,7 @@ Supported file format include:
 
 * Canvas based drawing, to be used in signatures
 * Viewport for drawing of text and emoji
+* Uses [canvas2svg](http://gliffy.github.io/canvas2svg) for SVG output
 
 ## Configuration
 
