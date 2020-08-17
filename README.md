@@ -13,7 +13,7 @@ Supported file format include:
 ## Features
 
 * Canvas based drawing, to be used in signatures
-* Viewport for drawing of text
+* Viewport for drawing of text and emoji
 
 ## Configuration
 
