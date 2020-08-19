@@ -32,9 +32,22 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
+    res.redirect(301, "/signature");
+});
+
+app.get("/signature", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || "";
-    res.render("index", {
+    res.render("signature", {
+        fullscreen: fullscreen,
+        theme: theme
+    });
+});
+
+app.get("/viewport", (req, res, next) => {
+    const fullscreen = req.query.fullscreen === "1";
+    const theme = req.query.theme || "";
+    res.render("viewport", {
         fullscreen: fullscreen,
         theme: theme
     });
