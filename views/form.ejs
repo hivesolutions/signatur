@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <form class="form">
+            <div class="field">
+                <label class="name">Responsible</label>
+                <div class="value">
+                    <input type="text" name="responsible" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="name">Technology</label>
+                <div class="value">
+                    <input type="radio" id="laser" name="technology" value="laser">
+                    <label for="laser">Laser</label><br>
+                    <input type="radio" id="fresa" name="technology" value="fresa">
+                    <label for="fresa">Fresa</label>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>

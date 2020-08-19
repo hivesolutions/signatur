@@ -35,6 +35,15 @@ app.get("/", (req, res, next) => {
     res.redirect(301, "/signature");
 });
 
+app.get("/form", (req, res, next) => {
+    const fullscreen = req.query.fullscreen === "1";
+    const theme = req.query.theme || "";
+    res.render("form", {
+        fullscreen: fullscreen,
+        theme: theme
+    });
+});
+
 app.get("/signature", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || "";
