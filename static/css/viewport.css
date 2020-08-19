@@ -19,4 +19,30 @@
     border: 2px dashed #2d2d2d;
     padding: 12px 12px 12px 12px;
     width: 100%;
+    box-sizing: border-box;
+}
+
+.viewport > .fonts-container {
+    position: absolute;
+    width: 660px;
+    margin-top: 150px;
+}
+
+.viewport > .fonts-container > .font {
+    display: inline-block;
+    font-size: 22px;
+    border: 1px solid #2d2d2d;
+    margin: 0px 6px 0px 6px;
+    padding: 6px 12px 6px 12px;
+    border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+}
+
+.viewport > .fonts-container > .font.selected,
+.viewport > .fonts-container > .font.selected:hover  {
+    background-color: #e0e0e0;
+}
+
+.viewport > .fonts-container > .font:hover {
+    background-color: #f0f0f0;
 }
