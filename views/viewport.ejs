@@ -4,16 +4,11 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="header">
-            <span class="button button-clear">Clear</span>
-            <span class="button button-download">Download</span>
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />
             <% } else { %>
                 <span class="logo"></span>
             <% } %>
-            <form class="form" action="/convert" method="post">
-                <input type="hidden" name="svg_base64" />
-            </form>
         </div>
         <div class="viewport">
             <div class="input-container">
