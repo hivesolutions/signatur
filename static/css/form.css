@@ -1,3 +1,13 @@
 .form {
-    font-size: 12px;
+    margin: 12px auto 12px auto;
+    font-size: 24px;
+    max-width: 640px;
+}
+
+.form > .field {
+    margin: 24px 0px 24px 0px;
+}
+
+.form > .field > .name {
+    text-transform: uppercase;
 }
