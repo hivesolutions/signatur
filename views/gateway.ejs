@@ -4,6 +4,13 @@
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="gateway">
             <form class="form form-gateway">
+                <div class="logo-container">
+                    <% if (theme === "ldj") { %>
+                        <img class="logo" src="/static/images/logo.svg" />
+                    <% } else { %>
+                        <span class="logo"></span>
+                    <% } %>
+                </div>
                 <div class="field">
                     <label class="name">Responsible</label>
                     <div class="value">
@@ -43,7 +50,9 @@
                         <label for="exterior">Exterior</label>
                     </div>
                 </div>
-                <button type="submit" class="button">Submit</span>
+                <div class="buttons-container">
+                    <button type="submit" class="button">Submit</span>
+                </div>
             </form>
         </div>
     </body>

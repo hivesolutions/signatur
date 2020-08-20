@@ -91,8 +91,8 @@ body {
 }
 
 .input {
-    background-color: #e8e8e8;
-    border: none;
+    background-color: #f4f7fa;
+    border: 2px solid #f4f7fa;
     border-radius: 4px 4px 4px 4px;
     -o-border-radius: 4px 4px 4px 4px;
     -ms-border-radius: 4px 4px 4px 4px;
@@ -106,10 +106,23 @@ body {
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
-    height: 32px;
+    font-size: 14px;
+    height: 36px;
+    line-height: 36px;
     min-width: 140px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
     padding: 4px 12px 4px 12px;
     width: 100%;
+}
+
+.input:focus {
+    background-color: #ffffff;
+    border-color: #2d2d2d;
 }
 
 .signature {
