@@ -62,6 +62,15 @@ app.get("/viewport", (req, res, next) => {
     });
 });
 
+app.get("/report", (req, res, next) => {
+    const fullscreen = req.query.fullscreen === "1";
+    const theme = req.query.theme || "";
+    res.render("report", {
+        fullscreen: fullscreen,
+        theme: theme
+    });
+});
+
 app.get("/engine", (req, res, next) => {
     async function clojure() {
         lib.verifyKey(req);
