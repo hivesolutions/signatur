@@ -35,10 +35,10 @@ app.get("/", (req, res, next) => {
     res.redirect(301, "/signature");
 });
 
-app.get("/form", (req, res, next) => {
+app.get("/gateway", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || "";
-    res.render("form", {
+    res.render("gateway", {
         fullscreen: fullscreen,
         theme: theme
     });
