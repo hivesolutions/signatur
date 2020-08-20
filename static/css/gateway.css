@@ -26,6 +26,7 @@
 }
 
 .gateway > .form > .logo-container {
+    font-size: 22px;
     margin: 0px auto 24px auto;
     text-align: center;
     width: 200px;

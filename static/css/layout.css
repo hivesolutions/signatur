@@ -81,6 +81,12 @@ body {
     letter-spacing: 0.5px;
     line-height: 32px;
     min-width: 160px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
     padding: 0px 0px 0px 0px;
     text-transform: uppercase;
 }
