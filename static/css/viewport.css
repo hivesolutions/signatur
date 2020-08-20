@@ -33,6 +33,8 @@
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     font-size: 32px;
+    height: 56px;
+    line-height: 56px;
     padding: 12px 12px 12px 12px;
     text-align: center;
     width: 100%;
