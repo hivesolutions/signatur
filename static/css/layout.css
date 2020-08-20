@@ -131,6 +131,16 @@ body {
     border-color: #2d2d2d;
 }
 
+.radio-label {
+    display: inline-block;
+    margin-right: 20px;
+    min-width: 80px;
+}
+
+.radio-label:last-child {
+    margin-right: 0px;
+}
+
 .signature {
     background: #f6f6f6;
     height: 100%;
