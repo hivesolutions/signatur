@@ -3,7 +3,7 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="gateway">
-            <form class="form form-gateway">
+            <form class="form form-gateway" method="post" action="/gateway">
                 <div class="logo-container">
                     <% if (theme === "ldj") { %>
                         <img class="logo" src="/static/images/logo.svg" />

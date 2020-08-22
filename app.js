@@ -1,5 +1,6 @@
 // requires the multiple libraries
 const express = require("express");
+const session = require("express-session");
 const path = require("path");
 const process = require("process");
 const bodyParser = require("body-parser");
@@ -11,6 +12,14 @@ const lib = require("./lib");
 // builds the initial application object to be used
 // by the application for serving
 const app = express();
+
+// initializes the session middleware with the pre-defined
+// session password (for encryption)
+app.use(session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true
+}));
 
 process.on("SIGINT", function() {
     process.exit();
@@ -32,7 +41,7 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
-    res.redirect(301, "/signature");
+    res.redirect(302, "/signature");
 });
 
 app.get("/gateway", (req, res, next) => {
@@ -42,6 +51,11 @@ app.get("/gateway", (req, res, next) => {
         fullscreen: fullscreen,
         theme: theme
     });
+});
+
+app.post("/gateway", (req, res, next) => {
+    req.session.config = req.body;
+    res.redirect(302, "/signature");
 });
 
 app.get("/signature", (req, res, next) => {
