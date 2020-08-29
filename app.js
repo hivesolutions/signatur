@@ -81,7 +81,8 @@ app.get("/report", (req, res, next) => {
     const theme = req.query.theme || "";
     res.render("report", {
         fullscreen: fullscreen,
-        theme: theme
+        theme: theme,
+        config: req.session.config
     });
 });
 
