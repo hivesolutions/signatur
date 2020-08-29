@@ -15,11 +15,14 @@ const app = express();
 
 // initializes the session middleware with the pre-defined
 // session password (for encryption)
-app.use(session({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: true
-}));
+app.use(
+    session({
+        secret: "keyboard cat",
+        cookie: { maxAge: 60000000 },
+        resave: true,
+        saveUninitialized: true
+    })
+);
 
 process.on("SIGINT", function() {
     process.exit();
@@ -54,7 +57,7 @@ app.get("/gateway", (req, res, next) => {
 });
 
 app.post("/gateway", (req, res, next) => {
-    req.session.config = req.body;
+    req.session.config = Object.assign({}, req.body);
     res.redirect(302, "/signature");
 });
 
@@ -84,6 +87,10 @@ app.get("/report", (req, res, next) => {
         theme: theme,
         config: req.session.config
     });
+});
+
+app.get("/config", (req, res, next) => {
+    res.json(req.session.config || {});
 });
 
 app.get("/engine", (req, res, next) => {

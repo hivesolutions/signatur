@@ -3,8 +3,9 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="report">
-            This is the place for the report.
-            <%= theme %>
+            This is the place for the report.<br/>
+            Theme := <%= theme %><br/>
+            Technology :=  <%= config ? config.technology : "-" %><br/>
         </div>
     </body>
 </html>
