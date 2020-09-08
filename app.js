@@ -49,7 +49,8 @@ app.get("/", (req, res, next) => {
 
 app.get("/gateway", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
-    const theme = req.query.theme || "";
+    const theme = req.query.theme || req.session.theme || "";
+    req.session.theme = theme;
     res.render("gateway", {
         fullscreen: fullscreen,
         theme: theme,
@@ -75,7 +76,8 @@ app.post("/gateway", (req, res, next) => {
 
 app.get("/signature", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
-    const theme = req.query.theme || "";
+    const theme = req.query.theme || req.session.theme || "";
+    req.session.theme = theme;
     res.render("signature", {
         fullscreen: fullscreen,
         theme: theme
@@ -84,7 +86,8 @@ app.get("/signature", (req, res, next) => {
 
 app.get("/viewport", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
-    const theme = req.query.theme || "";
+    const theme = req.query.theme || req.session.theme || "";
+    req.session.theme = theme;
     res.render("viewport", {
         fullscreen: fullscreen,
         theme: theme
@@ -93,7 +96,8 @@ app.get("/viewport", (req, res, next) => {
 
 app.get("/report", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
-    const theme = req.query.theme || "";
+    const theme = req.query.theme || req.session.theme || "";
+    req.session.theme = theme;
     res.render("report", {
         fullscreen: fullscreen,
         theme: theme,
