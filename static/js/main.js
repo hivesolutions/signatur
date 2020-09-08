@@ -99,18 +99,26 @@ jQuery(document).ready(function() {
         var element = jQuery(this);
         var value = element.text();
         var font = jQuery("body").data("font");
-        jQuery(".viewer-container").append(
-            "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-        );
+        if (value === "←") {
+            jQuery(".viewer-container > :last-child").remove();
+        } else {
+            jQuery(".viewer-container").append(
+                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+            );
+        }
     });
 
     jQuery(".emojis-container > .char").click(function() {
         var element = jQuery(this);
         var value = element.text();
         var font = jQuery("body").data("font");
-        jQuery(".viewer-container").append(
-            "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-        );
+        if (value === "←") {
+            jQuery(".viewer-container > :last-child").remove();
+        } else {
+            jQuery(".viewer-container").append(
+                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+            );
+        }
     });
 });
 
