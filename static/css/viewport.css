@@ -59,13 +59,14 @@
     -moz-box-sizing: border-box;
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
+    display: inline-block;
     font-size: 30px;
     height: 60px;
     line-height: 32px;
     margin: 0px auto 0px auto;
+    min-width: 460px;
     padding: 12px 12px 12px 12px;
     text-align: center;
-    width: 460px;
 }
 
 .viewport > .main-container > .fonts-container {
