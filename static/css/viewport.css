@@ -45,6 +45,29 @@
     width: 100%;
 }
 
+.viewport > .main-container > .viewer-container {
+    border: 2px dashed #2d2d2d;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    font-size: 30px;
+    height: 60px;
+    line-height: 32px;
+    margin: 0px auto 0px auto;
+    padding: 12px 12px 12px 12px;
+    text-align: center;
+    width: 460px;
+}
+
 .viewport > .main-container > .fonts-container {
     margin: 20px auto 0px auto;
     width: 720px;
@@ -89,8 +112,8 @@
 }
 
 .viewport > .main-container > .emojis-container {
-    font-family: "Cool Emojis";
     display: none;
+    font-family: "Cool Emojis";
     width: 720px;
 }
 

@@ -90,8 +90,27 @@ jQuery(document).ready(function() {
             jQuery(".emojis-container").hide();
             jQuery(".keyboard-container").show();
         }
-        jQuery(".keyboard-container").css("font-family", "\"" + font + "\"");
-        jQuery(".input-viewport").css("font-family", "\"" + font + "\"");
+        jQuery(".keyboard-container").css("font-family", '"' + font + '"');
+        jQuery(".input-viewport").css("font-family", '"' + font + '"');
+        jQuery("body").data("font", font);
+    });
+
+    jQuery(".keyboard-container > .char").click(function() {
+        var element = jQuery(this);
+        var value = element.text();
+        var font = jQuery("body").data("font");
+        jQuery(".viewer-container").append(
+            "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+        );
+    });
+
+    jQuery(".emojis-container > .char").click(function() {
+        var element = jQuery(this);
+        var value = element.text();
+        var font = jQuery("body").data("font");
+        jQuery(".viewer-container").append(
+            "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+        );
     });
 });
 
