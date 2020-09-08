@@ -3,10 +3,29 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="report">
-            This is the place for the report.<br/>
-            Theme := <%= theme %><br/>
-            Technology :=  <%= config ? config.technology : "-" %><br/>
-            Value :=  <%= config ? config.value : "-" %><br/>
+            <% if (theme === "ldj") { %>
+                <img class="logo" src="/static/images/logo.svg" />
+            <% } else { %>
+                <span class="logo"></span>
+            <% } %>
+            <div class="pairs">
+                <div class="pair">
+                    <span class="key">Responsible</span>
+                    <span class="value"><%= config.responsible || "-" %></span>
+                </div>
+                <div class="pair">
+                    <span class="key">Technology</span>
+                    <span class="value"><%= config.technology || "-" %></span>
+                </div>
+                <div class="pair">
+                    <span class="key">Elements</span>
+                    <span class="value"><%= config.elements || "-" %></span>
+                </div>
+                <div class="pair">
+                    <span class="key">Location</span>
+                    <span class="value"><%= config.location || "-" %></span>
+                </div>
+            </div>
         </div>
     </body>
 </html>

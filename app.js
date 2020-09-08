@@ -63,9 +63,11 @@ app.post("/gateway", (req, res, next) => {
     const elements = req.session.config.elements;
     switch (elements) {
         case "text":
-        case "digital-printing":
-        case "graphic-element":
             res.redirect(302, "/viewport");
+            break;
+        case "digital_printing":
+        case "graphic_element":
+            res.redirect(302, "/report");
             break;
         case "calligraphy":
         default:

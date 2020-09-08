@@ -1,3 +1,22 @@
 .report {
     font-size: 16px;
+    width: 960px;
+    margin: 0px auto 0px auto;
+}
+
+.logo {
+    width: 240px;
+}
+
+.pair {
+    line-height: 28px;
+}
+
+.pair > .key {
+    width: 120px;
+    display: inline-block;
+}
+
+.pair > .value {
+    display: inline-block;
 }
