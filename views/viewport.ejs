@@ -4,6 +4,10 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="header">
+            <div class="buttons-left">
+                <a class="button button-small button-back" href="/">←</a>
+                <span class="button button-clear">Clear</span>
+            </div>
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />
             <% } else { %>
