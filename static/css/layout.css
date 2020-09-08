@@ -1,3 +1,38 @@
+@font-face {
+    font-family: "Cool Emojis";
+    src: url(/static/fonts/coolemojis.ttf);
+}
+
+@font-face {
+    font-family: "Helvetica 1L";
+    src: url(/static/fonts/helvetica1l.ttf);
+}
+
+@font-face {
+    font-family: "Helvetica 4L";
+    src: url(/static/fonts/helvetica4l.ttf);
+}
+
+@font-face {
+    font-family: "Roman 4L";
+    src: url(/static/fonts/roman4l.ttf);
+}
+
+@font-face {
+    font-family: "Script 4L";
+    src: url(/static/fonts/script4l.ttf);
+}
+
+@font-face {
+    font-family: "Script 412 1L";
+    src: url(/static/fonts/script4121l.ttf);
+}
+
+@font-face {
+    font-family: "Script Round 1L";
+    src: url(/static/fonts/scriptround1l.ttf);
+}
+
 html {
     height: 100%;
 }
