@@ -44,7 +44,7 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
-    res.redirect(302, "/signature");
+    res.redirect(302, "/gateway");
 });
 
 app.get("/gateway", (req, res, next) => {
@@ -52,7 +52,8 @@ app.get("/gateway", (req, res, next) => {
     const theme = req.query.theme || "";
     res.render("gateway", {
         fullscreen: fullscreen,
-        theme: theme
+        theme: theme,
+        config: req.session.config || {}
     });
 });
 
@@ -96,7 +97,7 @@ app.get("/report", (req, res, next) => {
     res.render("report", {
         fullscreen: fullscreen,
         theme: theme,
-        config: req.session.config
+        config: req.session.config || {}
     });
 });
 
