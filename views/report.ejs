@@ -10,6 +10,10 @@
             <% } %>
             <div class="pairs">
                 <div class="pair">
+                    <span class="key">Date</span>
+                    <span class="value"><%= new Date() || "-" %></span>
+                </div>
+                <div class="pair">
                     <span class="key">Responsible</span>
                     <span class="value"><%= config.responsible || "-" %></span>
                 </div>
@@ -25,6 +29,16 @@
                     <span class="key">Location</span>
                     <span class="value"><%= config.location || "-" %></span>
                 </div>
+                <% if (config.text) { %>
+                    <div class="pair">
+                        <span class="key">Text</span>
+                        <span class="value">
+                            <% config.text.forEach(function(item){ %>
+                                <span class="item" style="font-family: <%= item[0] %>"><%= item[1] %></span>
+                            <% }); %>
+                        <span>
+                    </div>
+                <% } %>
             </div>
         </div>
     </body>

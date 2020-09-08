@@ -32,6 +32,15 @@ var drawText = function(ctx) {
     ctx.fillText("Hello World", 10, 500);
 };
 
+var serializeText = function(text) {
+    var buffer = [];
+    for (var index = 0; index < text.length; index++) {
+        var item = text[index];
+        buffer.push(item[0] + ":" + item[1]);
+    }
+    return buffer.join("-");
+};
+
 jQuery(document).ready(function() {
     var body = jQuery("body");
     var form = jQuery(".form");
@@ -82,7 +91,6 @@ jQuery(document).ready(function() {
 
     jQuery(".fonts-container").fontscontainer();
     jQuery(".fonts-container").bind("font", function(event, font) {
-        console.info(font);
         if (font === "Cool Emojis") {
             jQuery(".keyboard-container").hide();
             jQuery(".emojis-container").show();
@@ -98,27 +106,41 @@ jQuery(document).ready(function() {
     jQuery(".keyboard-container > .char").click(function() {
         var element = jQuery(this);
         var value = element.text();
+        var buttonReport = jQuery(".button-report");
+        var buttonHref = buttonReport.attr("data-href");
         var font = jQuery("body").data("font");
+        var text = jQuery("body").data("text") || [];
         if (value === "←") {
             jQuery(".viewer-container > :last-child").remove();
+            text.pop();
         } else {
             jQuery(".viewer-container").append(
                 "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
             );
+            text.push([font, value]);
         }
+        jQuery("body").data("text", text);
+        buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
     });
 
     jQuery(".emojis-container > .char").click(function() {
         var element = jQuery(this);
         var value = element.text();
+        var buttonReport = jQuery(".button-report");
+        var buttonHref = buttonReport.attr("data-href");
         var font = jQuery("body").data("font");
+        var text = jQuery("body").data("text") || [];
         if (value === "←") {
             jQuery(".viewer-container > :last-child").remove();
+            text.pop();
         } else {
             jQuery(".viewer-container").append(
                 "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
             );
+            text.push([font, value]);
         }
+        jQuery("body").data("text", text);
+        buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
     });
 });
 

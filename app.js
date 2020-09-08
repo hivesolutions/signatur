@@ -100,6 +100,8 @@ app.get("/report", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     req.session.theme = theme;
+    req.session.config = req.session.config || {};
+    req.session.config.text = lib.deserializeText(req.query.text) || null;
     res.render("report", {
         fullscreen: fullscreen,
         theme: theme,
