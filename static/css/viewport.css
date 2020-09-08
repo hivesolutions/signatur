@@ -19,8 +19,8 @@
 }
 
 .viewport > .main-container > .input-container {
-    width: 460px;
     margin: 0px auto 0px auto;
+    width: 460px;
 }
 
 .viewport > .main-container > .input-container > .input {
@@ -46,8 +46,8 @@
 }
 
 .viewport > .main-container > .fonts-container {
-    width: 720px;
     margin: 20px auto 0px auto;
+    width: 720px;
 }
 
 .viewport > .main-container > .fonts-container > .font {
@@ -61,10 +61,10 @@
     cursor: pointer;
     display: inline-block;
     font-size: 22px;
+    height: 34px;
     line-height: 34px;
     margin: 6px 6px 6px 6px;
     padding: 6px 12px 6px 12px;
-    height: 34px;
     vertical-align: top;
 }
 
@@ -79,7 +79,32 @@
 
 .viewport > .main-container > .emojis-container {
     font-family: "Cool Emojis";
+    font-size: 0px;
     margin: 20px auto 0px auto;
-    font-size: 22px;
     width: 720px;
+}
+
+.viewport > .main-container > .emojis-container > .char {
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 26px;
+    margin: 2px 0px 2px 0px;
+    min-width: 32px;
+    padding: 2px 8px 2px 8px;
+}
+
+.viewport > .main-container > .emojis-container > .char:hover {
+    background-color: #e2e2e2;
 }
