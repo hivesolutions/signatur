@@ -42,12 +42,16 @@ var serializeText = function(text) {
 };
 
 jQuery(document).ready(function() {
+    // runs a series of selections over the current viewport
     var body = jQuery("body");
     var form = jQuery(".form");
     var formInput = jQuery(".form > input");
     var buttonClear = jQuery(".button-clear");
     var buttonDownload = jQuery(".button-download");
     var signature = jQuery(".signature");
+
+    // gathers the currently selected theme information
+    // to be used to change the current visual style
     var theme = body.attr("data-theme") || "default";
 
     // registers for the click operation on the clear button
@@ -100,7 +104,7 @@ jQuery(document).ready(function() {
         }
         jQuery(".keyboard-container").css("font-family", '"' + font + '"');
         jQuery(".input-viewport").css("font-family", '"' + font + '"');
-        jQuery("body").data("font", font);
+        body.data("font", font);
     });
 
     jQuery(".keyboard-container > .char").click(function() {
@@ -108,8 +112,8 @@ jQuery(document).ready(function() {
         var value = element.text();
         var buttonReport = jQuery(".button-report");
         var buttonHref = buttonReport.attr("data-href");
-        var font = jQuery("body").data("font");
-        var text = jQuery("body").data("text") || [];
+        var font = body.data("font");
+        var text = body.data("text") || [];
         if (value === "←") {
             jQuery(".viewer-container > :last-child").remove();
             text.pop();
@@ -119,7 +123,7 @@ jQuery(document).ready(function() {
             );
             text.push([font, value]);
         }
-        jQuery("body").data("text", text);
+        body.data("text", text);
         buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
     });
 
@@ -128,8 +132,8 @@ jQuery(document).ready(function() {
         var value = element.text();
         var buttonReport = jQuery(".button-report");
         var buttonHref = buttonReport.attr("data-href");
-        var font = jQuery("body").data("font");
-        var text = jQuery("body").data("text") || [];
+        var font = body.data("font");
+        var text = body.data("text") || [];
         if (value === "←") {
             jQuery(".viewer-container > :last-child").remove();
             text.pop();
@@ -139,7 +143,7 @@ jQuery(document).ready(function() {
             );
             text.push([font, value]);
         }
-        jQuery("body").data("text", text);
+        body.data("text", text);
         buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
     });
 });
