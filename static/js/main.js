@@ -66,9 +66,9 @@ jQuery(document).ready(function() {
         var data = signature.jSignature("getData", "base30");
         var hasData = Boolean(data[1]);
         if (hasData) {
-            buttonClear.show();
+            buttonClear.css("display", "inline-block");
         } else {
-            buttonClear.hide();
+            buttonClear.css("display", "none");
         }
     });
 

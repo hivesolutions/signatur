@@ -35,17 +35,24 @@ body {
     height: 30px;
 }
 
-.header > .button.button-clear {
-    display: none;
+.header > .buttons-left {
     left: 0px;
     margin-left: 22px;
     position: absolute;
 }
 
-.header > .button.button-download {
-    margin-right: 22px;
+.header > .buttons-right {
     position: absolute;
     right: 0px;
+}
+
+.header .button.button-clear {
+    display: none;
+}
+
+.header .button.button-report,
+.header .button.button-download {
+    margin-right: 22px;
 }
 
 .line {
@@ -88,12 +95,17 @@ body {
     -khtml-outline: none;
     -webkit-outline: none;
     padding: 0px 0px 0px 0px;
+    text-decoration: none;
     text-transform: uppercase;
 }
 
 .button:hover,
 .signature > div:last-child > input[type=button]:hover {
     background-color: rgba(24, 24, 24, 0.85);
+}
+
+.button.button-small {
+    min-width: 32px;
 }
 
 .input {

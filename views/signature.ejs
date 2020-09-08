@@ -3,8 +3,14 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="header">
-            <span class="button button-clear">Clear</span>
-            <span class="button button-download">Download</span>
+            <div class="buttons-left">
+                <a class="button button-small button-back" href="/">&lt;</a>
+                <span class="button button-clear">Clear</span>
+            </div>
+            <div class="buttons-right">
+                <a class="button button-report" href="/report">Report</a>
+                <span class="button button-download">Download</span>
+            </div>
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />
             <% } else { %>
