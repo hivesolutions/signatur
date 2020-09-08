@@ -58,7 +58,18 @@ app.get("/gateway", (req, res, next) => {
 
 app.post("/gateway", (req, res, next) => {
     req.session.config = Object.assign({}, req.body);
-    res.redirect(302, "/signature");
+    const elements = req.session.config.elements;
+    switch (elements) {
+        case "text":
+        case "digital-printing":
+        case "graphic-element":
+            res.redirect(302, "/viewport");
+            break;
+        case "calligraphy":
+        default:
+            res.redirect(302, "/signature");
+            break;
+    }
 });
 
 app.get("/signature", (req, res, next) => {
