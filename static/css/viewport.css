@@ -77,14 +77,25 @@
     background-color: #f0f0f0;
 }
 
-.viewport > .main-container > .emojis-container {
-    font-family: "Cool Emojis";
+.viewport > .main-container > .emojis-container,
+.viewport > .main-container > .keyboard-container {
     font-size: 0px;
     margin: 20px auto 0px auto;
+}
+
+.viewport > .main-container > .keyboard-container {
+    display: none;
+    width: 520px;
+}
+
+.viewport > .main-container > .emojis-container {
+    font-family: "Cool Emojis";
+    display: none;
     width: 720px;
 }
 
-.viewport > .main-container > .emojis-container > .char {
+.viewport > .main-container > .emojis-container > .char,
+.viewport > .main-container > .keyboard-container > .char {
     border-radius: 4px 4px 4px 4px;
     -o-border-radius: 4px 4px 4px 4px;
     -ms-border-radius: 4px 4px 4px 4px;
@@ -105,6 +116,7 @@
     padding: 2px 8px 2px 8px;
 }
 
-.viewport > .main-container > .emojis-container > .char:hover {
+.viewport > .main-container > .emojis-container > .char:hover,
+.viewport > .main-container > .keyboard-container > .char:hover {
     background-color: #e2e2e2;
 }

@@ -75,6 +75,42 @@ jQuery(document).ready(function() {
     // gathers the canvas from the current viewport and then
     // runs the drawing of the text in it
     var canvas = document.getElementsByClassName("jSignature")[0];
-    var ctx = canvas.getContext("2d");
-    drawText(ctx);
+    if (canvas) {
+        var ctx = canvas.getContext("2d");
+        drawText(ctx);
+    }
+
+    jQuery(".fonts-container").fontscontainer();
+    jQuery(".fonts-container").bind("font", function(event, font) {
+        console.info(font);
+        if (font === "Cool Emojis") {
+            jQuery(".keyboard-container").hide();
+            jQuery(".emojis-container").show();
+        } else {
+            jQuery(".emojis-container").hide();
+            jQuery(".keyboard-container").show();
+        }
+        jQuery(".keyboard-container").css("font-family", "\"" + font + "\"");
+        jQuery(".input-viewport").css("font-family", "\"" + font + "\"");
+    });
 });
+
+(function(jQuery) {
+    jQuery.fn.fontscontainer = function() {
+        var elements = jQuery(this);
+
+        elements.each(function() {
+            var context = jQuery(this);
+            var fonts = jQuery(".font", context);
+
+            fonts.click(function() {
+                var _element = jQuery(this);
+                fonts.removeClass("selected");
+                _element.addClass("selected");
+                context.triggerHandler("font", [_element.attr("data-font")]);
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
