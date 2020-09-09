@@ -47,7 +47,13 @@ jQuery(document).ready(function() {
     var form = jQuery(".form");
     var formInput = jQuery(".form > input");
     var buttonClear = jQuery(".button-clear");
+    var buttonReport = jQuery(".button-report");
     var buttonDownload = jQuery(".button-download");
+    var fontsContainer = jQuery(".fonts-container");
+    var keyboardContainer = jQuery(".keyboard-container");
+    var emojisContainer = jQuery(".emojis-container");
+    var viewportContainer = jQuery(".viewer-container");
+    var inputViewport = jQuery(".input-viewport");
     var signature = jQuery(".signature");
 
     // gathers the currently selected theme information
@@ -93,59 +99,44 @@ jQuery(document).ready(function() {
         drawText(ctx);
     }
 
-    jQuery(".fonts-container").fontscontainer();
-    jQuery(".fonts-container").bind("font", function(event, font) {
+    // registers the fonts container and then binds the font changed
+    // event to the operation of switching keyboard and updating global
+    // body information on the selected font
+    fontsContainer.fontscontainer();
+    fontsContainer.bind("font", function(event, font) {
         if (font === "Cool Emojis") {
-            jQuery(".keyboard-container").hide();
-            jQuery(".emojis-container").show();
+            keyboardContainer.hide();
+            emojisContainer.show();
         } else {
-            jQuery(".emojis-container").hide();
-            jQuery(".keyboard-container").show();
+            emojisContainer.hide();
+            keyboardContainer.show();
         }
-        jQuery(".keyboard-container").css("font-family", '"' + font + '"');
-        jQuery(".input-viewport").css("font-family", '"' + font + '"');
+        keyboardContainer.css("font-family", '"' + font + '"');
+        inputViewport.css("font-family", '"' + font + '"');
         body.data("font", font);
     });
 
-    jQuery(".keyboard-container > .char").click(function() {
-        var element = jQuery(this);
-        var value = element.text();
-        var buttonReport = jQuery(".button-report");
+    const keyHandler = function(event, font, value) {
         var buttonHref = buttonReport.attr("data-href");
-        var font = body.data("font");
         var text = body.data("text") || [];
         if (value === "←") {
-            jQuery(".viewer-container > :last-child").remove();
+            jQuery("> :last-child", viewportContainer).remove();
             text.pop();
         } else {
-            jQuery(".viewer-container").append(
+            viewportContainer.append(
                 "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
             );
             text.push([font, value]);
         }
         body.data("text", text);
         buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
-    });
+    };
 
-    jQuery(".emojis-container > .char").click(function() {
-        var element = jQuery(this);
-        var value = element.text();
-        var buttonReport = jQuery(".button-report");
-        var buttonHref = buttonReport.attr("data-href");
-        var font = body.data("font");
-        var text = body.data("text") || [];
-        if (value === "←") {
-            jQuery(".viewer-container > :last-child").remove();
-            text.pop();
-        } else {
-            jQuery(".viewer-container").append(
-                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-            );
-            text.push([font, value]);
-        }
-        body.data("text", text);
-        buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
-    });
+    keyboardContainer.keyboardcontainer();
+    emojisContainer.keyboardcontainer();
+
+    keyboardContainer.bind("key", keyHandler);
+    emojisContainer.bind("key", keyHandler);
 });
 
 (function(jQuery) {
@@ -161,6 +152,27 @@ jQuery(document).ready(function() {
                 fonts.removeClass("selected");
                 _element.addClass("selected");
                 context.triggerHandler("font", [_element.attr("data-font")]);
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.keyboardcontainer = function() {
+        var elements = jQuery(this);
+
+        elements.each(function() {
+            var context = jQuery(this);
+            var body = jQuery("body");
+            var keys = jQuery("> .char", context);
+
+            keys.click(function() {
+                var element = jQuery(this);
+                var value = element.text();
+                var font = body.data("font");
+                context.triggerHandler("key", [font, value]);
             });
         });
 
