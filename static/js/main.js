@@ -119,9 +119,12 @@ jQuery(document).ready(function() {
     const keyHandler = function(event, font, value) {
         var buttonHref = buttonReport.attr("data-href");
         var text = body.data("text") || [];
-        if (value === "←") {
+        if (value === "⌫") {
             jQuery("> :last-child", viewportContainer).remove();
             text.pop();
+        } else if (value === "⎵") {
+            viewportContainer.append("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
+            text.push([font, " "]);
         } else {
             viewportContainer.append(
                 "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
@@ -171,10 +174,33 @@ jQuery(document).ready(function() {
             keys.click(function() {
                 var element = jQuery(this);
                 var value = element.text();
-                var font = body.data("font");
-                context.triggerHandler("key", [font, value]);
+                var casing = context.data("casing") || "uppercase";
+                value = casing === "lowercase" ? value.toLowerCase() : value;
+                if (value === "⇧") {
+                    toggleCasing(context);
+                } else {
+                    var font = body.data("font");
+                    context.triggerHandler("key", [font, value]);
+                }
             });
         });
+
+        /**
+         * Toggle the casing of the keyboard.
+         *
+         * @param {Element} context The context that is going to be used
+         * for the toggling.
+         */
+        var toggleCasing = function(context) {
+            var casing = context.data("casing") || "uppercase";
+            if (casing === "uppercase") {
+                context.data("casing", "lowercase");
+                context.addClass("lowercase");
+            } else {
+                context.data("casing", "uppercase");
+                context.removeClass("lowercase");
+            }
+        };
 
         return this;
     };

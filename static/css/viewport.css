@@ -109,7 +109,11 @@
 
 .viewport > .main-container > .keyboard-container {
     display: none;
-    width: 520px;
+    width: 620px;
+}
+
+.viewport > .main-container > .keyboard-container.lowercase {
+    text-transform: lowercase;
 }
 
 .viewport > .main-container > .emojis-container {
@@ -135,12 +139,20 @@
     cursor: pointer;
     display: inline-block;
     font-size: 26px;
-    margin: 2px 0px 2px 0px;
-    min-width: 32px;
-    padding: 2px 8px 2px 8px;
+    margin: 3px 3px 3px 3px;
+    min-width: 48px;
+    min-height: 48px;
+    line-height: 48px;
+    padding: 0px 8px 0px 8px;
+    border: 1px solid #9d9d9d;
 }
 
 .viewport > .main-container > .emojis-container > .char:hover,
 .viewport > .main-container > .keyboard-container > .char:hover {
     background-color: #e2e2e2;
+}
+
+.viewport > .main-container > .emojis-container > .char:active,
+.viewport > .main-container > .keyboard-container > .char:active {
+    background-color: #d2d2d2;
 }
