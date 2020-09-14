@@ -150,9 +150,15 @@
 .viewport > .main-container > .emojis-container > .char:hover,
 .viewport > .main-container > .keyboard-container > .char:hover {
     background-color: #e2e2e2;
+    box-shadow: 1px 1px 1px #cccccc;
 }
 
 .viewport > .main-container > .emojis-container > .char:active,
 .viewport > .main-container > .keyboard-container > .char:active {
     background-color: #d2d2d2;
+    box-shadow: none;
+}
+
+.viewport > .main-container > .keyboard-container:not(.lowercase) > .char.shift {
+    background-color: #e2e2e2;
 }
