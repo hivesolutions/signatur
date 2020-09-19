@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="report">
+            <% if (theme === "ldj") { %>
+                <img class="logo" src="/static/images/logo.svg" />
+            <% } else { %>
+                <span class="logo"></span>
+            <% } %>
+            <div class="pairs">
+                <div class="pair">
+                    <span class="key">Data</span>
+                    <span class="value"><%= new Date() || "-" %></span>
+                </div>
+                <div class="pair">
+                    <span class="key">Responsável</span>
+                    <span class="value"><%= config.responsible || "-" %></span>
+                </div>
+                <div class="pair">
+                    <span class="key">Tecnologia</span>
+                    <span class="value"><%= config.technology || "-" %></span>
+                </div>
+                <div class="pair">
+                    <span class="key">Elementos</span>
+                    <span class="value"><%= config.elements || "-" %></span>
+                </div>
+                <div class="pair">
+                    <span class="key">Localização</span>
+                    <span class="value"><%= config.location || "-" %></span>
+                </div>
+                <% if (text) { %>
+                    <div class="pair">
+                        <span class="key">Texto</span>
+                        <span class="value">
+                            <% text.forEach(function(item){ %>
+                                <span class="item" style="font-family: <%= item[0] %>"><%- item[1] === " " ? "&nbsp;" : item[1] %></span>
+                            <% }); %>
+                        <span>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </body>
+</html>

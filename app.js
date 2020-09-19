@@ -101,10 +101,12 @@ app.get("/viewport", (req, res, next) => {
 app.get("/report", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
     req.session.theme = theme;
+    req.session.locale = locale;
     req.session.config = req.session.config || {};
     req.session.config.text = req.query.text || req.session.config.text || null;
-    res.render("report", {
+    res.render("report" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
         config: req.session.config || {},
