@@ -46,8 +46,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get(["/", "/gateway"], (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
     req.session.theme = theme;
-    res.render("gateway", {
+    req.session.locale = locale;
+    res.render("gateway" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
         config: req.session.config || {}
