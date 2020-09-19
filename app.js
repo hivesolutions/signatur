@@ -88,9 +88,13 @@ app.get("/viewport", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     req.session.theme = theme;
+    req.session.config = req.session.config || {};
+    req.session.config.text = req.query.text || req.session.config.text || null;
     res.render("viewport", {
         fullscreen: fullscreen,
-        theme: theme
+        theme: theme,
+        config: req.session.config || {},
+        text: lib.deserializeText(req.session.config.text) || null
     });
 });
 
@@ -99,11 +103,12 @@ app.get("/report", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
     req.session.theme = theme;
     req.session.config = req.session.config || {};
-    req.session.config.text = lib.deserializeText(req.query.text) || null;
+    req.session.config.text = req.query.text || req.session.config.text || null;
     res.render("report", {
         fullscreen: fullscreen,
         theme: theme,
-        config: req.session.config || {}
+        config: req.session.config || {},
+        text: lib.deserializeText(req.session.config.text) || null
     });
 });
 

@@ -29,12 +29,12 @@
                     <span class="key">Location</span>
                     <span class="value"><%= config.location || "-" %></span>
                 </div>
-                <% if (config.text) { %>
+                <% if (text) { %>
                     <div class="pair">
                         <span class="key">Text</span>
                         <span class="value">
-                            <% config.text.forEach(function(item){ %>
-                                <span class="item" style="font-family: <%= item[0] %>"><%= item[1] %></span>
+                            <% text.forEach(function(item){ %>
+                                <span class="item" style="font-family: <%= item[0] %>"><%- item[1] === " " ? "&nbsp;" : item[1] %></span>
                             <% }); %>
                         <span>
                     </div>

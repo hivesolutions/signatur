@@ -19,7 +19,13 @@
         </div>
         <div class="viewport">
             <div class="main-container">
-                <div class="viewer-container"></div>
+                <div class="viewer-container" data-text="<%= config.text %>">
+                    <% if (text) { %>
+                        <% text.forEach(function(item){ %>
+                            <span style="font-family: <%= item[0] %>"><%- item[1] === " " ? "&nbsp;" : item[1] %></span>
+                        <% }); %>
+                    <% } %>
+                </div>
                 <div class="fonts-container">
                     <div class="font" data-font="Helvetica 1L" style="font-family: 'Helvetica 1L';">Helvetica 1L</div>
                     <div class="font" data-font="Helvetica 4L" style="font-family: 'Helvetica 4L';">Helvetica 4L</div>
