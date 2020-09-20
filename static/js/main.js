@@ -116,19 +116,21 @@ jQuery(document).ready(function() {
         body.data("font", font);
     });
 
-    const keyHandler = function(event, font, value) {
+    // creates the key handler function responsible for
+    // the update of the current text value, both from
+    // a visual and logic point of view
+    var keyHandler = function(event, font, value) {
+        var caret = jQuery("> .caret", viewportContainer);
         var buttonHref = buttonReport.attr("data-href");
         var text = body.data("text") || [];
         if (value === "⌫") {
-            jQuery("> :last-child", viewportContainer).remove();
+            caret.prev().remove();
             text.pop();
         } else if (value === "⎵") {
-            viewportContainer.append("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
+            caret.before("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
             text.push([font, " "]);
         } else {
-            viewportContainer.append(
-                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-            );
+            caret.before("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
             text.push([font, value]);
         }
         body.data("text", text);
