@@ -133,9 +133,10 @@ jQuery(document).ready(function() {
             element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
             caret.before(element);
             element.click(function() {
-                caretPosition = body.data("caret_position") || -1;
+                var element = jQuery(this);
                 element.after(caret);
-                body.data("caret_position", element.index());
+                caretPosition = element.index(".viewer-container > span:not(.caret)");
+                body.data("caret_position", caretPosition);
             });
             text.push([font, " "]);
             caretPosition++;
@@ -143,9 +144,10 @@ jQuery(document).ready(function() {
             element = jQuery("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
             caret.before(element);
             element.click(function() {
-                caretPosition = body.data("caret_position") || -1;
+                var element = jQuery(this);
                 element.after(caret);
-                body.data("caret_position", element.index());
+                caretPosition = element.index(".viewer-container > span:not(.caret)");
+                body.data("caret_position", caretPosition);
             });
             text.push([font, value]);
             caretPosition++;
