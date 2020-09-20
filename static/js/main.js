@@ -123,12 +123,14 @@ jQuery(document).ready(function() {
         var caret = jQuery("> .caret", viewportContainer);
         var buttonHref = buttonReport.attr("data-href");
         var text = body.data("text") || [];
-        var caretPosition = body.data("caret_position") || -1;
+        var caretPosition =
+            body.data("caret_position") === undefined ? -1 : body.data("caret_position");
         var element = null;
         if (value === "⌫") {
             caret.prev().remove();
             text.splice(caretPosition, 1);
             caretPosition--;
+            caretPosition = Math.max(caretPosition, -1);
         } else if (value === "⎵") {
             element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
             caret.before(element);
@@ -138,7 +140,7 @@ jQuery(document).ready(function() {
                 caretPosition = element.index(".viewer-container > span:not(.caret)");
                 body.data("caret_position", caretPosition);
             });
-            text.push([font, " "]);
+            text.splice(caretPosition + 1, 0, [font, " "]);
             caretPosition++;
         } else {
             element = jQuery("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
@@ -149,11 +151,11 @@ jQuery(document).ready(function() {
                 caretPosition = element.index(".viewer-container > span:not(.caret)");
                 body.data("caret_position", caretPosition);
             });
-            text.push([font, value]);
+            text.splice(caretPosition + 1, 0, [font, value]);
             caretPosition++;
         }
         body.data("text", text);
-        body.data("cart_position", caretPosition);
+        body.data("caret_position", caretPosition);
         buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
     };
 
