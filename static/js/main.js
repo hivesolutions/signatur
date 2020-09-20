@@ -123,17 +123,35 @@ jQuery(document).ready(function() {
         var caret = jQuery("> .caret", viewportContainer);
         var buttonHref = buttonReport.attr("data-href");
         var text = body.data("text") || [];
+        var caretPosition = body.data("caret_position") || -1;
+        var element = null;
         if (value === "⌫") {
             caret.prev().remove();
-            text.pop();
+            text.splice(caretPosition, 1);
+            caretPosition--;
         } else if (value === "⎵") {
-            caret.before("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
+            element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
+            caret.before(element);
+            element.click(function() {
+                caretPosition = body.data("caret_position") || -1;
+                element.after(caret);
+                body.data("caret_position", element.index());
+            });
             text.push([font, " "]);
+            caretPosition++;
         } else {
-            caret.before("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
+            element = jQuery("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
+            caret.before(element);
+            element.click(function() {
+                caretPosition = body.data("caret_position") || -1;
+                element.after(caret);
+                body.data("caret_position", element.index());
+            });
             text.push([font, value]);
+            caretPosition++;
         }
         body.data("text", text);
+        body.data("cart_position", caretPosition);
         buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
     };
 
