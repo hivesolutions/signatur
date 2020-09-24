@@ -69,6 +69,10 @@
     text-align: center;
 }
 
+.viewport > .main-container > .viewer-container > span:not(.caret) {
+    cursor: pointer;
+}
+
 .viewport > .main-container > .fonts-container {
     margin: 20px auto 0px auto;
     width: 720px;
