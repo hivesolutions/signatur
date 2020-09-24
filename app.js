@@ -125,30 +125,17 @@ app.get("/receipt", (req, res, next) => {
     });
 });
 
+app.get("/text", (req, res, next) => {
+    req.session.config = req.session.config || {};
+    req.session.config.text = req.query.text || req.session.config.text || null;
+    res.render("text", {
+        config: req.session.config || {},
+        text: lib.deserializeText(req.session.config.text) || null
+    });
+});
+
 app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
-});
-
-app.get("/engine", (req, res, next) => {
-    async function clojure() {
-        lib.verifyKey(req);
-        const engine = req.query.engine || "inkscape";
-        const engineModule = lib.ENGINES[engine];
-        const engineInstance = engineModule.singleton();
-        await engineInstance.info(req, res, next);
-    }
-    clojure().catch(next);
-});
-
-app.post("/convert", (req, res, next) => {
-    async function clojure() {
-        lib.verifyKey(req);
-        const engine = req.query.engine || "inkscape";
-        const engineModule = lib.ENGINES[engine];
-        const engineInstance = engineModule.singleton();
-        await engineInstance.convert(req, res, next);
-    }
-    clojure().catch(next);
 });
 
 app.get("/info", (req, res, next) => {
