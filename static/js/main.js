@@ -48,6 +48,7 @@ jQuery(document).ready(function() {
     var formInput = jQuery(".form > input");
     var buttonClear = jQuery(".button-clear");
     var buttonReport = jQuery(".button-report");
+    var buttonReceipt = jQuery(".button-receipt");
     var buttonDownload = jQuery(".button-download");
     var fontsContainer = jQuery(".fonts-container");
     var keyboardContainer = jQuery(".keyboard-container");
@@ -59,6 +60,30 @@ jQuery(document).ready(function() {
     // gathers the currently selected theme information
     // to be used to change the current visual style
     var theme = body.attr("data-theme") || "default";
+
+    buttonReceipt.click(async function() {
+        var response = null;
+        response = await fetch("/receipt");
+        var xmlContents = await response.text();
+        response = await fetch("https://colony-print.stage.hive.pt/documents.binie?base64=1", {
+            method: "POST",
+            body: xmlContents
+        });
+        var binieContents = await response.text();
+        var params = new URLSearchParams([
+            ["printer", "Microsoft Print to PDF"],
+            ["data_b64", binieContents]
+        ]).toString();
+        response = await fetch(
+            `https://colony-print.stage.hive.pt/nodes/tobias/printers/print?${params}`,
+            {
+                method: "POST",
+                headers: {
+                    "X-Secret-Key": "36a65bb436ac0426d037f45cac53ae1abec48f44"
+                }
+            }
+        );
+    });
 
     // registers for the click operation on the clear button
     // that sends the "reset" event to the jsignature

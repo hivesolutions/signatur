@@ -114,6 +114,17 @@ app.get("/report", (req, res, next) => {
     });
 });
 
+app.get("/receipt", (req, res, next) => {
+    const locale = req.query.locale || req.session.locale || "";
+    req.session.locale = locale;
+    req.session.config = req.session.config || {};
+    req.session.config.text = req.query.text || req.session.config.text || null;
+    res.render("receipt" + (locale ? `-${locale}` : ""), {
+        config: req.session.config || {},
+        text: lib.deserializeText(req.session.config.text) || null
+    });
+});
+
 app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
 });
