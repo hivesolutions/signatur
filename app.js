@@ -4,6 +4,7 @@ const session = require("express-session");
 const path = require("path");
 const process = require("process");
 const bodyParser = require("body-parser");
+const fetch = require("node-fetch");
 const expressLayouts = require("express-ejs-layouts");
 const util = require("hive-js-util");
 const info = require("./package");
@@ -115,14 +116,20 @@ app.get("/report", (req, res, next) => {
 });
 
 app.get("/receipt", (req, res, next) => {
-    const locale = req.query.locale || req.session.locale || "";
-    req.session.locale = locale;
-    req.session.config = req.session.config || {};
-    req.session.config.text = req.query.text || req.session.config.text || null;
-    res.render("receipt" + (locale ? `-${locale}` : ""), {
-        config: req.session.config || {},
-        text: lib.deserializeText(req.session.config.text) || null
-    });
+    async function clojure() {
+        const locale = req.query.locale || req.session.locale || "";
+        req.session.locale = locale;
+        req.session.config = req.session.config || {};
+        req.session.config.text = req.query.text || req.session.config.text || null;
+        const response = await fetch("http://localhost:3131/?full_page=0&trim=1&url=http://4ce02f7f177b.ngrok.io/text?text=Helvetica%204L:R-Helvetica%204L:R-Helvetica%204L:R-Cool%20Emojis:j-Cool%20Emojis:j");
+        const imageBuffer = await response.buffer();
+        const imageBase64 = imageBuffer.toString("base64");
+        res.render("receipt" + (locale ? `-${locale}` : ""), {
+            config: req.session.config || {},
+            textImageBase64: imageBase64
+        });
+    }
+    clojure().catch(next);
 });
 
 app.get("/text", (req, res, next) => {
