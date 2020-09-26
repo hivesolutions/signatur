@@ -92,10 +92,11 @@ jQuery(document).ready(function() {
         const printer =
             localStorage.getItem("printer") || element.attr("data-printer") || "printer";
         const key = localStorage.getItem("key") || element.attr("data-key") || null;
+        const locale = localStorage.getItem("locale") || element.attr("data-locale") || null;
 
         // retrieves the XML based template of the receipt that
         // is going to be used in the printing operation
-        const receiptResponse = await fetch("/receipt");
+        const receiptResponse = await fetch(`/receipt?locale=${locale}`);
         const receiptXml = await receiptResponse.text();
 
         // converts the XML template into a "compiled" binary format (binie)

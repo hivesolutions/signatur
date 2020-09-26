@@ -114,6 +114,7 @@ app.get("/report", (req, res, next) => {
         fullscreen: fullscreen,
         theme: theme,
         conf: lib.conf,
+        locale: locale,
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null
     });
