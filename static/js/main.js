@@ -66,24 +66,36 @@ jQuery(document).ready(function() {
         // pressing and then references some of its data
         // elements for operation configuration
         const element = jQuery(this);
-        const printUrl = element.attr("data-url") || "https://colony-print.stage.hive.pt";
-        const node = element.attr("data-node") || "default";
-        const printer = element.attr("data-printer") || "printer";
-        const key = element.attr("data-key") || null;
+        const printUrl =
+            localStorage.getItem("url") ||
+            element.attr("data-url") ||
+            "https://colony-print.stage.hive.pt";
+        const node = localStorage.getItem("node") || element.attr("data-node") || "default";
+        const printer =
+            localStorage.getItem("printer") || element.attr("data-printer") || "printer";
+        const key = localStorage.getItem("key") || element.attr("data-key") || null;
 
-        let response = null;
-        response = await fetch("/receipt");
-        const xmlContents = await response.text();
-        response = await fetch(`${printUrl}/documents.binie?base64=1`, {
+        // retrieves the XML based template of the receipt that
+        // is going to be used in the printing operation
+        const receiptResponse = await fetch("/receipt");
+        const receiptXml = await receiptResponse.text();
+
+        // converts the XML template into a "compiled" binary format (binie)
+        // that can be used by colony cloud print
+        const binieResponse = await fetch(`${printUrl}/documents.binie?base64=1`, {
             method: "POST",
-            body: xmlContents
+            body: receiptXml
         });
-        const binieContents = await response.text();
+        const receiptBinie = await binieResponse.text();
+
+        // builds the parameters that are going to be used for the concrete
+        // printing operation and runs the print with the properly configured
+        // colony cloud print configuration
         const params = new URLSearchParams([
             ["printer", printer],
-            ["data_b64", binieContents]
+            ["data_b64", receiptBinie]
         ]).toString();
-        response = await fetch(`${printUrl}/nodes/${node}/printers/print?${params}`, {
+        await fetch(`${printUrl}/nodes/${node}/printers/print?${params}`, {
             method: "POST",
             headers: { "X-Secret-Key": key }
         });
