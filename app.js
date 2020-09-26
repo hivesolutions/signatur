@@ -121,7 +121,9 @@ app.get("/receipt", (req, res, next) => {
         req.session.locale = locale;
         req.session.config = req.session.config || {};
         req.session.config.text = req.query.text || req.session.config.text || null;
-        const response = await fetch("http://localhost:3131/?full_page=0&trim=1&url=http://4ce02f7f177b.ngrok.io/text?text=Helvetica%204L:R-Helvetica%204L:R-Helvetica%204L:R-Cool%20Emojis:j-Cool%20Emojis:j");
+        const response = await fetch(
+            "http://localhost:3131/?full_page=0&trim=1&url=http://4ce02f7f177b.ngrok.io/text?text=Helvetica%204L:R-Helvetica%204L:R-Helvetica%204L:R-Cool%20Emojis:j-Cool%20Emojis:j"
+        );
         const imageBuffer = await response.buffer();
         const imageBase64 = imageBuffer.toString("base64");
         res.render("receipt" + (locale ? `-${locale}` : ""), {

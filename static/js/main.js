@@ -1,4 +1,4 @@
-var jQuery = window.jQuery ? window.jQuery : null;
+const jQuery = window.jQuery ? window.jQuery : null;
 
 /**
  * Gathers the series of UI and canvas options according to
@@ -8,7 +8,7 @@ var jQuery = window.jQuery ? window.jQuery : null;
  * options, that change thickness and global UI.
  * @returns {Object} An object with the setting for the current theme.
  */
-var getOptions = function(theme) {
+const getOptions = function(theme) {
     switch (theme) {
         case "ldj":
             return {
@@ -27,15 +27,15 @@ var getOptions = function(theme) {
     }
 };
 
-var drawText = function(ctx) {
+const drawText = function(ctx) {
     ctx.font = "30px Arial";
     ctx.fillText("Hello World", 10, 500);
 };
 
-var serializeText = function(text) {
-    var buffer = [];
-    for (var index = 0; index < text.length; index++) {
-        var item = text[index];
+const serializeText = function(text) {
+    const buffer = [];
+    for (let index = 0; index < text.length; index++) {
+        const item = text[index];
         buffer.push(item[0] + ":" + item[1]);
     }
     return buffer.join("-");
@@ -43,46 +43,50 @@ var serializeText = function(text) {
 
 jQuery(document).ready(function() {
     // runs a series of selections over the current viewport
-    var body = jQuery("body");
-    var form = jQuery(".form");
-    var formInput = jQuery(".form > input");
-    var buttonClear = jQuery(".button-clear");
-    var buttonReport = jQuery(".button-report");
-    var buttonReceipt = jQuery(".button-receipt");
-    var buttonDownload = jQuery(".button-download");
-    var fontsContainer = jQuery(".fonts-container");
-    var keyboardContainer = jQuery(".keyboard-container");
-    var emojisContainer = jQuery(".emojis-container");
-    var viewportContainer = jQuery(".viewer-container");
-    var inputViewport = jQuery(".input-viewport");
-    var signature = jQuery(".signature");
+    const body = jQuery("body");
+    const form = jQuery(".form");
+    const formInput = jQuery(".form > input");
+    const buttonClear = jQuery(".button-clear");
+    const buttonReport = jQuery(".button-report");
+    const buttonReceipt = jQuery(".button-receipt");
+    const buttonDownload = jQuery(".button-download");
+    const fontsContainer = jQuery(".fonts-container");
+    const keyboardContainer = jQuery(".keyboard-container");
+    const emojisContainer = jQuery(".emojis-container");
+    const viewportContainer = jQuery(".viewer-container");
+    const inputViewport = jQuery(".input-viewport");
+    const signature = jQuery(".signature");
 
     // gathers the currently selected theme information
     // to be used to change the current visual style
-    var theme = body.attr("data-theme") || "default";
+    const theme = body.attr("data-theme") || "default";
 
     buttonReceipt.click(async function() {
-        var response = null;
+        // gathers the reference to the current element in
+        // pressing and then references some of its data
+        // elements for operation configuration
+        const element = jQuery(this);
+        const printUrl = element.attr("data-url") || "https://colony-print.stage.hive.pt/";
+        const node = element.attr("data-node") || "default";
+        const printer = element.attr("data-printer") || "printer";
+        const key = element.attr("data-key") || null;
+
+        let response = null;
         response = await fetch("/receipt");
-        var xmlContents = await response.text();
-        response = await fetch("https://colony-print.stage.hive.pt/documents.binie?base64=1", {
+        const xmlContents = await response.text();
+        response = await fetch(`${printUrl}documents.binie?base64=1`, {
             method: "POST",
             body: xmlContents
         });
-        var binieContents = await response.text();
-        var params = new URLSearchParams([
-            ["printer", "Microsoft Print to PDF"],
+        const binieContents = await response.text();
+        const params = new URLSearchParams([
+            ["printer", printer],
             ["data_b64", binieContents]
         ]).toString();
-        response = await fetch(
-            `https://colony-print.stage.hive.pt/nodes/tobias/printers/print?${params}`,
-            {
-                method: "POST",
-                headers: {
-                    "X-Secret-Key": "36a65bb436ac0426d037f45cac53ae1abec48f44"
-                }
-            }
-        );
+        response = await fetch(`${printUrl}nodes/${node}/printers/print?${params}`, {
+            method: "POST",
+            headers: { "X-Secret-Key": key }
+        });
     });
 
     // registers for the click operation on the clear button
@@ -95,7 +99,7 @@ jQuery(document).ready(function() {
     // we obtain the SVG version and submit the current form with it
     // effectively converting the data into HPGL
     buttonDownload.click(function() {
-        var svgBase64 = signature.jSignature("getData", "svgbase64");
+        const svgBase64 = signature.jSignature("getData", "svgbase64");
         formInput.attr("value", svgBase64[1]);
         form.submit();
     });
@@ -107,8 +111,8 @@ jQuery(document).ready(function() {
     // registers for any change in the signature so that the
     // button clear visibility may be controlled
     signature.bind("change", function() {
-        var data = signature.jSignature("getData", "base30");
-        var hasData = Boolean(data[1]);
+        const data = signature.jSignature("getData", "base30");
+        const hasData = Boolean(data[1]);
         if (hasData) {
             buttonClear.css("display", "inline-block");
         } else {
@@ -118,9 +122,9 @@ jQuery(document).ready(function() {
 
     // gathers the canvas from the current viewport and then
     // runs the drawing of the text in it
-    var canvas = document.getElementsByClassName("jSignature")[0];
+    const canvas = document.getElementsByClassName("jSignature")[0];
     if (canvas) {
-        var ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
         drawText(ctx);
     }
 
@@ -144,13 +148,13 @@ jQuery(document).ready(function() {
     // creates the key handler function responsible for
     // the update of the current text value, both from
     // a visual and logic point of view
-    var keyHandler = function(event, font, value) {
-        var caret = jQuery("> .caret", viewportContainer);
-        var buttonHref = buttonReport.attr("data-href");
-        var text = body.data("text") || [];
-        var caretPosition =
+    const keyHandler = function(event, font, value) {
+        const caret = jQuery("> .caret", viewportContainer);
+        const buttonHref = buttonReport.attr("data-href");
+        const text = body.data("text") || [];
+        let caretPosition =
             body.data("caret_position") === undefined ? -1 : body.data("caret_position");
-        var element = null;
+        let element = null;
         if (value === "⌫") {
             caret.prev().remove();
             text.splice(caretPosition, 1);
@@ -160,7 +164,7 @@ jQuery(document).ready(function() {
             element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
             caret.before(element);
             element.click(function() {
-                var element = jQuery(this);
+                const element = jQuery(this);
                 element.after(caret);
                 caretPosition = element.index(".viewer-container > span:not(.caret)");
                 body.data("caret_position", caretPosition);
@@ -171,7 +175,7 @@ jQuery(document).ready(function() {
             element = jQuery("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
             caret.before(element);
             element.click(function() {
-                var element = jQuery(this);
+                const element = jQuery(this);
                 element.after(caret);
                 caretPosition = element.index(".viewer-container > span:not(.caret)");
                 body.data("caret_position", caretPosition);
@@ -193,14 +197,14 @@ jQuery(document).ready(function() {
 
 (function(jQuery) {
     jQuery.fn.fontscontainer = function() {
-        var elements = jQuery(this);
+        const elements = jQuery(this);
 
         elements.each(function() {
-            var context = jQuery(this);
-            var fonts = jQuery(".font", context);
+            const context = jQuery(this);
+            const fonts = jQuery(".font", context);
 
             fonts.click(function() {
-                var _element = jQuery(this);
+                const _element = jQuery(this);
                 fonts.removeClass("selected");
                 _element.addClass("selected");
                 context.triggerHandler("font", [_element.attr("data-font")]);
@@ -213,22 +217,22 @@ jQuery(document).ready(function() {
 
 (function(jQuery) {
     jQuery.fn.keyboardcontainer = function() {
-        var elements = jQuery(this);
+        const elements = jQuery(this);
 
         elements.each(function() {
-            var context = jQuery(this);
-            var body = jQuery("body");
-            var keys = jQuery("> .char", context);
+            const context = jQuery(this);
+            const body = jQuery("body");
+            const keys = jQuery("> .char", context);
 
             keys.click(function() {
-                var element = jQuery(this);
-                var value = element.text();
-                var casing = context.data("casing") || "uppercase";
+                const element = jQuery(this);
+                let value = element.text();
+                const casing = context.data("casing") || "uppercase";
                 value = casing === "lowercase" ? value.toLowerCase() : value;
                 if (value === "⇧") {
                     toggleCasing(context);
                 } else {
-                    var font = body.data("font");
+                    const font = body.data("font");
                     context.triggerHandler("key", [font, value]);
                 }
             });
@@ -240,8 +244,8 @@ jQuery(document).ready(function() {
          * @param {Element} context The context that is going to be used
          * for the toggling.
          */
-        var toggleCasing = function(context) {
-            var casing = context.data("casing") || "uppercase";
+        const toggleCasing = function(context) {
+            const casing = context.data("casing") || "uppercase";
             if (casing === "uppercase") {
                 context.data("casing", "lowercase");
                 context.addClass("lowercase");
