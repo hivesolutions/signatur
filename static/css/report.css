@@ -3,6 +3,7 @@
     margin: 0px auto 0px auto;
     padding-top: 62px;
     width: 960px;
+    user-select: text;
 }
 
 .logo {
