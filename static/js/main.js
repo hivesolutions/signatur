@@ -91,12 +91,12 @@ jQuery(document).ready(function() {
         // builds the parameters that are going to be used for the concrete
         // printing operation and runs the print with the properly configured
         // colony cloud print configuration
-        const params = new URLSearchParams([
-            ["printer", printer],
-            ["data_b64", receiptBinie]
-        ]).toString();
-        await fetch(`${printUrl}/nodes/${node}/printers/print?${params}`, {
+        await fetch(`${printUrl}/nodes/${node}/printers/print`, {
             method: "POST",
+            body: new URLSearchParams([
+                ["printer", printer],
+                ["data_b64", receiptBinie]
+            ]),
             headers: { "X-Secret-Key": key }
         });
     });
