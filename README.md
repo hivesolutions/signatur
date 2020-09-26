@@ -18,9 +18,15 @@ Supported file format include:
 
 ## Configuration
 
-| Name           | Type  | Default | Description                                                                                                            |
-| -------------- | ----- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `SIGNATUR_KEY` | `str` | `None`  | Secret key that should be passed in protected calls so that the server side "trusts" the client side (authentication). |
+| Name            | Type  | Default                              | Description                                                                                                            |
+| --------------- | ----- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `BASE_URL`      | `str` | `http://localhost:3000`              | The base URL that is going to be used in the construction of external URLs for Signatur.                               |
+| `SIGNATUR_KEY`  | `str` | `None`                               | Secret key that should be passed in protected calls so that the server side "trusts" the client side (authentication). |
+| `HEADLESS_URL`  | `str` | `https://headless.stage.hive.pt`     | The base URL to be used to access [Headless](https://github.com/hivesolutions/headless).                               |
+| `PRINT_URL`     | `str` | `https://colony-print.stage.hive.pt` | The base URL to be used to access [Colony Print](http://colony-print.hive.pt).                                         |
+| `PRINT_NODE`    | `str` | `default`                            | The name of the print node to be used when accessing Colony Print.                                                     |
+| `PRINT_PRINTER` | `str` | `printer`                            | The name of printer (within print node) to be used by Colony Print.                                                    |
+| `PRINT_KEY`     | `str` | `null`                               | The secret key to be used when accessing Colony Print service.                                                         |
 
 ## License
 
