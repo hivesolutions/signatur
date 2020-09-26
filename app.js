@@ -123,7 +123,7 @@ app.get("/receipt", (req, res, next) => {
         req.session.config = req.session.config || {};
         req.session.config.text = req.query.text || req.session.config.text || null;
         const response = await fetch(
-            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${lib.conf.BASE_URL}/text?text=Helvetica%204L:R-Helvetica%204L:R-Helvetica%204L:R-Cool%20Emojis:j-Cool%20Emojis:j`
+            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${lib.conf.BASE_URL}/text?text=${req.session.config.text}`
         );
         const imageBuffer = await response.buffer();
         const imageBase64 = imageBuffer.toString("base64");
