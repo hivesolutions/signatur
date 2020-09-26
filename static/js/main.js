@@ -61,6 +61,24 @@ jQuery(document).ready(function() {
     // to be used to change the current visual style
     const theme = body.attr("data-theme") || "default";
 
+    // registers for the click operation on the clear button
+    // that sends the "reset" event to the jsignature
+    buttonClear.click(function() {
+        signature.jSignature("reset");
+    });
+
+    // registers for the download button click operation so that
+    // we obtain the SVG version and submit the current form with it
+    // effectively converting the data into HPGL
+    buttonDownload.click(function() {
+        const svgBase64 = signature.jSignature("getData", "svgbase64");
+        formInput.attr("value", svgBase64[1]);
+        form.submit();
+    });
+
+    // registers for the click event on the button receipt
+    // to run the remove logic of receipt printing using
+    // the colony (cloud) print service
     buttonReceipt.click(async function() {
         // gathers the reference to the current element in
         // pressing and then references some of its data
@@ -99,21 +117,6 @@ jQuery(document).ready(function() {
             ]),
             headers: { "X-Secret-Key": key }
         });
-    });
-
-    // registers for the click operation on the clear button
-    // that sends the "reset" event to the jsignature
-    buttonClear.click(function() {
-        signature.jSignature("reset");
-    });
-
-    // registers for the download button click operation so that
-    // we obtain the SVG version and submit the current form with it
-    // effectively converting the data into HPGL
-    buttonDownload.click(function() {
-        const svgBase64 = signature.jSignature("getData", "svgbase64");
-        formInput.attr("value", svgBase64[1]);
-        form.submit();
     });
 
     // starts the jsignature "inside" the signature area

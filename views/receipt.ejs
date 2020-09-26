@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <printing_document name="receipt" font="Calibri" font_size="12">
     <paragraph text_align="left">
-        <line><text>Date: <%= new Date() || "-" %></text></line>
+        <line><text>Date: <%= lib.dateTimeString() || "-" %></text></line>
         <line><text>Responsible: <%= config.responsible || "-" %></text></line>
         <line><text>Technology: <%= config.technology || "-" %></text></line>
         <line><text>Elements: <%= config.elements || "-" %></text></line>

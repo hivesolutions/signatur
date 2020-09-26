@@ -5,7 +5,7 @@ const path = require("path");
 const process = require("process");
 const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
-const expressLayouts = require("express-ejs-layouts");
+const ejs = require("ejs");
 const util = require("hive-js-util");
 const info = require("./package");
 const lib = require("./lib");
@@ -38,8 +38,11 @@ process.on("exit", () => {
     lib.destroy();
 });
 
+app.engine("ejs", (filename, payload = {}, cb) => {
+    payload.lib = lib;
+    ejs.renderFile(filename, payload, {}, cb);
+});
 app.set("view engine", "ejs");
-app.use(expressLayouts);
 
 app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
