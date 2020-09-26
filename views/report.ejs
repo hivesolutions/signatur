@@ -8,10 +8,10 @@
             </div>
             <div class="buttons-right">
                 <a class="button button-receipt"
-                   data-url="https://colony-print.stage.hive.pt/"
-                   data-node="tobias"
-                   data-printer="Microsoft Print to PDF"
-                   data-key="36a65bb436ac0426d037f45cac53ae1abec48f44">Receipt</a>
+                   data-url="<%= conf.PRINT_URL %>"
+                   data-node="<%= conf.PRINT_NODE %>"
+                   data-printer="<%= conf.PRINT_NODE %>"
+                   data-key="<%= conf.PRINT_KEY %>">Receipt</a>
             </div>
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />

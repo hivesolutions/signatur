@@ -66,7 +66,7 @@ jQuery(document).ready(function() {
         // pressing and then references some of its data
         // elements for operation configuration
         const element = jQuery(this);
-        const printUrl = element.attr("data-url") || "https://colony-print.stage.hive.pt/";
+        const printUrl = element.attr("data-url") || "https://colony-print.stage.hive.pt";
         const node = element.attr("data-node") || "default";
         const printer = element.attr("data-printer") || "printer";
         const key = element.attr("data-key") || null;
@@ -74,7 +74,7 @@ jQuery(document).ready(function() {
         let response = null;
         response = await fetch("/receipt");
         const xmlContents = await response.text();
-        response = await fetch(`${printUrl}documents.binie?base64=1`, {
+        response = await fetch(`${printUrl}/documents.binie?base64=1`, {
             method: "POST",
             body: xmlContents
         });
@@ -83,7 +83,7 @@ jQuery(document).ready(function() {
             ["printer", printer],
             ["data_b64", binieContents]
         ]).toString();
-        response = await fetch(`${printUrl}nodes/${node}/printers/print?${params}`, {
+        response = await fetch(`${printUrl}/nodes/${node}/printers/print?${params}`, {
             method: "POST",
             headers: { "X-Secret-Key": key }
         });
