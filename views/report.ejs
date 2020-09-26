@@ -2,6 +2,23 @@
 <html lang="en">
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="header">
+            <div class="buttons-left">
+                <a class="button button-small button-back" href="/">←</a>
+            </div>
+            <div class="buttons-right">
+                <a class="button button-receipt"
+                   data-url="<%= conf.PRINT_URL %>"
+                   data-node="<%= conf.PRINT_NODE %>"
+                   data-printer="<%= conf.PRINT_PRINTER %>"
+                   data-key="<%= conf.PRINT_KEY %>">Receipt</a>
+            </div>
+            <% if (theme === "ldj") { %>
+                <img class="logo" src="/static/images/logo.svg" />
+            <% } else { %>
+                <span class="logo"></span>
+            <% } %>
+        </div>
         <div class="report">
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />

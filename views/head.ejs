@@ -1,7 +1,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <% if (fullscreen) { %>
+    <% if (typeof fullscreen !== "undefined" && fullscreen) { %>
         <meta name="apple-mobile-web-app-capable" content="yes" />
     <% } %>
     <title>Signatur</title>
@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/signature.css">
     <link rel="stylesheet" type="text/css" href="/static/css/viewport.css">
     <link rel="stylesheet" type="text/css" href="/static/css/report.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/text.css">
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
     <script src="/static/js/jSignature.min.js"></script>
     <script src="/static/js/main.js"></script>

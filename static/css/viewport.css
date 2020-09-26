@@ -69,6 +69,10 @@
     text-align: center;
 }
 
+.viewport > .main-container > .viewer-container > span:not(.caret) {
+    cursor: pointer;
+}
+
 .viewport > .main-container > .fonts-container {
     margin: 20px auto 0px auto;
     width: 720px;
@@ -124,6 +128,7 @@
 
 .viewport > .main-container > .emojis-container > .char,
 .viewport > .main-container > .keyboard-container > .char {
+    border: 1px solid #9d9d9d;
     border-radius: 4px 4px 4px 4px;
     -o-border-radius: 4px 4px 4px 4px;
     -ms-border-radius: 4px 4px 4px 4px;
@@ -139,24 +144,33 @@
     cursor: pointer;
     display: inline-block;
     font-size: 26px;
-    margin: 3px 3px 3px 3px;
-    min-width: 48px;
-    min-height: 48px;
     line-height: 48px;
+    margin: 3px 3px 3px 3px;
+    min-height: 48px;
+    min-width: 48px;
     padding: 0px 8px 0px 8px;
-    border: 1px solid #9d9d9d;
 }
 
 .viewport > .main-container > .emojis-container > .char:hover,
 .viewport > .main-container > .keyboard-container > .char:hover {
     background-color: #e2e2e2;
     box-shadow: 1px 1px 1px #cccccc;
+    -o-box-shadow: 1px 1px 1px #cccccc;
+    -ms-box-shadow: 1px 1px 1px #cccccc;
+    -moz-box-shadow: 1px 1px 1px #cccccc;
+    -khtml-box-shadow: 1px 1px 1px #cccccc;
+    -webkit-box-shadow: 1px 1px 1px #cccccc;
 }
 
 .viewport > .main-container > .emojis-container > .char:active,
 .viewport > .main-container > .keyboard-container > .char:active {
     background-color: #d2d2d2;
     box-shadow: none;
+    -o-box-shadow: none;
+    -ms-box-shadow: none;
+    -moz-box-shadow: none;
+    -khtml-box-shadow: none;
+    -webkit-box-shadow: none;
 }
 
 .viewport > .main-container > .keyboard-container:not(.lowercase) > .char.shift {

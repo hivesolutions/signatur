@@ -4,6 +4,7 @@ const session = require("express-session");
 const path = require("path");
 const process = require("process");
 const bodyParser = require("body-parser");
+const fetch = require("node-fetch");
 const expressLayouts = require("express-ejs-layouts");
 const util = require("hive-js-util");
 const info = require("./package");
@@ -109,6 +110,35 @@ app.get("/report", (req, res, next) => {
     res.render("report" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
+        conf: lib.conf,
+        config: req.session.config || {},
+        text: lib.deserializeText(req.session.config.text) || null
+    });
+});
+
+app.get("/receipt", (req, res, next) => {
+    async function clojure() {
+        const locale = req.query.locale || req.session.locale || "";
+        req.session.locale = locale;
+        req.session.config = req.session.config || {};
+        req.session.config.text = req.query.text || req.session.config.text || null;
+        const response = await fetch(
+            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${lib.conf.BASE_URL}/text?text=${req.session.config.text}`
+        );
+        const imageBuffer = await response.buffer();
+        const imageBase64 = imageBuffer.toString("base64");
+        res.render("receipt" + (locale ? `-${locale}` : ""), {
+            config: req.session.config || {},
+            textImageBase64: imageBase64
+        });
+    }
+    clojure().catch(next);
+});
+
+app.get("/text", (req, res, next) => {
+    req.session.config = req.session.config || {};
+    req.session.config.text = req.query.text || req.session.config.text || null;
+    res.render("text", {
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null
     });
@@ -116,28 +146,6 @@ app.get("/report", (req, res, next) => {
 
 app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
-});
-
-app.get("/engine", (req, res, next) => {
-    async function clojure() {
-        lib.verifyKey(req);
-        const engine = req.query.engine || "inkscape";
-        const engineModule = lib.ENGINES[engine];
-        const engineInstance = engineModule.singleton();
-        await engineInstance.info(req, res, next);
-    }
-    clojure().catch(next);
-});
-
-app.post("/convert", (req, res, next) => {
-    async function clojure() {
-        lib.verifyKey(req);
-        const engine = req.query.engine || "inkscape";
-        const engineModule = lib.ENGINES[engine];
-        const engineInstance = engineModule.singleton();
-        await engineInstance.convert(req, res, next);
-    }
-    clojure().catch(next);
 });
 
 app.get("/info", (req, res, next) => {
