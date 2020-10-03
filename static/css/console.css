@@ -1,0 +1,6 @@
+.console {
+    align-items: center;
+    background-color: #f4f7fa;
+    display: flex;
+    min-height: 100%;
+}

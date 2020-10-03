@@ -120,6 +120,13 @@ app.get("/report", (req, res, next) => {
     });
 });
 
+app.get("/console", (req, res, next) => {
+    const theme = req.query.theme || req.session.theme || "";
+    res.render("console", {
+        theme: theme
+    });
+});
+
 app.get("/receipt", (req, res, next) => {
     async function clojure() {
         const locale = req.query.locale || req.session.locale || "";
