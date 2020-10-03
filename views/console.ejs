@@ -3,7 +3,7 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="console">
-            <form class="form form-gateway">
+            <div class="form form-console">
                 <div class="logo-container">
                     <% if (theme === "ldj") { %>
                         <img class="logo" src="/static/images/logo.svg" />
@@ -18,9 +18,9 @@
                     </div>
                 </div>
                 <div class="buttons-container">
-                    <button class="button">Submit</span>
+                    <span class="button">Execute</span>
                 </div>
-            </form>
+            </div>
         </div>
     </body>
 </html>

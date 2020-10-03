@@ -221,7 +221,6 @@ body.ldj .input:focus {
     top: 16px !important;
 }
 
-
 .form {
     background-color: #ffffff;
     border-radius: 6px 6px 6px 6px;
@@ -239,8 +238,8 @@ body.ldj .input:focus {
     font-size: 16px;
     margin: 0px auto 0px auto;
     max-width: 640px;
-    padding: 32px 32px 32px 32px;
     min-width: 420px;
+    padding: 32px 32px 32px 32px;
 }
 
 .form > .logo-container {

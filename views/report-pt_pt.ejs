@@ -19,37 +19,56 @@
             <% } else { %>
                 <span class="logo"></span>
             <% } %>
-        </div>        
+        </div>
         <div class="report">
-            <div class="pairs">
-                <div class="pair">
-                    <span class="key">Data</span>
-                    <span class="value"><%= lib.dateTimeString() || "-" %></span>
+            <div class="form form-report">
+                <div class="logo-container">
+                    <% if (theme === "ldj") { %>
+                        <img class="logo" src="/static/images/logo.svg" />
+                    <% } else { %>
+                        <span class="logo">Relatório</span>
+                    <% } %>
                 </div>
-                <div class="pair">
-                    <span class="key">Responsável</span>
-                    <span class="value"><%= config.responsible || "-" %></span>
+                <div class="field">
+                    <label class="name">Data</label>
+                    <div class="value">
+                        <span class="text"><%= lib.dateTimeString() || "-" %></span>
+                    </div>
                 </div>
-                <div class="pair">
-                    <span class="key">Tecnologia</span>
-                    <span class="value"><%= config.technology || "-" %></span>
+                <div class="field">
+                    <label class="name">Responsável</label>
+                    <div class="value">
+                        <span class="text"><%= config.responsible || "-" %></span>
+                    </div>
                 </div>
-                <div class="pair">
-                    <span class="key">Elementos</span>
-                    <span class="value"><%= config.elements || "-" %></span>
+                <div class="field">
+                    <label class="name">Tecnologia</label>
+                    <div class="value">
+                        <span class="text"><%= config.technology || "-" %></span>
+                    </div>
                 </div>
-                <div class="pair">
-                    <span class="key">Localização</span>
-                    <span class="value"><%= config.location || "-" %></span>
+                <div class="field">
+                    <label class="name">Elementos</label>
+                    <div class="value">
+                        <span class="text"><%= config.elements || "-" %></span>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="name">Localização</label>
+                    <div class="value">
+                        <span class="text"><%= config.location || "-" %></span>
+                    </div>
                 </div>
                 <% if (text) { %>
-                    <div class="pair">
-                        <span class="key">Texto</span>
-                        <span class="value">
-                            <% text.forEach(function(item){ %>
-                                <span class="item" style="font-family: <%= item[0] %>"><%- item[1] === " " ? "&nbsp;" : item[1] %></span>
-                            <% }); %>
-                        <span>
+                    <div class="field">
+                        <label class="name">Texto</label>
+                        <div class="value">
+                            <span class="text">
+                                <% text.forEach(function(item){ %>
+                                    <% text.forEach(function(item){ %><span class="item" style="font-family: '<%= item[0] %>'"><%- item[1] === " " ? "&nbsp;" : item[1] %></span><% }); %>
+                                <% }); %>
+                            </span>
+                        </div>
                     </div>
                 <% } %>
             </div>

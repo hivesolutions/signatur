@@ -1,29 +1,24 @@
 .report {
+    align-items: center;
+    background-color: #f4f7fa;
+    display: flex;
     font-size: 16px;
     margin: 0px auto 0px auto;
-    padding-top: 62px;
+    min-height: 100%;
     user-select: text;
     -o-user-select: text;
     -ms-user-select: text;
     -moz-user-select: text;
     -khtml-user-select: text;
     -webkit-user-select: text;
-    width: 960px;
 }
 
-.logo {
-    width: 240px;
+.report > .form.form-report {
+    margin-top: 62px;
+    max-width: 820px;
+    min-width: 620px;
 }
 
-.pair {
-    line-height: 28px;
-}
-
-.pair > .key {
-    display: inline-block;
-    width: 120px;
-}
-
-.pair > .value {
+.pair > .form.form-report .text > .item {
     display: inline-block;
 }
