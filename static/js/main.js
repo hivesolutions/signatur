@@ -95,9 +95,14 @@ jQuery(document).ready(function() {
         const key = localStorage.getItem("key") || element.attr("data-key") || null;
         const locale = localStorage.getItem("locale") || element.attr("data-locale") || null;
 
+        // builds the GET parameters that are going to be "sent"
+        // to the receipt printing operation
+        const receiptParams = new URLSearchParams();
+        if (locale) receiptParams.append("locale", "locale");
+
         // retrieves the XML based template of the receipt that
         // is going to be used in the printing operation
-        const receiptResponse = await fetch(`/receipt?locale=${locale}`);
+        const receiptResponse = await fetch(`/receipt?${receiptParams.toString()}`);
         const receiptXml = await receiptResponse.text();
 
         // converts the XML template into a "compiled" binary format (binie)
