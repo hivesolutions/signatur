@@ -98,7 +98,7 @@ jQuery(document).ready(function() {
         // builds the GET parameters that are going to be "sent"
         // to the receipt printing operation
         const receiptParams = new URLSearchParams();
-        if (locale) receiptParams.append("locale", "locale");
+        if (locale) receiptParams.append("locale", locale);
 
         // retrieves the XML based template of the receipt that
         // is going to be used in the printing operation
