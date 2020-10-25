@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <printing_document name="receipt" font="Calibri" font_size="12">
     <paragraph text_align="left">
+        <line><text>Ficha de Gravação</text></line>
+    </paragraph>
+    <paragraph text_align="left">
         <line><text>Data: <%= lib.dateTimeString() || "-" %></text></line>
         <line><text>Responsável: <%= config.responsible || "-" %></text></line>
         <line><text>Tecnologia: <%= config.technology || "-" %></text></line>
