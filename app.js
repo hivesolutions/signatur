@@ -136,6 +136,7 @@ app.get("/receipt", (req, res, next) => {
         const response = await fetch(
             `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${lib.conf.BASE_URL}/text?text=${req.session.config.text}`
         );
+        if (response.status !== 200) throw new Error("Not possible to retrieve remote image");
         const imageBuffer = await response.buffer();
         const imageBase64 = imageBuffer.toString("base64");
         res.render("receipt" + (locale ? `-${locale}` : ""), {
