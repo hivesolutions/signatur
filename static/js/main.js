@@ -81,59 +81,11 @@ jQuery(document).ready(function() {
     // to run the remove logic of receipt printing using
     // the colony (cloud) print service
     buttonReceipt.click(async function() {
-        // gathers the reference to the current element in
-        // pressing and then references some of its data
-        // elements for operation configuration
-        const element = jQuery(this);
-        const printUrl =
-            localStorage.getItem("url") ||
-            element.attr("data-url") ||
-            "https://colony-print.stage.hive.pt";
-        const node = localStorage.getItem("node") || element.attr("data-node") || "default";
-        const printer =
-            localStorage.getItem("printer") || element.attr("data-printer") || "printer";
-        const key = localStorage.getItem("key") || element.attr("data-key") || null;
-        const locale = localStorage.getItem("locale") || element.attr("data-locale") || null;
-
-        // builds the GET parameters that are going to be "sent"
-        // to the receipt printing operation
-        const receiptParams = new URLSearchParams();
-        if (locale) receiptParams.append("locale", locale);
-
-        // retrieves the XML based template of the receipt that
-        // is going to be used in the printing operation
-        const receiptResponse = await fetch(`/receipt?${receiptParams.toString()}`);
-        if (receiptResponse.status !== 200) {
-            const error = await receiptResponse.json();
-            const errorMessage = error.message || error.error || "unset";
-            throw new Error(`Error while obtaining receipt XML: ${errorMessage}`);
+        try {
+            await printReceipt();
+        } catch (err) {
+            alert(err);
         }
-        const receiptXml = await receiptResponse.text();
-
-        // converts the XML template into a "compiled" binary format (binie)
-        // that can be used by colony cloud print
-        const binieResponse = await fetch(`${printUrl}/documents.binie?base64=1`, {
-            method: "POST",
-            body: receiptXml
-        });
-        if (binieResponse.status !== 200) {
-            const error = await binieResponse.json();
-            const errorMessage = error.message || error.error || "unset";
-            throw new Error(`Error while converting XML to binie: ${errorMessage}`);
-        }
-        const receiptBinie = await binieResponse.text();
-
-        // builds the parameters that are going to be used for the concrete
-        // printing operation and runs the print with the properly configured
-        // colony cloud print configuration
-        await fetch(`${printUrl}/nodes/${node}/printers/print`, {
-            method: "POST",
-            body: new URLSearchParams([
-                ["printer", printer],
-                ["data_b64", receiptBinie]
-            ]),
-            headers: { "X-Secret-Key": key }
-        });
     });
 
     // starts the jsignature "inside" the signature area
@@ -218,6 +170,67 @@ jQuery(document).ready(function() {
         body.data("text", text);
         body.data("caret_position", caretPosition);
         buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
+    };
+
+    const printReceipt = async function() {
+        // gathers the reference to the current element in
+        // pressing and then references some of its data
+        // elements for operation configuration
+        const element = jQuery(this);
+        const printUrl =
+            localStorage.getItem("url") ||
+            element.attr("data-url") ||
+            "https://colony-print.stage.hive.pt";
+        const node = localStorage.getItem("node") || element.attr("data-node") || "default";
+        const printer =
+            localStorage.getItem("printer") || element.attr("data-printer") || "printer";
+        const key = localStorage.getItem("key") || element.attr("data-key") || null;
+        const locale = localStorage.getItem("locale") || element.attr("data-locale") || null;
+
+        // builds the GET parameters that are going to be "sent"
+        // to the receipt printing operation
+        const receiptParams = new URLSearchParams();
+        if (locale) receiptParams.append("locale", locale);
+
+        // retrieves the XML based template of the receipt that
+        // is going to be used in the printing operation
+        const receiptResponse = await fetch(`/receipt?${receiptParams.toString()}`);
+        if (receiptResponse.status !== 200) {
+            const error = await receiptResponse.json();
+            const errorMessage = error.message || error.error || "unset";
+            throw new Error(`Error while obtaining receipt XML: ${errorMessage}`);
+        }
+        const receiptXml = await receiptResponse.text();
+
+        // converts the XML template into a "compiled" binary format (binie)
+        // that can be used by colony cloud print
+        const binieResponse = await fetch(`${printUrl}/documents.binie?base64=1`, {
+            method: "POST",
+            body: receiptXml
+        });
+        if (binieResponse.status !== 200) {
+            const error = await binieResponse.json();
+            const errorMessage = error.message || error.error || "unset";
+            throw new Error(`Error while converting XML to binie: ${errorMessage}`);
+        }
+        const receiptBinie = await binieResponse.text();
+
+        // builds the parameters that are going to be used for the concrete
+        // printing operation and runs the print with the properly configured
+        // colony cloud print configuration
+        const printResponse = await fetch(`${printUrl}/nodes/${node}/printers/print`, {
+            method: "POST",
+            body: new URLSearchParams([
+                ["printer", printer],
+                ["data_b64", receiptBinie]
+            ]),
+            headers: { "X-Secret-Key": key }
+        });
+        if (printResponse.status !== 200) {
+            const error = await printResponse.json();
+            const errorMessage = error.message || error.error || "unset";
+            throw new Error(`Error while running the final print operation: ${errorMessage}`);
+        }
     };
 
     keyboardContainer.keyboardcontainer();
