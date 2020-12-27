@@ -4,6 +4,11 @@
 }
 
 @font-face {
+    font-family: "Cool Emojis Pantograph";
+    src: url(/static/fonts/coolemojisp.ttf);
+}
+
+@font-face {
     font-family: "Helvetica 1L";
     src: url(/static/fonts/helvetica1l.ttf);
 }

@@ -32,13 +32,13 @@ const drawText = function(ctx) {
     ctx.fillText("Hello World", 10, 500);
 };
 
-const serializeText = function(text) {
+const serializeText = function(text, separator = "|") {
     const buffer = [];
     for (let index = 0; index < text.length; index++) {
         const item = text[index];
         buffer.push(item[0] + ":" + item[1]);
     }
-    return buffer.join("-");
+    return buffer.join(separator);
 };
 
 jQuery(document).ready(function() {
@@ -53,6 +53,7 @@ jQuery(document).ready(function() {
     const fontsContainer = jQuery(".fonts-container");
     const keyboardContainer = jQuery(".keyboard-container");
     const emojisContainer = jQuery(".emojis-container");
+    const emojispContainer = jQuery(".emojisp-container");
     const viewportContainer = jQuery(".viewer-container");
     const formConsole = jQuery(".form-console");
     const inputViewport = jQuery(".input-viewport");
@@ -146,9 +147,15 @@ jQuery(document).ready(function() {
     fontsContainer.bind("font", function(event, font) {
         if (font === "Cool Emojis") {
             keyboardContainer.hide();
+            emojispContainer.hide();
             emojisContainer.show();
+        } else if (font === "Cool Emojis Pantograph") {
+            keyboardContainer.hide();
+            emojisContainer.hide();
+            emojispContainer.show();
         } else {
             emojisContainer.hide();
+            emojispContainer.hide();
             keyboardContainer.show();
         }
         keyboardContainer.css("font-family", '"' + font + '"');
@@ -292,9 +299,11 @@ jQuery(document).ready(function() {
 
     keyboardContainer.keyboardcontainer();
     emojisContainer.keyboardcontainer();
+    emojispContainer.keyboardcontainer();
 
     keyboardContainer.bind("key", keyHandler);
     emojisContainer.bind("key", keyHandler);
+    emojispContainer.bind("key", keyHandler);
 
     formConsole.formconsole();
 });

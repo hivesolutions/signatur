@@ -1,11 +1,22 @@
 {
+    "laser": {
+        "fonts": [
+            "helvetica1l",
+            "helvetica4l",
+            "roman4l",
+            "script4l",
+            "script4121l",
+            "scriptround1l",
+            "coolemojis"
+        ]
+    },
     "fresa": {
         "fonts": ["helvetica1l", "scriptround1l"],
         "elements": ["text"],
         "location": ["exterior"]
     },
     "diamond": {
-        "fonts": ["helvetica1l", "coolemojisd"],
+        "fonts": ["helvetica1l", "coolemojisp"],
         "elements": ["text"],
         "location": ["exterior"]
     }

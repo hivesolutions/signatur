@@ -104,6 +104,9 @@ app.get("/viewport", (req, res, next) => {
     res.render("viewport", {
         fullscreen: fullscreen,
         theme: theme,
+        master: master,
+        masterb64: masterb64,
+        options: master[req.session.config.technology] || {},
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null
     });

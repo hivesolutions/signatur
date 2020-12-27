@@ -6,10 +6,20 @@ describe("Base", function() {
         it("should return proper most relevant fonts", () => {
             let result;
 
-            result = lib.fontText("arial:a-times:b");
+            result = lib.fontText("arial:a|times:b");
             assert.strictEqual(result, "arial");
 
-            result = lib.fontText("arial:a-times:bc");
+            result = lib.fontText("arial:a|times:bc");
+            assert.strictEqual(result, "times");
+        });
+
+        it("should be able to use other separators", () => {
+            let result;
+
+            result = lib.fontText("arial:a-times:b", "-");
+            assert.strictEqual(result, "arial", "-");
+
+            result = lib.fontText("arial:a-times:bc", "-");
             assert.strictEqual(result, "times");
         });
 

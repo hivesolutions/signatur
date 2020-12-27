@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <%- include("head"); -%>
-    <body class="<%= theme %>" data-theme="<%= theme %>">
+    <body class="<%= theme %>" data-theme="<%= theme %>" data-master="<%= masterb64 %>">
         <div class="header">
             <div class="buttons-left">
                 <a class="button button-small button-back" href="/">←</a>
@@ -28,13 +28,30 @@
                     <span class="caret">|</span>
                 </div>
                 <div class="fonts-container">
-                    <div class="font" data-font="Helvetica 1L" style="font-family: 'Helvetica 1L';">Helvetica 1L</div>
-                    <div class="font" data-font="Helvetica 4L" style="font-family: 'Helvetica 4L';">Helvetica 4L</div>
-                    <div class="font" data-font="Roman 4L" style="font-family: 'Roman 4L';">Roman 4L</div>
-                    <div class="font" data-font="Script 4L" style="font-family: 'Script 4L';">Script 4L</div>
-                    <div class="font" data-font="Script 412 1L" style="font-family: 'Script Round 412 1L';">Script 412 1L</div>
-                    <div class="font" data-font="Script Round 1L" style="font-family: 'Script Round 1L';">Script Round 1L</div>
-                    <div class="font" data-font="Cool Emojis" style="font-family: 'Helvetica';">Cool Emojis</div>
+                    <% if (!options.fonts || options.fonts.includes("helvetica1l")) { %>
+                        <div class="font" data-font="Helvetica 1L" style="font-family: 'Helvetica 1L';">Helvetica 1L</div>
+                    <% } %>
+                    <% if (!options.fonts || options.fonts.includes("helvetica4l")) { %>
+                        <div class="font" data-font="Helvetica 4L" style="font-family: 'Helvetica 4L';">Helvetica 4L</div>
+                    <% } %>
+                    <% if (!options.fonts || options.fonts.includes("roman4l")) { %>
+                        <div class="font" data-font="Roman 4L" style="font-family: 'Roman 4L';">Roman 4L</div>
+                    <% } %>
+                    <% if (!options.fonts || options.fonts.includes("script4l")) { %>
+                        <div class="font" data-font="Script 4L" style="font-family: 'Script 4L';">Script 4L</div>
+                    <% } %>
+                    <% if (!options.fonts || options.fonts.includes("script4121l")) { %>
+                        <div class="font" data-font="Script 412 1L" style="font-family: 'Script 412 1L';">Script 412 1L</div>
+                    <% } %>
+                    <% if (!options.fonts || options.fonts.includes("scriptround1l")) { %>
+                        <div class="font" data-font="Script Round 1L" style="font-family: 'Script Round 1L';">Script Round 1L</div>
+                    <% } %>
+                    <% if (!options.fonts || options.fonts.includes("coolemojis")) { %>
+                        <div class="font" data-font="Cool Emojis" style="font-family: 'Helvetica';">Cool Emojis</div>
+                    <% } %>
+                    <% if (!options.fonts || options.fonts.includes("coolemojisp")) { %>
+                        <div class="font" data-font="Cool Emojis Pantograph" style="font-family: 'Helvetica';">Cool Emojis</div>
+                    <% } %>
                 </div>
                 <div class="keyboard-container">
                     <span class="char">A</span>
@@ -149,6 +166,20 @@
                     <span class="char">r</span>
                     <span class="char">s</span>
                     <span class="char">t</span>
+                    <span class="char" style="min-width: 66px;">⌫</span>
+                    <span class="char" style="min-width: 96px;"">⎵</span>
+                </div>
+                <div class="emojisp-container">
+                    <span class="char">A</span>
+                    <span class="char">B</span>
+                    <span class="char">C</span>
+                    <span class="char">D</span>
+                    <span class="char">E</span>
+                    <span class="char">F</span>
+                    <span class="char">G</span>
+                    <span class="char">H</span>
+                    <span class="char">I</span>
+                    <span class="char">J</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
                     <span class="char" style="min-width: 96px;"">⎵</span>
                 </div>
