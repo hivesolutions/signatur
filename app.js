@@ -117,6 +117,7 @@ app.get("/report", (req, res, next) => {
         locale: locale,
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null,
+        font: lib.fontText(req.session.config.text) || null,
         localize: (v, f) => lib.localize(v, locale || undefined, f)
     });
 });
@@ -142,6 +143,7 @@ app.get("/receipt", (req, res, next) => {
         const imageBase64 = imageBuffer.toString("base64");
         res.render("receipt" + (locale ? `-${locale}` : ""), {
             config: req.session.config || {},
+            font: lib.fontText(req.session.config.text) || null,
             textImageBase64: imageBase64,
             localize: (v, f) => lib.localize(v, locale || undefined, f)
         });
