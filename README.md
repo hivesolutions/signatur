@@ -28,6 +28,17 @@ Supported file format include:
 | `PRINT_PRINTER` | `str` | `printer`                            | The name of printer (within print node) to be used by Colony Print.                                                    |
 | `PRINT_KEY`     | `str` | `null`                               | The secret key to be used when accessing Colony Print service.                                                         |
 
+## Printing
+
+To be able to enable printing the following Javascript code should be used inside Browser's Javascript console:
+
+```javascript
+localStorage.setItem("url", "https://colony-print.stage.hive.pt");
+localStorage.setItem("node", "${node-name}");
+localStorage.setItem("printer", "${node-printer}");
+localStorage.setItem("key", "${server-key}");
+```
+
 ## License
 
 Signatur is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).

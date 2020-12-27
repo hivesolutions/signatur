@@ -103,6 +103,11 @@ jQuery(document).ready(function() {
         // retrieves the XML based template of the receipt that
         // is going to be used in the printing operation
         const receiptResponse = await fetch(`/receipt?${receiptParams.toString()}`);
+        if (receiptResponse.status !== 200) {
+            const error = await receiptResponse.json();
+            const errorMessage = error.message || error.error || "unset";
+            throw new Error(`Error while obtaining receipt XML: ${errorMessage}`);
+        }
         const receiptXml = await receiptResponse.text();
 
         // converts the XML template into a "compiled" binary format (binie)
@@ -111,6 +116,11 @@ jQuery(document).ready(function() {
             method: "POST",
             body: receiptXml
         });
+        if (binieResponse.status !== 200) {
+            const error = await binieResponse.json();
+            const errorMessage = error.message || error.error || "unset";
+            throw new Error(`Error while converting XML to binie: ${errorMessage}`);
+        }
         const receiptBinie = await binieResponse.text();
 
         // builds the parameters that are going to be used for the concrete
