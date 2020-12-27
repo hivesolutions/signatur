@@ -1,0 +1,11 @@
+{
+    "fresa": {
+        "fonts": ["helvetica1l", "scriptround1l"],
+        "elements": ["text"],
+        "location": ["exterior"]
+    },
+    "diamond": {
+        "fonts": ["helvetica1l", "coolemojisd"],
+        "location": ["exterior"]
+    }
+}
