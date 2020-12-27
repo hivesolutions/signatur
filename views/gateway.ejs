@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <%- include("head"); -%>
-    <body class="<%= theme %>" data-theme="<%= theme %>">
+    <body class="<%= theme %>" data-theme="<%= theme %>" data-master="<%= masterb64 %>">
         <div class="gateway">
             <form class="form form-gateway" method="post" action="/gateway">
                 <div class="logo-container">
@@ -20,7 +20,7 @@
                 </div>
                 <div class="field">
                     <label class="name">Technology</label>
-                    <div class="value">
+                    <div class="value" id="technology">
                         <input class="radio" type="radio" id="diamond" name="technology" value="diamond"
                             <%= config.technology === "diamond" ? "checked" : '' %>>
                         <label class="radio-label" for="diamond">Diamond</label>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="field">
                     <label class="name">Elements</label>
-                    <div class="value">
+                    <div class="value" id="elements">
                         <input class="radio" type="radio" id="text" name="elements" value="text"
                             <%= config.elements === "text" ? "checked" : '' %>>
                         <label class="radio-label" for="text">Text</label>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="field">
                     <label class="name">Location</label>
-                    <div class="value">
+                    <div class="value" id="location">
                         <input class="radio" type="radio" id="interior" name="location" value="interior"
                             <%= config.location === "interior" ? "checked" : '' %>>
                         <label class="radio-label" for="interior">Interior</label>

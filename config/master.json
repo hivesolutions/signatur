@@ -6,6 +6,7 @@
     },
     "diamond": {
         "fonts": ["helvetica1l", "coolemojisd"],
+        "elements": ["text"],
         "location": ["exterior"]
     }
 }

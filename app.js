@@ -10,6 +10,11 @@ const util = require("hive-js-util");
 const info = require("./package");
 const lib = require("./lib");
 
+// imports the master configuration JSON and converts it
+// into a proper base 64 string ready to be used in front-end
+const master = require("./config/master.json");
+const masterb64 = Buffer.from(JSON.stringify(master)).toString("base64");
+
 // builds the initial application object to be used
 // by the application for serving
 const app = express();
@@ -56,6 +61,8 @@ app.get(["/", "/gateway"], (req, res, next) => {
     res.render("gateway" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
+        master: master,
+        masterb64: masterb64,
         config: req.session.config || {}
     });
 });

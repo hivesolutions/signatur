@@ -58,9 +58,36 @@ jQuery(document).ready(function() {
     const inputViewport = jQuery(".input-viewport");
     const signature = jQuery(".signature");
 
+    // gathers the values for the form related fields so that the
+    // typical form validations and changes may be performed
+    const technologyRadios = jQuery("input[name=technology]");
+    const technologySelected = jQuery("input[name=technology]:checked");
+    const elementsE = jQuery("[id=elements]");
+    const locationE = jQuery("[id=location]");
+    const elementsChild = jQuery("> *", elementsE);
+    const locationChild = jQuery("> *", locationE);
+
     // gathers the currently selected theme information
     // to be used to change the current visual style
     const theme = body.attr("data-theme") || "default";
+
+    // tries to retrieve the master configuration information
+    // base 64 JSON dictionary and parses it
+    const masterb64 = body.attr("data-master") || "";
+    const master = JSON.parse(atob(masterb64) || "{}");
+
+    // schedules a timeout for the initial selection of the
+    // technology in case that's required (pre-selection of fields)
+    setTimeout(() => {
+        updateForm(technologySelected.val());
+    });
+
+    // registers for the change in selection in the technology
+    // radio buttons so that the form may adapt
+    technologyRadios.bind("change", function() {
+        const value = this.value;
+        updateForm(value);
+    });
 
     // registers for the click operation on the clear button
     // that sends the "reset" event to the jsignature
@@ -128,6 +155,36 @@ jQuery(document).ready(function() {
         inputViewport.css("font-family", '"' + font + '"');
         body.data("font", font);
     });
+
+    const updateForm = function(value) {
+        const options = master[value] || {};
+        const elements = options.elements || "*";
+        const location = options.location || "*";
+
+        elementsChild.hide();
+        if (elements === "*") {
+            elementsChild.show();
+        } else {
+            for (const element of elements) {
+                const elementE = jQuery(`> [value=${element}]`, elementsE);
+                const labelE = elementE.next();
+                elementE.show();
+                labelE.show();
+            }
+        }
+
+        locationChild.hide();
+        if (location === "*") {
+            locationChild.show();
+        } else {
+            for (const _location of location) {
+                const _locationE = jQuery(`> [value=${_location}]`, locationE);
+                const labelE = _locationE.next();
+                _locationE.show();
+                labelE.show();
+            }
+        }
+    };
 
     // creates the key handler function responsible for
     // the update of the current text value, both from
