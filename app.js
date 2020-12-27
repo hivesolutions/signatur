@@ -141,7 +141,8 @@ app.get("/receipt", (req, res, next) => {
         const imageBase64 = imageBuffer.toString("base64");
         res.render("receipt" + (locale ? `-${locale}` : ""), {
             config: req.session.config || {},
-            textImageBase64: imageBase64
+            textImageBase64: imageBase64,
+            localize: (v, f) => lib.localize(v, locale || undefined, f)
         });
     }
     clojure().catch(next);

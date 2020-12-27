@@ -6,9 +6,9 @@
     <paragraph text_align="left">
         <line><text>Data: <%= lib.dateTimeString() || "-" %></text></line>
         <line><text>Responsável: <%= config.responsible || "-" %></text></line>
-        <line><text>Tecnologia: <%= config.technology || "-" %></text></line>
-        <line><text>Elementos: <%= config.elements || "-" %></text></line>
-        <line><text>Localização: <%= config.location || "-" %></text></line>
+        <line><text>Tecnologia: <%= localize(config.technology || "-") %></text></line>
+        <line><text>Elementos: <%= localize(config.elements || "-") %></text></line>
+        <line><text>Localização: <%= localize(config.location || "-") %></text></line>
         <line><image source="<%= textImageBase64 || '' %>" /></line>
     </paragraph>
 </printing_document>
