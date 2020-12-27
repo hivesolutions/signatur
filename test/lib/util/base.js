@@ -12,5 +12,15 @@ describe("Base", function() {
             result = lib.fontText("arial:a-times:bc");
             assert.strictEqual(result, "times");
         });
+
+        it("should handle proper invalid cases", () => {
+            let result;
+
+            result = lib.fontText(null);
+            assert.strictEqual(result, null);
+
+            result = lib.fontText("");
+            assert.strictEqual(result, null);
+        });
     });
 });
