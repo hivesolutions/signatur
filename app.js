@@ -116,7 +116,8 @@ app.get("/report", (req, res, next) => {
         conf: lib.conf,
         locale: locale,
         config: req.session.config || {},
-        text: lib.deserializeText(req.session.config.text) || null
+        text: lib.deserializeText(req.session.config.text) || null,
+        localize: (v, f) => lib.localize(v, locale || undefined, f)
     });
 });
 
