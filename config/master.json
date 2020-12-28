@@ -1,4 +1,15 @@
 {
+    "diamond": {
+        "fonts": [
+            "helvetica1l",
+            "helvetica4l",
+            "roman4l",
+            "script4l",
+            "script4121l",
+            "scriptround1l",
+            "coolemojis"
+        ]
+    },
     "laser": {
         "fonts": [
             "helvetica1l",
@@ -15,7 +26,7 @@
         "elements": ["text"],
         "location": ["exterior"]
     },
-    "diamond": {
+    "pantograph": {
         "fonts": ["helvetica1l", "coolemojisp"],
         "elements": ["text"],
         "location": ["exterior"]
