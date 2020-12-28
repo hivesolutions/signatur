@@ -233,7 +233,7 @@ jQuery(document).ready(function() {
         }
         body.data("text", text);
         body.data("caret_position", caretPosition);
-        buttonReport.attr("href", buttonHref + "?text=" + serializeText(text));
+        buttonReport.attr("href", buttonHref + "?text=" + encodeURIComponent(serializeText(text)));
     };
 
     const printReceipt = async function() {

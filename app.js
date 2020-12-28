@@ -145,8 +145,11 @@ app.get("/receipt", (req, res, next) => {
         req.session.locale = locale;
         req.session.config = req.session.config || {};
         req.session.config.text = req.query.text || req.session.config.text || null;
+        const remoteUrl = `${lib.conf.BASE_URL}/text?text=${encodeURIComponent(
+            req.session.config.text
+        )}`;
         const response = await fetch(
-            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${lib.conf.BASE_URL}/text?text=${req.session.config.text}`
+            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${encodeURIComponent(remoteUrl)}`
         );
         if (response.status !== 200) throw new Error("Not possible to retrieve remote image");
         const imageBuffer = await response.buffer();
