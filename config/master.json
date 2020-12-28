@@ -8,7 +8,8 @@
             "script4121l",
             "scriptround1l",
             "coolemojis"
-        ]
+        ],
+        "elements": ["text", "calligraphy", "graphic_element"]
     },
     "laser": {
         "fonts": [
