@@ -6,8 +6,8 @@
     "fresa": "fresa",
     "text": "texto",
     "calligraphy": "caligrafia",
-    "digital-printing": "impr. digital",
-    "graphic-element": "elemento gráfico",
+    "digital_printing": "impr. digital",
+    "graphic_element": "elemento gráfico",
     "interior": "interior",
     "exterior": "exterior"
 }
