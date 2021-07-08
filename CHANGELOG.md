@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for display of main font in report and receipt
-* Added new cool emoji icons
+*
 
 ### Changed
 
@@ -19,3 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.2.0] - 2021-07-08
+
+### Added
+
+* Support for display of main font in report and receipt
+* Added new cool emoji icons
