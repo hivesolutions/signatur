@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Support for new character for fonr `coolemojisp.ttf` (V, W, X, Y, Z, a, b, c, d, e, f and g)
 
 ### Changed
 
