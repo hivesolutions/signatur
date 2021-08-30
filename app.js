@@ -63,7 +63,8 @@ app.get(["/", "/gateway"], (req, res, next) => {
         theme: theme,
         master: master,
         masterb64: masterb64,
-        config: req.session.config || {}
+        config: req.session.config || {},
+        info: info || {}
     });
 });
 
