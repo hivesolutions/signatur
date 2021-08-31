@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* More symbols to the `coolemojis.ttf` font
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.3.2] - 2021-08-31
+
+### Added
+
+* More symbols to the `coolemojis.ttf` font
 
 ## [0.3.1] - 2021-08-30
 
