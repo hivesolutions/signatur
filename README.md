@@ -45,7 +45,7 @@ Signatur is currently licensed under the [Apache License, Version 2.0](http://ww
 
 ## Build Automation
 
-[![Build Status](https://travis-ci.com/hivesolutions/signatur.svg?branch=master)](https://travis-ci.com/hivesolutions/signatur)
+[![Build Status](https://app.travis-ci.com/hivesolutions/signatur.svg?branch=master)](https://travis-ci.com/github/hivesolutions/signatur)
 [![Build Status GitHub](https://github.com/hivesolutions/signatur/workflows/Main%20Workflow/badge.svg)](https://github.com/hivesolutions/signatur/actions)
 [![npm Status](https://img.shields.io/npm/v/signatur.svg)](https://www.npmjs.com/package/signatur)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/)
