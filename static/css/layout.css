@@ -87,6 +87,14 @@ body {
     right: 0px;
 }
 
+.header > .buttons-right > .button {
+    margin-right: 14px;
+}
+
+.header > .buttons-right > .button:last-child {
+    margin-right: 0px;
+}
+
 .header .button.button-clear {
     display: none;
 }
