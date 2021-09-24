@@ -272,6 +272,10 @@ body.ldj .input:focus {
     font-size: 16px;
 }
 
+.form > .field.field-text {
+    margin: 12px 0px 12px 0px;
+}
+
 .form > .field.field-half {
     display: inline-block;
     width: 50%;
