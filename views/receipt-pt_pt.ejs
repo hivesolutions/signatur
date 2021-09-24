@@ -6,6 +6,9 @@
     <paragraph text_align="left">
         <line><text>Data: <%= lib.dateTimeString() || "-" %></text></line>
         <line><text>Responsável: <%= config.responsible || "-" %></text></line>
+        <line><text>Nr. Encomenda: <%= config.orderno || "-" %></text></line>
+        <line><text>Tamanho: <%= config.size || "-" %></text></line>
+        <line><text>Observações: <%= config.observations || "-" %></text></line>
         <line><text>Tecnologia: <%= localize(config.technology || "-") %></text></line>
         <line><text>Elementos: <%= localize(config.elements || "-") %></text></line>
         <line><text>Localização: <%= localize(config.location || "-") %></text></line>

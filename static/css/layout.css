@@ -240,11 +240,15 @@ body.ldj .input:focus {
     -moz-box-shadow: 0px 7px 14px 0px rgba(60, 66, 87, 0.1), 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -khtml-box-shadow: 0px 7px 14px 0px rgba(60, 66, 87, 0.1), 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -webkit-box-shadow: 0px 7px 14px 0px rgba(60, 66, 87, 0.1), 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    font-size: 16px;
+    font-size: 0px;
     margin: 0px auto 0px auto;
     max-width: 640px;
     min-width: 420px;
     padding: 32px 32px 32px 32px;
+}
+
+.form * {
+    font-size: 16px;
 }
 
 .form > .logo-container {
@@ -260,6 +264,20 @@ body.ldj .input:focus {
 
 .form > .field {
     margin: 24px 0px 24px 0px;
+    box-sizing: border-box;
+}
+
+.form > .field.field-half {
+    display: inline-block;
+    width: 50%;
+}
+
+.form > .field.field-half.first {
+    padding-right: 8px;
+}
+
+.form > .field.field-half.second {
+    padding-left: 8px;
 }
 
 .form > .field:first-child {
