@@ -247,10 +247,6 @@ body.ldj .input:focus {
     padding: 32px 32px 32px 32px;
 }
 
-.form * {
-    font-size: 16px;
-}
-
 .form > .logo-container {
     font-size: 22px;
     margin: 0px auto 24px auto;
@@ -265,6 +261,7 @@ body.ldj .input:focus {
 .form > .field {
     margin: 24px 0px 24px 0px;
     box-sizing: border-box;
+    font-size: 16px;
 }
 
 .form > .field.field-half {
