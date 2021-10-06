@@ -174,6 +174,26 @@ app.get("/text", (req, res, next) => {
     });
 });
 
+app.get("/image", (req, res, next) => {
+    async function clojure() {
+        const locale = req.query.locale || req.session.locale || "";
+        req.session.locale = locale;
+        req.session.config = req.session.config || {};
+        req.session.config.text = req.query.text || req.session.config.text || null;
+        const remoteUrl = `${lib.conf.BASE_URL}/text?text=${encodeURIComponent(
+            req.session.config.text
+        )}`;
+        const response = await fetch(
+            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${encodeURIComponent(remoteUrl)}`
+        );
+        if (response.status !== 200) throw new Error("Not possible to retrieve remote image");
+        const imageBuffer = await response.buffer();
+        res.contentType("image/png");
+        res.send(imageBuffer);
+    }
+    clojure().catch(next);
+});
+
 app.post("/convert", (req, res, next) => {
     async function clojure() {
         lib.verifyKey(req);
