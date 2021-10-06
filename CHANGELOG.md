@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.5.0] - 2021-10-06
+
+### Added
+
+* Support for the `/image` URL for PNG image generation
+
 ## [0.4.1] - 2021-09-24
 
 ### Added
