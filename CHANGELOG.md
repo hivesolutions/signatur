@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [0.5.2] - 2022-09-27
+
+### Fixed
+
 * Removed `graphic_element` from `diamond`
 
 ## [0.5.1] - 2021-10-17
