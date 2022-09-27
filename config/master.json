@@ -9,7 +9,7 @@
             "scriptround1l",
             "coolemojis"
         ],
-        "elements": ["text", "calligraphy", "graphic_element"]
+        "elements": ["text", "calligraphy"]
     },
     "laser": {
         "fonts": [
