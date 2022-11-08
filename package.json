@@ -1,6 +1,6 @@
 {
     "name": "signatur",
-    "version": "0.5.3",
+    "version": "0.5.4",
     "description": "Simple Web App for Signatures",
     "keywords": [
         "html",
@@ -38,23 +38,24 @@
     },
     "dependencies": {
         "consola": "^2.15.3",
-        "ejs": "^3.1.6",
-        "express": "^4.17.1",
-        "express-session": "^1.17.2",
-        "hive-js-util": "^0.3.2",
-        "mustache-express": "^1.3.1",
-        "node-fetch": "^2.6.1",
-        "uuid": "^8.3.2",
-        "yonius": "^0.8.2"
+        "ejs": "^3.1.8",
+        "express": "^4.18.2",
+        "express-session": "^1.17.3",
+        "hive-js-util": "^0.4.1",
+        "mustache-express": "^1.3.2",
+        "node-fetch": "^2.6.7",
+        "uuid": "^9.0.0",
+        "yonius": "^0.11.7"
     },
     "devDependencies": {
-        "eslint": "^7.32.0",
-        "eslint-config-hive": "^0.5.3",
-        "mocha": "^9.1.1",
-        "nodemon": "^2.0.12",
-        "npm-check-updates": "^11.8.3",
-        "prettier": "^2.3.2",
+        "eslint": "^8.27.0",
+        "eslint-config-hive": "^0.6.0",
+        "eslint-plugin-n": "^15.5.0",
+        "mocha": "^10.1.0",
+        "nodemon": "^2.0.20",
+        "npm-check-updates": "^16.3.18",
+        "prettier": "^2.7.1",
         "prettier-config-hive": "^0.1.7",
-        "sort-package-json": "^1.50.0"
+        "sort-package-json": "^2.1.0"
     }
 }
