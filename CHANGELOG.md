@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [0.5.5] - 2022-11-08
+
+### Fixed
+
 * Small tilde character in emoji font
 
 ## [0.5.4] - 2022-11-08
