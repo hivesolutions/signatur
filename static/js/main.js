@@ -197,42 +197,97 @@ jQuery(document).ready(function() {
     // the update of the current text value, both from
     // a visual and logic point of view
     const keyHandler = function(event, font, value) {
-        const caret = jQuery("> .caret", viewportContainer);
-        const buttonHref = buttonReport.attr("data-href");
-        const text = body.data("text") || [];
-        let caretPosition =
-            body.data("caret_position") === undefined ? -1 : body.data("caret_position");
-        let element = null;
         if (value === "⌫") {
-            caret.prev().remove();
-            text.splice(caretPosition, 1);
-            caretPosition--;
-            caretPosition = Math.max(caretPosition, -1);
+            backspace();
         } else if (value === "⎵") {
-            element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
-            caret.before(element);
-            element.click(function() {
-                const element = jQuery(this);
-                element.after(caret);
-                caretPosition = element.index(".viewer-container > span:not(.caret)");
-                body.data("caret_position", caretPosition);
-            });
-            text.splice(caretPosition + 1, 0, [font, " "]);
-            caretPosition++;
+            space(font);
         } else {
-            element = jQuery("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
-            caret.before(element);
-            element.click(function() {
-                const element = jQuery(this);
-                element.after(caret);
-                caretPosition = element.index(".viewer-container > span:not(.caret)");
-                body.data("caret_position", caretPosition);
-            });
-            text.splice(caretPosition + 1, 0, [font, value]);
-            caretPosition++;
+            type(font, value);
         }
+    };
+
+    const keyboardHandler = function(event) {
+        const font = body.data("font");
+        switch (event.key) {
+            case "Backspace":
+                backspace();
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
+            case " ":
+                space(font);
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
+            default:
+                type(font, event.key, true);
+                break;
+        }
+    };
+
+    const backspace = function() {
+        let [text, caret, caretPosition] = getText();
+        caret.prev().remove();
+        text.splice(caretPosition, 1);
+        caretPosition--;
+        caretPosition = Math.max(caretPosition, -1);
+        setText(text, caretPosition);
+    };
+
+    const space = function(font) {
+        let [text, caret, caretPosition] = getText();
+        const element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
+        caret.before(element);
+        element.click(function() {
+            const element = jQuery(this);
+            element.after(caret);
+            caretPosition = element.index(".viewer-container > span:not(.caret)");
+            body.data("caret_position", caretPosition);
+        });
+        text.splice(caretPosition + 1, 0, [font, " "]);
+        caretPosition++;
+        setText(text, caretPosition);
+    };
+
+    const type = function(font, value, validate) {
+        // determines if a key exists in the current visible keyboard that
+        // has the value of the provide key and if that's no the case returns
+        // the control flow immediately, key is not compatible
+        const key = jQuery(
+            `.keyboard-container:visible > span[data-value=\"${value.toUpperCase()}\"]`,
+            body
+        );
+        if (validate && key.length === 0) return;
+
+        let [text, caret, caretPosition] = getText();
+        const element = jQuery("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
+        caret.before(element);
+        element.click(function() {
+            const element = jQuery(this);
+            element.after(caret);
+            caretPosition = element.index(".viewer-container > span:not(.caret)");
+            body.data("caret_position", caretPosition);
+        });
+        text.splice(caretPosition + 1, 0, [font, value]);
+        caretPosition++;
+        setText(text, caretPosition);
+    };
+
+    const getText = function() {
+        const text = body.data("text") || [];
+        const caret = jQuery("> .caret", viewportContainer);
+        const caretPosition =
+            body.data("caret_position") === undefined ? -1 : body.data("caret_position");
+        return [text, caret, caretPosition];
+    };
+
+    const setText = function(text, caretPosition) {
         body.data("text", text);
         body.data("caret_position", caretPosition);
+
+        const buttonHref = buttonReport.attr("data-href");
         buttonReport.attr("href", buttonHref + "?text=" + encodeURIComponent(serializeText(text)));
     };
 
@@ -306,6 +361,8 @@ jQuery(document).ready(function() {
     emojispContainer.bind("key", keyHandler);
 
     formConsole.formconsole();
+
+    body.bind("keydown", keyboardHandler);
 });
 
 (function(jQuery) {
