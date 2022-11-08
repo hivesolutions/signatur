@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Added the new characters to cool emojis fonts
 
 ## [0.5.3] - 2022-11-08
 
