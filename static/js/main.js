@@ -12,7 +12,6 @@ const getOptions = function(theme) {
     switch (theme) {
         case "ldj":
             return {
-                width: "100%",
                 height: "100%",
                 lineWidth: 1,
                 UndoButton: true
@@ -208,17 +207,22 @@ jQuery(document).ready(function() {
 
     const keyboardHandler = function(event) {
         const font = body.data("font");
+        let executed = false;
         switch (event.key) {
             case "Backspace":
-                backspace();
-                event.stopPropagation();
-                event.preventDefault();
+                executed = backspace();
+                if (executed) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
                 break;
 
             case " ":
-                space(font);
-                event.stopPropagation();
-                event.preventDefault();
+                executed = space(font);
+                if (executed) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
                 break;
 
             default:
@@ -229,15 +233,18 @@ jQuery(document).ready(function() {
 
     const backspace = function() {
         let [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
         caret.prev().remove();
         text.splice(caretPosition, 1);
         caretPosition--;
         caretPosition = Math.max(caretPosition, -1);
         setText(text, caretPosition);
+        return true;
     };
 
     const space = function(font) {
         let [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
         const element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
         caret.before(element);
         element.click(function() {
@@ -249,6 +256,7 @@ jQuery(document).ready(function() {
         text.splice(caretPosition + 1, 0, [font, " "]);
         caretPosition++;
         setText(text, caretPosition);
+        return true;
     };
 
     const type = function(font, value, validate) {
