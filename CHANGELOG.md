@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Keyboard backspace and space keys issue - [[#4](https://github.com/hivesolutions/signatur/issues/4)]
 
+## [0.6.1] - 2022-11-12
+
+### Fixed
+
+* Keyboard backspace and space keys issue - [[#4](https://github.com/hivesolutions/signatur/issues/4)]
+
 ## [0.6.0] - 2022-11-08
 
 ### Added
