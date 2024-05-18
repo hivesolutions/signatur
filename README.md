@@ -39,6 +39,18 @@ localStorage.setItem("printer", "${node-printer}");
 localStorage.setItem("key", "${server-key}");
 ```
 
+## Maintenance
+
+### Adding New Emoji
+
+To add a new emoji to the system the following steps should be followed:
+
+1. Determine the right file name for the new emoji font file (e.g. `coolemojis.ttf` for laser and `coolemojisp.ttf` for pantogrpah)
+2. Place the new font file in the `static/fonts` directory
+3. Add the new emoji "characters" to the `emoji` array in the `viewport.ejs` file
+4. Test the using the local machine `yarn && yarn dev`
+5. Release a new version of the system (Docker Image)
+
 ## License
 
 Signatur is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).

@@ -261,10 +261,13 @@ jQuery(document).ready(function() {
 
     const type = function(font, value, validate) {
         // determines if a key exists in the current visible keyboard that
-        // has the value of the provide key and if that's no the case returns
+        // has the value of the provided key and if that's not the case returns
         // the control flow immediately, key is not compatible
         const key = jQuery(
-            `.keyboard-container:visible > span[data-value=\"${value.toUpperCase()}\"]`,
+            `.keyboard-container:visible > span[data-value=\"${value
+                .replace("\\", "\\\\")
+                .replace('"', '\\"')
+                .toUpperCase()}\"]`,
             body
         );
         if (validate && key.length === 0) return;
