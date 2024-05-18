@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Bumped base nodejs version in `Dockerfile` to 18
 
 ### Fixed
 
