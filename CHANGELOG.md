@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Bump pstoedit version
+*
 
 ### Fixed
 
 *
+
+## [0.7.2] - 2024-05-18
+
+### Changed
+
+* Bumped pstoedit version to 4.01
 
 ## [0.7.1] - 2024-05-18
 
