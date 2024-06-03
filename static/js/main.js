@@ -40,12 +40,24 @@ const serializeText = function(text, separator = "|") {
     return buffer.join(separator);
 };
 
+const simplifyText = function(text, separator = "") {
+    const buffer = [];
+    let font = null;
+    for (let index = 0; index < text.length; index++) {
+        const item = text[index];
+        font = item[0];
+        buffer.push(item[1]);
+    }
+    return [buffer.join(separator), font];
+};
+
 jQuery(document).ready(function() {
     // runs a series of selections over the current viewport
     const body = jQuery("body");
     const form = jQuery(".form");
     const formInput = jQuery(".form > input");
     const buttonClear = jQuery(".button-clear");
+    const buttonPrint = jQuery(".button-print");
     const buttonReport = jQuery(".button-report");
     const buttonReceipt = jQuery(".button-receipt");
     const buttonDownload = jQuery(".button-download");
@@ -93,6 +105,35 @@ jQuery(document).ready(function() {
     // that sends the "reset" event to the jsignature
     buttonClear.click(function() {
         signature.jSignature("reset");
+    });
+
+    // registers for the print/engrave button click operation
+    // that makes use of colony print to engrave the values
+    buttonPrint.click(async function() {
+        const element = jQuery(this);
+        const text = element.attr("data-text");
+        const font = element.attr("data-font");
+
+        const printUrl = localStorage.getItem("url");
+        const node = localStorage.getItem("node");
+        const key = localStorage.getItem("key") || null;
+
+        // builds the parameters that are going to be used for the concrete
+        // printing operation and runs the print with the properly configured
+        // colony cloud print configuration
+        const printResponse = await fetch(`${printUrl}/nodes/${node}/print`, {
+            method: "POST",
+            body: new URLSearchParams([
+                ["type", "gravo"],
+                ["data", JSON.stringify({ text: text, font: font })]
+            ]),
+            headers: { "X-Secret-Key": key }
+        });
+        if (printResponse.status !== 200) {
+            const error = await printResponse.json();
+            const errorMessage = error.message || error.error || "unset";
+            throw new Error(`Error while running the final print operation: ${errorMessage}`);
+        }
     });
 
     // registers for the download button click operation so that
@@ -300,6 +341,10 @@ jQuery(document).ready(function() {
 
         const buttonHref = buttonReport.attr("data-href");
         buttonReport.attr("href", buttonHref + "?text=" + encodeURIComponent(serializeText(text)));
+
+        const [textSimple, font] = simplifyText(text);
+        buttonPrint.attr("data-text", textSimple);
+        buttonPrint.attr("data-font", font);
     };
 
     const printReceipt = async function() {
