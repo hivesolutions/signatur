@@ -30,13 +30,22 @@ Supported file format include:
 
 ## Printing
 
-To be able to enable printing the following Javascript code should be used inside Browser's Javascript console:
+To be able to enable printing the following JavaScript code should be used inside Browser's JavaScript console:
 
 ```javascript
 localStorage.setItem("url", "https://colony-print.stage.hive.pt");
 localStorage.setItem("node", "${node-name}");
 localStorage.setItem("printer", "${node-printer}");
 localStorage.setItem("key", "${server-key}");
+```
+
+To read the configuration you can use the following JavaScript code:
+
+```javascript
+console.info(localStorage.getItem("url"));
+console.info(localStorage.getItem("node"));
+console.info(localStorage.getItem("printer"));
+console.info(localStorage.getItem("key"));
 ```
 
 ## Maintenance
