@@ -1,4 +1,5 @@
 // requires the multiple libraries
+const fs = require("fs/promises");
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
@@ -207,6 +208,22 @@ app.post("/convert", (req, res, next) => {
 
 app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
+});
+
+app.get("/profiles", async (req, res, next) => {
+    const directoryPath = path.join(__dirname, "static", "profiles");
+    const files = await fs.readdir(directoryPath);
+    const profiles = {};
+    for (const file of files) {
+        const filePath = path.join(directoryPath, file);
+        if (path.extname(file) === ".json") {
+            const fileContent = await fs.readFile(filePath, "utf8");
+            const jsonObject = JSON.parse(fileContent);
+            const name = path.basename(file, ".json");
+            profiles[name] = jsonObject;
+        }
+    }
+    res.json(profiles);
 });
 
 app.get("/info", (req, res, next) => {
