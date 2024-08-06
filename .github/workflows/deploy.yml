@@ -1,0 +1,33 @@
+name: Deploy Workflow
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  build:
+    name: Deploy
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node-version: [14]
+    runs-on: ubuntu-latest
+    container: node:${{ matrix.node-version }}-buster
+    steps:
+      - name: Checkout code from repository
+        uses: actions/checkout@v4
+      - name: Print Node.js information
+        run: node --version
+      - name: Install package
+        run: npm install
+      - name: Install package (development)
+        run: npm install --only=dev
+      - name: Verify Javascript code linting
+        run: npm run lint
+      - name: Run unit tests
+        run: npm test
+      - name: Deploy package to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
