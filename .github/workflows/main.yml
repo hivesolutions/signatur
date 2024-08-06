@@ -1,17 +1,27 @@
 name: Main Workflow
-on: [push]
+on:
+  push:
+  schedule:
+    - cron: "0 0 * * 0"
 jobs:
   build:
     name: Build
+    timeout-minutes: 10
     strategy:
       matrix:
-        node-version: [12, 13, 14, 15, 16, 17, 18]
+        node-version: [14, 15, 16, 17, 18, 19, 20]
     runs-on: ubuntu-latest
-    container: node:${{ matrix.node-version }}
+    container: node:${{ matrix.node-version }}-buster
     steps:
-      - uses: actions/checkout@v1
-      - run: node --version
-      - run: npm install
-      - run: npm install --only=dev
-      - run: npm run lint
-      - run: npm test
+      - name: Checkout code from repository
+        uses: actions/checkout@v4
+      - name: Print Node.js information
+        run: node --version
+      - name: Install package
+        run: npm install
+      - name: Install package (development)
+        run: npm install --only=dev
+      - name: Verify Javascript code linting
+        run: npm run lint
+      - name: Run unit tests
+        run: npm test
