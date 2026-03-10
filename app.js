@@ -50,6 +50,8 @@ app.engine("ejs", (filename, payload = {}, cb) => {
 });
 app.set("view engine", "ejs");
 
+app.locals.dev = process.env.NODE_ENV !== "production";
+
 app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -219,6 +221,8 @@ app.get("/profiles", async (req, res, next) => {
         if (path.extname(file) === ".json") {
             const fileContent = await fs.readFile(filePath, "utf8");
             const jsonObject = JSON.parse(fileContent);
+            const errors = lib.validateProfile(jsonObject);
+            if (errors.length > 0) continue;
             const name = path.basename(file, ".json");
             profiles[name] = jsonObject;
         }

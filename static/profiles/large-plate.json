@@ -1,0 +1,30 @@
+{
+    "id": "large-plate",
+    "name": "Large Plate",
+    "description": "A large engraving plate.",
+    "width": 200,
+    "height": 60,
+    "unit": "mm",
+    "orientation": "landscape",
+    "padding": {
+        "top": 8,
+        "right": 10,
+        "bottom": 8,
+        "left": 10
+    },
+    "font_size": {
+        "mode": "manual",
+        "default": 14,
+        "min": 8,
+        "max": 36,
+        "step": 1
+    },
+    "preview": {
+        "show_bounds": true,
+        "show_safe_area": true
+    },
+    "machine": {
+        "viewport_width": 200,
+        "viewport_height": 60
+    }
+}

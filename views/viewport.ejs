@@ -18,15 +18,38 @@
                 <span class="logo"></span>
             <% } %>
         </div>
+        <div class="profile-info">
+            <div class="profile-info-name"></div>
+            <div class="profile-info-dimensions"></div>
+            <div class="profile-info-orientation"></div>
+        </div>
         <div class="viewport">
             <div class="main-container">
-                <div class="viewer-container" data-text="<%= config.text %>">
+                <div class="profile-container">
+                    <label class="profile-label">Profile</label>
+                    <select class="profile-select">
+                        <option value="">None</option>
+                    </select>
+                    <div class="font-size-container">
+                        <label class="font-size-label">Size</label>
+                        <input class="font-size-range" type="range" min="8" max="24" value="12" step="1" />
+                        <span class="font-size-value">12</span>
+                        <label class="font-size-mode-label">
+                            <input class="font-size-mode" type="checkbox" />
+                            Auto
+                        </label>
+                    </div>
+                </div>
+                <div class="viewport-preview">
+                    <svg class="viewport-svg"></svg>
+                    <div class="viewer-container" data-text="<%= config.text %>">
                     <% if (text) { %>
                         <% text.forEach(function(item){ %>
                             <span style="font-family: '<%= item[0] %>'"><%- item[1] === " " ? "&nbsp;" : item[1] %></span>
                         <% }); %>
                     <% } %>
                     <span class="caret">|</span>
+                    </div>
                 </div>
                 <div class="fonts-container">
                     <% if (!options.fonts || options.fonts.includes("helvetica1l")) { %>
@@ -257,6 +280,17 @@
                     <span class="char" data-value="y">y</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
                     <span class="char" style="min-width: 96px;"">⎵</span>
+                </div>
+            </div>
+        </div>
+        <div class="toast"></div>
+        <div class="modal-overlay modal-overlay-confirm">
+            <div class="modal">
+                <div class="modal-title">Confirm Engraving</div>
+                <div class="modal-specs"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-engrave">Engrave</span>
+                    <span class="button button-modal-close">Cancel</span>
                 </div>
             </div>
         </div>

@@ -1,9 +1,9 @@
 {
-    "id": "small-medal",
-    "name": "Small Medal",
-    "description": "A small medal.",
-    "width": 80,
-    "height": 100,
+    "id": "plate",
+    "name": "Steel Plate",
+    "description": "A 70x70 steel plate.",
+    "width": 70,
+    "height": 70,
     "unit": "mm",
     "orientation": "portrait",
     "padding": {
@@ -15,7 +15,7 @@
     "font_size": {
         "mode": "manual",
         "default": 12,
-        "min": 8,
+        "min": 6,
         "max": 24,
         "step": 1
     },
@@ -24,7 +24,7 @@
         "show_safe_area": true
     },
     "machine": {
-        "viewport_width": 80,
-        "viewport_height": 100
+        "viewport_width": 70,
+        "viewport_height": 70
     }
 }
