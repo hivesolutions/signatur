@@ -9,6 +9,10 @@
     min-width: 600px;
 }
 
+.gateway > .form > .buttons-container > .button-configure {
+    margin-left: 14px;
+}
+
 .gateway > .footer {
     bottom: 0px;
     font-size: 11px;

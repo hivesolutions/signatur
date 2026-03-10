@@ -61,6 +61,7 @@ jQuery(document).ready(function() {
     const buttonReport = jQuery(".button-report");
     const buttonReceipt = jQuery(".button-receipt");
     const buttonDownload = jQuery(".button-download");
+    const buttonConfigure = jQuery(".button-configure");
     const fontsContainer = jQuery(".fonts-container");
     const keyboardContainer = jQuery(".keyboard-container");
     const emojisContainer = jQuery(".emojis-container");
@@ -69,6 +70,8 @@ jQuery(document).ready(function() {
     const formConsole = jQuery(".form-console");
     const inputViewport = jQuery(".input-viewport");
     const signature = jQuery(".signature");
+    const modalOverlayError = jQuery(".modal-overlay-error");
+    const modalOverlayConfig = jQuery(".modal-overlay-config");
 
     // gathers the values for the form related fields so that the
     // typical form validations and changes may be performed
@@ -118,6 +121,16 @@ jQuery(document).ready(function() {
         const node = localStorage.getItem("node");
         const key = localStorage.getItem("key") || null;
 
+        // verifies that the printer is properly configured before
+        // trying to run the print operation, showing a modal otherwise
+        if (!printUrl || !node) {
+            modalOverlayError.modal(
+                "show",
+                "No printer configured, please set the printer in the console."
+            );
+            return;
+        }
+
         // builds the parameters that are going to be used for the concrete
         // printing operation and runs the print with the properly configured
         // colony cloud print configuration
@@ -132,7 +145,10 @@ jQuery(document).ready(function() {
         if (printResponse.status !== 200) {
             const error = await printResponse.json();
             const errorMessage = error.message || error.error || "unset";
-            throw new Error(`Error while running the final print operation: ${errorMessage}`);
+            modalOverlayError.modal(
+                "show",
+                "Error while running the final print operation: " + errorMessage
+            );
         }
     });
 
@@ -145,6 +161,12 @@ jQuery(document).ready(function() {
         form.submit();
     });
 
+    // registers for the click operation on the configure button
+    // that opens the printer configuration modal from the gateway
+    buttonConfigure.click(function() {
+        modalOverlayConfig.modal("show");
+    });
+
     // registers for the click event on the button receipt
     // to run the remove logic of receipt printing using
     // the colony (cloud) print service
@@ -152,7 +174,7 @@ jQuery(document).ready(function() {
         try {
             await printReceipt();
         } catch (err) {
-            alert(err);
+            modalOverlayError.modal("show", String(err));
         }
     });
 
@@ -416,6 +438,9 @@ jQuery(document).ready(function() {
     emojisContainer.bind("key", keyHandler);
     emojispContainer.bind("key", keyHandler);
 
+    modalOverlayError.modal();
+    modalOverlayConfig.modal();
+
     formConsole.formconsole();
 
     body.bind("keydown", keyboardHandler);
@@ -480,6 +505,61 @@ jQuery(document).ready(function() {
                 context.removeClass("lowercase");
             }
         };
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.modal = function(action, message) {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const modalMessage = jQuery(".modal-message", context);
+            const buttonClose = jQuery(".button-modal-close", context);
+            const buttonConfigure = jQuery(".button-modal-configure", context);
+            const buttonSave = jQuery(".button-modal-save", context);
+
+            if (action === "show") {
+                modalMessage.text(message);
+                context.addClass("visible");
+                return;
+            }
+
+            buttonClose.click(function() {
+                context.removeClass("visible");
+            });
+
+            // registers for the click operation on the configure button
+            // that opens the printer configuration modal
+            buttonConfigure.click(function() {
+                context.removeClass("visible");
+                const configOverlay = jQuery(".modal-overlay-config");
+                configOverlay.modal("show");
+            });
+
+            // registers for the click operation on the save button
+            // that persists the printer configuration to localStorage
+            buttonSave.click(function() {
+                const url = jQuery(".input[name=url]", context).val();
+                const node = jQuery(".input[name=node]", context).val();
+                const printer = jQuery(".input[name=printer]", context).val();
+                const key = jQuery(".input[name=key]", context).val();
+                if (url) localStorage.setItem("url", url);
+                if (node) localStorage.setItem("node", node);
+                if (printer) localStorage.setItem("printer", printer);
+                if (key) localStorage.setItem("key", key);
+                context.removeClass("visible");
+            });
+
+            // populates the configuration fields with the current
+            // values stored in localStorage (if any)
+            jQuery(".input[name=url]", context).val(localStorage.getItem("url") || "");
+            jQuery(".input[name=node]", context).val(localStorage.getItem("node") || "");
+            jQuery(".input[name=printer]", context).val(localStorage.getItem("printer") || "");
+            jQuery(".input[name=key]", context).val(localStorage.getItem("key") || "");
+        });
 
         return this;
     };

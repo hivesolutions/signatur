@@ -260,5 +260,51 @@
                 </div>
             </div>
         </div>
+        <div class="modal-overlay modal-overlay-error">
+            <div class="modal">
+                <div class="modal-message"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-configure">Configure</span>
+                    <span class="button button-modal-close">Close</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-config">
+            <div class="modal modal-config">
+                <div class="modal-title">Printer Configuration</div>
+                <div class="field field-text">
+                    <label class="name">URL</label>
+                    <div class="value">
+                        <input class="input" type="text" name="url"
+                               placeholder="https://colony-print.stage.hive.pt" />
+                    </div>
+                </div>
+                <div class="field field-text">
+                    <label class="name">Node</label>
+                    <div class="value">
+                        <input class="input" type="text" name="node"
+                               placeholder="node-print" />
+                    </div>
+                </div>
+                <div class="field field-text">
+                    <label class="name">Printer</label>
+                    <div class="value">
+                        <input class="input" type="text" name="printer"
+                               placeholder="printer" />
+                    </div>
+                </div>
+                <div class="field field-text">
+                    <label class="name">Key</label>
+                    <div class="value">
+                        <input class="input" type="text" name="key"
+                               placeholder="secret-key" />
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-save">Save</span>
+                    <span class="button button-modal-close">Close</span>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
