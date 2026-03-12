@@ -89,7 +89,7 @@
                         <label class="name">Text</label>
                         <div class="value">
                             <span class="text">
-                                <% text.forEach(function(item){ %><span class="item" style="font-family: '<%= item[0] %>'"><%- item[1] === " " ? "&nbsp;" : item[1] %></span><% }); %>
+                                <% text.forEach(function(item){ %><% if (item[1] === "\n") { %><br /><% } else { %><span class="item" style="font-family: '<%= item[0] %>'"><%- item[1] === " " ? "&nbsp;" : item[1] %></span><% } %><% }); %>
                             </span>
                         </div>
                     </div>

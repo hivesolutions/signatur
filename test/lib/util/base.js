@@ -36,6 +36,15 @@ describe("Base", function() {
                 ["emoji", "ad"]
             ]);
         });
+
+        it("should deserialize text with newlines", () => {
+            const result = lib.deserializeText("arial:a|\\n|times:b");
+            assert.deepStrictEqual(result, [
+                ["arial", "a"],
+                [null, "\n"],
+                ["times", "b"]
+            ]);
+        });
     });
 
     describe("#fontText()", function() {

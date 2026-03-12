@@ -62,7 +62,8 @@
 
                 // builds the data payload for the print operation, including
                 // the viewport information from the selected profile if available
-                const printData = { text: text, font: font, debug: true };
+                const dryRun = jQuery(".modal-dry-run", context).prop("checked");
+                const printData = { text: text, font: font, debug: true, dry_run: dryRun };
                 if (profileKey) {
                     const profiles = context.data("profiles") || {};
                     const profile = profiles[profileKey];

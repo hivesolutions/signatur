@@ -35,7 +35,11 @@ const serializeText = function(text, separator = "|") {
     const buffer = [];
     for (let index = 0; index < text.length; index++) {
         const item = text[index];
-        buffer.push(item[0] + ":" + item[1]);
+        if (item[1] === "\n") {
+            buffer.push("\\n");
+        } else {
+            buffer.push(item[0] + ":" + item[1]);
+        }
     }
     return buffer.join(separator);
 };
@@ -45,8 +49,16 @@ const simplifyText = function(text, separator = "") {
     let font = null;
     for (let index = 0; index < text.length; index++) {
         const item = text[index];
-        font = item[0];
+        if (item[0] !== null) font = item[0];
         buffer.push(item[1]);
     }
     return [buffer.join(separator), font];
+};
+
+const countLines = function(text) {
+    let lines = 1;
+    for (let index = 0; index < text.length; index++) {
+        if (text[index][1] === "\n") lines++;
+    }
+    return lines;
 };

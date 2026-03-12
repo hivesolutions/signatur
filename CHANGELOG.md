@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Support for toggling the visual keyboard by clicking the same font again
+* Support for multiple lines with Enter key and visual keyboard `↵` button
+* Enforcement of `max_lines` profile constraint when inserting newlines
+* Display of max lines in the profile info panel
+* Dry run checkbox in the engraving confirmation modal
+* Raw profile JSON viewer with show/hide toggle in the profile info panel
+* Newline rendering in report views (EN and PT)
+
+### Changed
+
+* Line height in viewport preview now scales proportionally to font size (1.2x)
 
 ## [0.7.2] - 2024-05-18
 

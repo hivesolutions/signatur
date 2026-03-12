@@ -14,7 +14,25 @@ jQuery(document).ready(function() {
     const profileInfoName = jQuery(".profile-info-name");
     const profileInfoDimensions = jQuery(".profile-info-dimensions");
     const profileInfoOrientation = jQuery(".profile-info-orientation");
+    const profileInfoLines = jQuery(".profile-info-lines");
+    const profileInfoRawToggle = jQuery(".profile-info-raw-toggle");
+    const profileInfoRaw = jQuery(".profile-info-raw");
     const profileSelect = jQuery(".profile-select");
+
+    // registers for the click operation on the raw profile
+    // toggle link to show or hide the formatted JSON contents
+    profileInfoRawToggle.click(function(event) {
+        event.preventDefault();
+        const visible = profileInfoRaw.is(":visible");
+        if (visible) {
+            profileInfoRaw.hide();
+            profileInfoRawToggle.text("Show Raw");
+        } else {
+            profileInfoRaw.show();
+            profileInfoRawToggle.text("Hide Raw");
+        }
+    });
+
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeValue = jQuery(".font-size-value");
@@ -251,6 +269,8 @@ jQuery(document).ready(function() {
     const updateProfileInfo = function(profile) {
         if (!profile) {
             profileInfo.removeClass("visible");
+            profileInfoRaw.hide();
+            profileInfoRawToggle.text("Show Raw");
             return;
         }
 
@@ -258,6 +278,16 @@ jQuery(document).ready(function() {
         profileInfoName.text(profile.name);
         profileInfoDimensions.text(profile.width + " x " + profile.height + (unit ? " " + unit : ""));
         profileInfoOrientation.text(profile.orientation || "");
+        const text = profile.text || {};
+        const maxLines = text.max_lines || 0;
+        if (maxLines > 0) {
+            profileInfoLines.text("max " + maxLines + (maxLines === 1 ? " line" : " lines"));
+        } else {
+            profileInfoLines.text("");
+        }
+        profileInfoRaw.text(JSON.stringify(profile, null, 4));
+        profileInfoRaw.hide();
+        profileInfoRawToggle.text("Show Raw");
         profileInfo.addClass("visible");
     };
 
@@ -333,7 +363,7 @@ jQuery(document).ready(function() {
         if (size) {
             const scaledSize = size * VIEWPORT_SCALE;
             viewportContainer.css("font-size", scaledSize + "px");
-            viewportContainer.css("line-height", scaledSize + "px");
+            viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
         }
     };
 
@@ -468,6 +498,8 @@ jQuery(document).ready(function() {
             backspace();
         } else if (value === "⎵") {
             space(font);
+        } else if (value === "↵") {
+            newline();
         } else {
             type(font, value);
         }
@@ -487,6 +519,14 @@ jQuery(document).ready(function() {
 
             case " ":
                 executed = space(font);
+                if (executed) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+                break;
+
+            case "Enter":
+                executed = newline();
                 if (executed) {
                     event.stopPropagation();
                     event.preventDefault();
@@ -518,10 +558,30 @@ jQuery(document).ready(function() {
         element.click(function() {
             const element = jQuery(this);
             element.after(caret);
-            caretPosition = element.index(".viewer-container > span:not(.caret)");
+            caretPosition = element.index(".viewer-container > :not(.caret)");
             body.data("caret_position", caretPosition);
         });
         text.splice(caretPosition + 1, 0, [font, " "]);
+        caretPosition++;
+        setText(text, caretPosition);
+        return true;
+    };
+
+    const newline = function() {
+        let [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+        const maxLines = currentProfile && currentProfile.text
+            ? currentProfile.text.max_lines || 0 : 0;
+        if (maxLines > 0 && countLines(text) >= maxLines) return false;
+        const element = jQuery("<div class=\"newline\"></div>");
+        caret.before(element);
+        element.click(function() {
+            const element = jQuery(this);
+            element.after(caret);
+            caretPosition = element.index(".viewer-container > :not(.caret)");
+            body.data("caret_position", caretPosition);
+        });
+        text.splice(caretPosition + 1, 0, [null, "\n"]);
         caretPosition++;
         setText(text, caretPosition);
         return true;
@@ -546,7 +606,7 @@ jQuery(document).ready(function() {
         element.click(function() {
             const element = jQuery(this);
             element.after(caret);
-            caretPosition = element.index(".viewer-container > span:not(.caret)");
+            caretPosition = element.index(".viewer-container > :not(.caret)");
             body.data("caret_position", caretPosition);
         });
         text.splice(caretPosition + 1, 0, [font, value]);

@@ -424,13 +424,19 @@ body.ldj .line {
 }
 
 .viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
+    align-content: center;
     border: none;
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
     min-width: 0px;
     overflow: hidden;
     position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .viewer-container > .newline {
+    height: 0px;
+    width: 100%;
 }
 
 .viewport > .main-container > .viewer-container > span:not(.caret),
@@ -608,6 +614,45 @@ body.ldj .line {
     color: #6d6d6d;
     font-size: 12px;
     letter-spacing: 0.3px;
+}
+
+.profile-info > .profile-info-lines {
+    color: #6d6d6d;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
+
+.profile-info > .profile-info-raw-toggle {
+    color: #2d2d2d;
+    cursor: pointer;
+    display: none;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+.profile-info.visible > .profile-info-raw-toggle {
+    display: inline-block;
+}
+
+.profile-info > .profile-info-raw {
+    background-color: #f4f7fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    display: none;
+    font-size: 11px;
+    line-height: 16px;
+    margin-top: 8px;
+    max-height: 200px;
+    overflow: auto;
+    padding: 8px 10px 8px 10px;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .viewport > .main-container > .profile-container {
@@ -851,6 +896,16 @@ body.ldj .line {
 
 .modal-overlay > .modal > .modal-specs > .modal-spec:last-child {
     margin-bottom: 0px;
+}
+
+.modal-overlay > .modal > .modal-options {
+    font-size: 14px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.modal-overlay > .modal > .modal-options > .modal-option {
+    cursor: pointer;
 }
 
 .toast {

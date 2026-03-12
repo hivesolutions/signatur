@@ -124,3 +124,13 @@
 .modal-overlay > .modal > .modal-specs > .modal-spec:last-child {
     margin-bottom: 0px;
 }
+
+.modal-overlay > .modal > .modal-options {
+    font-size: 14px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.modal-overlay > .modal > .modal-options > .modal-option {
+    cursor: pointer;
+}

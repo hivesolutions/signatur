@@ -22,6 +22,9 @@
             <div class="profile-info-name"></div>
             <div class="profile-info-dimensions"></div>
             <div class="profile-info-orientation"></div>
+            <div class="profile-info-lines"></div>
+            <a class="profile-info-raw-toggle" href="#">Show Raw</a>
+            <pre class="profile-info-raw"></pre>
         </div>
         <div class="viewport">
             <div class="main-container">
@@ -45,7 +48,11 @@
                     <div class="viewer-container" data-text="<%= config.text %>">
                     <% if (text) { %>
                         <% text.forEach(function(item){ %>
+                            <% if (item[1] === "\n") { %>
+                                <div class="newline"></div>
+                            <% } else { %>
                             <span style="font-family: '<%= item[0] %>'"><%- item[1] === " " ? "&nbsp;" : item[1] %></span>
+                            <% } %>
                         <% }); %>
                     <% } %>
                     <span class="caret">|</span>
@@ -141,6 +148,7 @@
                     <span class="char" data-value="`">`</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
                     <span class="char" style="min-width: 96px;"">⎵</span>
+                    <span class="char" style="min-width: 66px;">↵</span>
                     <span class="char shift" style="min-width: 66px;">⇧</span>
                 </div>
                 <div class="emojis-container">
@@ -225,6 +233,7 @@
                     <span class="char" data-value="#">#</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
                     <span class="char" style="min-width: 96px;"">⎵</span>
+                    <span class="char" style="min-width: 66px;">↵</span>
                 </div>
                 <div class="emojisp-container">
                     <span class="char" data-value="A">A</span>
@@ -280,6 +289,7 @@
                     <span class="char" data-value="y">y</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
                     <span class="char" style="min-width: 96px;"">⎵</span>
+                    <span class="char" style="min-width: 66px;">↵</span>
                 </div>
             </div>
         </div>
@@ -288,6 +298,12 @@
             <div class="modal">
                 <div class="modal-title">Confirm Engraving</div>
                 <div class="modal-specs"></div>
+                <div class="modal-options">
+                    <label class="modal-option">
+                        <input class="modal-dry-run" type="checkbox" />
+                        Dry Run
+                    </label>
+                </div>
                 <div class="modal-buttons">
                     <span class="button button-modal-engrave">Engrave</span>
                     <span class="button button-modal-close">Cancel</span>

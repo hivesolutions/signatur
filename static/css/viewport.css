@@ -71,13 +71,19 @@
 }
 
 .viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
+    align-content: center;
     border: none;
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
     min-width: 0px;
     overflow: hidden;
     position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .viewer-container > .newline {
+    height: 0px;
+    width: 100%;
 }
 
 .viewport > .main-container > .viewer-container > span:not(.caret),
