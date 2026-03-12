@@ -352,6 +352,8 @@ jQuery(document).ready(function() {
     const fontSizeMode = jQuery(".font-size-mode");
     const viewportPreview = jQuery(".viewport-preview");
     const viewportSvg = jQuery(".viewport-svg");
+    const rulerHorizontal = jQuery(".ruler-horizontal");
+    const rulerVertical = jQuery(".ruler-vertical");
     const fontsContainer = jQuery(".fonts-container");
     const keyboardContainer = jQuery(".keyboard-container");
     const emojisContainer = jQuery(".emojis-container");
@@ -577,6 +579,51 @@ jQuery(document).ready(function() {
         viewportPreview.addClass("profile-active");
     };
 
+    // renders the horizontal and vertical rulers adjacent to
+    // the viewport preview based on the profile dimensions
+    const renderRulers = function(profile) {
+        rulerHorizontal.empty();
+        rulerVertical.empty();
+
+        if (!profile) return;
+
+        const width = profile.width * VIEWPORT_SCALE;
+        const height = profile.height * VIEWPORT_SCALE;
+        const unit = profile.unit || "mm";
+        const step = 5;
+
+        rulerHorizontal.css("width", width + "px");
+        rulerVertical.css("height", height + "px");
+
+        for (let mm = 0; mm <= profile.width; mm += step) {
+            const px = mm * VIEWPORT_SCALE;
+            const isMajor = mm % 10 === 0;
+            const tick = jQuery("<div class=\"ruler-tick\"></div>");
+            tick.addClass(isMajor ? "major" : "minor");
+            tick.css("left", px + "px");
+            tick.append("<div class=\"ruler-line\"></div>");
+            if (isMajor) {
+                tick.append("<span class=\"ruler-label\">" + mm + "</span>");
+            }
+            rulerHorizontal.append(tick);
+        }
+        rulerHorizontal.append("<span class=\"ruler-unit\">" + unit + "</span>");
+
+        for (let mm = 0; mm <= profile.height; mm += step) {
+            const px = mm * VIEWPORT_SCALE;
+            const isMajor = mm % 10 === 0;
+            const tick = jQuery("<div class=\"ruler-tick\"></div>");
+            tick.addClass(isMajor ? "major" : "minor");
+            tick.css("top", px + "px");
+            tick.append("<div class=\"ruler-line\"></div>");
+            if (isMajor) {
+                tick.append("<span class=\"ruler-label\">" + mm + "</span>");
+            }
+            rulerVertical.append(tick);
+        }
+        rulerVertical.append("<span class=\"ruler-unit\">" + unit + "</span>");
+    };
+
     // updates the floating profile info block with the
     // currently selected profile summary information
     const updateProfileInfo = function(profile) {
@@ -686,6 +733,7 @@ jQuery(document).ready(function() {
         const key = jQuery(this).val();
         currentProfile = key ? profiles[key] : null;
         renderViewportPreview(currentProfile);
+        renderRulers(currentProfile);
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
         applyFontSize();
@@ -846,6 +894,38 @@ jQuery(document).ready(function() {
                 }
                 break;
 
+            case "Delete":
+                executed = deleteForward();
+                if (executed) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+                break;
+
+            case "ArrowLeft":
+                moveCaret(-1);
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
+            case "ArrowRight":
+                moveCaret(1);
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
+            case "ArrowUp":
+                moveCaretLine(-1);
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
+            case "ArrowDown":
+                moveCaretLine(1);
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
             default:
                 type(font, event.key, true);
                 break;
@@ -859,6 +939,16 @@ jQuery(document).ready(function() {
         text.splice(caretPosition, 1);
         caretPosition--;
         caretPosition = Math.max(caretPosition, -1);
+        setText(text, caretPosition);
+        return true;
+    };
+
+    const deleteForward = function() {
+        let [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+        if (caretPosition + 1 >= text.length) return false;
+        caret.next().remove();
+        text.splice(caretPosition + 1, 1);
         setText(text, caretPosition);
         return true;
     };
@@ -897,6 +987,102 @@ jQuery(document).ready(function() {
         text.splice(caretPosition + 1, 0, [null, "\n"]);
         caretPosition++;
         setText(text, caretPosition);
+        return true;
+    };
+
+    const moveCaret = function(direction) {
+        let [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+        const newPosition = caretPosition + direction;
+        if (newPosition < -1 || newPosition >= text.length) return false;
+        const elements = viewportContainer.children(":not(.caret)");
+        if (newPosition === -1) {
+            elements.first().before(caret);
+        } else {
+            elements.eq(newPosition).after(caret);
+        }
+        body.data("caret_position", newPosition);
+        return true;
+    };
+
+    const moveCaretLine = function(direction) {
+        let [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+
+        // splits the text array into lines separated by newline
+        // entries to determine the current line and column
+        const lines = [[]];
+        for (let i = 0; i < text.length; i++) {
+            if (text[i][1] === "\n") {
+                lines.push([]);
+            } else {
+                lines[lines.length - 1].push(i);
+            }
+        }
+
+        // determines which line and column the caret is on
+        let currentLine = 0;
+        let currentCol = 0;
+        if (caretPosition === -1) {
+            currentLine = 0;
+            currentCol = -1;
+        } else if (text[caretPosition] && text[caretPosition][1] === "\n") {
+            // caret is on a newline, treat as end of that line
+            for (let l = 0; l < lines.length - 1; l++) {
+                const lineEnd = lines[l].length > 0
+                    ? lines[l][lines[l].length - 1] : -1;
+                if (caretPosition === lineEnd + 1) {
+                    currentLine = l;
+                    currentCol = lines[l].length;
+                    break;
+                }
+            }
+        } else {
+            for (let l = 0; l < lines.length; l++) {
+                const idx = lines[l].indexOf(caretPosition);
+                if (idx !== -1) {
+                    currentLine = l;
+                    currentCol = idx;
+                    break;
+                }
+            }
+        }
+
+        const targetLine = currentLine + direction;
+        if (targetLine < 0 || targetLine >= lines.length) return false;
+
+        // moves to the same column on the target line or the
+        // end of the target line if it is shorter
+        let newPosition;
+        if (currentCol === -1) {
+            // was before first char, go to before first char of target line
+            if (lines[targetLine].length > 0) {
+                newPosition = lines[targetLine][0] - 1;
+            } else {
+                // target line is empty, find the newline before it
+                newPosition = targetLine === 0 ? -1 : lines[targetLine - 1].length > 0
+                    ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1 : targetLine - 1;
+            }
+        } else if (currentCol >= lines[targetLine].length) {
+            // column exceeds target line length, go to end
+            if (lines[targetLine].length > 0) {
+                newPosition = lines[targetLine][lines[targetLine].length - 1];
+            } else {
+                // target line is empty, position on its preceding newline
+                newPosition = targetLine === 0 ? -1 : lines[targetLine - 1].length > 0
+                    ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1 : targetLine - 1;
+            }
+        } else {
+            newPosition = lines[targetLine][currentCol];
+        }
+
+        const elements = viewportContainer.children(":not(.caret)");
+        if (newPosition === -1) {
+            elements.first().before(caret);
+        } else {
+            elements.eq(newPosition).after(caret);
+        }
+        body.data("caret_position", newPosition);
         return true;
     };
 

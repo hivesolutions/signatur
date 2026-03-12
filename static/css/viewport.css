@@ -122,3 +122,97 @@
 .viewport > .main-container > .fonts-container > .font:hover {
     background-color: #f0f0f0;
 }
+
+.viewport > .main-container > .viewport-preview > .ruler {
+    display: none;
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active > .ruler {
+    display: block;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick {
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-line {
+    background-color: #9d9d9d;
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-label {
+    color: #6d6d6d;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-unit {
+    color: #9d9d9d;
+    font-size: 8px;
+    letter-spacing: 0.3px;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal {
+    height: 20px;
+    left: 0px;
+    top: -12px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-line {
+    bottom: 0px;
+    left: 0px;
+    width: 1px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.major > .ruler-line {
+    height: 10px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.minor > .ruler-line {
+    height: 6px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-label {
+    bottom: 12px;
+    left: 2px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-unit {
+    bottom: 0px;
+    right: -24px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical {
+    left: -12px;
+    top: 0px;
+    width: 20px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-line {
+    height: 1px;
+    right: 0px;
+    top: 0px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.major > .ruler-line {
+    width: 10px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.minor > .ruler-line {
+    width: 6px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-label {
+    right: 12px;
+    top: -5px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-unit {
+    bottom: -16px;
+    right: 0px;
+}

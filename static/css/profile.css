@@ -199,6 +199,7 @@
 }
 
 .viewport > .main-container > .viewport-preview.profile-active {
+    margin: 48px auto 16px 32px;
     position: relative;
 }
 

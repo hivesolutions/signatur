@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Dry run checkbox in the engraving confirmation modal
 * Raw profile JSON viewer with show/hide toggle in the profile info panel
 * Newline rendering in report views (EN and PT)
+* Horizontal and vertical rulers adjacent to the viewport preview
+* Arrow key navigation (left, right, up, down) for caret movement
+* Delete key support for forward character deletion
 
 ### Changed
 
