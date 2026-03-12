@@ -61,6 +61,11 @@ const simplifyText = function(text, separator = "") {
 
             fonts.click(function() {
                 const _element = jQuery(this);
+                if (_element.hasClass("selected")) {
+                    _element.removeClass("selected");
+                    context.triggerHandler("defont", [_element.attr("data-font")]);
+                    return;
+                }
                 fonts.removeClass("selected");
                 _element.addClass("selected");
                 context.triggerHandler("font", [_element.attr("data-font")]);
@@ -718,6 +723,11 @@ jQuery(document).ready(function() {
         keyboardContainer.css("font-family", '"' + font + '"');
         inputViewport.css("font-family", '"' + font + '"');
         body.data("font", font);
+    });
+    fontsContainer.bind("defont", function(event, font) {
+        keyboardContainer.hide();
+        emojisContainer.hide();
+        emojispContainer.hide();
     });
 
     const updateForm = function(value) {

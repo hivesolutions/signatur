@@ -9,15 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
-
-### Changed
-
-*
-
-### Fixed
-
-*
+* Support for toggling the visual keyboard by clicking the same font again
 
 ## [0.7.2] - 2024-05-18
 

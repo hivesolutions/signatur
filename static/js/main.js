@@ -424,6 +424,11 @@ jQuery(document).ready(function() {
         inputViewport.css("font-family", '"' + font + '"');
         body.data("font", font);
     });
+    fontsContainer.bind("defont", function(event, font) {
+        keyboardContainer.hide();
+        emojisContainer.hide();
+        emojispContainer.hide();
+    });
 
     const updateForm = function(value) {
         const options = master[value] || {};
