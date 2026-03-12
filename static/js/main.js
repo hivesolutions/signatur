@@ -43,6 +43,11 @@ jQuery(document).ready(function() {
     const rulerVertical = jQuery(".ruler-vertical");
     const rulersMode = jQuery(".rulers-mode");
     const viewportOptionsRulers = jQuery(".viewport-options-rulers");
+    const marginContainer = jQuery(".margin-container");
+    const marginLeft = jQuery(".margin-left");
+    const marginRight = jQuery(".margin-right");
+    const marginTop = jQuery(".margin-top");
+    const marginBottom = jQuery(".margin-bottom");
     const fontsContainer = jQuery(".fonts-container");
     const keyboardContainer = jQuery(".keyboard-container");
     const emojisContainer = jQuery(".emojis-container");
@@ -180,6 +185,28 @@ jQuery(document).ready(function() {
         }
     };
 
+    // retrieves the current margin values from the margin
+    // input fields returning a padding-like object in mm
+    const getMargins = function() {
+        return {
+            left: parseFloat(marginLeft.val()) || 0,
+            right: parseFloat(marginRight.val()) || 0,
+            top: parseFloat(marginTop.val()) || 0,
+            bottom: parseFloat(marginBottom.val()) || 0
+        };
+    };
+
+    // populates the margin input fields with the default
+    // padding values from the given profile definition
+    const populateMargins = function(profile) {
+        if (!profile) return;
+        const padding = profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+        marginLeft.val(padding.left);
+        marginRight.val(padding.right);
+        marginTop.val(padding.top);
+        marginBottom.val(padding.bottom);
+    };
+
     // renders the viewport preview SVG based on the selected
     // profile definition including bounds and safe drawable area
     const renderViewportPreview = function(profile) {
@@ -203,7 +230,7 @@ jQuery(document).ready(function() {
         const height = profile.height * VIEWPORT_SCALE;
         const showBounds = profile.preview ? profile.preview.show_bounds : false;
         const showSafeArea = profile.preview ? profile.preview.show_safe_area : false;
-        const padding = profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+        const padding = getMargins();
 
         const svg = viewportSvg.get(0);
         svg.setAttribute("width", width);
@@ -379,7 +406,7 @@ jQuery(document).ready(function() {
         if (!profile || !profile.font_size) return null;
 
         const fs = profile.font_size;
-        const padding = profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+        const padding = getMargins();
         const safeW = profile.width - padding.left - padding.right;
         const safeH = profile.height - padding.top - padding.bottom;
 
@@ -429,15 +456,18 @@ jQuery(document).ready(function() {
     profileSelect.bind("change", function() {
         const key = jQuery(this).val();
         currentProfile = key ? profiles[key] : null;
+        if (currentProfile) {
+            populateMargins(currentProfile);
+            marginContainer.addClass("visible");
+            viewportOptionsRulers.addClass("visible");
+        } else {
+            marginContainer.removeClass("visible");
+            viewportOptionsRulers.removeClass("visible");
+        }
         renderViewportPreview(currentProfile);
         renderRulers(currentProfile);
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
-        if (currentProfile) {
-            viewportOptionsRulers.addClass("visible");
-        } else {
-            viewportOptionsRulers.removeClass("visible");
-        }
         applyFontSize();
     });
 
@@ -468,6 +498,13 @@ jQuery(document).ready(function() {
             rulerHorizontal.hide();
             rulerVertical.hide();
         }
+    });
+
+    // registers for the change in the margin input fields
+    // to re-render the viewport preview in real time
+    jQuery(".margin-input").bind("input", function() {
+        renderViewportPreview(currentProfile);
+        applyFontSize();
     });
 
     // loads the available profiles from the server

@@ -247,6 +247,70 @@
     vertical-align: middle;
 }
 
+.viewport-options > .margin-container {
+    display: none;
+}
+
+.viewport-options > .margin-container.visible {
+    display: block;
+}
+
+.viewport-options > .margin-container > .margin-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+}
+
+.viewport-options > .margin-container > .margin-fields > .margin-field {
+    display: flex;
+    flex-direction: column;
+    width: calc(50% - 5px);
+}
+
+.viewport-options > .margin-container > .margin-fields > .margin-field > .margin-label {
+    color: #6d6d6d;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.viewport-options > .margin-container > .margin-fields > .margin-field > .margin-input {
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
+    background-color: #f4f7fa;
+    border: 2px solid #f4f7fa;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    height: 28px;
+    letter-spacing: 0.3px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 8px 0px 8px;
+    text-align: center;
+    width: 100%;
+}
+
+.viewport-options > .margin-container > .margin-fields > .margin-field > .margin-input:focus {
+    background-color: #ffffff;
+    border-color: #2d2d2d;
+}
+
 .viewport > .main-container > .viewport-preview {
     display: inline-block;
     margin: 0px auto 16px auto;

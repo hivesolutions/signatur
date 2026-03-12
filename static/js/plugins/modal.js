@@ -72,6 +72,11 @@
                         printData.width = machine.viewport_width || profile.width;
                         printData.height = machine.viewport_height || profile.height;
                         printData.font_size = parseInt(fontSizeRange.val());
+                        const ml = parseFloat(jQuery(".margin-left").val()) || 0;
+                        const mr = parseFloat(jQuery(".margin-right").val()) || 0;
+                        const mt = parseFloat(jQuery(".margin-top").val()) || 0;
+                        const mb = parseFloat(jQuery(".margin-bottom").val()) || 0;
+                        printData.margins = [ml, mr, mt, mb];
                     }
                 }
 
