@@ -7,7 +7,7 @@
 
 .viewport > .main-container > .keyboard-container {
     display: none;
-    width: 620px;
+    width: 700px;
 }
 
 .viewport > .main-container > .keyboard-container.lowercase {

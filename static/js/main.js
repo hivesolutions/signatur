@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
     const buttonReceipt = jQuery(".button-receipt");
     const buttonDownload = jQuery(".button-download");
     const buttonConfigure = jQuery(".button-configure");
-    const profileContainer = jQuery(".profile-container");
+    const viewportOptions = jQuery(".viewport-options");
     const profileInfo = jQuery(".profile-info");
     const profileInfoName = jQuery(".profile-info-name");
     const profileInfoDimensions = jQuery(".profile-info-dimensions");
@@ -41,6 +41,8 @@ jQuery(document).ready(function() {
     const viewportSvg = jQuery(".viewport-svg");
     const rulerHorizontal = jQuery(".ruler-horizontal");
     const rulerVertical = jQuery(".ruler-vertical");
+    const rulersMode = jQuery(".rulers-mode");
+    const viewportOptionsRulers = jQuery(".viewport-options-rulers");
     const fontsContainer = jQuery(".fonts-container");
     const keyboardContainer = jQuery(".keyboard-container");
     const emojisContainer = jQuery(".emojis-container");
@@ -171,7 +173,7 @@ jQuery(document).ready(function() {
                 option.text(profile.name);
                 profileSelect.append(option);
             }
-            profileContainer.addClass("visible");
+            viewportOptions.addClass("visible");
             modalOverlayConfirm.data("profiles", profiles);
         } catch (err) {
             // silently ignores profile loading errors
@@ -309,6 +311,14 @@ jQuery(document).ready(function() {
             rulerVertical.append(tick);
         }
         rulerVertical.append("<span class=\"ruler-unit\">" + unit + "</span>");
+
+        // applies the current rulers visibility based on the
+        // show rulers checkbox state in the viewport options
+        const showRulers = rulersMode.prop("checked");
+        if (!showRulers) {
+            rulerHorizontal.hide();
+            rulerVertical.hide();
+        }
     };
 
     // updates the floating profile info block with the
@@ -423,6 +433,11 @@ jQuery(document).ready(function() {
         renderRulers(currentProfile);
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
+        if (currentProfile) {
+            viewportOptionsRulers.addClass("visible");
+        } else {
+            viewportOptionsRulers.removeClass("visible");
+        }
         applyFontSize();
     });
 
@@ -440,6 +455,19 @@ jQuery(document).ready(function() {
         const isAutomatic = jQuery(this).prop("checked");
         fontSizeRange.prop("disabled", isAutomatic);
         applyFontSize();
+    });
+
+    // registers for the change in the rulers mode checkbox
+    // to toggle the visibility of the viewport rulers
+    rulersMode.bind("change", function() {
+        const showRulers = jQuery(this).prop("checked");
+        if (showRulers) {
+            rulerHorizontal.show();
+            rulerVertical.show();
+        } else {
+            rulerHorizontal.hide();
+            rulerVertical.hide();
+        }
     });
 
     // loads the available profiles from the server

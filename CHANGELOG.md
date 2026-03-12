@@ -19,10 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Horizontal and vertical rulers adjacent to the viewport preview
 * Arrow key navigation (left, right, up, down) for caret movement
 * Delete key support for forward character deletion
+* Floating viewport options panel with profile selection, font size controls, and rulers toggle
 
 ### Changed
 
 * Line height in viewport preview now scales proportionally to font size (1.2x)
+* Moved profile and font size controls from inline layout to fixed options panel
 
 ## [0.7.2] - 2024-05-18
 
