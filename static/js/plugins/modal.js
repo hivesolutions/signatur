@@ -27,6 +27,7 @@
                 if (specs.profile) html += "<div class=\"modal-spec\"><strong>Profile:</strong> " + jQuery("<span>").text(specs.profile).html() + "</div>";
                 if (specs.viewport) html += "<div class=\"modal-spec\"><strong>Viewport:</strong> " + jQuery("<span>").text(specs.viewport).html() + "</div>";
                 if (specs.font_size) html += "<div class=\"modal-spec\"><strong>Font size:</strong> " + jQuery("<span>").text(specs.font_size).html() + "</div>";
+                if (specs.margins) html += "<div class=\"modal-spec\"><strong>Margins:</strong> " + jQuery("<span>").text(specs.margins).html() + "</div>";
                 if (specs.node) html += "<div class=\"modal-spec\"><strong>Node:</strong> " + jQuery("<span>").text(specs.node).html() + "</div>";
                 modalSpecs.html(html);
                 context.addClass("visible");

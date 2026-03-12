@@ -133,6 +133,8 @@ jQuery(document).ready(function() {
             specs.profile = currentProfile.name;
             specs.viewport = width + " x " + height + (unit ? " " + unit : "");
             specs.font_size = fontSizeRange.val() + (unit ? " " + unit : "");
+            const margins = getMargins();
+            specs.margins = margins.left + ", " + margins.right + ", " + margins.top + ", " + margins.bottom + (unit ? " " + unit : "");
         }
 
         modalOverlayConfirm.modal("confirm", specs);
