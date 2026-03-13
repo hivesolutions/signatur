@@ -216,3 +216,32 @@
     bottom: -16px;
     right: 0px;
 }
+
+.viewport > .main-container > .viewport-preview > .crosshair {
+    display: none;
+    pointer-events: none;
+    position: absolute;
+    z-index: 50;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active > .crosshair {
+    display: none;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active.crosshair-active > .crosshair {
+    display: block;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair-horizontal {
+    border-top: 1px dashed #9d9d9d;
+    height: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair-vertical {
+    border-left: 1px dashed #9d9d9d;
+    height: 100%;
+    top: 0px;
+    width: 0px;
+}

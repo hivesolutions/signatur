@@ -306,6 +306,24 @@
     vertical-align: middle;
 }
 
+.viewport-options > .viewport-options-body > .viewport-options-crosshair {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-crosshair.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-crosshair > .viewport-options-option {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-crosshair > .viewport-options-option > .crosshair-mode {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
 .viewport-options > .viewport-options-body > .zoom-container {
     display: none;
 }
@@ -392,6 +410,20 @@
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-input:focus {
     background-color: #ffffff;
     border-color: #2d2d2d;
+}
+
+.viewport-options > .viewport-options-body > .position-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .position-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .position-container > .position-value {
+    color: #6d6d6d;
+    font-size: 12px;
+    letter-spacing: 0.3px;
 }
 
 .viewport > .main-container > .viewport-preview {

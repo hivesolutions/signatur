@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Zoom slider in viewport options panel with per-profile default zoom and layout compensation
 * Collapsible viewport options and profile info panels with animated toggle
 * Dynamic profile info panel title showing the selected profile name
+* Crosshair lines on viewport hover with toggleable visibility checkbox
+* Position readout in viewport options panel showing X/Y coordinates in mm
 
 ### Changed
 

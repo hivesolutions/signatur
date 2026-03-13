@@ -570,6 +570,35 @@ body.ldj .line {
     right: 0px;
 }
 
+.viewport > .main-container > .viewport-preview > .crosshair {
+    display: none;
+    pointer-events: none;
+    position: absolute;
+    z-index: 50;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active > .crosshair {
+    display: none;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active.crosshair-active > .crosshair {
+    display: block;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair-horizontal {
+    border-top: 1px dashed #9d9d9d;
+    height: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair-vertical {
+    border-left: 1px dashed #9d9d9d;
+    height: 100%;
+    top: 0px;
+    width: 0px;
+}
+
 .viewport > .main-container > .emojis-container,
 .viewport > .main-container > .emojisp-container,
 .viewport > .main-container > .keyboard-container {
@@ -960,6 +989,24 @@ body.ldj .line {
     vertical-align: middle;
 }
 
+.viewport-options > .viewport-options-body > .viewport-options-crosshair {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-crosshair.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-crosshair > .viewport-options-option {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-crosshair > .viewport-options-option > .crosshair-mode {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
 .viewport-options > .viewport-options-body > .zoom-container {
     display: none;
 }
@@ -1046,6 +1093,20 @@ body.ldj .line {
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-input:focus {
     background-color: #ffffff;
     border-color: #2d2d2d;
+}
+
+.viewport-options > .viewport-options-body > .position-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .position-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .position-container > .position-value {
+    color: #6d6d6d;
+    font-size: 12px;
+    letter-spacing: 0.3px;
 }
 
 .viewport > .main-container > .viewport-preview {

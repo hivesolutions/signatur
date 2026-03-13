@@ -90,9 +90,15 @@ jQuery(document).ready(function() {
     const rulerVertical = jQuery(".ruler-vertical");
     const rulersMode = jQuery(".rulers-mode");
     const viewportOptionsRulers = jQuery(".viewport-options-rulers");
+    const crosshairMode = jQuery(".crosshair-mode");
+    const viewportOptionsCrosshair = jQuery(".viewport-options-crosshair");
     const zoomContainer = jQuery(".zoom-container");
     const zoomRange = jQuery(".zoom-range");
     const zoomValue = jQuery(".zoom-value");
+    const crosshairHorizontal = jQuery(".crosshair-horizontal");
+    const crosshairVertical = jQuery(".crosshair-vertical");
+    const positionContainer = jQuery(".position-container");
+    const positionValue = jQuery(".position-value");
     const marginContainer = jQuery(".margin-container");
     const marginLeft = jQuery(".margin-left");
     const marginRight = jQuery(".margin-right");
@@ -545,11 +551,15 @@ jQuery(document).ready(function() {
             zoomRange.val(defaultZoom);
             marginContainer.addClass("visible");
             viewportOptionsRulers.addClass("visible");
+            viewportOptionsCrosshair.addClass("visible");
             zoomContainer.addClass("visible");
+            positionContainer.addClass("visible");
         } else {
             marginContainer.removeClass("visible");
             viewportOptionsRulers.removeClass("visible");
+            viewportOptionsCrosshair.removeClass("visible");
             zoomContainer.removeClass("visible");
+            positionContainer.removeClass("visible");
         }
         renderViewportPreview(currentProfile);
         renderRulers(currentProfile);
@@ -599,6 +609,41 @@ jQuery(document).ready(function() {
     jQuery(".margin-input").bind("input", function() {
         renderViewportPreview(currentProfile);
         applyFontSize();
+    });
+
+    // registers for the change in the crosshair mode checkbox
+    // to toggle the visibility of the viewport crosshair lines
+    crosshairMode.bind("change", function() {
+        if (!crosshairMode.prop("checked")) {
+            viewportPreview.removeClass("crosshair-active");
+            positionValue.text("—");
+        }
+    });
+
+    // registers for the mouse move event on the viewport preview
+    // to display crosshair lines and update the position readout
+    viewportPreview.bind("mousemove", function(event) {
+        if (!currentProfile) return;
+        const offset = viewportPreview.offset();
+        const zoom = parseFloat(zoomRange.val()) || 1;
+        const x = (event.pageX - offset.left) / zoom;
+        const y = (event.pageY - offset.top) / zoom;
+        const mmX = (x / VIEWPORT_SCALE).toFixed(1);
+        const mmY = (y / VIEWPORT_SCALE).toFixed(1);
+        const unit = currentProfile.unit || "mm";
+        if (crosshairMode.prop("checked")) {
+            crosshairHorizontal.css("top", y + "px");
+            crosshairVertical.css("left", x + "px");
+            viewportPreview.addClass("crosshair-active");
+        }
+        positionValue.text("X " + mmX + " " + unit + "  Y " + mmY + " " + unit);
+    });
+
+    // registers for the mouse leave event on the viewport preview
+    // to hide the crosshair lines and clear the position readout
+    viewportPreview.bind("mouseleave", function() {
+        viewportPreview.removeClass("crosshair-active");
+        positionValue.text("—");
     });
 
     // loads the available profiles from the server

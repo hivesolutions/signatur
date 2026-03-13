@@ -52,6 +52,12 @@
                     Show Rulers
                 </label>
             </div>
+            <div class="viewport-options-field viewport-options-crosshair">
+                <label class="viewport-options-option">
+                    <input class="crosshair-mode" type="checkbox" checked />
+                    Show Crosshair
+                </label>
+            </div>
             <div class="viewport-options-field zoom-container">
                 <label class="viewport-options-label">Zoom</label>
                 <input class="zoom-range" type="range" min="0.5" max="5" value="1" step="0.5" />
@@ -78,6 +84,10 @@
                     </div>
                 </div>
             </div>
+            <div class="viewport-options-field position-container">
+                <label class="viewport-options-label">Position</label>
+                <span class="position-value">—</span>
+            </div>
             </div>
         </div>
         <div class="viewport">
@@ -85,6 +95,8 @@
                 <div class="viewport-preview">
                     <div class="ruler ruler-horizontal"></div>
                     <div class="ruler ruler-vertical"></div>
+                    <div class="crosshair crosshair-horizontal"></div>
+                    <div class="crosshair crosshair-vertical"></div>
                     <svg class="viewport-svg"></svg>
                     <div class="viewer-container" data-text="<%= config.text %>">
                     <% if (text) { %>
