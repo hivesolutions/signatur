@@ -107,6 +107,73 @@ describe("Profile", function() {
             );
         });
 
+        it("should validate a complete valid circular profile", () => {
+            const errors = lib.validateProfile({
+                id: "small-medal",
+                name: "Small Medal",
+                description: "A small circular medal.",
+                width: 14,
+                height: 14,
+                unit: "mm",
+                orientation: "landscape",
+                shape: "circle",
+                padding: { top: 2, right: 2, bottom: 2, left: 2 },
+                font_size: { mode: "manual", default: 6, min: 3, max: 10, step: 1 },
+                text: { max_lines: 2, align: "center" },
+                preview: { show_bounds: true, show_safe_area: true },
+                machine: { viewport_width: 14, viewport_height: 14 }
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should accept valid shape values", () => {
+            const base = {
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            };
+
+            let errors = lib.validateProfile({ ...base, shape: "rectangle" });
+            assert.deepStrictEqual(errors, []);
+
+            errors = lib.validateProfile({ ...base, shape: "circle" });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject invalid shape values", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                shape: "triangle",
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.strictEqual(
+                true,
+                errors.includes("shape must be one of: rectangle, circle")
+            );
+        });
+
+        it("should accept profile without shape (optional field)", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.strictEqual(false, errors.includes("shape must be one of: rectangle, circle"));
+        });
+
         it("should reject non-positive dimensions", () => {
             const errors = lib.validateProfile({
                 id: "test",

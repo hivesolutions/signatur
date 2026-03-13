@@ -920,7 +920,7 @@ body.ldj .line {
     align-items: center;
     display: flex;
     gap: 4px;
-    width: calc(50% - 2px);
+    width: 110px;
 }
 
 .viewport-options > .margin-container > .margin-fields > .margin-field > .margin-label {
@@ -928,7 +928,8 @@ body.ldj .line {
     font-size: 10px;
     letter-spacing: 0.3px;
     text-transform: uppercase;
-    width: 36px;
+    width: 50px;
+    text-align: center;
 }
 
 .viewport-options > .margin-container > .margin-fields > .margin-field > .margin-input {

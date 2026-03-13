@@ -563,18 +563,32 @@ jQuery(document).ready(function() {
             svg.removeChild(svg.firstChild);
         }
 
-        // renders the outer bounds rectangle
+        // renders the outer bounds as a rectangle or circle
+        // depending on the shape defined in the profile
+        const isCircle = profile.shape === "circle";
         if (showBounds) {
-            const bounds = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            bounds.setAttribute("x", 0);
-            bounds.setAttribute("y", 0);
-            bounds.setAttribute("width", width);
-            bounds.setAttribute("height", height);
-            bounds.setAttribute("fill", "none");
-            bounds.setAttribute("stroke", "#2d2d2d");
-            bounds.setAttribute("stroke-width", 2);
-            bounds.setAttribute("stroke-dasharray", "6 3");
-            svg.appendChild(bounds);
+            if (isCircle) {
+                const bounds = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                bounds.setAttribute("cx", width / 2);
+                bounds.setAttribute("cy", height / 2);
+                bounds.setAttribute("r", Math.min(width, height) / 2);
+                bounds.setAttribute("fill", "none");
+                bounds.setAttribute("stroke", "#2d2d2d");
+                bounds.setAttribute("stroke-width", 2);
+                bounds.setAttribute("stroke-dasharray", "6 3");
+                svg.appendChild(bounds);
+            } else {
+                const bounds = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                bounds.setAttribute("x", 0);
+                bounds.setAttribute("y", 0);
+                bounds.setAttribute("width", width);
+                bounds.setAttribute("height", height);
+                bounds.setAttribute("fill", "none");
+                bounds.setAttribute("stroke", "#2d2d2d");
+                bounds.setAttribute("stroke-width", 2);
+                bounds.setAttribute("stroke-dasharray", "6 3");
+                svg.appendChild(bounds);
+            }
         }
 
         // renders the safe drawable area defined by padding

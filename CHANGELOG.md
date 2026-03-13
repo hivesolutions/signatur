@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Application icon (SVG, PNG 512/180/32) with monospaced S on blue gradient
 * Favicon and Apple touch icon references in HTML head
 * Icon generation script (`npm run icons`) using sharp
+* Circular profile shape support with `shape: "circle"` field
+* New "small-medal" circular profile (14x14mm)
+* Circle boundary rendering in viewport preview for circular profiles
 
 ### Changed
 
