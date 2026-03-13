@@ -28,6 +28,7 @@
     ],
     "scripts": {
         "build": "node scripts/build.js",
+        "icons": "node scripts/icons.js",
         "dev": "nodemon app.js",
         "lint": "eslint \"./**/*.js\"",
         "lint-fix": "eslint \"./**/*.js\" --fix",
@@ -58,6 +59,7 @@
         "npm-check-updates": "^16.3.18",
         "prettier": "^2.7.1",
         "prettier-config-hive": "^0.1.7",
+        "sharp": "^0.34.5",
         "sort-package-json": "^2.1.0"
     }
 }

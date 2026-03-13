@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Arrow key navigation (left, right, up, down) for caret movement
 * Delete key support for forward character deletion
 * Floating viewport options panel with profile selection, font size controls, and rulers toggle
+* Margin override controls in viewport options panel with real-time preview
+* Margins included in the engraving confirmation report
+* Application icon (SVG, PNG 512/180/32) with monospaced S on blue gradient
+* Favicon and Apple touch icon references in HTML head
+* Icon generation script (`npm run icons`) using sharp
 
 ### Changed
 
