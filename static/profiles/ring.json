@@ -19,7 +19,8 @@
     },
     "preview": {
         "show_bounds": true,
-        "show_safe_area": true
+        "show_safe_area": true,
+        "zoom": 1.5
     },
     "machine": {
         "viewport_width": 120,

@@ -459,7 +459,7 @@ body.ldj .line {
     -webkit-border-radius: 4px 4px 4px 4px;
     cursor: pointer;
     display: inline-block;
-    font-size: 22px;
+    font-size: 18px;
     height: 34px;
     line-height: 34px;
     margin: 6px 6px 6px 6px;
@@ -681,6 +681,7 @@ body.ldj .line {
     -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     visibility: hidden;
     z-index: 100;
+    min-width: 120px;
 }
 
 .profile-info.visible {
@@ -689,34 +690,62 @@ body.ldj .line {
     visibility: visible;
 }
 
-.profile-info > .profile-info-name {
+.profile-info > .profile-info-title {
+    cursor: pointer;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 12px;
+    position: relative;
     text-transform: uppercase;
+    transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
 }
 
-.profile-info > .profile-info-dimensions {
+.profile-info > .profile-info-title > .profile-info-toggle {
+    font-size: 14px;
+    position: absolute;
+    right: -4px;
+}
+
+.profile-info > .profile-info-body {
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
+.profile-info.minimized > .profile-info-body {
+    max-height: 0px;
+}
+
+.profile-info > .profile-info-body > .profile-info-dimensions {
     color: #6d6d6d;
     font-size: 12px;
     letter-spacing: 0.3px;
     margin-bottom: 2px;
 }
 
-.profile-info > .profile-info-orientation {
+.profile-info > .profile-info-body > .profile-info-orientation {
     color: #6d6d6d;
     font-size: 12px;
     letter-spacing: 0.3px;
 }
 
-.profile-info > .profile-info-lines {
+.profile-info > .profile-info-body > .profile-info-lines {
     color: #6d6d6d;
     font-size: 12px;
     letter-spacing: 0.3px;
 }
 
-.profile-info > .profile-info-raw-toggle {
+.profile-info > .profile-info-body > .profile-info-raw-toggle {
     color: #2d2d2d;
     cursor: pointer;
     display: none;
@@ -724,11 +753,11 @@ body.ldj .line {
     margin-top: 8px;
 }
 
-.profile-info.visible > .profile-info-raw-toggle {
+.profile-info.visible > .profile-info-body > .profile-info-raw-toggle {
     display: inline-block;
 }
 
-.profile-info > .profile-info-raw {
+.profile-info > .profile-info-body > .profile-info-raw {
     background-color: #f4f7fa;
     border: 1px solid #e0e0e0;
     border-radius: 4px 4px 4px 4px;
@@ -789,22 +818,50 @@ body.ldj .line {
 }
 
 .viewport-options > .viewport-options-title {
+    cursor: pointer;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.5px;
     margin-bottom: 12px;
+    position: relative;
     text-transform: uppercase;
+    transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
 }
 
-.viewport-options > .viewport-options-field {
+.viewport-options > .viewport-options-title > .viewport-options-toggle {
+    font-size: 14px;
+    position: absolute;
+    right: -4px;
+}
+
+.viewport-options > .viewport-options-body {
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
+.viewport-options.minimized > .viewport-options-body {
+    max-height: 0px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field {
     margin-bottom: 10px;
 }
 
-.viewport-options > .viewport-options-field:last-child {
+.viewport-options > .viewport-options-body > .viewport-options-field:last-child {
     margin-bottom: 0px;
 }
 
-.viewport-options > .viewport-options-field > .viewport-options-label {
+.viewport-options > .viewport-options-body > .viewport-options-field > .viewport-options-label {
     color: #6d6d6d;
     display: block;
     font-size: 11px;
@@ -813,7 +870,7 @@ body.ldj .line {
     text-transform: uppercase;
 }
 
-.viewport-options > .viewport-options-field > .profile-select {
+.viewport-options > .viewport-options-body > .viewport-options-field > .profile-select {
     appearance: none;
     -o-appearance: none;
     -ms-appearance: none;
@@ -845,26 +902,26 @@ body.ldj .line {
     width: 100%;
 }
 
-.viewport-options > .viewport-options-field > .profile-select:focus {
+.viewport-options > .viewport-options-body > .viewport-options-field > .profile-select:focus {
     background-color: #ffffff;
     border-color: #2d2d2d;
 }
 
-.viewport-options > .font-size-container {
+.viewport-options > .viewport-options-body > .font-size-container {
     display: none;
 }
 
-.viewport-options > .font-size-container.visible {
+.viewport-options > .viewport-options-body > .font-size-container.visible {
     display: block;
 }
 
-.viewport-options > .font-size-container > .font-size-range {
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-range {
     cursor: pointer;
     vertical-align: middle;
     width: 120px;
 }
 
-.viewport-options > .font-size-container > .font-size-value {
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-value {
     display: inline-block;
     font-size: 12px;
     min-width: 24px;
@@ -872,7 +929,7 @@ body.ldj .line {
     vertical-align: middle;
 }
 
-.viewport-options > .font-size-container > .font-size-mode-label {
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label {
     cursor: pointer;
     display: inline-block;
     font-size: 12px;
@@ -880,44 +937,44 @@ body.ldj .line {
     vertical-align: middle;
 }
 
-.viewport-options > .font-size-container > .font-size-mode-label > .font-size-mode {
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label > .font-size-mode {
     cursor: pointer;
     vertical-align: middle;
 }
 
-.viewport-options > .viewport-options-rulers {
+.viewport-options > .viewport-options-body > .viewport-options-rulers {
     display: none;
 }
 
-.viewport-options > .viewport-options-rulers.visible {
+.viewport-options > .viewport-options-body > .viewport-options-rulers.visible {
     display: block;
 }
 
-.viewport-options > .viewport-options-rulers > .viewport-options-option {
+.viewport-options > .viewport-options-body > .viewport-options-rulers > .viewport-options-option {
     cursor: pointer;
     font-size: 12px;
 }
 
-.viewport-options > .viewport-options-rulers > .viewport-options-option > .rulers-mode {
+.viewport-options > .viewport-options-body > .viewport-options-rulers > .viewport-options-option > .rulers-mode {
     cursor: pointer;
     vertical-align: middle;
 }
 
-.viewport-options > .zoom-container {
+.viewport-options > .viewport-options-body > .zoom-container {
     display: none;
 }
 
-.viewport-options > .zoom-container.visible {
+.viewport-options > .viewport-options-body > .zoom-container.visible {
     display: block;
 }
 
-.viewport-options > .zoom-container > .zoom-range {
+.viewport-options > .viewport-options-body > .zoom-container > .zoom-range {
     cursor: pointer;
     vertical-align: middle;
     width: 120px;
 }
 
-.viewport-options > .zoom-container > .zoom-value {
+.viewport-options > .viewport-options-body > .zoom-container > .zoom-value {
     display: inline-block;
     font-size: 12px;
     min-width: 24px;
@@ -925,28 +982,28 @@ body.ldj .line {
     vertical-align: middle;
 }
 
-.viewport-options > .margin-container {
+.viewport-options > .viewport-options-body > .margin-container {
     display: none;
 }
 
-.viewport-options > .margin-container.visible {
+.viewport-options > .viewport-options-body > .margin-container.visible {
     display: block;
 }
 
-.viewport-options > .margin-container > .margin-fields {
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields {
     display: flex;
     flex-wrap: wrap;
     gap: 4px 4px;
 }
 
-.viewport-options > .margin-container > .margin-fields > .margin-field {
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field {
     align-items: center;
     display: flex;
     gap: 4px;
     width: 110px;
 }
 
-.viewport-options > .margin-container > .margin-fields > .margin-field > .margin-label {
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-label {
     color: #6d6d6d;
     font-size: 10px;
     letter-spacing: 0.3px;
@@ -955,7 +1012,7 @@ body.ldj .line {
     text-align: center;
 }
 
-.viewport-options > .margin-container > .margin-fields > .margin-field > .margin-input {
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-input {
     appearance: none;
     -o-appearance: none;
     -ms-appearance: none;
@@ -986,7 +1043,7 @@ body.ldj .line {
     width: 42px;
 }
 
-.viewport-options > .margin-container > .margin-fields > .margin-field > .margin-input:focus {
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-input:focus {
     background-color: #ffffff;
     border-color: #2d2d2d;
 }

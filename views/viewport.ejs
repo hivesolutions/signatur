@@ -19,15 +19,18 @@
             <% } %>
         </div>
         <div class="profile-info">
-            <div class="profile-info-name"></div>
-            <div class="profile-info-dimensions"></div>
-            <div class="profile-info-orientation"></div>
-            <div class="profile-info-lines"></div>
-            <a class="profile-info-raw-toggle" href="#">Show Raw</a>
-            <pre class="profile-info-raw"></pre>
+            <div class="profile-info-title">Profile <span class="profile-info-toggle">▾</span></div>
+            <div class="profile-info-body">
+                <div class="profile-info-dimensions"></div>
+                <div class="profile-info-orientation"></div>
+                <div class="profile-info-lines"></div>
+                <a class="profile-info-raw-toggle" href="#">Show Raw</a>
+                <pre class="profile-info-raw"></pre>
+            </div>
         </div>
         <div class="viewport-options">
-            <div class="viewport-options-title">Options</div>
+            <div class="viewport-options-title">Options <span class="viewport-options-toggle">▾</span></div>
+            <div class="viewport-options-body">
             <div class="viewport-options-field">
                 <label class="viewport-options-label">Profile</label>
                 <select class="profile-select">
@@ -74,6 +77,7 @@
                         <input class="margin-input margin-bottom" type="number" min="0" step="1" value="0" />
                     </div>
                 </div>
+            </div>
             </div>
         </div>
         <div class="viewport">

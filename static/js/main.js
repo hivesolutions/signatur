@@ -11,13 +11,16 @@ jQuery(document).ready(function() {
     const buttonConfigure = jQuery(".button-configure");
     const viewportOptions = jQuery(".viewport-options");
     const profileInfo = jQuery(".profile-info");
-    const profileInfoName = jQuery(".profile-info-name");
     const profileInfoDimensions = jQuery(".profile-info-dimensions");
     const profileInfoOrientation = jQuery(".profile-info-orientation");
     const profileInfoLines = jQuery(".profile-info-lines");
     const profileInfoRawToggle = jQuery(".profile-info-raw-toggle");
     const profileInfoRaw = jQuery(".profile-info-raw");
     const profileSelect = jQuery(".profile-select");
+    const profileInfoTitle = jQuery(".profile-info-title");
+    const profileInfoToggle = jQuery(".profile-info-toggle");
+    const viewportOptionsTitle = jQuery(".viewport-options-title");
+    const viewportOptionsToggle = jQuery(".viewport-options-toggle");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -31,6 +34,50 @@ jQuery(document).ready(function() {
             profileInfoRaw.show();
             profileInfoRawToggle.text("Hide Raw");
         }
+    });
+
+    const profileInfoBody = jQuery(".profile-info-body");
+    const viewportOptionsBody = jQuery(".viewport-options-body");
+
+    // toggles a collapsible panel between expanded and minimized
+    // states using a smooth max-height transition on the body
+    const togglePanel = function(panel, panelBody, panelTitle, toggleIcon) {
+        const bodyEl = panelBody.get(0);
+        const minimized = panel.hasClass("minimized");
+        if (minimized) {
+            panel.removeClass("minimized");
+            const height = bodyEl.scrollHeight;
+            panelBody.css("max-height", "0px");
+            panelTitle.css("margin-bottom", "0px");
+            bodyEl.offsetHeight;
+            panelBody.css("max-height", height + "px");
+            panelTitle.css("margin-bottom", "");
+            toggleIcon.text("▾");
+            panelBody.one("transitionend", function() {
+                panelBody.css("max-height", "");
+            });
+        } else {
+            panelBody.css("max-height", bodyEl.scrollHeight + "px");
+            bodyEl.offsetHeight;
+            panelBody.css("max-height", "0px");
+            panelTitle.css("margin-bottom", "0px");
+            toggleIcon.text("▸");
+            panelBody.one("transitionend", function() {
+                panel.addClass("minimized");
+            });
+        }
+    };
+
+    // registers for the click operation on the profile info
+    // title to toggle the panel between expanded and minimized
+    profileInfoTitle.click(function() {
+        togglePanel(profileInfo, profileInfoBody, profileInfoTitle, profileInfoToggle);
+    });
+
+    // registers for the click operation on the viewport options
+    // title to toggle the panel between expanded and minimized
+    viewportOptionsTitle.click(function() {
+        togglePanel(viewportOptions, viewportOptionsBody, viewportOptionsTitle, viewportOptionsToggle);
     });
 
     const fontSizeContainer = jQuery(".font-size-container");
@@ -390,11 +437,12 @@ jQuery(document).ready(function() {
             profileInfo.removeClass("visible");
             profileInfoRaw.hide();
             profileInfoRawToggle.text("Show Raw");
+            profileInfoTitle.contents().first().replaceWith("Profile ");
             return;
         }
 
         const unit = profile.unit || "";
-        profileInfoName.text(profile.name);
+        profileInfoTitle.contents().first().replaceWith(profile.name + " ");
         profileInfoDimensions.text(profile.width + " x " + profile.height + (unit ? " " + unit : ""));
         profileInfoOrientation.text(profile.orientation || "");
         const text = profile.text || {};
