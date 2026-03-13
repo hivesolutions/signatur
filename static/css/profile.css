@@ -124,6 +124,7 @@
     -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     visibility: hidden;
     z-index: 100;
+    width: 260px;
     max-width: 260px;
 }
 
@@ -248,6 +249,28 @@
     vertical-align: middle;
 }
 
+.viewport-options > .zoom-container {
+    display: none;
+}
+
+.viewport-options > .zoom-container.visible {
+    display: block;
+}
+
+.viewport-options > .zoom-container > .zoom-range {
+    cursor: pointer;
+    vertical-align: middle;
+    width: 120px;
+}
+
+.viewport-options > .zoom-container > .zoom-value {
+    display: inline-block;
+    font-size: 12px;
+    min-width: 24px;
+    text-align: center;
+    vertical-align: middle;
+}
+
 .viewport-options > .margin-container {
     display: none;
 }
@@ -322,6 +345,12 @@
 .viewport > .main-container > .viewport-preview.profile-active {
     margin: 48px auto 16px 32px;
     position: relative;
+    transform-origin: 0px 0px;
+    -o-transform-origin: 0px 0px;
+    -ms-transform-origin: 0px 0px;
+    -moz-transform-origin: 0px 0px;
+    -khtml-transform-origin: 0px 0px;
+    -webkit-transform-origin: 0px 0px;
 }
 
 .viewport > .main-container > .viewport-preview > .viewport-svg {

@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Circular profile shape support with `shape: "circle"` field
 * New "small-medal" circular profile (14x14mm)
 * Circle boundary rendering in viewport preview for circular profiles
+* Zoom slider in viewport options panel with per-profile default zoom and layout compensation
 
 ### Changed
 

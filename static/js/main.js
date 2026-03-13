@@ -43,6 +43,9 @@ jQuery(document).ready(function() {
     const rulerVertical = jQuery(".ruler-vertical");
     const rulersMode = jQuery(".rulers-mode");
     const viewportOptionsRulers = jQuery(".viewport-options-rulers");
+    const zoomContainer = jQuery(".zoom-container");
+    const zoomRange = jQuery(".zoom-range");
+    const zoomValue = jQuery(".zoom-value");
     const marginContainer = jQuery(".margin-container");
     const marginLeft = jQuery(".margin-left");
     const marginRight = jQuery(".margin-right");
@@ -214,6 +217,13 @@ jQuery(document).ready(function() {
     const renderViewportPreview = function(profile) {
         if (!profile) {
             viewportPreview.removeClass("profile-active");
+            viewportPreview.css({
+                width: "",
+                height: "",
+                transform: "",
+                "margin-bottom": "",
+                "margin-right": ""
+            });
             viewportContainer.css({
                 position: "",
                 left: "",
@@ -244,32 +254,18 @@ jQuery(document).ready(function() {
             svg.removeChild(svg.firstChild);
         }
 
-        // renders the outer bounds as a rectangle or circle
-        // depending on the shape defined in the profile
-        const isCircle = profile.shape === "circle";
+        // renders the outer bounds as a dashed rectangle
         if (showBounds) {
-            if (isCircle) {
-                const bounds = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                bounds.setAttribute("cx", width / 2);
-                bounds.setAttribute("cy", height / 2);
-                bounds.setAttribute("r", Math.min(width, height) / 2);
-                bounds.setAttribute("fill", "none");
-                bounds.setAttribute("stroke", "#2d2d2d");
-                bounds.setAttribute("stroke-width", 2);
-                bounds.setAttribute("stroke-dasharray", "6 3");
-                svg.appendChild(bounds);
-            } else {
-                const bounds = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                bounds.setAttribute("x", 0);
-                bounds.setAttribute("y", 0);
-                bounds.setAttribute("width", width);
-                bounds.setAttribute("height", height);
-                bounds.setAttribute("fill", "none");
-                bounds.setAttribute("stroke", "#2d2d2d");
-                bounds.setAttribute("stroke-width", 2);
-                bounds.setAttribute("stroke-dasharray", "6 3");
-                svg.appendChild(bounds);
-            }
+            const bounds = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            bounds.setAttribute("x", 0);
+            bounds.setAttribute("y", 0);
+            bounds.setAttribute("width", width);
+            bounds.setAttribute("height", height);
+            bounds.setAttribute("fill", "none");
+            bounds.setAttribute("stroke", "#2d2d2d");
+            bounds.setAttribute("stroke-width", 2);
+            bounds.setAttribute("stroke-dasharray", "6 3");
+            svg.appendChild(bounds);
         }
 
         // renders the safe drawable area defined by padding
@@ -308,6 +304,7 @@ jQuery(document).ready(function() {
             "min-width": "0px"
         });
 
+        viewportPreview.css({ width: width + "px", height: height + "px" });
         viewportPreview.addClass("profile-active");
     };
 
@@ -362,6 +359,28 @@ jQuery(document).ready(function() {
             rulerHorizontal.hide();
             rulerVertical.hide();
         }
+    };
+
+    // applies the current zoom level from the zoom slider
+    // using a CSS transform to scale the viewport preview
+    // and compensating the layout margins for the scaled size
+    const applyZoom = function() {
+        const zoom = parseFloat(zoomRange.val()) || 1;
+        zoomValue.text(zoom + "x");
+        const width = parseFloat(viewportPreview.css("width")) || 0;
+        const height = parseFloat(viewportPreview.css("height")) || 0;
+        const extraWidth = width * (zoom - 1);
+        const extraHeight = height * (zoom - 1);
+        viewportPreview.css({
+            transform: "scale(" + zoom + ")",
+            "-o-transform": "scale(" + zoom + ")",
+            "-ms-transform": "scale(" + zoom + ")",
+            "-moz-transform": "scale(" + zoom + ")",
+            "-khtml-transform": "scale(" + zoom + ")",
+            "-webkit-transform": "scale(" + zoom + ")",
+            "margin-bottom": (16 * zoom + extraHeight) + "px",
+            "margin-right": extraWidth + "px"
+        });
     };
 
     // updates the floating profile info block with the
@@ -474,14 +493,19 @@ jQuery(document).ready(function() {
         currentProfile = key ? profiles[key] : null;
         if (currentProfile) {
             populateMargins(currentProfile);
+            const defaultZoom = currentProfile.preview ? currentProfile.preview.zoom || 1 : 1;
+            zoomRange.val(defaultZoom);
             marginContainer.addClass("visible");
             viewportOptionsRulers.addClass("visible");
+            zoomContainer.addClass("visible");
         } else {
             marginContainer.removeClass("visible");
             viewportOptionsRulers.removeClass("visible");
+            zoomContainer.removeClass("visible");
         }
         renderViewportPreview(currentProfile);
         renderRulers(currentProfile);
+        applyZoom();
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
         applyFontSize();
@@ -514,6 +538,12 @@ jQuery(document).ready(function() {
             rulerHorizontal.hide();
             rulerVertical.hide();
         }
+    });
+
+    // registers for the change in the zoom range slider
+    // to apply the zoom transform to the viewport preview
+    zoomRange.bind("input", function() {
+        applyZoom();
     });
 
     // registers for the change in the margin input fields
