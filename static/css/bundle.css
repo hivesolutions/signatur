@@ -1007,6 +1007,16 @@ body.ldj .line {
     vertical-align: middle;
 }
 
+.viewport-options > .viewport-options-body > .viewport-options-keyboard > .viewport-options-option {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-keyboard > .viewport-options-option > .keyboard-mode {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
 .viewport-options > .viewport-options-body > .zoom-container {
     display: none;
 }

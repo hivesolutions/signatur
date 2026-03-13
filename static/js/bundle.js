@@ -411,6 +411,8 @@ jQuery(document).ready(function() {
     const viewportOptionsRulers = jQuery(".viewport-options-rulers");
     const crosshairMode = jQuery(".crosshair-mode");
     const viewportOptionsCrosshair = jQuery(".viewport-options-crosshair");
+    const keyboardMode = jQuery(".keyboard-mode");
+    const viewportOptionsKeyboard = jQuery(".viewport-options-keyboard");
     const zoomContainer = jQuery(".zoom-container");
     const zoomRange = jQuery(".zoom-range");
     const zoomValue = jQuery(".zoom-value");
@@ -939,6 +941,26 @@ jQuery(document).ready(function() {
         }
     });
 
+    // registers for the change in the keyboard mode checkbox
+    // to toggle the visibility of the visual keyboard
+    keyboardMode.bind("change", function() {
+        const showKeyboard = keyboardMode.prop("checked");
+        if (showKeyboard) {
+            const font = body.data("font");
+            if (font === "Cool Emojis") {
+                emojisContainer.show();
+            } else if (font === "Cool Emojis Pantograph") {
+                emojispContainer.show();
+            } else if (font) {
+                keyboardContainer.show();
+            }
+        } else {
+            keyboardContainer.hide();
+            emojisContainer.hide();
+            emojispContainer.hide();
+        }
+    });
+
     // registers for the mouse move event on the viewport preview
     // to display crosshair lines and update the position readout
     viewportPreview.bind("mousemove", function(event) {
@@ -1008,18 +1030,25 @@ jQuery(document).ready(function() {
     // body information on the selected font
     fontsContainer.fontscontainer();
     fontsContainer.bind("font", function(event, font) {
+        const showKeyboard = keyboardMode.prop("checked");
+        keyboardContainer.removeClass("selected");
+        emojisContainer.removeClass("selected");
+        emojispContainer.removeClass("selected");
         if (font === "Cool Emojis") {
             keyboardContainer.hide();
             emojispContainer.hide();
-            emojisContainer.show();
+            if (showKeyboard) emojisContainer.show();
+            emojisContainer.addClass("selected");
         } else if (font === "Cool Emojis Pantograph") {
             keyboardContainer.hide();
             emojisContainer.hide();
-            emojispContainer.show();
+            if (showKeyboard) emojispContainer.show();
+            emojispContainer.addClass("selected");
         } else {
             emojisContainer.hide();
             emojispContainer.hide();
-            keyboardContainer.show();
+            if (showKeyboard) keyboardContainer.show();
+            keyboardContainer.addClass("selected");
         }
         keyboardContainer.css("font-family", '"' + font + '"');
         inputViewport.css("font-family", '"' + font + '"');
@@ -1029,6 +1058,9 @@ jQuery(document).ready(function() {
         keyboardContainer.hide();
         emojisContainer.hide();
         emojispContainer.hide();
+        keyboardContainer.removeClass("selected");
+        emojisContainer.removeClass("selected");
+        emojispContainer.removeClass("selected");
     });
 
     const updateForm = function(value) {
@@ -1184,7 +1216,7 @@ jQuery(document).ready(function() {
         let [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
         const maxLines = currentProfile && currentProfile.text
-            ? currentProfile.text.max_lines || 0 : 0;
+            ? currentProfile.text.max_lines || 0 : 1;
         if (maxLines > 0 && countLines(text) >= maxLines) return false;
         const element = jQuery("<div class=\"newline\"></div>");
         caret.before(element);
@@ -1297,11 +1329,11 @@ jQuery(document).ready(function() {
     };
 
     const type = function(font, value, validate) {
-        // determines if a key exists in the current visible keyboard that
+        // determines if a key exists in the current selected keyboard that
         // has the value of the provided key and if that's not the case returns
         // the control flow immediately, key is not compatible
         const key = jQuery(
-            `.keyboard-container:visible > span[data-value=\"${value
+            `.keyboard-container.selected > span[data-value=\"${value
                 .replace("\\", "\\\\")
                 .replace('"', '\\"')
                 .toUpperCase()}\"]`,

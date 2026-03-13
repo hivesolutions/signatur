@@ -33,6 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Dynamic profile info panel title showing the selected profile name
 * Crosshair lines on viewport hover with toggleable visibility checkbox
 * Position readout in viewport options panel showing X/Y coordinates in mm
+* Show Keyboard toggle checkbox in viewport options panel to hide/show the visual keyboard
+* Selected class tracking on the active keyboard container for font-based key validation
+* Single-line constraint when no profile is selected (max 1 line)
 
 ### Changed
 
