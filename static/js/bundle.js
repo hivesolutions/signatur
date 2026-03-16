@@ -656,6 +656,12 @@ jQuery(document).ready(function() {
     let emojiMapping = {};
     jQuery.getJSON("/static/fonts/coolemojis.mapping.json", function(data) {
         emojiMapping = data;
+        emojisContainer.find(".char[data-value]").each(function() {
+            const element = jQuery(this);
+            const value = element.attr("data-value");
+            const font = emojiMapping[value];
+            if (font) element.attr("title", font);
+        });
         restoreText();
     });
 
