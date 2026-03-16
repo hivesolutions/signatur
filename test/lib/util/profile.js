@@ -230,6 +230,51 @@ describe("Profile", function() {
         });
     });
 
+    describe("#validateExtraPadding()", function() {
+        it("should accept valid extra_padding", () => {
+            const errors = lib.validateExtraPadding({
+                top: 2,
+                right: 3,
+                bottom: 2,
+                left: 3
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should accept zero values", () => {
+            const errors = lib.validateExtraPadding({
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject negative values", () => {
+            const errors = lib.validateExtraPadding({
+                top: -1,
+                right: 3,
+                bottom: 2,
+                left: 3
+            });
+            assert.strictEqual(true, errors.includes("extra_padding.top must be a non-negative number"));
+        });
+
+        it("should reject missing fields", () => {
+            const errors = lib.validateExtraPadding({});
+            assert.strictEqual(true, errors.includes("extra_padding.top is required"));
+            assert.strictEqual(true, errors.includes("extra_padding.right is required"));
+            assert.strictEqual(true, errors.includes("extra_padding.bottom is required"));
+            assert.strictEqual(true, errors.includes("extra_padding.left is required"));
+        });
+
+        it("should reject non-object extra_padding", () => {
+            const errors = lib.validateExtraPadding("invalid");
+            assert.deepStrictEqual(errors, ["extra_padding must be an object"]);
+        });
+    });
+
     describe("#validateFontSize()", function() {
         it("should validate manual font size", () => {
             const errors = lib.validateFontSize({

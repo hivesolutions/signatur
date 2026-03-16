@@ -231,6 +231,22 @@ jQuery(document).ready(function() {
                 ", " +
                 margins.bottom +
                 (unit ? " " + unit : "");
+            const extraPadding = currentProfile.extra_padding;
+            if (extraPadding) {
+                specs.extra_padding =
+                    extraPadding.left +
+                    ", " +
+                    extraPadding.right +
+                    ", " +
+                    extraPadding.top +
+                    ", " +
+                    extraPadding.bottom +
+                    (unit ? " " + unit : "");
+                const finalWidth = width + (extraPadding.left || 0) + (extraPadding.right || 0);
+                const finalHeight = height + (extraPadding.top || 0) + (extraPadding.bottom || 0);
+                specs.final_viewport =
+                    finalWidth + " x " + finalHeight + (unit ? " " + unit : "");
+            }
         }
 
         modalOverlayConfirm.modal("confirm", specs);

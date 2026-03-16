@@ -83,6 +83,18 @@
                         jQuery("<span>").text(specs.margins).html() +
                         "</div>";
                 }
+                if (specs.extra_padding) {
+                    html +=
+                        '<div class="modal-spec"><strong>Extra padding:</strong> ' +
+                        jQuery("<span>").text(specs.extra_padding).html() +
+                        "</div>";
+                }
+                if (specs.final_viewport) {
+                    html +=
+                        '<div class="modal-spec"><strong>Final viewport:</strong> ' +
+                        jQuery("<span>").text(specs.final_viewport).html() +
+                        "</div>";
+                }
                 if (specs.node) {
                     html +=
                         '<div class="modal-spec"><strong>Node:</strong> ' +
@@ -108,16 +120,43 @@
                 return;
             }
 
+            // dismisses the modal with a faster fade-out transition
+            // removing the visible and dismissing classes after completion
+            const dismissModal = function(callback) {
+                if (!context.hasClass("visible")) return;
+                context.addClass("dismissing");
+                context.one("transitionend", function() {
+                    context.removeClass("visible dismissing");
+                    if (callback) callback();
+                });
+            };
+
             buttonClose.click(function() {
-                context.removeClass("visible");
+                dismissModal();
+            });
+
+            // registers for the click operation on the overlay
+            // background to dismiss the modal when clicking outside
+            context.click(function(event) {
+                if (event.target !== context.get(0)) return;
+                dismissModal();
+            });
+
+            // registers for the escape key press to dismiss
+            // the modal when it is currently visible
+            jQuery(document).bind("keydown", function(event) {
+                if (event.key !== "Escape") return;
+                if (!context.hasClass("visible")) return;
+                dismissModal();
             });
 
             // registers for the click operation on the configure button
             // that opens the printer configuration modal
             buttonConfigure.click(function() {
-                context.removeClass("visible");
-                const configOverlay = jQuery(".modal-overlay-config");
-                configOverlay.modal("show");
+                dismissModal(function() {
+                    const configOverlay = jQuery(".modal-overlay-config");
+                    configOverlay.modal("show");
+                });
             });
 
             // registers for the click operation on the engrave button
@@ -152,13 +191,20 @@
                     const profile = profiles[profileKey];
                     if (profile) {
                         const machine = profile.machine || {};
-                        printData.width = machine.viewport_width || profile.width;
-                        printData.height = machine.viewport_height || profile.height;
+                        const extraPadding = profile.extra_padding || {};
+                        printData.width = (machine.viewport_width || profile.width) +
+                            (extraPadding.left || 0) + (extraPadding.right || 0);
+                        printData.height = (machine.viewport_height || profile.height) +
+                            (extraPadding.top || 0) + (extraPadding.bottom || 0);
                         printData.font_size = parseInt(fontSizeRange.val());
-                        const ml = parseFloat(jQuery(".margin-left").val()) || 0;
-                        const mr = parseFloat(jQuery(".margin-right").val()) || 0;
-                        const mt = parseFloat(jQuery(".margin-top").val()) || 0;
-                        const mb = parseFloat(jQuery(".margin-bottom").val()) || 0;
+                        const ml = (parseFloat(jQuery(".margin-left").val()) || 0) +
+                            (extraPadding.left || 0);
+                        const mr = (parseFloat(jQuery(".margin-right").val()) || 0) +
+                            (extraPadding.right || 0);
+                        const mt = (parseFloat(jQuery(".margin-top").val()) || 0) +
+                            (extraPadding.top || 0);
+                        const mb = (parseFloat(jQuery(".margin-bottom").val()) || 0) +
+                            (extraPadding.bottom || 0);
                         printData.margins = [ml, mr, mt, mb];
                     }
                 }
