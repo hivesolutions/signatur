@@ -285,6 +285,11 @@ jQuery(document).ready(function() {
     // profiles dictionary for later reference
     let currentProfile = null;
     let profiles = {};
+
+    // if the restoring flag is true, the URL update function will
+    // ignore the call to prevent overwriting the URL state during
+    // the initial restore process on page load, allowing the URL
+    // parameters to properly set the initial state of the app
     let restoring = false;
 
     // fetches the available profiles from the server and
