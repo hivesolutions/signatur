@@ -250,6 +250,10 @@ jQuery(document).ready(function() {
     // viewport preview SVG rendering (pixels per mm)
     const VIEWPORT_SCALE = 3;
 
+    // correction factor applied to the font size to compensate
+    // for the difference between CSS em-square and visual cap height
+    const FONT_SIZE_SCALE = 1.4;
+
     // stores the currently selected profile and the loaded
     // profiles dictionary for later reference
     let currentProfile = null;
@@ -574,7 +578,7 @@ jQuery(document).ready(function() {
         }
 
         if (size) {
-            const scaledSize = size * VIEWPORT_SCALE;
+            const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
             viewportContainer.css("font-size", scaledSize + "px");
             viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
         }
