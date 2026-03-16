@@ -31,6 +31,30 @@ const drawText = function(ctx) {
     ctx.fillText("Hello World", 10, 500);
 };
 
+const deserializeText = function(text, separator = "|") {
+    if (!text) return null;
+    const textL = [];
+    const pairs = text.split(new RegExp("\\" + separator));
+    for (let index = 0; index < pairs.length; index++) {
+        const pair = pairs[index];
+        if (pair === "\\n") {
+            textL.push([null, "\n"]);
+            continue;
+        }
+        let font, value;
+        const offset = pair.indexOf(":");
+        if (offset === -1) {
+            font = pair;
+            value = null;
+        } else {
+            font = pair.slice(0, offset);
+            value = pair.slice(offset + 1);
+        }
+        textL.push([font, value]);
+    }
+    return textL;
+};
+
 const serializeText = function(text, separator = "|") {
     const buffer = [];
     for (let index = 0; index < text.length; index++) {
@@ -176,6 +200,7 @@ const countLines = function(text) {
         elements.each(function() {
             const context = jQuery(this);
             const modalMessage = jQuery(".modal-message", context);
+            const modalPreview = jQuery(".modal-preview", context);
             const modalSpecs = jQuery(".modal-specs", context);
             const buttonClose = jQuery(".button-modal-close", context);
             const buttonConfigure = jQuery(".button-modal-configure", context);
@@ -203,7 +228,7 @@ const countLines = function(text) {
                             html += '<div class="modal-spec modal-spec-segment">&crarr;</div>';
                             continue;
                         }
-                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "&nbsp;");
+                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "⎵");
                         const fontEscaped = jQuery("<span>").text(font).html();
                         html +=
                             '<div class="modal-spec modal-spec-segment">' +
@@ -260,6 +285,20 @@ const countLines = function(text) {
                         "</div>";
                 }
                 modalSpecs.html(html);
+
+                // clones the viewport preview into the modal so that the
+                // user can visually confirm the engraving layout
+                modalPreview.empty();
+                const viewportPreview = jQuery(".viewport-preview");
+                if (viewportPreview.hasClass("profile-active")) {
+                    const clone = viewportPreview.clone();
+                    clone.find(".crosshair").remove();
+                    clone.find(".ruler").remove();
+                    clone.find(".caret").remove();
+                    clone.removeClass("crosshair-active");
+                    modalPreview.append(clone);
+                }
+
                 context.addClass("visible");
                 return;
             }
@@ -561,6 +600,7 @@ jQuery(document).ready(function() {
     let emojiMapping = {};
     jQuery.getJSON("/static/fonts/coolemojis.mapping.json", function(data) {
         emojiMapping = data;
+        restoreText();
     });
 
     // gathers the currently selected theme information
@@ -571,6 +611,10 @@ jQuery(document).ready(function() {
     // base 64 JSON dictionary and parses it
     const masterb64 = body.attr("data-master") || "";
     const master = JSON.parse(atob(masterb64) || "{}");
+
+    // parses the current URL query parameters so that they
+    // can be used to restore state on page load
+    const urlParams = new URLSearchParams(window.location.search);
 
     // schedules a timeout for the initial selection of the
     // technology in case that's required (pre-selection of fields)
@@ -700,6 +744,49 @@ jQuery(document).ready(function() {
             }
             viewportOptions.addClass("visible");
             modalOverlayConfirm.data("profiles", profiles);
+
+            // restores the profile selection from the URL query
+            // parameters if a profile key was previously saved
+            const urlProfile = urlParams.get("profile");
+            if (urlProfile && profiles[urlProfile]) {
+                profileSelect.val(urlProfile).trigger("change");
+            }
+
+            // restores the margin values from the URL query
+            // parameters if they were previously saved
+            const urlMargins = urlParams.get("margins");
+            if (urlMargins) {
+                const parts = urlMargins.split(",");
+                if (parts.length === 4) {
+                    marginLeft.val(parts[0]);
+                    marginRight.val(parts[1]);
+                    marginTop.val(parts[2]);
+                    marginBottom.val(parts[3]);
+                    renderViewportPreview(currentProfile);
+                }
+            }
+
+            // restores the font size mode and value from the
+            // URL query parameters if they were previously saved
+            const urlFontSizeMode = urlParams.get("font_size_mode");
+            if (urlFontSizeMode === "automatic") {
+                fontSizeMode.prop("checked", true);
+                fontSizeRange.prop("disabled", true);
+            }
+            const urlFontSize = urlParams.get("font_size");
+            if (urlFontSize) {
+                fontSizeRange.val(urlFontSize);
+                fontSizeValue.text(urlFontSize);
+            }
+            applyFontSize();
+
+            // restores the zoom level from the URL query
+            // parameters if it was previously saved
+            const urlZoom = urlParams.get("zoom");
+            if (urlZoom) {
+                zoomRange.val(urlZoom);
+                applyZoom();
+            }
         } catch (err) {
             // silently ignores profile loading errors
         }
@@ -1034,6 +1121,7 @@ jQuery(document).ready(function() {
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
         applyFontSize();
+        updateUrl();
     });
 
     // registers for the change in the font size range slider
@@ -1042,6 +1130,7 @@ jQuery(document).ready(function() {
         const size = jQuery(this).val();
         fontSizeValue.text(size);
         applyFontSize();
+        updateUrl();
     });
 
     // registers for the change in the font size mode checkbox
@@ -1050,6 +1139,7 @@ jQuery(document).ready(function() {
         const isAutomatic = jQuery(this).prop("checked");
         fontSizeRange.prop("disabled", isAutomatic);
         applyFontSize();
+        updateUrl();
     });
 
     // registers for the change in the rulers mode checkbox
@@ -1069,6 +1159,7 @@ jQuery(document).ready(function() {
     // to apply the zoom transform to the viewport preview
     zoomRange.bind("input", function() {
         applyZoom();
+        updateUrl();
     });
 
     // registers for the change in the margin input fields
@@ -1076,6 +1167,7 @@ jQuery(document).ready(function() {
     jQuery(".margin-input").bind("input", function() {
         renderViewportPreview(currentProfile);
         applyFontSize();
+        updateUrl();
     });
 
     // registers for the change in the crosshair mode checkbox
@@ -1199,6 +1291,7 @@ jQuery(document).ready(function() {
         keyboardContainer.css("font-family", '"' + font + '"');
         inputViewport.css("font-family", '"' + font + '"');
         body.data("font", font);
+        updateUrl();
     });
     fontsContainer.bind("defont", function(event, font) {
         keyboardContainer.hide();
@@ -1519,6 +1612,80 @@ jQuery(document).ready(function() {
         return [text, caret, caretPosition];
     };
 
+    // updates the browser URL with the current session state
+    // using history.replaceState so that the URL can be shared
+    // or bookmarked to resume an engraving session later
+    const updateUrl = function() {
+        const params = new URLSearchParams();
+        const text = body.data("text") || [];
+        if (text.length > 0) params.set("text", serializeText(text));
+        const font = body.data("font");
+        if (font) params.set("font", font);
+        if (currentProfile) {
+            const keys = Object.keys(profiles);
+            for (const key of keys) {
+                if (profiles[key] === currentProfile) {
+                    params.set("profile", key);
+                    break;
+                }
+            }
+        }
+        const fontSize = fontSizeRange.val();
+        if (fontSize) params.set("font_size", fontSize);
+        const isAutomatic = fontSizeMode.prop("checked");
+        if (isAutomatic) params.set("font_size_mode", "automatic");
+        const zoom = zoomRange.val();
+        if (zoom && zoom !== "1") params.set("zoom", zoom);
+        const margins = getMargins();
+        const marginStr =
+            margins.left + "," + margins.right + "," + margins.top + "," + margins.bottom;
+        if (marginStr !== "0,0,0,0") params.set("margins", marginStr);
+        const fullscreen = urlParams.get("fullscreen");
+        if (fullscreen === "1") params.set("fullscreen", "1");
+        if (theme !== "default") params.set("theme", theme);
+        const query = params.toString();
+        const url = window.location.pathname + (query ? "?" + query : "");
+        history.replaceState(null, "", url);
+    };
+
+    // restores the font selection from the URL query
+    // parameters by clicking the matching font element
+    const restoreFont = function() {
+        const urlFont = urlParams.get("font");
+        if (!urlFont) return;
+        const fontEl = fontsContainer.find(".font[data-font=\"" + urlFont + "\"]");
+        if (fontEl.length > 0) fontEl.click();
+    };
+
+    // initializes the text data array from server-rendered
+    // content so that the session state is fully restored
+    const restoreText = function() {
+        const initialText = viewportContainer.attr("data-text");
+        if (!initialText) return;
+        const textData = deserializeText(initialText);
+        if (!textData || textData.length === 0) return;
+        body.data("text", textData);
+        body.data("caret_position", textData.length - 1);
+        viewportContainer.find("> span:not(.caret)").each(function() {
+            const element = jQuery(this);
+            element.click(function() {
+                const element = jQuery(this);
+                viewportContainer.find("> .caret").insertAfter(element);
+                const caretPosition = element.index(".viewer-container > :not(.caret)");
+                body.data("caret_position", caretPosition);
+            });
+        });
+        const [textSimple, font] = simplifyText(textData);
+        buttonPrint.attr("data-text", textSimple);
+        buttonPrint.attr("data-font", font);
+        buttonPrint.data("multifont", multifontText(textData, emojiMapping));
+        const buttonHref = buttonReport.attr("data-href");
+        buttonReport.attr(
+            "href",
+            buttonHref + "?text=" + encodeURIComponent(serializeText(textData))
+        );
+    };
+
     const setText = function(text, caretPosition) {
         body.data("text", text);
         body.data("caret_position", caretPosition);
@@ -1536,6 +1703,8 @@ jQuery(document).ready(function() {
         if (currentProfile && fontSizeMode.prop("checked")) {
             applyFontSize();
         }
+
+        updateUrl();
     };
 
     const printReceipt = async function() {
@@ -1615,4 +1784,6 @@ jQuery(document).ready(function() {
     formConsole.formconsole();
 
     body.bind("keydown", keyboardHandler);
+
+    restoreFont();
 });

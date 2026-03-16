@@ -5,6 +5,7 @@
         elements.each(function() {
             const context = jQuery(this);
             const modalMessage = jQuery(".modal-message", context);
+            const modalPreview = jQuery(".modal-preview", context);
             const modalSpecs = jQuery(".modal-specs", context);
             const buttonClose = jQuery(".button-modal-close", context);
             const buttonConfigure = jQuery(".button-modal-configure", context);
@@ -32,7 +33,7 @@
                             html += '<div class="modal-spec modal-spec-segment">&crarr;</div>';
                             continue;
                         }
-                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "&nbsp;");
+                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "⎵");
                         const fontEscaped = jQuery("<span>").text(font).html();
                         html +=
                             '<div class="modal-spec modal-spec-segment">' +
@@ -89,6 +90,20 @@
                         "</div>";
                 }
                 modalSpecs.html(html);
+
+                // clones the viewport preview into the modal so that the
+                // user can visually confirm the engraving layout
+                modalPreview.empty();
+                const viewportPreview = jQuery(".viewport-preview");
+                if (viewportPreview.hasClass("profile-active")) {
+                    const clone = viewportPreview.clone();
+                    clone.find(".crosshair").remove();
+                    clone.find(".ruler").remove();
+                    clone.find(".caret").remove();
+                    clone.removeClass("crosshair-active");
+                    modalPreview.append(clone);
+                }
+
                 context.addClass("visible");
                 return;
             }

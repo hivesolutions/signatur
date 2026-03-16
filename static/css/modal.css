@@ -110,6 +110,32 @@
     min-width: auto;
 }
 
+.modal-overlay > .modal > .modal-preview {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.modal-overlay > .modal > .modal-preview > .viewport-preview {
+    display: inline-block;
+    position: relative;
+}
+
+.modal-overlay > .modal > .modal-preview > .viewport-preview.profile-active > .viewer-container {
+    align-content: center;
+    border: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 0px;
+    overflow: hidden;
+    position: absolute;
+}
+
+.modal-overlay > .modal > .modal-preview > .viewport-preview > .viewer-container > .newline {
+    height: 0px;
+    width: 100%;
+}
+
 .modal-overlay > .modal > .modal-specs {
     font-size: 14px;
     line-height: 22px;

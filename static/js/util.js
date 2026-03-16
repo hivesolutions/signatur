@@ -31,6 +31,30 @@ const drawText = function(ctx) {
     ctx.fillText("Hello World", 10, 500);
 };
 
+const deserializeText = function(text, separator = "|") {
+    if (!text) return null;
+    const textL = [];
+    const pairs = text.split(new RegExp("\\" + separator));
+    for (let index = 0; index < pairs.length; index++) {
+        const pair = pairs[index];
+        if (pair === "\\n") {
+            textL.push([null, "\n"]);
+            continue;
+        }
+        let font, value;
+        const offset = pair.indexOf(":");
+        if (offset === -1) {
+            font = pair;
+            value = null;
+        } else {
+            font = pair.slice(0, offset);
+            value = pair.slice(offset + 1);
+        }
+        textL.push([font, value]);
+    }
+    return textL;
+};
+
 const serializeText = function(text, separator = "|") {
     const buffer = [];
     for (let index = 0; index < text.length; index++) {
