@@ -113,6 +113,16 @@
                     clone.find(".ruler").remove();
                     clone.find(".caret").remove();
                     clone.removeClass("crosshair-active");
+                    clone.css({
+                        transform: "none",
+                        "-o-transform": "none",
+                        "-ms-transform": "none",
+                        "-moz-transform": "none",
+                        "-khtml-transform": "none",
+                        "-webkit-transform": "none",
+                        "margin-bottom": "",
+                        "margin-right": ""
+                    });
                     modalPreview.append(clone);
                 }
 
