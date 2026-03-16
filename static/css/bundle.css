@@ -1271,6 +1271,16 @@ body.ldj .line {
     margin-bottom: 0px;
 }
 
+.modal-overlay > .modal > .modal-specs > .modal-spec-segment {
+    margin-bottom: 2px;
+    padding-left: 16px;
+}
+
+.modal-overlay > .modal > .modal-specs > .modal-spec-segment > .modal-spec-font {
+    color: #888888;
+    font-size: 12px;
+}
+
 .modal-overlay > .modal > .modal-options {
     font-size: 14px;
     margin-bottom: 24px;

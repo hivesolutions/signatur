@@ -55,6 +55,43 @@ const simplifyText = function(text, separator = "") {
     return [buffer.join(separator), font];
 };
 
+const multifontText = function(text, emojiMapping) {
+    const result = [];
+    for (let index = 0; index < text.length; index++) {
+        const item = text[index];
+        const font = item[0];
+        const value = item[1];
+        if (value === "\n") {
+            result.push([null, "\n"]);
+            continue;
+        }
+        if (font === "Cool Emojis") {
+            const mapped = emojiMapping[value];
+            if (mapped) {
+                result.push([mapped, "a"]);
+            } else if (value === " ") {
+                result.push(["HELVETICA 4L", " "]);
+            }
+            continue;
+        }
+        if (font === "Cool Emojis Pantograph") continue;
+        const last = result.length > 0 ? result[result.length - 1] : null;
+        if (last && last[0] === font && last[1] !== "\n") {
+            last[1] += value;
+        } else {
+            result.push([font, value]);
+        }
+    }
+    return result;
+};
+
+const hasUnsupportedFont = function(text) {
+    for (let index = 0; index < text.length; index++) {
+        if (text[index][0] === "Cool Emojis Pantograph") return true;
+    }
+    return false;
+};
+
 const countLines = function(text) {
     let lines = 1;
     for (let index = 0; index < text.length; index++) {

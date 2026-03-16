@@ -155,10 +155,7 @@ describe("Profile", function() {
                 shape: "triangle",
                 font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
             });
-            assert.strictEqual(
-                true,
-                errors.includes("shape must be one of: rectangle, circle")
-            );
+            assert.strictEqual(true, errors.includes("shape must be one of: rectangle, circle"));
         });
 
         it("should accept profile without shape (optional field)", () => {
@@ -224,10 +221,7 @@ describe("Profile", function() {
                 bottom: 5,
                 left: 5
             });
-            assert.strictEqual(
-                true,
-                errors.includes("padding.top must be a non-negative number")
-            );
+            assert.strictEqual(true, errors.includes("padding.top must be a non-negative number"));
         });
 
         it("should reject non-object padding", () => {
@@ -276,18 +270,9 @@ describe("Profile", function() {
                 true,
                 errors.includes("font_size.default is required for manual mode")
             );
-            assert.strictEqual(
-                true,
-                errors.includes("font_size.min is required for manual mode")
-            );
-            assert.strictEqual(
-                true,
-                errors.includes("font_size.max is required for manual mode")
-            );
-            assert.strictEqual(
-                true,
-                errors.includes("font_size.step is required for manual mode")
-            );
+            assert.strictEqual(true, errors.includes("font_size.min is required for manual mode"));
+            assert.strictEqual(true, errors.includes("font_size.max is required for manual mode"));
+            assert.strictEqual(true, errors.includes("font_size.step is required for manual mode"));
         });
 
         it("should require automatic mode fields", () => {
@@ -314,10 +299,7 @@ describe("Profile", function() {
                 true,
                 errors.includes("font_size.default must be a positive number")
             );
-            assert.strictEqual(
-                true,
-                errors.includes("font_size.min must be a positive number")
-            );
+            assert.strictEqual(true, errors.includes("font_size.min must be a positive number"));
         });
     });
 
@@ -339,10 +321,7 @@ describe("Profile", function() {
             const errors = lib.validatePreview({
                 show_bounds: "yes"
             });
-            assert.strictEqual(
-                true,
-                errors.includes("preview.show_bounds must be a boolean")
-            );
+            assert.strictEqual(true, errors.includes("preview.show_bounds must be a boolean"));
         });
     });
 
@@ -357,14 +336,8 @@ describe("Profile", function() {
 
         it("should require viewport dimensions", () => {
             const errors = lib.validateMachine({});
-            assert.strictEqual(
-                true,
-                errors.includes("machine.viewport_width is required")
-            );
-            assert.strictEqual(
-                true,
-                errors.includes("machine.viewport_height is required")
-            );
+            assert.strictEqual(true, errors.includes("machine.viewport_width is required"));
+            assert.strictEqual(true, errors.includes("machine.viewport_height is required"));
         });
 
         it("should reject non-positive viewport dimensions", () => {
@@ -400,10 +373,7 @@ describe("Profile", function() {
 
         it("should reject invalid max_lines", () => {
             const errors = lib.validateText({ max_lines: 0 });
-            assert.strictEqual(
-                true,
-                errors.includes("text.max_lines must be a positive integer")
-            );
+            assert.strictEqual(true, errors.includes("text.max_lines must be a positive integer"));
         });
 
         it("should reject invalid align values", () => {
@@ -452,18 +422,12 @@ describe("Profile", function() {
 
         it("should reject duplicate tags", () => {
             const errors = lib.validateMetadata({ tags: ["a", "a"] });
-            assert.strictEqual(
-                true,
-                errors.includes("metadata.tags must contain unique items")
-            );
+            assert.strictEqual(true, errors.includes("metadata.tags must contain unique items"));
         });
 
         it("should reject non-string tag items", () => {
             const errors = lib.validateMetadata({ tags: [123] });
-            assert.strictEqual(
-                true,
-                errors.includes("metadata.tags[0] must be a string")
-            );
+            assert.strictEqual(true, errors.includes("metadata.tags[0] must be a string"));
         });
     });
 });

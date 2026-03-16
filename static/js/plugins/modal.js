@@ -22,13 +22,72 @@
             if (action === "confirm") {
                 const specs = message;
                 let html = "";
-                if (specs.text) html += "<div class=\"modal-spec\"><strong>Text:</strong> " + jQuery("<span>").text(specs.text).html() + "</div>";
-                if (specs.font) html += "<div class=\"modal-spec\"><strong>Font:</strong> " + jQuery("<span>").text(specs.font).html() + "</div>";
-                if (specs.profile) html += "<div class=\"modal-spec\"><strong>Profile:</strong> " + jQuery("<span>").text(specs.profile).html() + "</div>";
-                if (specs.viewport) html += "<div class=\"modal-spec\"><strong>Viewport:</strong> " + jQuery("<span>").text(specs.viewport).html() + "</div>";
-                if (specs.font_size) html += "<div class=\"modal-spec\"><strong>Font size:</strong> " + jQuery("<span>").text(specs.font_size).html() + "</div>";
-                if (specs.margins) html += "<div class=\"modal-spec\"><strong>Margins:</strong> " + jQuery("<span>").text(specs.margins).html() + "</div>";
-                if (specs.node) html += "<div class=\"modal-spec\"><strong>Node:</strong> " + jQuery("<span>").text(specs.node).html() + "</div>";
+                if (specs.multifont && specs.multifont.length > 0) {
+                    html += '<div class="modal-spec"><strong>Text:</strong></div>';
+                    for (let index = 0; index < specs.multifont.length; index++) {
+                        const entry = specs.multifont[index];
+                        const font = entry[0];
+                        const value = entry[1];
+                        if (value === "\n") {
+                            html += '<div class="modal-spec modal-spec-segment">&crarr;</div>';
+                            continue;
+                        }
+                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "&nbsp;");
+                        const fontEscaped = jQuery("<span>").text(font).html();
+                        html +=
+                            '<div class="modal-spec modal-spec-segment">' +
+                            '<span class="modal-spec-text">' +
+                            escaped +
+                            "</span>" +
+                            ' <span class="modal-spec-font">(' +
+                            fontEscaped +
+                            ")</span>" +
+                            "</div>";
+                    }
+                } else {
+                    if (specs.text) {
+                        html +=
+                            '<div class="modal-spec"><strong>Text:</strong> ' +
+                            jQuery("<span>").text(specs.text).html() +
+                            "</div>";
+                    }
+                }
+                if (specs.font) {
+                    html +=
+                        '<div class="modal-spec"><strong>Font:</strong> ' +
+                        jQuery("<span>").text(specs.font).html() +
+                        "</div>";
+                }
+                if (specs.profile) {
+                    html +=
+                        '<div class="modal-spec"><strong>Profile:</strong> ' +
+                        jQuery("<span>").text(specs.profile).html() +
+                        "</div>";
+                }
+                if (specs.viewport) {
+                    html +=
+                        '<div class="modal-spec"><strong>Viewport:</strong> ' +
+                        jQuery("<span>").text(specs.viewport).html() +
+                        "</div>";
+                }
+                if (specs.font_size) {
+                    html +=
+                        '<div class="modal-spec"><strong>Font size:</strong> ' +
+                        jQuery("<span>").text(specs.font_size).html() +
+                        "</div>";
+                }
+                if (specs.margins) {
+                    html +=
+                        '<div class="modal-spec"><strong>Margins:</strong> ' +
+                        jQuery("<span>").text(specs.margins).html() +
+                        "</div>";
+                }
+                if (specs.node) {
+                    html +=
+                        '<div class="modal-spec"><strong>Node:</strong> ' +
+                        jQuery("<span>").text(specs.node).html() +
+                        "</div>";
+                }
                 modalSpecs.html(html);
                 context.addClass("visible");
                 return;
@@ -54,6 +113,7 @@
                 const buttonPrint = jQuery(".button-print");
                 const text = buttonPrint.attr("data-text");
                 const font = buttonPrint.attr("data-font");
+                const multifont = buttonPrint.data("multifont");
                 const printUrl = localStorage.getItem("url");
                 const node = localStorage.getItem("node");
                 const key = localStorage.getItem("key") || null;
@@ -64,7 +124,14 @@
                 // builds the data payload for the print operation, including
                 // the viewport information from the selected profile if available
                 const dryRun = jQuery(".modal-dry-run", context).prop("checked");
-                const printData = { text: text, font: font, debug: true, dry_run: dryRun };
+                const textPayload = multifont && multifont.length > 0 ? multifont : text;
+                const fontPayload = font === "Cool Emojis" ? null : font;
+                const printData = {
+                    text: textPayload,
+                    font: fontPayload,
+                    debug: true,
+                    dry_run: dryRun
+                };
                 if (profileKey) {
                     const profiles = context.data("profiles") || {};
                     const profile = profiles[profileKey];

@@ -55,6 +55,43 @@ const simplifyText = function(text, separator = "") {
     return [buffer.join(separator), font];
 };
 
+const multifontText = function(text, emojiMapping) {
+    const result = [];
+    for (let index = 0; index < text.length; index++) {
+        const item = text[index];
+        const font = item[0];
+        const value = item[1];
+        if (value === "\n") {
+            result.push([null, "\n"]);
+            continue;
+        }
+        if (font === "Cool Emojis") {
+            const mapped = emojiMapping[value];
+            if (mapped) {
+                result.push([mapped, "a"]);
+            } else if (value === " ") {
+                result.push(["HELVETICA 4L", " "]);
+            }
+            continue;
+        }
+        if (font === "Cool Emojis Pantograph") continue;
+        const last = result.length > 0 ? result[result.length - 1] : null;
+        if (last && last[0] === font && last[1] !== "\n") {
+            last[1] += value;
+        } else {
+            result.push([font, value]);
+        }
+    }
+    return result;
+};
+
+const hasUnsupportedFont = function(text) {
+    for (let index = 0; index < text.length; index++) {
+        if (text[index][0] === "Cool Emojis Pantograph") return true;
+    }
+    return false;
+};
+
 const countLines = function(text) {
     let lines = 1;
     for (let index = 0; index < text.length; index++) {
@@ -156,13 +193,72 @@ const countLines = function(text) {
             if (action === "confirm") {
                 const specs = message;
                 let html = "";
-                if (specs.text) html += "<div class=\"modal-spec\"><strong>Text:</strong> " + jQuery("<span>").text(specs.text).html() + "</div>";
-                if (specs.font) html += "<div class=\"modal-spec\"><strong>Font:</strong> " + jQuery("<span>").text(specs.font).html() + "</div>";
-                if (specs.profile) html += "<div class=\"modal-spec\"><strong>Profile:</strong> " + jQuery("<span>").text(specs.profile).html() + "</div>";
-                if (specs.viewport) html += "<div class=\"modal-spec\"><strong>Viewport:</strong> " + jQuery("<span>").text(specs.viewport).html() + "</div>";
-                if (specs.font_size) html += "<div class=\"modal-spec\"><strong>Font size:</strong> " + jQuery("<span>").text(specs.font_size).html() + "</div>";
-                if (specs.margins) html += "<div class=\"modal-spec\"><strong>Margins:</strong> " + jQuery("<span>").text(specs.margins).html() + "</div>";
-                if (specs.node) html += "<div class=\"modal-spec\"><strong>Node:</strong> " + jQuery("<span>").text(specs.node).html() + "</div>";
+                if (specs.multifont && specs.multifont.length > 0) {
+                    html += '<div class="modal-spec"><strong>Text:</strong></div>';
+                    for (let index = 0; index < specs.multifont.length; index++) {
+                        const entry = specs.multifont[index];
+                        const font = entry[0];
+                        const value = entry[1];
+                        if (value === "\n") {
+                            html += '<div class="modal-spec modal-spec-segment">&crarr;</div>';
+                            continue;
+                        }
+                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "&nbsp;");
+                        const fontEscaped = jQuery("<span>").text(font).html();
+                        html +=
+                            '<div class="modal-spec modal-spec-segment">' +
+                            '<span class="modal-spec-text">' +
+                            escaped +
+                            "</span>" +
+                            ' <span class="modal-spec-font">(' +
+                            fontEscaped +
+                            ")</span>" +
+                            "</div>";
+                    }
+                } else {
+                    if (specs.text) {
+                        html +=
+                            '<div class="modal-spec"><strong>Text:</strong> ' +
+                            jQuery("<span>").text(specs.text).html() +
+                            "</div>";
+                    }
+                }
+                if (specs.font) {
+                    html +=
+                        '<div class="modal-spec"><strong>Font:</strong> ' +
+                        jQuery("<span>").text(specs.font).html() +
+                        "</div>";
+                }
+                if (specs.profile) {
+                    html +=
+                        '<div class="modal-spec"><strong>Profile:</strong> ' +
+                        jQuery("<span>").text(specs.profile).html() +
+                        "</div>";
+                }
+                if (specs.viewport) {
+                    html +=
+                        '<div class="modal-spec"><strong>Viewport:</strong> ' +
+                        jQuery("<span>").text(specs.viewport).html() +
+                        "</div>";
+                }
+                if (specs.font_size) {
+                    html +=
+                        '<div class="modal-spec"><strong>Font size:</strong> ' +
+                        jQuery("<span>").text(specs.font_size).html() +
+                        "</div>";
+                }
+                if (specs.margins) {
+                    html +=
+                        '<div class="modal-spec"><strong>Margins:</strong> ' +
+                        jQuery("<span>").text(specs.margins).html() +
+                        "</div>";
+                }
+                if (specs.node) {
+                    html +=
+                        '<div class="modal-spec"><strong>Node:</strong> ' +
+                        jQuery("<span>").text(specs.node).html() +
+                        "</div>";
+                }
                 modalSpecs.html(html);
                 context.addClass("visible");
                 return;
@@ -188,6 +284,7 @@ const countLines = function(text) {
                 const buttonPrint = jQuery(".button-print");
                 const text = buttonPrint.attr("data-text");
                 const font = buttonPrint.attr("data-font");
+                const multifont = buttonPrint.data("multifont");
                 const printUrl = localStorage.getItem("url");
                 const node = localStorage.getItem("node");
                 const key = localStorage.getItem("key") || null;
@@ -198,7 +295,14 @@ const countLines = function(text) {
                 // builds the data payload for the print operation, including
                 // the viewport information from the selected profile if available
                 const dryRun = jQuery(".modal-dry-run", context).prop("checked");
-                const printData = { text: text, font: font, debug: true, dry_run: dryRun };
+                const textPayload = multifont && multifont.length > 0 ? multifont : text;
+                const fontPayload = font === "Cool Emojis" ? null : font;
+                const printData = {
+                    text: textPayload,
+                    font: fontPayload,
+                    debug: true,
+                    dry_run: dryRun
+                };
                 if (profileKey) {
                     const profiles = context.data("profiles") || {};
                     const profile = profiles[profileKey];
@@ -396,7 +500,12 @@ jQuery(document).ready(function() {
     // registers for the click operation on the viewport options
     // title to toggle the panel between expanded and minimized
     viewportOptionsTitle.click(function() {
-        togglePanel(viewportOptions, viewportOptionsBody, viewportOptionsTitle, viewportOptionsToggle);
+        togglePanel(
+            viewportOptions,
+            viewportOptionsBody,
+            viewportOptionsTitle,
+            viewportOptionsToggle
+        );
     });
 
     const fontSizeContainer = jQuery(".font-size-container");
@@ -447,6 +556,13 @@ jQuery(document).ready(function() {
     const elementsChild = jQuery("> *", elementsE);
     const locationChild = jQuery("> *", locationE);
 
+    // loads the cool emojis mapping from the static fonts
+    // directory to resolve emoji characters to font names
+    let emojiMapping = {};
+    jQuery.getJSON("/static/fonts/coolemojis.mapping.json", function(data) {
+        emojiMapping = data;
+    });
+
     // gathers the currently selected theme information
     // to be used to change the current visual style
     const theme = body.attr("data-theme") || "default";
@@ -481,6 +597,7 @@ jQuery(document).ready(function() {
         const element = jQuery(this);
         const text = element.attr("data-text");
         const font = element.attr("data-font");
+        const textData = body.data("text") || [];
 
         const printUrl = localStorage.getItem("url");
         const node = localStorage.getItem("node");
@@ -495,10 +612,22 @@ jQuery(document).ready(function() {
             return;
         }
 
+        // verifies that the text does not contain any unsupported
+        // fonts that cannot be sent to colony-print for engraving
+        if (hasUnsupportedFont(textData)) {
+            modalOverlayError.modal(
+                "show",
+                "Cool Emojis Pantograph is not supported for engraving."
+            );
+            return;
+        }
+
         // builds the specs object that summarizes the current
         // printing configuration for user confirmation
+        const multifont = element.data("multifont") || [];
         const specs = {
             text: text || "(empty)",
+            multifont: multifont,
             font: font || "(none)",
             node: node
         };
@@ -511,7 +640,15 @@ jQuery(document).ready(function() {
             specs.viewport = width + " x " + height + (unit ? " " + unit : "");
             specs.font_size = fontSizeRange.val() + (unit ? " " + unit : "");
             const margins = getMargins();
-            specs.margins = margins.left + ", " + margins.right + ", " + margins.top + ", " + margins.bottom + (unit ? " " + unit : "");
+            specs.margins =
+                margins.left +
+                ", " +
+                margins.right +
+                ", " +
+                margins.top +
+                ", " +
+                margins.bottom +
+                (unit ? " " + unit : "");
         }
 
         modalOverlayConfirm.modal("confirm", specs);
@@ -701,30 +838,30 @@ jQuery(document).ready(function() {
         for (let mm = 0; mm <= profile.width; mm += step) {
             const px = mm * VIEWPORT_SCALE;
             const isMajor = mm % 10 === 0;
-            const tick = jQuery("<div class=\"ruler-tick\"></div>");
+            const tick = jQuery('<div class="ruler-tick"></div>');
             tick.addClass(isMajor ? "major" : "minor");
             tick.css("left", px + "px");
-            tick.append("<div class=\"ruler-line\"></div>");
+            tick.append('<div class="ruler-line"></div>');
             if (isMajor) {
-                tick.append("<span class=\"ruler-label\">" + mm + "</span>");
+                tick.append('<span class="ruler-label">' + mm + "</span>");
             }
             rulerHorizontal.append(tick);
         }
-        rulerHorizontal.append("<span class=\"ruler-unit\">" + unit + "</span>");
+        rulerHorizontal.append('<span class="ruler-unit">' + unit + "</span>");
 
         for (let mm = 0; mm <= profile.height; mm += step) {
             const px = mm * VIEWPORT_SCALE;
             const isMajor = mm % 10 === 0;
-            const tick = jQuery("<div class=\"ruler-tick\"></div>");
+            const tick = jQuery('<div class="ruler-tick"></div>');
             tick.addClass(isMajor ? "major" : "minor");
             tick.css("top", px + "px");
-            tick.append("<div class=\"ruler-line\"></div>");
+            tick.append('<div class="ruler-line"></div>');
             if (isMajor) {
-                tick.append("<span class=\"ruler-label\">" + mm + "</span>");
+                tick.append('<span class="ruler-label">' + mm + "</span>");
             }
             rulerVertical.append(tick);
         }
-        rulerVertical.append("<span class=\"ruler-unit\">" + unit + "</span>");
+        rulerVertical.append('<span class="ruler-unit">' + unit + "</span>");
 
         // applies the current rulers visibility based on the
         // show rulers checkbox state in the viewport options
@@ -752,7 +889,7 @@ jQuery(document).ready(function() {
             "-moz-transform": "scale(" + zoom + ")",
             "-khtml-transform": "scale(" + zoom + ")",
             "-webkit-transform": "scale(" + zoom + ")",
-            "margin-bottom": (16 * zoom + extraHeight) + "px",
+            "margin-bottom": 16 * zoom + extraHeight + "px",
             "margin-right": extraWidth + "px"
         });
     };
@@ -769,8 +906,13 @@ jQuery(document).ready(function() {
         }
 
         const unit = profile.unit || "";
-        profileInfoTitle.contents().first().replaceWith(profile.name + " ");
-        profileInfoDimensions.text(profile.width + " x " + profile.height + (unit ? " " + unit : ""));
+        profileInfoTitle
+            .contents()
+            .first()
+            .replaceWith(profile.name + " ");
+        profileInfoDimensions.text(
+            profile.width + " x " + profile.height + (unit ? " " + unit : "")
+        );
         profileInfoOrientation.text(profile.orientation || "");
         const text = profile.text || {};
         const maxLines = text.max_lines || 0;
@@ -1186,7 +1328,7 @@ jQuery(document).ready(function() {
     };
 
     const deleteForward = function() {
-        let [text, caret, caretPosition] = getText();
+        const [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
         if (caretPosition + 1 >= text.length) return false;
         caret.next().remove();
@@ -1215,10 +1357,13 @@ jQuery(document).ready(function() {
     const newline = function() {
         let [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
-        const maxLines = currentProfile && currentProfile.text
-            ? currentProfile.text.max_lines || 0 : 1;
+        const maxLines = currentProfile
+            ? currentProfile.text
+                ? currentProfile.text.max_lines || 0
+                : 0
+            : 1;
         if (maxLines > 0 && countLines(text) >= maxLines) return false;
-        const element = jQuery("<div class=\"newline\"></div>");
+        const element = jQuery('<div class="newline"></div>');
         caret.before(element);
         element.click(function() {
             const element = jQuery(this);
@@ -1233,7 +1378,7 @@ jQuery(document).ready(function() {
     };
 
     const moveCaret = function(direction) {
-        let [text, caret, caretPosition] = getText();
+        const [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
         const newPosition = caretPosition + direction;
         if (newPosition < -1 || newPosition >= text.length) return false;
@@ -1248,7 +1393,7 @@ jQuery(document).ready(function() {
     };
 
     const moveCaretLine = function(direction) {
-        let [text, caret, caretPosition] = getText();
+        const [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
 
         // splits the text array into lines separated by newline
@@ -1271,8 +1416,7 @@ jQuery(document).ready(function() {
         } else if (text[caretPosition] && text[caretPosition][1] === "\n") {
             // caret is on a newline, treat as end of that line
             for (let l = 0; l < lines.length - 1; l++) {
-                const lineEnd = lines[l].length > 0
-                    ? lines[l][lines[l].length - 1] : -1;
+                const lineEnd = lines[l].length > 0 ? lines[l][lines[l].length - 1] : -1;
                 if (caretPosition === lineEnd + 1) {
                     currentLine = l;
                     currentCol = lines[l].length;
@@ -1302,8 +1446,12 @@ jQuery(document).ready(function() {
                 newPosition = lines[targetLine][0] - 1;
             } else {
                 // target line is empty, find the newline before it
-                newPosition = targetLine === 0 ? -1 : lines[targetLine - 1].length > 0
-                    ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1 : targetLine - 1;
+                newPosition =
+                    targetLine === 0
+                        ? -1
+                        : lines[targetLine - 1].length > 0
+                        ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1
+                        : targetLine - 1;
             }
         } else if (currentCol >= lines[targetLine].length) {
             // column exceeds target line length, go to end
@@ -1311,8 +1459,12 @@ jQuery(document).ready(function() {
                 newPosition = lines[targetLine][lines[targetLine].length - 1];
             } else {
                 // target line is empty, position on its preceding newline
-                newPosition = targetLine === 0 ? -1 : lines[targetLine - 1].length > 0
-                    ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1 : targetLine - 1;
+                newPosition =
+                    targetLine === 0
+                        ? -1
+                        : lines[targetLine - 1].length > 0
+                        ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1
+                        : targetLine - 1;
             }
         } else {
             newPosition = lines[targetLine][currentCol];
@@ -1373,6 +1525,7 @@ jQuery(document).ready(function() {
         const [textSimple, font] = simplifyText(text);
         buttonPrint.attr("data-text", textSimple);
         buttonPrint.attr("data-font", font);
+        buttonPrint.data("multifont", multifontText(text, emojiMapping));
 
         // recalculates the automatic font size when the
         // text content changes to fit the viewport
