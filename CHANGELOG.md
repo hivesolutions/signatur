@@ -36,8 +36,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Show Keyboard toggle checkbox in viewport options panel to hide/show the visual keyboard
 * Selected class tracking on the active keyboard container for font-based key validation
 * Single-line constraint when no profile is selected (max 1 line)
+* Emoji validation script (`scripts/emoji_validation.py`) for visual glyph-to-F3S mapping verification
+* Missing emoji keyboard keys for all Cool Emojis TTF glyphs (`0`, `@`, `$`, `%`, `&`, `(`, `)`, `` ` ``, `[`, `{`, `|`, `}`)
 
 ### Changed
+
+* Corrected Cool Emojis character-to-F3S font mapping using visual glyph recognition
+* Sorted `coolemojis.mapping.json` by font number for better structure
 
 * Line height in viewport preview now scales proportionally to font size (1.2x)
 * Moved profile and font size controls from inline layout to fixed options panel
