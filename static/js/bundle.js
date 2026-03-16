@@ -797,12 +797,13 @@ jQuery(document).ready(function() {
 
     // correction factor applied to the font size to compensate
     // for the difference between CSS em-square and visual cap height
-    const FONT_SIZE_SCALE = 1.4;
+    const FONT_SIZE_SCALE = 1.3;
 
     // stores the currently selected profile and the loaded
     // profiles dictionary for later reference
     let currentProfile = null;
     let profiles = {};
+    let restoring = false;
 
     // fetches the available profiles from the server and
     // populates the profile dropdown with the results
@@ -823,8 +824,9 @@ jQuery(document).ready(function() {
             viewportOptions.addClass("visible");
             modalOverlayConfirm.data("profiles", profiles);
 
-            // restores the profile selection from the URL query
-            // parameters if a profile key was previously saved
+            // restores the session state from the URL query
+            // parameters, suppressing URL updates during restore
+            restoring = true;
             const urlProfile = urlParams.get("profile");
             if (urlProfile && profiles[urlProfile]) {
                 profileSelect.val(urlProfile).trigger("change");
@@ -865,7 +867,10 @@ jQuery(document).ready(function() {
                 zoomRange.val(urlZoom);
                 applyZoom();
             }
+            restoring = false;
+            updateUrl();
         } catch (err) {
+            restoring = false;
             // silently ignores profile loading errors
         }
     };
@@ -1694,6 +1699,7 @@ jQuery(document).ready(function() {
     // using history.replaceState so that the URL can be shared
     // or bookmarked to resume an engraving session later
     const updateUrl = function() {
+        if (restoring) return;
         const params = new URLSearchParams();
         const text = body.data("text") || [];
         if (text.length > 0) params.set("text", serializeText(text));
