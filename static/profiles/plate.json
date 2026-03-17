@@ -25,6 +25,7 @@
         "max": 24,
         "step": 1
     },
+    "background": "plate.png",
     "preview": {
         "show_bounds": true,
         "show_safe_area": true
