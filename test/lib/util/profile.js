@@ -142,6 +142,9 @@ describe("Profile", function() {
 
             errors = lib.validateProfile({ ...base, shape: "circle" });
             assert.deepStrictEqual(errors, []);
+
+            errors = lib.validateProfile({ ...base, shape: "heart" });
+            assert.deepStrictEqual(errors, []);
         });
 
         it("should reject invalid shape values", () => {
@@ -155,7 +158,10 @@ describe("Profile", function() {
                 shape: "triangle",
                 font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
             });
-            assert.strictEqual(true, errors.includes("shape must be one of: rectangle, circle"));
+            assert.strictEqual(
+                true,
+                errors.includes("shape must be one of: rectangle, circle, heart")
+            );
         });
 
         it("should accept valid background value", () => {
