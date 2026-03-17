@@ -8,10 +8,16 @@
     "orientation": "landscape",
     "shape": "circle",
     "padding": {
-        "top": 3,
-        "right": 3,
-        "bottom": 3,
-        "left": 3
+        "top": 2.94,
+        "right": 2.94,
+        "bottom": 2.94,
+        "left": 2.94
+    },
+    "extra_padding": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 28.5
     },
     "font_size": {
         "mode": "manual",
