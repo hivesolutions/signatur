@@ -445,6 +445,16 @@ body.ldj .line {
     cursor: pointer;
 }
 
+.viewport > .main-container > .viewer-container > .caret,
+.viewport > .main-container > .viewport-preview > .viewer-container > .caret {
+    animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
 .viewport > .main-container > .fonts-container {
     margin: 20px auto 0px auto;
     width: 720px;
