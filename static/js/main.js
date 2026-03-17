@@ -359,6 +359,29 @@ jQuery(document).ready(function() {
                 applyZoom();
             }
 
+            // restores the rulers visibility from the URL
+            // query parameters if it was previously saved
+            const urlRulers = urlParams.get("rulers");
+            if (urlRulers === "0") {
+                rulersMode.prop("checked", false);
+                rulerHorizontal.hide();
+                rulerVertical.hide();
+            }
+
+            // restores the crosshair visibility from the URL
+            // query parameters if it was previously saved
+            const urlCrosshair = urlParams.get("crosshair");
+            if (urlCrosshair === "0") {
+                crosshairMode.prop("checked", false);
+            }
+
+            // restores the keyboard visibility from the URL
+            // query parameters if it was previously saved
+            const urlKeyboard = urlParams.get("keyboard");
+            if (urlKeyboard === "0") {
+                keyboardMode.prop("checked", false);
+            }
+
             // restores the guidelines visibility from the URL
             // query parameters if it was previously saved
             const urlGuidelines = urlParams.get("guidelines");
@@ -769,6 +792,7 @@ jQuery(document).ready(function() {
             rulerHorizontal.hide();
             rulerVertical.hide();
         }
+        updateUrl();
     });
 
     // registers for the change in the zoom range slider
@@ -793,6 +817,7 @@ jQuery(document).ready(function() {
             viewportPreview.removeClass("crosshair-active");
             positionValue.text("—");
         }
+        updateUrl();
     });
 
     // registers for the change in the keyboard mode checkbox
@@ -813,6 +838,7 @@ jQuery(document).ready(function() {
             emojisContainer.hide();
             emojispContainer.hide();
         }
+        updateUrl();
     });
 
     // registers for the change in the guidelines mode checkbox
@@ -1282,6 +1308,12 @@ jQuery(document).ready(function() {
         const marginStr =
             margins.left + "," + margins.right + "," + margins.top + "," + margins.bottom;
         if (marginStr !== "0,0,0,0") params.set("margins", marginStr);
+        const showRulers = rulersMode.prop("checked");
+        if (!showRulers) params.set("rulers", "0");
+        const showCrosshair = crosshairMode.prop("checked");
+        if (!showCrosshair) params.set("crosshair", "0");
+        const showKeyboard = keyboardMode.prop("checked");
+        if (!showKeyboard) params.set("keyboard", "0");
         const showGuidelines = guidelinesMode.prop("checked");
         if (!showGuidelines) params.set("guidelines", "0");
         const showCaret = caretMode.prop("checked");
