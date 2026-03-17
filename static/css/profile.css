@@ -334,6 +334,42 @@
     vertical-align: middle;
 }
 
+.viewport-options > .viewport-options-body > .viewport-options-guidelines {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-guidelines.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-guidelines > .viewport-options-option {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-guidelines > .viewport-options-option > .guidelines-mode {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-caret {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-caret.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-caret > .viewport-options-option {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-caret > .viewport-options-option > .caret-mode {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
 .viewport-options > .viewport-options-body > .zoom-container {
     display: none;
 }

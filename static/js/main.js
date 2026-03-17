@@ -99,6 +99,10 @@ jQuery(document).ready(function() {
     const viewportOptionsCrosshair = jQuery(".viewport-options-crosshair");
     const keyboardMode = jQuery(".keyboard-mode");
     const viewportOptionsKeyboard = jQuery(".viewport-options-keyboard");
+    const guidelinesMode = jQuery(".guidelines-mode");
+    const viewportOptionsGuidelines = jQuery(".viewport-options-guidelines");
+    const caretMode = jQuery(".caret-mode");
+    const viewportOptionsCaret = jQuery(".viewport-options-caret");
     const zoomContainer = jQuery(".zoom-container");
     const zoomRange = jQuery(".zoom-range");
     const zoomValue = jQuery(".zoom-value");
@@ -353,6 +357,22 @@ jQuery(document).ready(function() {
             if (urlZoom) {
                 zoomRange.val(urlZoom);
                 applyZoom();
+            }
+
+            // restores the guidelines visibility from the URL
+            // query parameters if it was previously saved
+            const urlGuidelines = urlParams.get("guidelines");
+            if (urlGuidelines === "0") {
+                guidelinesMode.prop("checked", false);
+                viewportSvg.hide();
+            }
+
+            // restores the caret visibility from the URL
+            // query parameters if it was previously saved
+            const urlCaret = urlParams.get("caret");
+            if (urlCaret === "0") {
+                caretMode.prop("checked", false);
+                viewportContainer.find("> .caret").hide();
             }
             restoring = false;
             updateUrl();
@@ -698,12 +718,16 @@ jQuery(document).ready(function() {
             marginContainer.addClass("visible");
             viewportOptionsRulers.addClass("visible");
             viewportOptionsCrosshair.addClass("visible");
+            viewportOptionsGuidelines.addClass("visible");
+            viewportOptionsCaret.addClass("visible");
             zoomContainer.addClass("visible");
             positionContainer.addClass("visible");
         } else {
             marginContainer.removeClass("visible");
             viewportOptionsRulers.removeClass("visible");
             viewportOptionsCrosshair.removeClass("visible");
+            viewportOptionsGuidelines.removeClass("visible");
+            viewportOptionsCaret.removeClass("visible");
             zoomContainer.removeClass("visible");
             positionContainer.removeClass("visible");
         }
@@ -789,6 +813,31 @@ jQuery(document).ready(function() {
             emojisContainer.hide();
             emojispContainer.hide();
         }
+    });
+
+    // registers for the change in the guidelines mode checkbox
+    // to toggle the visibility of the viewport SVG guidelines
+    guidelinesMode.bind("change", function() {
+        const showGuidelines = guidelinesMode.prop("checked");
+        if (showGuidelines) {
+            viewportSvg.show();
+        } else {
+            viewportSvg.hide();
+        }
+        updateUrl();
+    });
+
+    // registers for the change in the caret mode checkbox
+    // to toggle the visibility of the blinking caret
+    caretMode.bind("change", function() {
+        const showCaret = caretMode.prop("checked");
+        const caret = viewportContainer.find("> .caret");
+        if (showCaret) {
+            caret.show();
+        } else {
+            caret.hide();
+        }
+        updateUrl();
     });
 
     // registers for the mouse move event on the viewport preview
@@ -1233,6 +1282,10 @@ jQuery(document).ready(function() {
         const marginStr =
             margins.left + "," + margins.right + "," + margins.top + "," + margins.bottom;
         if (marginStr !== "0,0,0,0") params.set("margins", marginStr);
+        const showGuidelines = guidelinesMode.prop("checked");
+        if (!showGuidelines) params.set("guidelines", "0");
+        const showCaret = caretMode.prop("checked");
+        if (!showCaret) params.set("caret", "0");
         const fullscreen = urlParams.get("fullscreen");
         if (fullscreen === "1") params.set("fullscreen", "1");
         if (theme !== "default") params.set("theme", theme);
