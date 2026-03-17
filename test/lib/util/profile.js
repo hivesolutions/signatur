@@ -299,7 +299,10 @@ describe("Profile", function() {
                 bottom: 2,
                 left: 3
             });
-            assert.strictEqual(true, errors.includes("extra_padding.top must be a non-negative number"));
+            assert.strictEqual(
+                true,
+                errors.includes("extra_padding.top must be a non-negative number")
+            );
         });
 
         it("should reject missing fields", () => {

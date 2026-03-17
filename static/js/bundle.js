@@ -397,18 +397,26 @@ const countLines = function(text) {
                     if (profile) {
                         const machine = profile.machine || {};
                         const extraPadding = profile.extra_padding || {};
-                        printData.width = (machine.viewport_width || profile.width) +
-                            (extraPadding.left || 0) + (extraPadding.right || 0);
-                        printData.height = (machine.viewport_height || profile.height) +
-                            (extraPadding.top || 0) + (extraPadding.bottom || 0);
-                        printData.font_size = parseInt(fontSizeRange.val());
-                        const ml = (parseFloat(jQuery(".margin-left").val()) || 0) +
-                            (extraPadding.left || 0);
-                        const mr = (parseFloat(jQuery(".margin-right").val()) || 0) +
+                        printData.width =
+                            (machine.viewport_width || profile.width) +
+                            (extraPadding.left || 0) +
                             (extraPadding.right || 0);
-                        const mt = (parseFloat(jQuery(".margin-top").val()) || 0) +
+                        printData.height =
+                            (machine.viewport_height || profile.height) +
+                            (extraPadding.top || 0) +
+                            (extraPadding.bottom || 0);
+                        printData.font_size = parseInt(fontSizeRange.val());
+                        const ml =
+                            (parseFloat(jQuery(".margin-left").val()) || 0) +
+                            (extraPadding.left || 0);
+                        const mr =
+                            (parseFloat(jQuery(".margin-right").val()) || 0) +
+                            (extraPadding.right || 0);
+                        const mt =
+                            (parseFloat(jQuery(".margin-top").val()) || 0) +
                             (extraPadding.top || 0);
-                        const mb = (parseFloat(jQuery(".margin-bottom").val()) || 0) +
+                        const mb =
+                            (parseFloat(jQuery(".margin-bottom").val()) || 0) +
                             (extraPadding.bottom || 0);
                         printData.margins = [ml, mr, mt, mb];
                     }
@@ -567,7 +575,7 @@ jQuery(document).ready(function() {
             const height = bodyEl.scrollHeight;
             panelBody.css("max-height", "0px");
             panelTitle.css("margin-bottom", "0px");
-            bodyEl.offsetHeight;
+            bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
             panelBody.css("max-height", height + "px");
             panelTitle.css("margin-bottom", "");
             toggleIcon.text("▾");
@@ -576,7 +584,7 @@ jQuery(document).ready(function() {
             });
         } else {
             panelBody.css("max-height", bodyEl.scrollHeight + "px");
-            bodyEl.offsetHeight;
+            bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
             panelBody.css("max-height", "0px");
             panelTitle.css("margin-bottom", "0px");
             toggleIcon.text("▸");
@@ -616,7 +624,6 @@ jQuery(document).ready(function() {
     const crosshairMode = jQuery(".crosshair-mode");
     const viewportOptionsCrosshair = jQuery(".viewport-options-crosshair");
     const keyboardMode = jQuery(".keyboard-mode");
-    const viewportOptionsKeyboard = jQuery(".viewport-options-keyboard");
     const guidelinesMode = jQuery(".guidelines-mode");
     const viewportOptionsGuidelines = jQuery(".viewport-options-guidelines");
     const caretMode = jQuery(".caret-mode");
@@ -772,8 +779,7 @@ jQuery(document).ready(function() {
                     (unit ? " " + unit : "");
                 const finalWidth = width + (extraPadding.left || 0) + (extraPadding.right || 0);
                 const finalHeight = height + (extraPadding.top || 0) + (extraPadding.bottom || 0);
-                specs.final_viewport =
-                    finalWidth + " x " + finalHeight + (unit ? " " + unit : "");
+                specs.final_viewport = finalWidth + " x " + finalHeight + (unit ? " " + unit : "");
             }
         }
 
@@ -1847,7 +1853,7 @@ jQuery(document).ready(function() {
     const restoreFont = function() {
         const urlFont = urlParams.get("font");
         if (!urlFont) return;
-        const fontEl = fontsContainer.find(".font[data-font=\"" + urlFont + "\"]");
+        const fontEl = fontsContainer.find('.font[data-font="' + urlFont + '"]');
         if (fontEl.length > 0) fontEl.click();
     };
 
