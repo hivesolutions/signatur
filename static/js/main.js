@@ -394,7 +394,11 @@ jQuery(document).ready(function() {
                 height: "",
                 transform: "",
                 "margin-bottom": "",
-                "margin-right": ""
+                "margin-right": "",
+                "background-image": "",
+                "background-size": "",
+                "background-repeat": "",
+                "background-position": ""
             });
             viewportContainer.css({
                 position: "",
@@ -475,6 +479,24 @@ jQuery(document).ready(function() {
             border: "none",
             "min-width": "0px"
         });
+
+        // applies the background image behind the viewport so that
+        // the user can preview the engraving on a realistic surface
+        if (profile.background) {
+            viewportPreview.css({
+                "background-image": "url('/static/profiles/" + profile.background + "')",
+                "background-size": width + "px " + height + "px",
+                "background-repeat": "no-repeat",
+                "background-position": "0px 0px 0px 0px"
+            });
+        } else {
+            viewportPreview.css({
+                "background-image": "",
+                "background-size": "",
+                "background-repeat": "",
+                "background-position": ""
+            });
+        }
 
         viewportPreview.css({ width: width + "px", height: height + "px" });
         viewportPreview.addClass("profile-active");

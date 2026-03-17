@@ -2,16 +2,16 @@
     "id": "small-medal",
     "name": "Small Medal",
     "description": "A small circular medal inscribed in a 14x14mm area.",
-    "width": 14,
-    "height": 14,
+    "width": 20,
+    "height": 20,
     "unit": "mm",
     "orientation": "landscape",
     "shape": "circle",
     "padding": {
-        "top": 2,
-        "right": 2,
-        "bottom": 2,
-        "left": 2
+        "top": 3,
+        "right": 3,
+        "bottom": 3,
+        "left": 3
     },
     "font_size": {
         "mode": "manual",
@@ -24,13 +24,14 @@
         "max_lines": 2,
         "align": "center"
     },
+    "background": "small-medal.png",
     "preview": {
         "show_bounds": true,
         "show_safe_area": true,
         "zoom": 2
     },
     "machine": {
-        "viewport_width": 14,
-        "viewport_height": 14
+        "viewport_width": 20,
+        "viewport_height": 20
     }
 }

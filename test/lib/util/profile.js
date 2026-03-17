@@ -158,6 +158,47 @@ describe("Profile", function() {
             assert.strictEqual(true, errors.includes("shape must be one of: rectangle, circle"));
         });
 
+        it("should accept valid background value", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                background: "test.png",
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-string background value", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                background: 123,
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.strictEqual(true, errors.includes("background must be a string"));
+        });
+
+        it("should accept profile without background (optional field)", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.strictEqual(false, errors.includes("background must be a string"));
+        });
+
         it("should accept profile without shape (optional field)", () => {
             const errors = lib.validateProfile({
                 id: "test",
