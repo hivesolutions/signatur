@@ -1,7 +1,7 @@
 {
     "id": "small-medal",
     "name": "Small Medal",
-    "description": "A small circular medal inscribed in a 14x14mm area.",
+    "description": "A small circular medal inscribed in a 20x20mm area.",
     "width": 20,
     "height": 20,
     "unit": "mm",

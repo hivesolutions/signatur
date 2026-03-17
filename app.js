@@ -212,22 +212,25 @@ app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
 });
 
-app.get("/profiles", async (req, res, next) => {
-    const directoryPath = path.join(__dirname, "static", "profiles");
-    const files = await fs.readdir(directoryPath);
-    const profiles = {};
-    for (const file of files) {
-        const filePath = path.join(directoryPath, file);
-        if (path.extname(file) === ".json") {
-            const fileContent = await fs.readFile(filePath, "utf8");
-            const jsonObject = JSON.parse(fileContent);
-            const errors = lib.validateProfile(jsonObject);
-            if (errors.length > 0) continue;
-            const name = path.basename(file, ".json");
-            profiles[name] = jsonObject;
+app.get("/profiles", (req, res, next) => {
+    async function clojure() {
+        const directoryPath = path.join(__dirname, "static", "profiles");
+        const files = await fs.readdir(directoryPath);
+        const profiles = {};
+        for (const file of files) {
+            const filePath = path.join(directoryPath, file);
+            if (path.extname(file) === ".json") {
+                const fileContent = await fs.readFile(filePath, "utf8");
+                const jsonObject = JSON.parse(fileContent);
+                const errors = lib.validateProfile(jsonObject);
+                if (errors.length > 0) continue;
+                const name = path.basename(file, ".json");
+                profiles[name] = jsonObject;
+            }
         }
+        res.json(profiles);
     }
-    res.json(profiles);
+    clojure().catch(next);
 });
 
 app.get("/info", (req, res, next) => {

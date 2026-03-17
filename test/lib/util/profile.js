@@ -409,6 +409,28 @@ describe("Profile", function() {
             });
             assert.strictEqual(true, errors.includes("preview.show_bounds must be a boolean"));
         });
+
+        it("should validate correct zoom value", () => {
+            const errors = lib.validatePreview({
+                show_bounds: true,
+                zoom: 2
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-positive zoom values", () => {
+            const errors = lib.validatePreview({
+                zoom: 0
+            });
+            assert.strictEqual(true, errors.includes("preview.zoom must be a positive number"));
+        });
+
+        it("should reject negative zoom values", () => {
+            const errors = lib.validatePreview({
+                zoom: -1
+            });
+            assert.strictEqual(true, errors.includes("preview.zoom must be a positive number"));
+        });
     });
 
     describe("#validateMachine()", function() {

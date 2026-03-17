@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Favicon and Apple touch icon references in HTML head
 * Icon generation script (`npm run icons`) using sharp
 * Circular profile shape support with `shape: "circle"` field
-* New "small-medal" circular profile (14x14mm)
+* New "small-medal" circular profile (20x20mm)
 * Circle boundary rendering in viewport preview for circular profiles
 * Zoom slider in viewport options panel with per-profile default zoom and layout compensation
 * Collapsible viewport options and profile info panels with animated toggle
@@ -38,6 +38,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Single-line constraint when no profile is selected (max 1 line)
 * Emoji validation script (`scripts/emoji_validation.py`) for visual glyph-to-F3S mapping verification
 * Missing emoji keyboard keys for all Cool Emojis TTF glyphs (`0`, `@`, `$`, `%`, `&`, `(`, `)`, `` ` ``, `[`, `{`, `|`, `}`)
+* Optional background image support for viewport profiles (`background` field)
+* Show Guidelines toggle checkbox in viewport options panel to hide/show SVG bounds and safe area
+* Show Caret toggle checkbox in viewport options panel to hide/show the blinking caret
+* URL persistence for rulers, crosshair, keyboard, guidelines, and caret visibility toggles
+
+### Fixed
+
+* `/profiles` endpoint now handles async errors through Express error middleware
+* Invalid CSS `background-position` value corrected to valid 2-value syntax
+* Restored text click handler now binds to all non-caret children including newline elements
+* Malformed HTML `style` attribute on space bar keyboard keys (extra double quote)
+* Small-medal profile description now matches actual 20x20mm dimensions
+* Font deselection handler now clears stored font state and updates URL
+* Backspace at caret start position no longer corrupts text state
+* Server-side validation for `preview.zoom` field in profile schema
 
 ### Changed
 

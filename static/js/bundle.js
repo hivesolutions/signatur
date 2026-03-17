@@ -1480,6 +1480,8 @@ jQuery(document).ready(function() {
         keyboardContainer.removeClass("selected");
         emojisContainer.removeClass("selected");
         emojispContainer.removeClass("selected");
+        body.data("font", null);
+        updateUrl();
     });
 
     const updateForm = function(value) {
@@ -1596,6 +1598,7 @@ jQuery(document).ready(function() {
     const backspace = function() {
         let [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
+        if (caretPosition < 0) return false;
         caret.prev().remove();
         text.splice(caretPosition, 1);
         caretPosition--;
@@ -1857,7 +1860,7 @@ jQuery(document).ready(function() {
         if (!textData || textData.length === 0) return;
         body.data("text", textData);
         body.data("caret_position", textData.length - 1);
-        viewportContainer.find("> span:not(.caret)").each(function() {
+        viewportContainer.find("> :not(.caret)").each(function() {
             const element = jQuery(this);
             element.click(function() {
                 const element = jQuery(this);
