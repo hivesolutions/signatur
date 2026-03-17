@@ -54,10 +54,19 @@ def main():
     header_font = ImageFont.truetype("arial.ttf", 40)
     font_name = os.path.basename(FONT_PATH)
     render_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    draw.text((MARGIN, 10), "Cool Emojis TTF - Glyph to F3S Font Mapping Validation", font=header_font, fill="#000000")
+    draw.text(
+        (MARGIN, 10),
+        "Cool Emojis TTF - Glyph to F3S Font Mapping Validation",
+        font=header_font,
+        fill="#000000",
+    )
     draw.text((MARGIN, 70), "Font: " + font_name, font=header_font, fill="#666666")
-    draw.text((MARGIN, 125), "Glyphs: " + str(len(chars)), font=header_font, fill="#666666")
-    draw.text((MARGIN, 180), "Rendered: " + render_date, font=header_font, fill="#666666")
+    draw.text(
+        (MARGIN, 125), "Glyphs: " + str(len(chars)), font=header_font, fill="#666666"
+    )
+    draw.text(
+        (MARGIN, 180), "Rendered: " + render_date, font=header_font, fill="#666666"
+    )
 
     for i, ch in enumerate(chars):
         col = i % COLS
@@ -65,9 +74,7 @@ def main():
         x0 = MARGIN + col * CELL_W
         y0 = MARGIN + header_h + row * CELL_H
 
-        draw.rectangle(
-            [x0, y0, x0 + CELL_W - 1, y0 + CELL_H - 1], outline="#aaaaaa"
-        )
+        draw.rectangle([x0, y0, x0 + CELL_W - 1, y0 + CELL_H - 1], outline="#aaaaaa")
 
         try:
             glyph_area_w = CELL_W - 16
