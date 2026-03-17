@@ -45,7 +45,8 @@
     width: 100%;
 }
 
-.viewport > .main-container > .viewer-container {
+.viewport > .main-container > .viewer-container,
+.viewport > .main-container > .viewport-preview > .viewer-container {
     border: 2px dashed #2d2d2d;
     border-radius: 6px 6px 6px 6px;
     -o-border-radius: 6px 6px 6px 6px;
@@ -69,7 +70,24 @@
     text-align: center;
 }
 
-.viewport > .main-container > .viewer-container > span:not(.caret) {
+.viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
+    align-content: center;
+    border: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 0px;
+    overflow: hidden;
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .viewer-container > .newline {
+    height: 0px;
+    width: 100%;
+}
+
+.viewport > .main-container > .viewer-container > span:not(.caret),
+.viewport > .main-container > .viewport-preview > .viewer-container > span:not(.caret) {
     cursor: pointer;
 }
 
@@ -88,7 +106,7 @@
     -webkit-border-radius: 4px 4px 4px 4px;
     cursor: pointer;
     display: inline-block;
-    font-size: 22px;
+    font-size: 18px;
     height: 34px;
     line-height: 34px;
     margin: 6px 6px 6px 6px;
@@ -105,84 +123,125 @@
     background-color: #f0f0f0;
 }
 
-.viewport > .main-container > .emojis-container,
-.viewport > .main-container > .emojisp-container,
-.viewport > .main-container > .keyboard-container {
-    font-size: 0px;
-    margin: 20px auto 0px auto;
-}
-
-.viewport > .main-container > .keyboard-container {
+.viewport > .main-container > .viewport-preview > .ruler {
     display: none;
-    width: 620px;
+    position: absolute;
 }
 
-.viewport > .main-container > .keyboard-container.lowercase {
-    text-transform: lowercase;
+.viewport > .main-container > .viewport-preview.profile-active > .ruler {
+    display: block;
 }
 
-.viewport > .main-container > .emojis-container {
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick {
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-line {
+    background-color: #9d9d9d;
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-label {
+    color: #6d6d6d;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-unit {
+    color: #9d9d9d;
+    font-size: 8px;
+    letter-spacing: 0.3px;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal {
+    height: 20px;
+    left: 0px;
+    top: -12px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-line {
+    bottom: 0px;
+    left: 0px;
+    width: 1px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.major > .ruler-line {
+    height: 10px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.minor > .ruler-line {
+    height: 6px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-label {
+    bottom: 12px;
+    left: 2px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-unit {
+    bottom: 0px;
+    right: -24px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical {
+    left: -12px;
+    top: 0px;
+    width: 20px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-line {
+    height: 1px;
+    right: 0px;
+    top: 0px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.major > .ruler-line {
+    width: 10px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.minor > .ruler-line {
+    width: 6px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-label {
+    right: 12px;
+    top: -5px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-unit {
+    bottom: -16px;
+    right: 0px;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair {
     display: none;
-    font-family: "Cool Emojis";
-    width: 720px;
+    pointer-events: none;
+    position: absolute;
+    z-index: 50;
 }
 
-.viewport > .main-container > .emojisp-container {
+.viewport > .main-container > .viewport-preview.profile-active > .crosshair {
     display: none;
-    font-family: "Cool Emojis Pantograph";
-    width: 720px;
 }
 
-.viewport > .main-container > .emojis-container > .char,
-.viewport > .main-container > .emojisp-container > .char,
-.viewport > .main-container > .keyboard-container > .char {
-    border: 1px solid #9d9d9d;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
-    box-sizing: border-box;
-    -o-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -khtml-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 26px;
-    line-height: 48px;
-    margin: 3px 3px 3px 3px;
-    min-height: 48px;
-    min-width: 48px;
-    padding: 0px 8px 0px 8px;
+.viewport > .main-container > .viewport-preview.profile-active.crosshair-active > .crosshair {
+    display: block;
 }
 
-.viewport > .main-container > .emojis-container > .char:hover,
-.viewport > .main-container > .emojisp-container > .char:hover,
-.viewport > .main-container > .keyboard-container > .char:hover {
-    background-color: #e2e2e2;
-    box-shadow: 1px 1px 1px #cccccc;
-    -o-box-shadow: 1px 1px 1px #cccccc;
-    -ms-box-shadow: 1px 1px 1px #cccccc;
-    -moz-box-shadow: 1px 1px 1px #cccccc;
-    -khtml-box-shadow: 1px 1px 1px #cccccc;
-    -webkit-box-shadow: 1px 1px 1px #cccccc;
+.viewport > .main-container > .viewport-preview > .crosshair-horizontal {
+    border-top: 1px dashed #9d9d9d;
+    height: 0px;
+    left: 0px;
+    width: 100%;
 }
 
-.viewport > .main-container > .emojis-container > .char:active,
-.viewport > .main-container > .emojisp-container > .char:active,
-.viewport > .main-container > .keyboard-container > .char:active {
-    background-color: #d2d2d2;
-    box-shadow: none;
-    -o-box-shadow: none;
-    -ms-box-shadow: none;
-    -moz-box-shadow: none;
-    -khtml-box-shadow: none;
-    -webkit-box-shadow: none;
-}
-
-.viewport > .main-container > .keyboard-container:not(.lowercase) > .char.shift {
-    background-color: #e2e2e2;
+.viewport > .main-container > .viewport-preview > .crosshair-vertical {
+    border-left: 1px dashed #9d9d9d;
+    height: 100%;
+    top: 0px;
+    width: 0px;
 }

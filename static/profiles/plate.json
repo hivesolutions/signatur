@@ -1,0 +1,36 @@
+{
+    "id": "plate",
+    "name": "Steel Plate",
+    "description": "A 70x70 steel plate.",
+    "width": 70,
+    "height": 70,
+    "unit": "mm",
+    "orientation": "portrait",
+    "padding": {
+        "top": 5,
+        "right": 5,
+        "bottom": 5,
+        "left": 5
+    },
+    "extra_padding": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+    },
+    "font_size": {
+        "mode": "manual",
+        "default": 12,
+        "min": 6,
+        "max": 24,
+        "step": 1
+    },
+    "preview": {
+        "show_bounds": true,
+        "show_safe_area": true
+    },
+    "machine": {
+        "viewport_width": 70,
+        "viewport_height": 70
+    }
+}

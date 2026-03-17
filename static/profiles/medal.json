@@ -1,0 +1,30 @@
+{
+    "id": "medal",
+    "name": "Medal",
+    "description": "A standard medal.",
+    "width": 80,
+    "height": 100,
+    "unit": "mm",
+    "orientation": "portrait",
+    "padding": {
+        "top": 5,
+        "right": 5,
+        "bottom": 5,
+        "left": 5
+    },
+    "font_size": {
+        "mode": "manual",
+        "default": 12,
+        "min": 8,
+        "max": 24,
+        "step": 1
+    },
+    "preview": {
+        "show_bounds": true,
+        "show_safe_area": true
+    },
+    "machine": {
+        "viewport_width": 80,
+        "viewport_height": 100
+    }
+}

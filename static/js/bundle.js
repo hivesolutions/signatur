@@ -1,3 +1,529 @@
+const jQuery = window.jQuery ? window.jQuery : null;
+
+/**
+ * Gathers the series of UI and canvas options according to
+ * the requested theme.
+ *
+ * @param {String} theme The name of the theme to retrieve the target
+ * options, that change thickness and global UI.
+ * @returns {Object} An object with the setting for the current theme.
+ */
+const getOptions = function(theme) {
+    switch (theme) {
+        case "ldj":
+            return {
+                height: "100%",
+                lineWidth: 1,
+                UndoButton: true
+            };
+        default:
+            return {
+                width: "100%",
+                height: "100%",
+                lineWidth: 4,
+                UndoButton: true
+            };
+    }
+};
+
+const drawText = function(ctx) {
+    ctx.font = "30px Arial";
+    ctx.fillText("Hello World", 10, 500);
+};
+
+const deserializeText = function(text, separator = "|") {
+    if (!text) return null;
+    const textL = [];
+    const pairs = text.split(new RegExp("\\" + separator));
+    for (let index = 0; index < pairs.length; index++) {
+        const pair = pairs[index];
+        if (pair === "\\n") {
+            textL.push([null, "\n"]);
+            continue;
+        }
+        let font, value;
+        const offset = pair.indexOf(":");
+        if (offset === -1) {
+            font = pair;
+            value = null;
+        } else {
+            font = pair.slice(0, offset);
+            value = pair.slice(offset + 1);
+        }
+        textL.push([font, value]);
+    }
+    return textL;
+};
+
+const serializeText = function(text, separator = "|") {
+    const buffer = [];
+    for (let index = 0; index < text.length; index++) {
+        const item = text[index];
+        if (item[1] === "\n") {
+            buffer.push("\\n");
+        } else {
+            buffer.push(item[0] + ":" + item[1]);
+        }
+    }
+    return buffer.join(separator);
+};
+
+const simplifyText = function(text, separator = "") {
+    const buffer = [];
+    let font = null;
+    for (let index = 0; index < text.length; index++) {
+        const item = text[index];
+        if (item[0] !== null) font = item[0];
+        buffer.push(item[1]);
+    }
+    return [buffer.join(separator), font];
+};
+
+const multifontText = function(text, emojiMapping) {
+    const result = [];
+    for (let index = 0; index < text.length; index++) {
+        const item = text[index];
+        const font = item[0];
+        const value = item[1];
+        if (value === "\n") {
+            result.push([null, "\n"]);
+            continue;
+        }
+        if (font === "Cool Emojis") {
+            const mapped = emojiMapping[value];
+            if (mapped) {
+                result.push([mapped, "a"]);
+            } else if (value === " ") {
+                result.push(["HELVETICA 4L", " "]);
+            }
+            continue;
+        }
+        if (font === "Cool Emojis Pantograph") continue;
+        const last = result.length > 0 ? result[result.length - 1] : null;
+        if (last && last[0] === font && last[1] !== "\n") {
+            last[1] += value;
+        } else {
+            result.push([font, value]);
+        }
+    }
+    return result;
+};
+
+const hasUnsupportedFont = function(text) {
+    for (let index = 0; index < text.length; index++) {
+        if (text[index][0] === "Cool Emojis Pantograph") return true;
+    }
+    return false;
+};
+
+const countLines = function(text) {
+    let lines = 1;
+    for (let index = 0; index < text.length; index++) {
+        if (text[index][1] === "\n") lines++;
+    }
+    return lines;
+};
+
+(function(jQuery) {
+    jQuery.fn.fontscontainer = function() {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const fonts = jQuery(".font", context);
+
+            fonts.click(function() {
+                const _element = jQuery(this);
+                if (_element.hasClass("selected")) {
+                    _element.removeClass("selected");
+                    context.triggerHandler("defont", [_element.attr("data-font")]);
+                    return;
+                }
+                fonts.removeClass("selected");
+                _element.addClass("selected");
+                context.triggerHandler("font", [_element.attr("data-font")]);
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.keyboardcontainer = function() {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const body = jQuery("body");
+            const keys = jQuery("> .char", context);
+
+            keys.click(function() {
+                const element = jQuery(this);
+                let value = element.text();
+                const casing = context.data("casing") || "uppercase";
+                value = casing === "lowercase" ? value.toLowerCase() : value;
+                if (value === "⇧") {
+                    toggleCasing(context);
+                } else {
+                    const font = body.data("font");
+                    context.triggerHandler("key", [font, value]);
+                }
+            });
+        });
+
+        /**
+         * Toggle the casing of the keyboard.
+         *
+         * @param {Element} context The context that is going to be used
+         * for the toggling.
+         */
+        const toggleCasing = function(context) {
+            const casing = context.data("casing") || "uppercase";
+            if (casing === "uppercase") {
+                context.data("casing", "lowercase");
+                context.addClass("lowercase");
+            } else {
+                context.data("casing", "uppercase");
+                context.removeClass("lowercase");
+            }
+        };
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.modal = function(action, message) {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const modalMessage = jQuery(".modal-message", context);
+            const modalPreview = jQuery(".modal-preview", context);
+            const modalSpecs = jQuery(".modal-specs", context);
+            const buttonClose = jQuery(".button-modal-close", context);
+            const buttonConfigure = jQuery(".button-modal-configure", context);
+            const buttonEngrave = jQuery(".button-modal-engrave", context);
+            const buttonSave = jQuery(".button-modal-save", context);
+
+            if (action === "show") {
+                modalMessage.text(message);
+                context.addClass("visible");
+                return;
+            }
+
+            // renders the printing specs in the confirmation modal
+            // and shows it for the user to review before engraving
+            if (action === "confirm") {
+                const specs = message;
+                let html = "";
+                if (specs.multifont && specs.multifont.length > 0) {
+                    html += '<div class="modal-spec"><strong>Text:</strong></div>';
+                    for (let index = 0; index < specs.multifont.length; index++) {
+                        const entry = specs.multifont[index];
+                        const font = entry[0];
+                        const value = entry[1];
+                        if (value === "\n") {
+                            html += '<div class="modal-spec modal-spec-segment">&crarr;</div>';
+                            continue;
+                        }
+                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "⎵");
+                        const fontEscaped = jQuery("<span>").text(font).html();
+                        html +=
+                            '<div class="modal-spec modal-spec-segment">' +
+                            '<span class="modal-spec-text">' +
+                            escaped +
+                            "</span>" +
+                            ' <span class="modal-spec-font">(' +
+                            fontEscaped +
+                            ")</span>" +
+                            "</div>";
+                    }
+                } else {
+                    if (specs.text) {
+                        html +=
+                            '<div class="modal-spec"><strong>Text:</strong> ' +
+                            jQuery("<span>").text(specs.text).html() +
+                            "</div>";
+                    }
+                }
+                if (specs.font) {
+                    html +=
+                        '<div class="modal-spec"><strong>Font:</strong> ' +
+                        jQuery("<span>").text(specs.font).html() +
+                        "</div>";
+                }
+                if (specs.profile) {
+                    html +=
+                        '<div class="modal-spec"><strong>Profile:</strong> ' +
+                        jQuery("<span>").text(specs.profile).html() +
+                        "</div>";
+                }
+                if (specs.viewport) {
+                    html +=
+                        '<div class="modal-spec"><strong>Viewport:</strong> ' +
+                        jQuery("<span>").text(specs.viewport).html() +
+                        "</div>";
+                }
+                if (specs.font_size) {
+                    html +=
+                        '<div class="modal-spec"><strong>Font size:</strong> ' +
+                        jQuery("<span>").text(specs.font_size).html() +
+                        "</div>";
+                }
+                if (specs.margins) {
+                    html +=
+                        '<div class="modal-spec"><strong>Margins:</strong> ' +
+                        jQuery("<span>").text(specs.margins).html() +
+                        "</div>";
+                }
+                if (specs.extra_padding) {
+                    html +=
+                        '<div class="modal-spec"><strong>Extra padding:</strong> ' +
+                        jQuery("<span>").text(specs.extra_padding).html() +
+                        "</div>";
+                }
+                if (specs.final_viewport) {
+                    html +=
+                        '<div class="modal-spec"><strong>Final viewport:</strong> ' +
+                        jQuery("<span>").text(specs.final_viewport).html() +
+                        "</div>";
+                }
+                if (specs.node) {
+                    html +=
+                        '<div class="modal-spec"><strong>Node:</strong> ' +
+                        jQuery("<span>").text(specs.node).html() +
+                        "</div>";
+                }
+                modalSpecs.html(html);
+
+                // clones the viewport preview into the modal so that the
+                // user can visually confirm the engraving layout
+                modalPreview.empty();
+                const viewportPreview = jQuery(".viewport-preview");
+                if (viewportPreview.hasClass("profile-active")) {
+                    const clone = viewportPreview.clone();
+                    clone.find(".crosshair").remove();
+                    clone.find(".ruler").remove();
+                    clone.find(".caret").remove();
+                    clone.removeClass("crosshair-active");
+                    clone.css({
+                        transform: "none",
+                        "-o-transform": "none",
+                        "-ms-transform": "none",
+                        "-moz-transform": "none",
+                        "-khtml-transform": "none",
+                        "-webkit-transform": "none",
+                        "margin-bottom": "",
+                        "margin-right": ""
+                    });
+                    modalPreview.append(clone);
+                }
+
+                context.addClass("visible");
+                return;
+            }
+
+            // dismisses the modal with a faster fade-out transition
+            // removing the visible and dismissing classes after completion
+            const dismissModal = function(callback) {
+                if (!context.hasClass("visible")) return;
+                context.addClass("dismissing");
+                context.one("transitionend", function() {
+                    context.removeClass("visible dismissing");
+                    if (callback) callback();
+                });
+            };
+
+            buttonClose.click(function() {
+                dismissModal();
+            });
+
+            // registers for the click operation on the overlay
+            // background to dismiss the modal when clicking outside
+            context.click(function(event) {
+                if (event.target !== context.get(0)) return;
+                dismissModal();
+            });
+
+            // registers for the escape key press to dismiss
+            // the modal when it is currently visible
+            jQuery(document).bind("keydown", function(event) {
+                if (event.key !== "Escape") return;
+                if (!context.hasClass("visible")) return;
+                dismissModal();
+            });
+
+            // registers for the click operation on the configure button
+            // that opens the printer configuration modal
+            buttonConfigure.click(function() {
+                dismissModal(function() {
+                    const configOverlay = jQuery(".modal-overlay-config");
+                    configOverlay.modal("show");
+                });
+            });
+
+            // registers for the click operation on the engrave button
+            // that performs the actual print submission via colony print
+            buttonEngrave.click(async function() {
+                context.removeClass("visible");
+
+                const buttonPrint = jQuery(".button-print");
+                const text = buttonPrint.attr("data-text");
+                const font = buttonPrint.attr("data-font");
+                const multifont = buttonPrint.data("multifont");
+                const printUrl = localStorage.getItem("url");
+                const node = localStorage.getItem("node");
+                const key = localStorage.getItem("key") || null;
+                const fontSizeRange = jQuery(".font-size-range");
+                const profileSelect = jQuery(".profile-select");
+                const profileKey = profileSelect.val();
+
+                // builds the data payload for the print operation, including
+                // the viewport information from the selected profile if available
+                const dryRun = jQuery(".modal-dry-run", context).prop("checked");
+                const textPayload = multifont && multifont.length > 0 ? multifont : text;
+                const fontPayload = font === "Cool Emojis" ? null : font;
+                const printData = {
+                    text: textPayload,
+                    font: fontPayload,
+                    debug: true,
+                    dry_run: dryRun
+                };
+                if (profileKey) {
+                    const profiles = context.data("profiles") || {};
+                    const profile = profiles[profileKey];
+                    if (profile) {
+                        const machine = profile.machine || {};
+                        const extraPadding = profile.extra_padding || {};
+                        printData.width =
+                            (machine.viewport_width || profile.width) +
+                            (extraPadding.left || 0) +
+                            (extraPadding.right || 0);
+                        printData.height =
+                            (machine.viewport_height || profile.height) +
+                            (extraPadding.top || 0) +
+                            (extraPadding.bottom || 0);
+                        printData.font_size = parseInt(fontSizeRange.val());
+                        const ml =
+                            (parseFloat(jQuery(".margin-left").val()) || 0) +
+                            (extraPadding.left || 0);
+                        const mr =
+                            (parseFloat(jQuery(".margin-right").val()) || 0) +
+                            (extraPadding.right || 0);
+                        const mt =
+                            (parseFloat(jQuery(".margin-top").val()) || 0) +
+                            (extraPadding.top || 0);
+                        const mb =
+                            (parseFloat(jQuery(".margin-bottom").val()) || 0) +
+                            (extraPadding.bottom || 0);
+                        printData.margins = [ml, mr, mt, mb];
+                    }
+                }
+
+                // builds the parameters that are going to be used for the concrete
+                // printing operation and runs the print with the properly configured
+                // colony cloud print configuration
+                try {
+                    const printResponse = await fetch(`${printUrl}/nodes/${node}/print`, {
+                        method: "POST",
+                        body: new URLSearchParams([
+                            ["type", "gravo"],
+                            ["data", JSON.stringify(printData)]
+                        ]),
+                        headers: { "X-Secret-Key": key }
+                    });
+                    if (printResponse.status !== 200) {
+                        const error = await printResponse.json();
+                        const errorMessage = error.message || error.error || "unset";
+                        const errorOverlay = jQuery(".modal-overlay-error");
+                        errorOverlay.modal(
+                            "show",
+                            "Error while running the final print operation: " + errorMessage
+                        );
+                    } else {
+                        jQuery(".toast").toast("show", "Engraving job submitted successfully.");
+                    }
+                } catch (err) {
+                    const errorOverlay = jQuery(".modal-overlay-error");
+                    errorOverlay.modal("show", String(err));
+                }
+            });
+
+            // registers for the click operation on the save button
+            // that persists the printer configuration to localStorage
+            buttonSave.click(function() {
+                const url = jQuery(".input[name=url]", context).val();
+                const node = jQuery(".input[name=node]", context).val();
+                const printer = jQuery(".input[name=printer]", context).val();
+                const key = jQuery(".input[name=key]", context).val();
+                if (url) localStorage.setItem("url", url);
+                if (node) localStorage.setItem("node", node);
+                if (printer) localStorage.setItem("printer", printer);
+                if (key) localStorage.setItem("key", key);
+                context.removeClass("visible");
+            });
+
+            // populates the configuration fields with the current
+            // values stored in localStorage (if any)
+            jQuery(".input[name=url]", context).val(localStorage.getItem("url") || "");
+            jQuery(".input[name=node]", context).val(localStorage.getItem("node") || "");
+            jQuery(".input[name=printer]", context).val(localStorage.getItem("printer") || "");
+            jQuery(".input[name=key]", context).val(localStorage.getItem("key") || "");
+        });
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.toast = function(action, message) {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+
+            if (action === "show") {
+                context.text(message);
+                context.addClass("visible");
+                setTimeout(function() {
+                    context.removeClass("visible");
+                }, 3000);
+            }
+        });
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.formconsole = function() {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const button = jQuery(".button", context);
+            const command = jQuery(".input[name=command]", context);
+
+            button.click(function() {
+                const commandValue = command.val();
+                try {
+                    // eslint-disable-next-line no-eval
+                    const result = eval(commandValue);
+                    if (result) alert(result);
+                    else alert("executed");
+                } catch (err) {
+                    alert(err);
+                }
+                command.val("");
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
+
 jQuery(document).ready(function() {
     // runs a series of selections over the current viewport
     const body = jQuery("body");
@@ -287,11 +813,6 @@ jQuery(document).ready(function() {
     // profiles dictionary for later reference
     let currentProfile = null;
     let profiles = {};
-
-    // if the restoring flag is true, the URL update function will
-    // ignore the call to prevent overwriting the URL state during
-    // the initial restore process on page load, allowing the URL
-    // parameters to properly set the initial state of the app
     let restoring = false;
 
     // fetches the available profiles from the server and
@@ -528,7 +1049,7 @@ jQuery(document).ready(function() {
                 "background-image": "url('/static/profiles/" + profile.background + "')",
                 "background-size": width + "px " + height + "px",
                 "background-repeat": "no-repeat",
-                "background-position": "0px 0px"
+                "background-position": "0 0"
             });
         } else {
             viewportPreview.css({

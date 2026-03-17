@@ -5,15 +5,36 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
     <% } %>
     <title>Signatur</title>
+    <link rel="icon" type="image/svg+xml" href="/static/images/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/static/images/icon-180.png" />
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/css/layout.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/gateway.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/signature.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/viewport.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/report.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/text.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/console.css">
+    <% if (dev) { %>
+        <link rel="stylesheet" type="text/css" href="/static/css/layout.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/gateway.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/signature.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/viewport.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/keyboard.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/profile.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/modal.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/toast.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/report.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/text.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/console.css">
+    <% } else { %>
+        <link rel="stylesheet" type="text/css" href="/static/css/bundle.css">
+    <% } %>
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
     <script src="/static/js/jSignature.min.js"></script>
-    <script src="/static/js/main.js"></script>
+    <% if (dev) { %>
+        <script src="/static/js/util.js"></script>
+        <script src="/static/js/plugins/fonts.js"></script>
+        <script src="/static/js/plugins/keyboard.js"></script>
+        <script src="/static/js/plugins/modal.js"></script>
+        <script src="/static/js/plugins/toast.js"></script>
+        <script src="/static/js/plugins/console.js"></script>
+        <script src="/static/js/main.js"></script>
+    <% } else { %>
+        <script src="/static/js/bundle.js"></script>
+    <% } %>
 </head>

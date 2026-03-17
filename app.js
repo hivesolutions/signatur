@@ -1,4 +1,5 @@
 // requires the multiple libraries
+const fs = require("fs/promises");
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
@@ -48,6 +49,8 @@ app.engine("ejs", (filename, payload = {}, cb) => {
     ejs.renderFile(filename, payload, {}, cb);
 });
 app.set("view engine", "ejs");
+
+app.locals.dev = process.env.NODE_ENV !== "production";
 
 app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -207,6 +210,27 @@ app.post("/convert", (req, res, next) => {
 
 app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
+});
+
+app.get("/profiles", (req, res, next) => {
+    async function clojure() {
+        const directoryPath = path.join(__dirname, "static", "profiles");
+        const files = await fs.readdir(directoryPath);
+        const profiles = {};
+        for (const file of files) {
+            const filePath = path.join(directoryPath, file);
+            if (path.extname(file) === ".json") {
+                const fileContent = await fs.readFile(filePath, "utf8");
+                const jsonObject = JSON.parse(fileContent);
+                const errors = lib.validateProfile(jsonObject);
+                if (errors.length > 0) continue;
+                const name = path.basename(file, ".json");
+                profiles[name] = jsonObject;
+            }
+        }
+        res.json(profiles);
+    }
+    clojure().catch(next);
 });
 
 app.get("/info", (req, res, next) => {

@@ -1,0 +1,41 @@
+.toast {
+    background-color: rgba(24, 24, 24, 0.9);
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    bottom: 32px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    left: 50%;
+    letter-spacing: 0.5px;
+    opacity: 0;
+    padding: 12px 24px 12px 24px;
+    pointer-events: none;
+    position: fixed;
+    text-transform: uppercase;
+    transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -khtml-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    z-index: 2000;
+}
+
+.toast.visible {
+    opacity: 1;
+}
+
+body.ldj .toast {
+    background-color: rgba(151, 120, 211, 0.9);
+}

@@ -9,15 +9,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
-
-### Changed
-
-*
+* Support for toggling the visual keyboard by clicking the same font again
+* Support for multiple lines with Enter key and visual keyboard `↵` button
+* Enforcement of `max_lines` profile constraint when inserting newlines
+* Display of max lines in the profile info panel
+* Dry run checkbox in the engraving confirmation modal
+* Raw profile JSON viewer with show/hide toggle in the profile info panel
+* Newline rendering in report views (EN and PT)
+* Horizontal and vertical rulers adjacent to the viewport preview
+* Arrow key navigation (left, right, up, down) for caret movement
+* Delete key support for forward character deletion
+* Floating viewport options panel with profile selection, font size controls, and rulers toggle
+* Margin override controls in viewport options panel with real-time preview
+* Margins included in the engraving confirmation report
+* Application icon (SVG, PNG 512/180/32) with monospaced S on blue gradient
+* Favicon and Apple touch icon references in HTML head
+* Icon generation script (`npm run icons`) using sharp
+* Circular profile shape support with `shape: "circle"` field
+* New "small-medal" circular profile (20x20mm)
+* Circle boundary rendering in viewport preview for circular profiles
+* Zoom slider in viewport options panel with per-profile default zoom and layout compensation
+* Collapsible viewport options and profile info panels with animated toggle
+* Dynamic profile info panel title showing the selected profile name
+* Crosshair lines on viewport hover with toggleable visibility checkbox
+* Position readout in viewport options panel showing X/Y coordinates in mm
+* Show Keyboard toggle checkbox in viewport options panel to hide/show the visual keyboard
+* Selected class tracking on the active keyboard container for font-based key validation
+* Single-line constraint when no profile is selected (max 1 line)
+* Emoji validation script (`scripts/emoji_validation.py`) for visual glyph-to-F3S mapping verification
+* Missing emoji keyboard keys for all Cool Emojis TTF glyphs (`0`, `@`, `$`, `%`, `&`, `(`, `)`, `` ` ``, `[`, `{`, `|`, `}`)
+* Optional background image support for viewport profiles (`background` field)
+* Show Guidelines toggle checkbox in viewport options panel to hide/show SVG bounds and safe area
+* Show Caret toggle checkbox in viewport options panel to hide/show the blinking caret
+* URL persistence for rulers, crosshair, keyboard, guidelines, and caret visibility toggles
 
 ### Fixed
 
-*
+* `/profiles` endpoint now handles async errors through Express error middleware
+* Invalid CSS `background-position` value corrected to valid 2-value syntax
+* Restored text click handler now binds to all non-caret children including newline elements
+* Malformed HTML `style` attribute on space bar keyboard keys (extra double quote)
+* Small-medal profile description now matches actual 20x20mm dimensions
+* Font deselection handler now clears stored font state and updates URL
+* Backspace at caret start position no longer corrupts text state
+* Server-side validation for `preview.zoom` field in profile schema
+
+### Changed
+
+* Corrected Cool Emojis character-to-F3S font mapping using visual glyph recognition
+* Sorted `coolemojis.mapping.json` by font number for better structure
+
+* Line height in viewport preview now scales proportionally to font size (1.2x)
+* Moved profile and font size controls from inline layout to fixed options panel
 
 ## [0.7.2] - 2024-05-18
 

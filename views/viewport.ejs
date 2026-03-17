@@ -18,15 +18,116 @@
                 <span class="logo"></span>
             <% } %>
         </div>
+        <div class="profile-info">
+            <div class="profile-info-title">Profile <span class="profile-info-toggle">▾</span></div>
+            <div class="profile-info-body">
+                <div class="profile-info-dimensions"></div>
+                <div class="profile-info-orientation"></div>
+                <div class="profile-info-lines"></div>
+                <a class="profile-info-raw-toggle" href="#">Show Raw</a>
+                <pre class="profile-info-raw"></pre>
+            </div>
+        </div>
+        <div class="viewport-options">
+            <div class="viewport-options-title">Options <span class="viewport-options-toggle">▾</span></div>
+            <div class="viewport-options-body">
+            <div class="viewport-options-field">
+                <label class="viewport-options-label">Profile</label>
+                <select class="profile-select">
+                    <option value="">None</option>
+                </select>
+            </div>
+            <div class="viewport-options-field font-size-container">
+                <label class="viewport-options-label">Size</label>
+                <input class="font-size-range" type="range" min="8" max="24" value="12" step="1" />
+                <span class="font-size-value">12</span>
+                <label class="font-size-mode-label">
+                    <input class="font-size-mode" type="checkbox" />
+                    Auto
+                </label>
+            </div>
+            <div class="viewport-options-field viewport-options-rulers">
+                <label class="viewport-options-option">
+                    <input class="rulers-mode" type="checkbox" checked />
+                    Show Rulers
+                </label>
+            </div>
+            <div class="viewport-options-field viewport-options-crosshair">
+                <label class="viewport-options-option">
+                    <input class="crosshair-mode" type="checkbox" checked />
+                    Show Crosshair
+                </label>
+            </div>
+            <div class="viewport-options-field viewport-options-keyboard">
+                <label class="viewport-options-option">
+                    <input class="keyboard-mode" type="checkbox" checked />
+                    Show Keyboard
+                </label>
+            </div>
+            <div class="viewport-options-field viewport-options-guidelines">
+                <label class="viewport-options-option">
+                    <input class="guidelines-mode" type="checkbox" checked />
+                    Show Guidelines
+                </label>
+            </div>
+            <div class="viewport-options-field viewport-options-caret">
+                <label class="viewport-options-option">
+                    <input class="caret-mode" type="checkbox" checked />
+                    Show Caret
+                </label>
+            </div>
+            <div class="viewport-options-field zoom-container">
+                <label class="viewport-options-label">Zoom</label>
+                <input class="zoom-range" type="range" min="0.5" max="5" value="1" step="0.5" />
+                <span class="zoom-value">1x</span>
+            </div>
+            <div class="viewport-options-field margin-container">
+                <label class="viewport-options-label">Margins (mm)</label>
+                <div class="margin-fields">
+                    <div class="margin-field">
+                        <label class="margin-label">Left</label>
+                        <input class="margin-input margin-left" type="number" min="0" step="1" value="0" />
+                    </div>
+                    <div class="margin-field">
+                        <label class="margin-label">Right</label>
+                        <input class="margin-input margin-right" type="number" min="0" step="1" value="0" />
+                    </div>
+                    <div class="margin-field">
+                        <label class="margin-label">Top</label>
+                        <input class="margin-input margin-top" type="number" min="0" step="1" value="0" />
+                    </div>
+                    <div class="margin-field">
+                        <label class="margin-label">Bottom</label>
+                        <input class="margin-input margin-bottom" type="number" min="0" step="1" value="0" />
+                    </div>
+                </div>
+            </div>
+            <div class="viewport-options-field position-container">
+                <label class="viewport-options-label">Position</label>
+                <span class="position-value">—</span>
+            </div>
+            </div>
+        </div>
         <div class="viewport">
             <div class="main-container">
-                <div class="viewer-container" data-text="<%= config.text %>">
+                <div class="viewport-preview">
+                    <div class="ruler ruler-horizontal"></div>
+                    <div class="ruler ruler-vertical"></div>
+                    <div class="crosshair crosshair-horizontal"></div>
+                    <div class="crosshair crosshair-vertical"></div>
+                    <svg class="viewport-svg"></svg>
+                    <div class="viewer-container" data-text="<%= config.text %>">
                     <% if (text) { %>
                         <% text.forEach(function(item){ %>
+                            <% if (item[1] === "\n") { %>
+                                <div class="newline"></div>
+                            <% } else { %>
                             <span style="font-family: '<%= item[0] %>'"><%- item[1] === " " ? "&nbsp;" : item[1] %></span>
+                            <% } %>
                         <% }); %>
                     <% } %>
                     <span class="caret">|</span>
+                    </div>
                 </div>
                 <div class="fonts-container">
                     <% if (!options.fonts || options.fonts.includes("helvetica1l")) { %>
@@ -117,7 +218,8 @@
                     <span class="char" data-value="^">^</span>
                     <span class="char" data-value="`">`</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
-                    <span class="char" style="min-width: 96px;"">⎵</span>
+                    <span class="char" style="min-width: 96px;">⎵</span>
+                    <span class="char" style="min-width: 66px;">↵</span>
                     <span class="char shift" style="min-width: 66px;">⇧</span>
                 </div>
                 <div class="emojis-container">
@@ -174,6 +276,7 @@
                     <span class="char" data-value="y">y</span>
                     <span class="char" data-value="z">z</span>
                     <span class="char" data-value=",">,</span>
+                    <span class="char" data-value="0">0</span>
                     <span class="char" data-value="1">1</span>
                     <span class="char" data-value="2">2</span>
                     <span class="char" data-value="3">3</span>
@@ -200,8 +303,20 @@
                     <span class="char" data-value="'">'</span>
                     <span class="char" data-value="&quot;">&quot;</span>
                     <span class="char" data-value="#">#</span>
+                    <span class="char" data-value="@">@</span>
+                    <span class="char" data-value="$">$</span>
+                    <span class="char" data-value="%">%</span>
+                    <span class="char" data-value="&amp;">&amp;</span>
+                    <span class="char" data-value="(">(</span>
+                    <span class="char" data-value=")">)</span>
+                    <span class="char" data-value="`">`</span>
+                    <span class="char" data-value="[">[</span>
+                    <span class="char" data-value="{">{</span>
+                    <span class="char" data-value="|">|</span>
+                    <span class="char" data-value="}">}</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
-                    <span class="char" style="min-width: 96px;"">⎵</span>
+                    <span class="char" style="min-width: 96px;">⎵</span>
+                    <span class="char" style="min-width: 66px;">↵</span>
                 </div>
                 <div class="emojisp-container">
                     <span class="char" data-value="A">A</span>
@@ -256,7 +371,26 @@
                     <span class="char" data-value="x">x</span>
                     <span class="char" data-value="y">y</span>
                     <span class="char" style="min-width: 66px;">⌫</span>
-                    <span class="char" style="min-width: 96px;"">⎵</span>
+                    <span class="char" style="min-width: 96px;">⎵</span>
+                    <span class="char" style="min-width: 66px;">↵</span>
+                </div>
+            </div>
+        </div>
+        <div class="toast"></div>
+        <div class="modal-overlay modal-overlay-confirm">
+            <div class="modal">
+                <div class="modal-title">Confirm Engraving</div>
+                <div class="modal-preview"></div>
+                <div class="modal-specs"></div>
+                <div class="modal-options">
+                    <label class="modal-option">
+                        <input class="modal-dry-run" type="checkbox" />
+                        Dry Run
+                    </label>
+                </div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-engrave">Engrave</span>
+                    <span class="button button-modal-close">Cancel</span>
                 </div>
             </div>
         </div>
