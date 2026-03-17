@@ -42,8 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Show Guidelines toggle checkbox in viewport options panel to hide/show SVG bounds and safe area
 * Show Caret toggle checkbox in viewport options panel to hide/show the blinking caret
 * URL persistence for rulers, crosshair, keyboard, guidelines, and caret visibility toggles
+* Font metrics rendering script (`scripts/font_metrics.py`) for visual glyph metric inspection
 
 ### Fixed
+
+* Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
 
 * `/profiles` endpoint now handles async errors through Express error middleware
 * Invalid CSS `background-position` value corrected to valid 2-value syntax
