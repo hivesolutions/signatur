@@ -205,6 +205,34 @@ describe("Profile", function() {
             assert.strictEqual(false, errors.includes("background must be a string"));
         });
 
+        it("should accept valid inspirations field", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                inspirations: "test.inspirations.json",
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-string inspirations value", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                inspirations: 123,
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.strictEqual(true, errors.includes("inspirations must be a string"));
+        });
+
         it("should accept profile without shape (optional field)", () => {
             const errors = lib.validateProfile({
                 id: "test",
@@ -545,6 +573,228 @@ describe("Profile", function() {
         it("should reject non-string tag items", () => {
             const errors = lib.validateMetadata({ tags: [123] });
             assert.strictEqual(true, errors.includes("metadata.tags[0] must be a string"));
+        });
+    });
+
+    describe("#validateInspiration()", function() {
+        it("should validate a complete valid inspiration", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "classic-name",
+                    title: "Classic Name",
+                    description: "A centered name in Script 4L.",
+                    author: "Hive Solutions",
+                    text: [
+                        ["Script 4L", "T"],
+                        ["Script 4L", "i"]
+                    ],
+                    font_size: 4,
+                    padding: { top: 4, right: 3, bottom: 5, left: 3 },
+                    align: "center"
+                },
+                0
+            );
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate a minimal valid inspiration", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "minimal",
+                    title: "Minimal",
+                    description: "A minimal inspiration.",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 8
+                },
+                0
+            );
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject a non-object inspiration", () => {
+            const errors = lib.validateInspiration("invalid", 0);
+            assert.deepStrictEqual(errors, ["inspirations[0] must be an object"]);
+        });
+
+        it("should require all mandatory fields", () => {
+            const errors = lib.validateInspiration({}, 0);
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].id is required and must be a string")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].title is required and must be a string")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].description is required and must be a string")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].author is required and must be a string")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].text is required and must be an array")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].font_size is required")
+            );
+        });
+
+        it("should reject invalid id patterns", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "Invalid ID",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4
+                },
+                0
+            );
+            assert.strictEqual(
+                true,
+                errors.includes(
+                    "inspirations[0].id must match pattern: lowercase alphanumeric with hyphens"
+                )
+            );
+        });
+
+        it("should reject invalid text pairs", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["only-one"]],
+                    font_size: 4
+                },
+                0
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].text[0] must be a [font, character] pair")
+            );
+        });
+
+        it("should reject non-positive font size", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 0
+                },
+                0
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].font_size must be a positive number")
+            );
+        });
+
+        it("should reject invalid align values", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4,
+                    align: "justify"
+                },
+                0
+            );
+            assert.strictEqual(
+                true,
+                errors.includes(
+                    "inspirations[0].align must be one of: left, center, right"
+                )
+            );
+        });
+
+        it("should validate optional padding when present", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4,
+                    padding: { top: 2, right: 2, bottom: 2, left: 2 }
+                },
+                0
+            );
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject invalid padding in inspiration", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4,
+                    padding: { top: -1, right: 2, bottom: 2, left: 2 }
+                },
+                0
+            );
+            assert.strictEqual(
+                true,
+                errors.includes(
+                    "inspirations[0].padding.top must be a non-negative number"
+                )
+            );
+        });
+    });
+
+    describe("#validateInspirations()", function() {
+        it("should validate a correct inspirations array", () => {
+            const errors = lib.validateInspirations([
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4
+                }
+            ]);
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate an empty inspirations array", () => {
+            const errors = lib.validateInspirations([]);
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-array inspirations", () => {
+            const errors = lib.validateInspirations("invalid");
+            assert.deepStrictEqual(errors, ["inspirations must be an array"]);
+        });
+
+        it("should collect errors from multiple entries", () => {
+            const errors = lib.validateInspirations([{}, {}]);
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].id is required and must be a string")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[1].id is required and must be a string")
+            );
         });
     });
 });
