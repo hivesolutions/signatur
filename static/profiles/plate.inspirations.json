@@ -17,7 +17,11 @@
         "title": "Serial Number",
         "description": "An industrial serial number label in Helvetica 1L.",
         "author": "Hive Solutions",
-        "text": [["Helvetica 1L", "SN-2024-00451"]],
+        "text": [
+            ["Helvetica 1L", "SN-2024"],
+            [null, "\n"],
+            ["Helvetica 1L", "00451"]
+        ],
         "font_size": 8,
         "align": "center"
     },
