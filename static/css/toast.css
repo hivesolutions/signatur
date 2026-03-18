@@ -13,6 +13,11 @@
     left: 50%;
     letter-spacing: 0.5px;
     opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
     padding: 12px 24px 12px 24px;
     pointer-events: none;
     position: fixed;
@@ -34,6 +39,11 @@
 
 .toast.visible {
     opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
 }
 
 body.ldj .toast {

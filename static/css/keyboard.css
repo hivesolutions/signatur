@@ -97,6 +97,7 @@
     -khtml-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
     -webkit-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
     display: flex;
+    margin-top: -6px;
     padding: 4px 4px 4px 4px;
     position: absolute;
     transform: translate(-50%, -100%);
@@ -105,7 +106,6 @@
     -moz-transform: translate(-50%, -100%);
     -khtml-transform: translate(-50%, -100%);
     -webkit-transform: translate(-50%, -100%);
-    margin-top: -6px;
     z-index: 100;
 }
 
