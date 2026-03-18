@@ -1439,6 +1439,7 @@ body.ldj .line {
     font-weight: 600;
     letter-spacing: 0.5px;
     margin-bottom: 24px;
+    text-transform: uppercase;
 }
 
 .modal-overlay > .modal > .modal-buttons {

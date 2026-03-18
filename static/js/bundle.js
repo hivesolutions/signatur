@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const jQuery = window.jQuery ? window.jQuery : null;
 
 /**
@@ -8,6 +9,7 @@ const jQuery = window.jQuery ? window.jQuery : null;
  * options, that change thickness and global UI.
  * @returns {Object} An object with the setting for the current theme.
  */
+// eslint-disable-next-line no-unused-vars
 const getOptions = function(theme) {
     switch (theme) {
         case "ldj":
@@ -26,11 +28,13 @@ const getOptions = function(theme) {
     }
 };
 
+// eslint-disable-next-line no-unused-vars
 const drawText = function(ctx) {
     ctx.font = "30px Arial";
     ctx.fillText("Hello World", 10, 500);
 };
 
+// eslint-disable-next-line no-unused-vars
 const deserializeText = function(text, separator = "|") {
     if (!text) return null;
     const textL = [];
@@ -55,6 +59,7 @@ const deserializeText = function(text, separator = "|") {
     return textL;
 };
 
+// eslint-disable-next-line no-unused-vars
 const serializeText = function(text, separator = "|") {
     const buffer = [];
     for (let index = 0; index < text.length; index++) {
@@ -68,6 +73,7 @@ const serializeText = function(text, separator = "|") {
     return buffer.join(separator);
 };
 
+// eslint-disable-next-line no-unused-vars
 const simplifyText = function(text, separator = "") {
     const buffer = [];
     let font = null;
@@ -79,6 +85,7 @@ const simplifyText = function(text, separator = "") {
     return [buffer.join(separator), font];
 };
 
+// eslint-disable-next-line no-unused-vars
 const multifontText = function(text, emojiMapping) {
     const result = [];
     for (let index = 0; index < text.length; index++) {
@@ -109,6 +116,7 @@ const multifontText = function(text, emojiMapping) {
     return result;
 };
 
+// eslint-disable-next-line no-unused-vars
 const hasUnsupportedFont = function(text) {
     for (let index = 0; index < text.length; index++) {
         if (text[index][0] === "Cool Emojis Pantograph") return true;
@@ -116,6 +124,7 @@ const hasUnsupportedFont = function(text) {
     return false;
 };
 
+// eslint-disable-next-line no-unused-vars
 const countLines = function(text) {
     let lines = 1;
     for (let index = 0; index < text.length; index++) {
@@ -840,6 +849,11 @@ jQuery(document).ready(function() {
     // profiles dictionary for later reference
     let currentProfile = null;
     let profiles = {};
+
+    // if the restoring flag is true, the URL update function will
+    // ignore the call to prevent overwriting the URL state during
+    // the initial restore process on page load, allowing the URL
+    // parameters to properly set the initial state of the app
     let restoring = false;
 
     // fetches the available profiles from the server and
@@ -1076,7 +1090,7 @@ jQuery(document).ready(function() {
                 "background-image": "url('/static/profiles/" + profile.background + "')",
                 "background-size": width + "px " + height + "px",
                 "background-repeat": "no-repeat",
-                "background-position": "0 0"
+                "background-position": "0px 0px"
             });
         } else {
             viewportPreview.css({
