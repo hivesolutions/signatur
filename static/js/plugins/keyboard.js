@@ -58,15 +58,13 @@
 
             const variants = accents.split(",");
             const casing = context.data("casing") || "uppercase";
-            const popup = jQuery("<div class=\"accent-popup\"></div>");
-            const arrow = jQuery("<div class=\"accent-popup-arrow\"></div>");
+            const popup = jQuery('<div class="accent-popup"></div>');
+            const arrow = jQuery('<div class="accent-popup-arrow"></div>');
 
             for (let index = 0; index < variants.length; index++) {
                 let value = variants[index].trim();
                 if (casing === "lowercase") value = value.toLowerCase();
-                const option = jQuery(
-                    "<span class=\"accent-option\">" + value + "</span>"
-                );
+                const option = jQuery('<span class="accent-option">' + value + "</span>");
                 option.on("mouseup touchend click", function(event) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -81,8 +79,7 @@
 
             const offset = element.offset();
             const containerOffset = context.offset();
-            const left = offset.left - containerOffset.left +
-                element.outerWidth() / 2;
+            const left = offset.left - containerOffset.left + element.outerWidth() / 2;
             const top = offset.top - containerOffset.top;
             popup.css({ left: left + "px", top: top + "px" });
 

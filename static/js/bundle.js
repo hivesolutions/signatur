@@ -218,15 +218,13 @@ const countLines = function(text) {
 
             const variants = accents.split(",");
             const casing = context.data("casing") || "uppercase";
-            const popup = jQuery("<div class=\"accent-popup\"></div>");
-            const arrow = jQuery("<div class=\"accent-popup-arrow\"></div>");
+            const popup = jQuery('<div class="accent-popup"></div>');
+            const arrow = jQuery('<div class="accent-popup-arrow"></div>');
 
             for (let index = 0; index < variants.length; index++) {
                 let value = variants[index].trim();
                 if (casing === "lowercase") value = value.toLowerCase();
-                const option = jQuery(
-                    "<span class=\"accent-option\">" + value + "</span>"
-                );
+                const option = jQuery('<span class="accent-option">' + value + "</span>");
                 option.on("mouseup touchend click", function(event) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -241,8 +239,7 @@ const countLines = function(text) {
 
             const offset = element.offset();
             const containerOffset = context.offset();
-            const left = offset.left - containerOffset.left +
-                element.outerWidth() / 2;
+            const left = offset.left - containerOffset.left + element.outerWidth() / 2;
             const top = offset.top - containerOffset.top;
             popup.css({ left: left + "px", top: top + "px" });
 
@@ -2163,9 +2160,10 @@ jQuery(document).ready(function() {
                     const composed = DEAD_KEY_MAP[pendingDeadKey][event.key.toLowerCase()];
                     pendingDeadKey = null;
                     if (composed) {
-                        const cased = event.key === event.key.toUpperCase()
-                            ? composed.toUpperCase()
-                            : composed;
+                        const cased =
+                            event.key === event.key.toUpperCase()
+                                ? composed.toUpperCase()
+                                : composed;
                         type(font, cased, false);
                     }
                     break;
@@ -2307,9 +2305,10 @@ jQuery(document).ready(function() {
         if (lines[currentLine].length > 0) {
             newPosition = lines[currentLine][0] - 1;
         } else {
-            newPosition = currentLine === 0
-                ? -1
-                : lines[currentLine - 1].length > 0
+            newPosition =
+                currentLine === 0
+                    ? -1
+                    : lines[currentLine - 1].length > 0
                     ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
                     : currentLine - 1;
         }
@@ -2335,9 +2334,10 @@ jQuery(document).ready(function() {
         if (lines[currentLine].length > 0) {
             newPosition = lines[currentLine][lines[currentLine].length - 1];
         } else {
-            newPosition = currentLine === 0
-                ? -1
-                : lines[currentLine - 1].length > 0
+            newPosition =
+                currentLine === 0
+                    ? -1
+                    : lines[currentLine - 1].length > 0
                     ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
                     : currentLine - 1;
         }

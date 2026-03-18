@@ -1269,9 +1269,10 @@ jQuery(document).ready(function() {
                     const composed = DEAD_KEY_MAP[pendingDeadKey][event.key.toLowerCase()];
                     pendingDeadKey = null;
                     if (composed) {
-                        const cased = event.key === event.key.toUpperCase()
-                            ? composed.toUpperCase()
-                            : composed;
+                        const cased =
+                            event.key === event.key.toUpperCase()
+                                ? composed.toUpperCase()
+                                : composed;
                         type(font, cased, false);
                     }
                     break;
@@ -1413,9 +1414,10 @@ jQuery(document).ready(function() {
         if (lines[currentLine].length > 0) {
             newPosition = lines[currentLine][0] - 1;
         } else {
-            newPosition = currentLine === 0
-                ? -1
-                : lines[currentLine - 1].length > 0
+            newPosition =
+                currentLine === 0
+                    ? -1
+                    : lines[currentLine - 1].length > 0
                     ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
                     : currentLine - 1;
         }
@@ -1441,9 +1443,10 @@ jQuery(document).ready(function() {
         if (lines[currentLine].length > 0) {
             newPosition = lines[currentLine][lines[currentLine].length - 1];
         } else {
-            newPosition = currentLine === 0
-                ? -1
-                : lines[currentLine - 1].length > 0
+            newPosition =
+                currentLine === 0
+                    ? -1
+                    : lines[currentLine - 1].length > 0
                     ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
                     : currentLine - 1;
         }
