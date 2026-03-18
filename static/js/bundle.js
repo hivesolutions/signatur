@@ -2032,6 +2032,17 @@ jQuery(document).ready(function() {
         }
     };
 
+    // dead key composition map for physical keyboard input,
+    // maps a dead key followed by a base letter to the
+    // corresponding accented character
+    const DEAD_KEY_MAP = {
+        "´": { a: "á", e: "é", i: "í", o: "ó", u: "ú" },
+        "^": { a: "â", e: "ê", o: "ô" },
+        "~": { a: "ã", o: "õ" },
+        "`": { a: "à" }
+    };
+    let pendingDeadKey = null;
+
     const keyboardHandler = function(event) {
         // skips keyboard handling when a modal input is focused
         // so that text editing controls work normally in modals
@@ -2041,7 +2052,13 @@ jQuery(document).ready(function() {
         const font = body.data("font");
         let executed = false;
         switch (event.key) {
+            case "Dead":
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
             case "Backspace":
+                pendingDeadKey = null;
                 executed = backspace();
                 if (executed) {
                     event.stopPropagation();
@@ -2050,6 +2067,7 @@ jQuery(document).ready(function() {
                 break;
 
             case " ":
+                pendingDeadKey = null;
                 executed = space(font);
                 if (executed) {
                     event.stopPropagation();
@@ -2058,6 +2076,7 @@ jQuery(document).ready(function() {
                 break;
 
             case "Enter":
+                pendingDeadKey = null;
                 executed = newline();
                 if (executed) {
                     event.stopPropagation();
@@ -2066,6 +2085,7 @@ jQuery(document).ready(function() {
                 break;
 
             case "Delete":
+                pendingDeadKey = null;
                 executed = deleteForward();
                 if (executed) {
                     event.stopPropagation();
@@ -2074,30 +2094,57 @@ jQuery(document).ready(function() {
                 break;
 
             case "ArrowLeft":
+                pendingDeadKey = null;
                 moveCaret(-1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
             case "ArrowRight":
+                pendingDeadKey = null;
                 moveCaret(1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
             case "ArrowUp":
+                pendingDeadKey = null;
                 moveCaretLine(-1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
             case "ArrowDown":
+                pendingDeadKey = null;
                 moveCaretLine(1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
             default:
+                // checks if the current key is a dead key accent
+                // and stores it for composition with the next key
+                if (DEAD_KEY_MAP[event.key]) {
+                    pendingDeadKey = event.key;
+                    event.stopPropagation();
+                    event.preventDefault();
+                    break;
+                }
+
+                // composes the pending dead key with the current
+                // key to produce an accented character if valid
+                if (pendingDeadKey) {
+                    const composed = DEAD_KEY_MAP[pendingDeadKey][event.key.toLowerCase()];
+                    pendingDeadKey = null;
+                    if (composed) {
+                        const cased = event.key === event.key.toUpperCase()
+                            ? composed.toUpperCase()
+                            : composed;
+                        type(font, cased, false);
+                    }
+                    break;
+                }
+
                 type(font, event.key, true);
                 break;
         }
