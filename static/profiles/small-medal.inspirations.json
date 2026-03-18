@@ -5,11 +5,26 @@
         "description": "A centered name in Script 4L with balanced margins.",
         "author": "Hive Solutions",
         "text": [
-            ["Script 4L", "T"],
-            ["Script 4L", "i"],
-            ["Script 4L", "a"],
-            ["Script 4L", "g"],
-            ["Script 4L", "o"]
+            [
+                "Script 4L",
+                "T"
+            ],
+            [
+                "Script 4L",
+                "i"
+            ],
+            [
+                "Script 4L",
+                "a"
+            ],
+            [
+                "Script 4L",
+                "g"
+            ],
+            [
+                "Script 4L",
+                "o"
+            ]
         ],
         "font_size": 4,
         "align": "center"
@@ -20,8 +35,14 @@
         "description": "Two uppercase initials in Helvetica 4L.",
         "author": "Hive Solutions",
         "text": [
-            ["Helvetica 4L", "J"],
-            ["Helvetica 4L", "M"]
+            [
+                "Helvetica 4L",
+                "J"
+            ],
+            [
+                "Helvetica 4L",
+                "M"
+            ]
         ],
         "font_size": 6,
         "align": "center"
@@ -32,16 +53,46 @@
         "description": "A memorable date in Helvetica 1L.",
         "author": "Hive Solutions",
         "text": [
-            ["Helvetica 1L", "2"],
-            ["Helvetica 1L", "5"],
-            ["Helvetica 1L", "."],
-            ["Helvetica 1L", "1"],
-            ["Helvetica 1L", "2"],
-            ["Helvetica 1L", "."],
-            ["Helvetica 1L", "2"],
-            ["Helvetica 1L", "0"],
-            ["Helvetica 1L", "2"],
-            ["Helvetica 1L", "4"]
+            [
+                "Helvetica 1L",
+                "2"
+            ],
+            [
+                "Helvetica 1L",
+                "5"
+            ],
+            [
+                "Helvetica 1L",
+                "."
+            ],
+            [
+                "Helvetica 1L",
+                "1"
+            ],
+            [
+                "Helvetica 1L",
+                "2"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Helvetica 1L",
+                "2"
+            ],
+            [
+                "Helvetica 1L",
+                "0"
+            ],
+            [
+                "Helvetica 1L",
+                "2"
+            ],
+            [
+                "Helvetica 1L",
+                "4"
+            ]
         ],
         "font_size": 3,
         "align": "center"
@@ -52,10 +103,22 @@
         "description": "The word Love in elegant Script 4L.",
         "author": "Hive Solutions",
         "text": [
-            ["Script 4L", "L"],
-            ["Script 4L", "o"],
-            ["Script 4L", "v"],
-            ["Script 4L", "e"]
+            [
+                "Script 4L",
+                "L"
+            ],
+            [
+                "Script 4L",
+                "o"
+            ],
+            [
+                "Script 4L",
+                "v"
+            ],
+            [
+                "Script 4L",
+                "e"
+            ]
         ],
         "font_size": 5,
         "align": "center"
@@ -66,9 +129,56 @@
         "description": "A single letter monogram in Roman 4L.",
         "author": "Hive Solutions",
         "text": [
-            ["Roman 4L", "A"]
+            [
+                "Roman 4L",
+                "A"
+            ]
         ],
         "font_size": 8,
+        "align": "center"
+    },
+    {
+        "id": "mickey-love",
+        "title": "Mickey Love",
+        "description": "Mickey and Minnie with a heart between them.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Cool Emojis",
+                "$"
+            ],
+            [
+                "Cool Emojis",
+                "A"
+            ],
+            [
+                "Cool Emojis",
+                "@"
+            ]
+        ],
+        "font_size": 4,
+        "align": "center"
+    },
+    {
+        "id": "pacman-chase",
+        "title": "Pacman Chase",
+        "description": "Pacman chasing ghosts in retro arcade style.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Cool Emojis",
+                "r"
+            ],
+            [
+                "Cool Emojis",
+                "r"
+            ],
+            [
+                "Cool Emojis",
+                "s"
+            ]
+        ],
+        "font_size": 4,
         "align": "center"
     }
 ]
