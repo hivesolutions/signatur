@@ -60,6 +60,7 @@
 }
 
 .inspiration-panel > .inspiration-panel-body {
+    overflow: hidden;
     transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -ms-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
