@@ -116,7 +116,7 @@
                 // clones the viewport preview into the modal so that the
                 // user can visually confirm the engraving layout
                 modalPreview.empty();
-                const viewportPreview = jQuery(".viewport-preview");
+                const viewportPreview = jQuery(".viewport > .main-container > .viewport-preview");
                 if (viewportPreview.hasClass("profile-active")) {
                     const clone = viewportPreview.clone();
                     clone.find(".crosshair").remove();
