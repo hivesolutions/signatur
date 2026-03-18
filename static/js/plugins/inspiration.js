@@ -211,8 +211,10 @@
                     panelToggle.text("▾");
                     panelBody.one("transitionend", function() {
                         panelBody.css("max-height", "");
+                        panelBody.css("overflow", "visible");
                     });
                 } else {
+                    panelBody.css("overflow", "");
                     panelBody.css("max-height", bodyEl.scrollHeight + "px");
                     bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
                     panelBody.css("max-height", "0px");
