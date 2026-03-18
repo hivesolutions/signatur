@@ -26,6 +26,11 @@
         "step": 1
     },
     "background": "plate.png",
+    "instructions": {
+        "title": "Steel Plate Jig Setup",
+        "description": "Place the steel plate on the flat jig surface and align it with the corner guides.",
+        "images": ["/images/jig-plate.png"]
+    },
     "inspirations": "plate.inspirations.json",
     "preview": {
         "show_bounds": true,

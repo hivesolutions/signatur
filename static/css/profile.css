@@ -439,6 +439,18 @@
     letter-spacing: 0.3px;
 }
 
+.viewport-options > .viewport-options-body > .viewport-options-instructions {
+    color: #2d2d2d;
+    cursor: pointer;
+    display: none;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-instructions.visible {
+    display: inline-block;
+}
+
 .viewport > .main-container > .viewport-preview {
     display: inline-block;
     margin: 0px auto 16px auto;

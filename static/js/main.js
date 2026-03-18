@@ -21,6 +21,11 @@ jQuery(document).ready(function() {
     const profileInfoToggle = jQuery(".profile-info-toggle");
     const viewportOptionsTitle = jQuery(".viewport-options-title");
     const viewportOptionsToggle = jQuery(".viewport-options-toggle");
+    const viewportOptionsInstructions = jQuery(".viewport-options-instructions");
+    const modalOverlayInstructions = jQuery(".modal-overlay-instructions");
+    const modalInstructionsTitle = jQuery(".modal-instructions-title");
+    const modalInstructionsDescription = jQuery(".modal-instructions-description");
+    const modalInstructionsImages = jQuery(".modal-instructions-images");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -34,6 +39,24 @@ jQuery(document).ready(function() {
             profileInfoRaw.show();
             profileInfoRawToggle.text("Hide Raw");
         }
+    });
+
+    // registers for the click operation on the instructions
+    // link to open the instructions modal for the current profile
+    viewportOptionsInstructions.click(function(event) {
+        event.preventDefault();
+        if (!currentProfile || !currentProfile.instructions) return;
+        const instructions = currentProfile.instructions;
+        modalInstructionsTitle.text(instructions.title || "Instructions");
+        modalInstructionsDescription.text(instructions.description || "");
+        modalInstructionsImages.empty();
+        const images = instructions.images || [];
+        for (let i = 0; i < images.length; i++) {
+            const img = jQuery("<img />");
+            img.attr("src", images[i]);
+            modalInstructionsImages.append(img);
+        }
+        modalOverlayInstructions.modal("show");
     });
 
     const profileInfoBody = jQuery(".profile-info-body");
@@ -256,6 +279,10 @@ jQuery(document).ready(function() {
                 const finalWidth = width + (extraPadding.left || 0) + (extraPadding.right || 0);
                 const finalHeight = height + (extraPadding.top || 0) + (extraPadding.bottom || 0);
                 specs.final_viewport = finalWidth + " x " + finalHeight + (unit ? " " + unit : "");
+            }
+            if (currentProfile.instructions) {
+                specs.instructions = currentProfile.instructions.title ||
+                    currentProfile.instructions.description || "See instructions";
             }
         }
 
@@ -747,6 +774,7 @@ jQuery(document).ready(function() {
             profileInfoRaw.hide();
             profileInfoRawToggle.text("Show Raw");
             profileInfoTitle.contents().first().replaceWith("Profile ");
+            viewportOptionsInstructions.removeClass("visible");
             return;
         }
 
@@ -770,6 +798,11 @@ jQuery(document).ready(function() {
         profileInfoRaw.hide();
         profileInfoRawToggle.text("Show Raw");
         profileInfo.addClass("visible");
+        if (profile.instructions) {
+            viewportOptionsInstructions.addClass("visible");
+        } else {
+            viewportOptionsInstructions.removeClass("visible");
+        }
     };
 
     // updates the font size controls based on the selected
@@ -1725,6 +1758,7 @@ jQuery(document).ready(function() {
     modalOverlayConfirm.modal();
     modalOverlayConfig.modal();
     modalOverlayInspirations.modal();
+    modalOverlayInstructions.modal();
     toast.toast();
 
     // initializes the inspiration panel plugin and binds the

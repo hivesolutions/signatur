@@ -1210,6 +1210,18 @@ body.ldj .line {
     letter-spacing: 0.3px;
 }
 
+.viewport-options > .viewport-options-body > .viewport-options-instructions {
+    color: #2d2d2d;
+    cursor: pointer;
+    display: none;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-instructions.visible {
+    display: inline-block;
+}
+
 .viewport > .main-container > .viewport-preview {
     display: inline-block;
     margin: 0px auto 16px auto;
@@ -1459,6 +1471,30 @@ body.ldj .line {
     cursor: pointer;
 }
 
+.modal-overlay > .modal.modal-instructions {
+    max-width: 600px;
+}
+
+.modal-overlay > .modal > .modal-instructions-images {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.modal-overlay > .modal > .modal-instructions-images > img {
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    margin-bottom: 12px;
+    max-width: 100%;
+}
+
+.modal-overlay > .modal > .modal-instructions-images > img:last-child {
+    margin-bottom: 0px;
+}
+
 .inspiration-panel {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -1642,14 +1678,14 @@ body.ldj .line {
     -moz-box-sizing: border-box;
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    font-size: 14px;
+    font-size: 15px;
     outline: none;
     -o-outline: none;
     -ms-outline: none;
     -moz-outline: none;
     -khtml-outline: none;
     -webkit-outline: none;
-    padding: 8px 12px 8px 12px;
+    padding: 12px 12px 12px 12px;
     width: 100%;
 }
 
@@ -1671,7 +1707,7 @@ body.ldj .line {
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-empty {
     color: #9d9d9d;
-    font-size: 14px;
+    font-size: 17px;
     padding: 32px 0px 32px 0px;
     text-align: center;
     grid-column: 1 / -1;

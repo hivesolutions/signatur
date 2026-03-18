@@ -111,6 +111,12 @@
                         jQuery("<span>").text(specs.node).html() +
                         "</div>";
                 }
+                if (specs.instructions) {
+                    html +=
+                        '<div class="modal-spec"><strong>Jig:</strong> ' +
+                        jQuery("<span>").text(specs.instructions).html() +
+                        "</div>";
+                }
                 modalSpecs.html(html);
 
                 // clones the viewport preview into the modal so that the
