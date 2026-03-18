@@ -85,15 +85,6 @@ jQuery(document).ready(function() {
         );
     });
 
-    inspirationPanelTitle.click(function() {
-        togglePanel(
-            inspirationPanel,
-            inspirationPanelBody,
-            inspirationPanelTitle,
-            inspirationPanelToggle
-        );
-    });
-
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeValue = jQuery(".font-size-value");
@@ -144,6 +135,15 @@ jQuery(document).ready(function() {
     const modalInspirationsGrid = jQuery(".modal-inspirations-grid");
     const modalSearchInput = jQuery(".modal-search-input");
     const toast = jQuery(".toast");
+
+    inspirationPanelTitle.click(function() {
+        togglePanel(
+            inspirationPanel,
+            inspirationPanelBody,
+            inspirationPanelTitle,
+            inspirationPanelToggle
+        );
+    });
 
     // gathers the values for the form related fields so that the
     // typical form validations and changes may be performed
