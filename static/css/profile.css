@@ -598,6 +598,11 @@
     position: relative;
 }
 
+.inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails > .inspiration-thumb > .inspiration-thumb-preview .newline {
+    height: 0px;
+    width: 100%;
+}
+
 .inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails > .inspiration-thumb > .inspiration-thumb-title {
     color: #6d6d6d;
     font-size: 10px;

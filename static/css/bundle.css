@@ -1292,6 +1292,11 @@ body.ldj .line {
     position: relative;
 }
 
+.inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails > .inspiration-thumb > .inspiration-thumb-preview .newline {
+    height: 0px;
+    width: 100%;
+}
+
 .inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails > .inspiration-thumb > .inspiration-thumb-title {
     color: #6d6d6d;
     font-size: 10px;
@@ -1593,6 +1598,11 @@ body.ldj .line {
     -webkit-border-radius: 4px 4px 4px 4px;
     overflow: hidden;
     position: relative;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-preview .newline {
+    height: 0px;
+    width: 100%;
 }
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-title {

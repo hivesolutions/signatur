@@ -284,6 +284,11 @@
     position: relative;
 }
 
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-preview .newline {
+    height: 0px;
+    width: 100%;
+}
+
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-title {
     font-size: 12px;
     font-weight: 600;
