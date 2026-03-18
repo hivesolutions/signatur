@@ -1231,13 +1231,17 @@ jQuery(document).ready(function() {
         });
 
         // renders the text items inside the viewer container
+        // expanding multi-character entries into individual spans
         for (let i = 0; i < inspiration.text.length; i++) {
-            const item = inspiration.text[i];
-            if (item[1] === "\n") {
+            const font = inspiration.text[i][0];
+            const chars = inspiration.text[i][1];
+            if (chars === "\n") {
                 viewer.append('<div class="newline"></div>');
             } else {
-                const value = item[1] === " " ? "&nbsp;" : item[1];
-                viewer.append("<span style=\"font-family: '" + item[0] + "';\">" + value + "</span>");
+                for (let j = 0; j < chars.length; j++) {
+                    const value = chars[j] === " " ? "&nbsp;" : chars[j];
+                    viewer.append("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
+                }
             }
         }
 
@@ -1338,8 +1342,24 @@ jQuery(document).ready(function() {
         viewportContainer.find("> :not(.caret)").remove();
         const caret = viewportContainer.find("> .caret");
 
-        // rebuilds the DOM elements from the inspiration text
-        const text = inspiration.text || [];
+        // expands the inspiration text entries into individual
+        // character pairs so that each character gets its own
+        // DOM element for per-character caret navigation
+        const text = [];
+        const raw = inspiration.text || [];
+        for (let i = 0; i < raw.length; i++) {
+            const font = raw[i][0];
+            const value = raw[i][1];
+            if (value === "\n") {
+                text.push([font, "\n"]);
+            } else {
+                for (let j = 0; j < value.length; j++) {
+                    text.push([font, value[j]]);
+                }
+            }
+        }
+
+        // rebuilds the DOM elements from the expanded text
         for (let i = 0; i < text.length; i++) {
             const item = text[i];
             if (item[1] === "\n") {
@@ -1365,7 +1385,7 @@ jQuery(document).ready(function() {
         }
 
         // updates the text data and caret position
-        body.data("text", text.slice());
+        body.data("text", text);
         body.data("caret_position", text.length - 1);
 
         // applies the font size from the inspiration
