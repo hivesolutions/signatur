@@ -1147,6 +1147,18 @@ jQuery(document).ready(function() {
         "~": { a: "ã", o: "õ" },
         "`": { a: "à" }
     };
+
+    // builds a set of all valid accented characters so that
+    // OS-composed dead key input can bypass keyboard validation
+    const ACCENTED_CHARS = new Set();
+    for (const deadKey in DEAD_KEY_MAP) {
+        for (const base in DEAD_KEY_MAP[deadKey]) {
+            const composed = DEAD_KEY_MAP[deadKey][base];
+            ACCENTED_CHARS.add(composed);
+            ACCENTED_CHARS.add(composed.toUpperCase());
+        }
+    }
+
     let pendingDeadKey = null;
 
     const keyboardHandler = function(event) {
@@ -1248,6 +1260,13 @@ jQuery(document).ready(function() {
                             : composed;
                         type(font, cased, false);
                     }
+                    break;
+                }
+
+                // allows OS-composed accented characters to bypass
+                // the keyboard validation (dead key handled by the OS)
+                if (ACCENTED_CHARS.has(event.key)) {
+                    type(font, event.key, false);
                     break;
                 }
 
