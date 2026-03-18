@@ -268,9 +268,14 @@ body.ldj .input:focus {
 }
 
 .form > .field {
-    margin: 24px 0px 24px 0px;
     box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     font-size: 16px;
+    margin: 24px 0px 24px 0px;
 }
 
 .form > .field.field-text {
@@ -425,14 +430,14 @@ body.ldj .line {
 }
 
 .viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
-    align-content: center;
     border: none;
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     min-width: 0px;
     overflow: hidden;
     position: absolute;
+    align-content: center;
+    flex-wrap: wrap;
 }
 
 .viewport > .main-container > .viewport-preview > .viewer-container > .newline {
@@ -453,6 +458,11 @@ body.ldj .line {
 .viewport > .main-container > .viewer-container > .caret,
 .viewport > .main-container > .viewport-preview > .viewer-container > .caret {
     animation: caret-blink 1s step-end infinite;
+    -o-animation: caret-blink 1s step-end infinite;
+    -ms-animation: caret-blink 1s step-end infinite;
+    -moz-animation: caret-blink 1s step-end infinite;
+    -khtml-animation: caret-blink 1s step-end infinite;
+    -webkit-animation: caret-blink 1s step-end infinite;
 }
 
 @keyframes caret-blink {
@@ -624,6 +634,7 @@ body.ldj .line {
 
 .viewport > .main-container > .keyboard-container {
     display: none;
+    position: relative;
     width: 700px;
 }
 
@@ -697,6 +708,67 @@ body.ldj .line {
     background-color: #e2e2e2;
 }
 
+.viewport > .main-container > .keyboard-container > .accent-popup {
+    background-color: #ffffff;
+    border: 1px solid #9d9d9d;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -o-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -ms-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -khtml-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    margin-top: -6px;
+    padding: 4px 4px 4px 4px;
+    position: absolute;
+    transform: translate(-50%, -100%);
+    -o-transform: translate(-50%, -100%);
+    -ms-transform: translate(-50%, -100%);
+    -moz-transform: translate(-50%, -100%);
+    -khtml-transform: translate(-50%, -100%);
+    -webkit-transform: translate(-50%, -100%);
+    z-index: 100;
+}
+
+.viewport > .main-container > .keyboard-container > .accent-popup > .accent-option {
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 26px;
+    line-height: 44px;
+    min-height: 44px;
+    min-width: 44px;
+    text-align: center;
+}
+
+.viewport > .main-container > .keyboard-container > .accent-popup > .accent-option:hover {
+    background-color: #4a90d9;
+    color: #ffffff;
+}
+
+.viewport > .main-container > .keyboard-container > .accent-popup > .accent-popup-arrow {
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #ffffff;
+    bottom: -6px;
+    height: 0px;
+    left: 50%;
+    margin-left: -6px;
+    position: absolute;
+    width: 0px;
+}
+
 .profile-info {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -712,7 +784,13 @@ body.ldj .line {
     -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    min-width: 120px;
     opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
     padding: 14px 18px 14px 18px;
     pointer-events: none;
     position: fixed;
@@ -726,11 +804,15 @@ body.ldj .line {
     -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     visibility: hidden;
     z-index: 100;
-    min-width: 120px;
 }
 
 .profile-info.visible {
     opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
     pointer-events: auto;
     visibility: visible;
 }
@@ -839,7 +921,13 @@ body.ldj .line {
     -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     left: 22px;
+    max-width: 260px;
     opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
     padding: 14px 18px 14px 18px;
     pointer-events: none;
     position: fixed;
@@ -851,13 +939,17 @@ body.ldj .line {
     -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     visibility: hidden;
-    z-index: 100;
     width: 260px;
-    max-width: 260px;
+    z-index: 100;
 }
 
 .viewport-options.visible {
     opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
     pointer-events: auto;
     visibility: visible;
 }
@@ -989,6 +1081,11 @@ body.ldj .line {
 
 .viewport-options > .viewport-options-body > .viewport-options-checkbox {
     box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     display: none;
     width: 50%;
 }
@@ -1050,17 +1147,17 @@ body.ldj .line {
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field {
     align-items: center;
     display: flex;
-    gap: 4px;
     width: 110px;
+    gap: 4px;
 }
 
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-label {
     color: #6d6d6d;
     font-size: 10px;
     letter-spacing: 0.3px;
+    text-align: center;
     text-transform: uppercase;
     width: 50px;
-    text-align: center;
 }
 
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-input {
@@ -1377,7 +1474,13 @@ body.ldj .line {
     -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    max-width: 260px;
     opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
     padding: 14px 18px 14px 18px;
     pointer-events: none;
     position: fixed;
@@ -1390,13 +1493,17 @@ body.ldj .line {
     -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     visibility: hidden;
-    z-index: 100;
     width: 260px;
-    max-width: 260px;
+    z-index: 100;
 }
 
 .inspiration-panel.visible {
     opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
     pointer-events: auto;
     visibility: visible;
 }
@@ -1439,9 +1546,9 @@ body.ldj .line {
 
 .inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails {
     display: flex;
+    margin-bottom: 10px;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 10px;
 }
 
 .inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails > .inspiration-thumb {
@@ -1530,8 +1637,18 @@ body.ldj .line {
     -khtml-border-radius: 4px 4px 4px 4px;
     -webkit-border-radius: 4px 4px 4px 4px;
     box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     font-size: 14px;
     outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
     padding: 8px 12px 8px 12px;
     width: 100%;
 }
@@ -1543,21 +1660,21 @@ body.ldj .line {
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid {
     display: grid;
     flex: 1;
-    gap: 16px;
-    grid-template-columns: repeat(4, 1fr);
     margin-bottom: 16px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 4px 4px 4px 4px;
+    gap: 16px;
+    grid-template-columns: repeat(4, 1fr);
     align-content: start;
 }
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-empty {
     color: #9d9d9d;
     font-size: 14px;
-    grid-column: 1 / -1;
     padding: 32px 0px 32px 0px;
     text-align: center;
+    grid-column: 1 / -1;
 }
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card {
@@ -1608,23 +1725,23 @@ body.ldj .line {
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-title {
     font-size: 14px;
     font-weight: 600;
-    margin-top: 12px;
     line-height: 22px;
+    margin-top: 12px;
 }
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-description {
     color: #6d6d6d;
     font-size: 12px;
-    margin-top: 2px;
     line-height: 16px;
     margin: 4px 0px 4px 0px;
+    margin-top: 2px;
 }
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-author {
     color: #9d9d9d;
     font-size: 11px;
-    margin-top: 2px;
     line-height: 14px;
+    margin-top: 2px;
 }
 
 .toast {
@@ -1642,6 +1759,11 @@ body.ldj .line {
     left: 50%;
     letter-spacing: 0.5px;
     opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
     padding: 12px 24px 12px 24px;
     pointer-events: none;
     position: fixed;
@@ -1663,6 +1785,11 @@ body.ldj .line {
 
 .toast.visible {
     opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
 }
 
 body.ldj .toast {

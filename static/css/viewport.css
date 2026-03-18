@@ -71,14 +71,14 @@
 }
 
 .viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
-    align-content: center;
     border: none;
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     min-width: 0px;
     overflow: hidden;
     position: absolute;
+    align-content: center;
+    flex-wrap: wrap;
 }
 
 .viewport > .main-container > .viewport-preview > .viewer-container > .newline {
@@ -99,6 +99,11 @@
 .viewport > .main-container > .viewer-container > .caret,
 .viewport > .main-container > .viewport-preview > .viewer-container > .caret {
     animation: caret-blink 1s step-end infinite;
+    -o-animation: caret-blink 1s step-end infinite;
+    -ms-animation: caret-blink 1s step-end infinite;
+    -moz-animation: caret-blink 1s step-end infinite;
+    -khtml-animation: caret-blink 1s step-end infinite;
+    -webkit-animation: caret-blink 1s step-end infinite;
 }
 
 @keyframes caret-blink {

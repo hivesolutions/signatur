@@ -7,6 +7,7 @@
 
 .viewport > .main-container > .keyboard-container {
     display: none;
+    position: relative;
     width: 700px;
 }
 
@@ -78,4 +79,65 @@
 
 .viewport > .main-container > .keyboard-container:not(.lowercase) > .char.shift {
     background-color: #e2e2e2;
+}
+
+.viewport > .main-container > .keyboard-container > .accent-popup {
+    background-color: #ffffff;
+    border: 1px solid #9d9d9d;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -o-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -ms-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -khtml-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    margin-top: -6px;
+    padding: 4px 4px 4px 4px;
+    position: absolute;
+    transform: translate(-50%, -100%);
+    -o-transform: translate(-50%, -100%);
+    -ms-transform: translate(-50%, -100%);
+    -moz-transform: translate(-50%, -100%);
+    -khtml-transform: translate(-50%, -100%);
+    -webkit-transform: translate(-50%, -100%);
+    z-index: 100;
+}
+
+.viewport > .main-container > .keyboard-container > .accent-popup > .accent-option {
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 26px;
+    line-height: 44px;
+    min-height: 44px;
+    min-width: 44px;
+    text-align: center;
+}
+
+.viewport > .main-container > .keyboard-container > .accent-popup > .accent-option:hover {
+    background-color: #4a90d9;
+    color: #ffffff;
+}
+
+.viewport > .main-container > .keyboard-container > .accent-popup > .accent-popup-arrow {
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #ffffff;
+    bottom: -6px;
+    height: 0px;
+    left: 50%;
+    margin-left: -6px;
+    position: absolute;
+    width: 0px;
 }

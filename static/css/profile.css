@@ -13,7 +13,13 @@
     -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    min-width: 120px;
     opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
     padding: 14px 18px 14px 18px;
     pointer-events: none;
     position: fixed;
@@ -27,11 +33,15 @@
     -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     visibility: hidden;
     z-index: 100;
-    min-width: 120px;
 }
 
 .profile-info.visible {
     opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
     pointer-events: auto;
     visibility: visible;
 }
@@ -140,7 +150,13 @@
     -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     left: 22px;
+    max-width: 260px;
     opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
     padding: 14px 18px 14px 18px;
     pointer-events: none;
     position: fixed;
@@ -152,13 +168,17 @@
     -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     visibility: hidden;
-    z-index: 100;
     width: 260px;
-    max-width: 260px;
+    z-index: 100;
 }
 
 .viewport-options.visible {
     opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
     pointer-events: auto;
     visibility: visible;
 }
@@ -290,6 +310,11 @@
 
 .viewport-options > .viewport-options-body > .viewport-options-checkbox {
     box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     display: none;
     width: 50%;
 }
@@ -351,17 +376,17 @@
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field {
     align-items: center;
     display: flex;
-    gap: 4px;
     width: 110px;
+    gap: 4px;
 }
 
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-label {
     color: #6d6d6d;
     font-size: 10px;
     letter-spacing: 0.3px;
+    text-align: center;
     text-transform: uppercase;
     width: 50px;
-    text-align: center;
 }
 
 .viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-input {

@@ -1138,6 +1138,29 @@ jQuery(document).ready(function() {
         }
     };
 
+    // dead key composition map for physical keyboard input,
+    // maps a dead key followed by a base letter to the
+    // corresponding accented character
+    const DEAD_KEY_MAP = {
+        "´": { a: "á", e: "é", i: "í", o: "ó", u: "ú" },
+        "^": { a: "â", e: "ê", o: "ô" },
+        "~": { a: "ã", o: "õ" },
+        "`": { a: "à" }
+    };
+
+    // builds a set of all valid accented characters so that
+    // OS-composed dead key input can bypass keyboard validation
+    const ACCENTED_CHARS = new Set();
+    for (const deadKey in DEAD_KEY_MAP) {
+        for (const base in DEAD_KEY_MAP[deadKey]) {
+            const composed = DEAD_KEY_MAP[deadKey][base];
+            ACCENTED_CHARS.add(composed);
+            ACCENTED_CHARS.add(composed.toUpperCase());
+        }
+    }
+
+    let pendingDeadKey = null;
+
     const keyboardHandler = function(event) {
         // skips keyboard handling when a modal input is focused
         // so that text editing controls work normally in modals
@@ -1147,7 +1170,11 @@ jQuery(document).ready(function() {
         const font = body.data("font");
         let executed = false;
         switch (event.key) {
+            case "Dead":
+                break;
+
             case "Backspace":
+                pendingDeadKey = null;
                 executed = backspace();
                 if (executed) {
                     event.stopPropagation();
@@ -1156,6 +1183,7 @@ jQuery(document).ready(function() {
                 break;
 
             case " ":
+                pendingDeadKey = null;
                 executed = space(font);
                 if (executed) {
                     event.stopPropagation();
@@ -1164,6 +1192,7 @@ jQuery(document).ready(function() {
                 break;
 
             case "Enter":
+                pendingDeadKey = null;
                 executed = newline();
                 if (executed) {
                     event.stopPropagation();
@@ -1172,6 +1201,7 @@ jQuery(document).ready(function() {
                 break;
 
             case "Delete":
+                pendingDeadKey = null;
                 executed = deleteForward();
                 if (executed) {
                     event.stopPropagation();
@@ -1180,30 +1210,79 @@ jQuery(document).ready(function() {
                 break;
 
             case "ArrowLeft":
+                pendingDeadKey = null;
                 moveCaret(-1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
             case "ArrowRight":
+                pendingDeadKey = null;
                 moveCaret(1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
             case "ArrowUp":
+                pendingDeadKey = null;
                 moveCaretLine(-1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
             case "ArrowDown":
+                pendingDeadKey = null;
                 moveCaretLine(1);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
+            case "Home":
+                pendingDeadKey = null;
+                moveCaretHome();
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
+            case "End":
+                pendingDeadKey = null;
+                moveCaretEnd();
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+
             default:
+                // checks if the current key is a dead key accent
+                // and stores it for composition with the next key
+                if (DEAD_KEY_MAP[event.key]) {
+                    pendingDeadKey = event.key;
+                    event.stopPropagation();
+                    event.preventDefault();
+                    break;
+                }
+
+                // composes the pending dead key with the current
+                // key to produce an accented character if valid
+                if (pendingDeadKey) {
+                    const composed = DEAD_KEY_MAP[pendingDeadKey][event.key.toLowerCase()];
+                    pendingDeadKey = null;
+                    if (composed) {
+                        const cased =
+                            event.key === event.key.toUpperCase()
+                                ? composed.toUpperCase()
+                                : composed;
+                        type(font, cased, false);
+                    }
+                    break;
+                }
+
+                // allows OS-composed accented characters to bypass
+                // the keyboard validation (dead key handled by the OS)
+                if (ACCENTED_CHARS.has(event.key)) {
+                    type(font, event.key, false);
+                    break;
+                }
+
                 type(font, event.key, true);
                 break;
         }
@@ -1286,12 +1365,9 @@ jQuery(document).ready(function() {
         return true;
     };
 
-    const moveCaretLine = function(direction) {
-        const [text, caret, caretPosition] = getText();
-        if (caret.length === 0) return false;
-
-        // splits the text array into lines separated by newline
-        // entries to determine the current line and column
+    // splits the text array into lines and determines which
+    // line the caret is currently on based on its position
+    const getCaretLine = function(text, caretPosition) {
         const lines = [[]];
         for (let i = 0; i < text.length; i++) {
             if (text[i][1] === "\n") {
@@ -1301,31 +1377,92 @@ jQuery(document).ready(function() {
             }
         }
 
-        // determines which line and column the caret is on
+        // determines the current line by counting newline entries
+        // up to the caret position, handling empty lines correctly
         let currentLine = 0;
+        if (caretPosition >= 0) {
+            let line = 0;
+            for (let i = 0; i <= caretPosition; i++) {
+                if (text[i][1] === "\n") line++;
+            }
+            currentLine = line;
+        }
+
+        return { lines: lines, currentLine: currentLine };
+    };
+
+    const moveCaretHome = function() {
+        const [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+        const { lines, currentLine } = getCaretLine(text, caretPosition);
+
+        // moves the caret to before the first character on the line
+        let newPosition;
+        if (lines[currentLine].length > 0) {
+            newPosition = lines[currentLine][0] - 1;
+        } else {
+            newPosition =
+                currentLine === 0
+                    ? -1
+                    : lines[currentLine - 1].length > 0
+                    ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
+                    : currentLine - 1;
+        }
+
+        if (newPosition === caretPosition) return false;
+        const elements = viewportContainer.children(":not(.caret)");
+        if (newPosition === -1) {
+            elements.first().before(caret);
+        } else {
+            elements.eq(newPosition).after(caret);
+        }
+        body.data("caret_position", newPosition);
+        return true;
+    };
+
+    const moveCaretEnd = function() {
+        const [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+        const { lines, currentLine } = getCaretLine(text, caretPosition);
+
+        // moves the caret to after the last character on the line
+        let newPosition;
+        if (lines[currentLine].length > 0) {
+            newPosition = lines[currentLine][lines[currentLine].length - 1];
+        } else {
+            newPosition =
+                currentLine === 0
+                    ? -1
+                    : lines[currentLine - 1].length > 0
+                    ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
+                    : currentLine - 1;
+        }
+
+        if (newPosition === caretPosition) return false;
+        const elements = viewportContainer.children(":not(.caret)");
+        if (newPosition === -1) {
+            elements.first().before(caret);
+        } else {
+            elements.eq(newPosition).after(caret);
+        }
+        body.data("caret_position", newPosition);
+        return true;
+    };
+
+    const moveCaretLine = function(direction) {
+        const [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+        const { lines, currentLine } = getCaretLine(text, caretPosition);
+
+        // determines the column within the current line
         let currentCol = 0;
         if (caretPosition === -1) {
-            currentLine = 0;
             currentCol = -1;
         } else if (text[caretPosition] && text[caretPosition][1] === "\n") {
-            // caret is on a newline, treat as end of that line
-            for (let l = 0; l < lines.length - 1; l++) {
-                const lineEnd = lines[l].length > 0 ? lines[l][lines[l].length - 1] : -1;
-                if (caretPosition === lineEnd + 1) {
-                    currentLine = l;
-                    currentCol = lines[l].length;
-                    break;
-                }
-            }
+            currentCol = -1;
         } else {
-            for (let l = 0; l < lines.length; l++) {
-                const idx = lines[l].indexOf(caretPosition);
-                if (idx !== -1) {
-                    currentLine = l;
-                    currentCol = idx;
-                    break;
-                }
-            }
+            const idx = lines[currentLine].indexOf(caretPosition);
+            currentCol = idx !== -1 ? idx : 0;
         }
 
         const targetLine = currentLine + direction;
