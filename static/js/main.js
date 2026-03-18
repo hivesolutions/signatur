@@ -1462,43 +1462,17 @@ jQuery(document).ready(function() {
     const moveCaretLine = function(direction) {
         const [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
+        const { lines, currentLine } = getCaretLine(text, caretPosition);
 
-        // splits the text array into lines separated by newline
-        // entries to determine the current line and column
-        const lines = [[]];
-        for (let i = 0; i < text.length; i++) {
-            if (text[i][1] === "\n") {
-                lines.push([]);
-            } else {
-                lines[lines.length - 1].push(i);
-            }
-        }
-
-        // determines which line and column the caret is on
-        let currentLine = 0;
+        // determines the column within the current line
         let currentCol = 0;
         if (caretPosition === -1) {
-            currentLine = 0;
             currentCol = -1;
         } else if (text[caretPosition] && text[caretPosition][1] === "\n") {
-            // caret is on a newline, treat as end of that line
-            for (let l = 0; l < lines.length - 1; l++) {
-                const lineEnd = lines[l].length > 0 ? lines[l][lines[l].length - 1] : -1;
-                if (caretPosition === lineEnd + 1) {
-                    currentLine = l;
-                    currentCol = lines[l].length;
-                    break;
-                }
-            }
+            currentCol = -1;
         } else {
-            for (let l = 0; l < lines.length; l++) {
-                const idx = lines[l].indexOf(caretPosition);
-                if (idx !== -1) {
-                    currentLine = l;
-                    currentCol = idx;
-                    break;
-                }
-            }
+            const idx = lines[currentLine].indexOf(caretPosition);
+            currentCol = idx !== -1 ? idx : 0;
         }
 
         const targetLine = currentLine + direction;
