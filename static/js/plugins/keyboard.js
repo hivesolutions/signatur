@@ -67,7 +67,9 @@
                 const option = jQuery(
                     "<span class=\"accent-option\">" + value + "</span>"
                 );
-                option.on("click", function() {
+                option.on("mouseup touchend click", function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
                     const font = body.data("font");
                     context.triggerHandler("key", [font, value]);
                     popup.remove();
