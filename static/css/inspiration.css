@@ -94,6 +94,7 @@
     -moz-border-radius: 4px 4px 4px 4px;
     -khtml-border-radius: 4px 4px 4px 4px;
     -webkit-border-radius: 4px 4px 4px 4px;
+    overflow: visible;
     position: relative;
     transition: transform 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: transform 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.0);
@@ -183,6 +184,7 @@
     margin-bottom: 16px;
     overflow-x: hidden;
     overflow-y: auto;
+    padding: 4px 4px 4px 4px;
     align-content: start;
 }
 
@@ -206,6 +208,7 @@
     -moz-border-radius: 4px 4px 4px 4px;
     -khtml-border-radius: 4px 4px 4px 4px;
     -webkit-border-radius: 4px 4px 4px 4px;
+    overflow: visible;
     position: relative;
     transition: transform 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: transform 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.0);

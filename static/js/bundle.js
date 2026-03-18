@@ -678,6 +678,7 @@ const countLines = function(text) {
                 }
 
                 context.addClass("visible");
+                panelBody.css("overflow", "visible");
             };
 
             // renders all inspirations in the full-screen modal grid
