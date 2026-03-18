@@ -281,8 +281,10 @@ jQuery(document).ready(function() {
                 specs.final_viewport = finalWidth + " x " + finalHeight + (unit ? " " + unit : "");
             }
             if (currentProfile.instructions) {
-                specs.instructions = currentProfile.instructions.title ||
-                    currentProfile.instructions.description || "See instructions";
+                specs.instructions =
+                    currentProfile.instructions.title ||
+                    currentProfile.instructions.description ||
+                    "See instructions";
             }
         }
 

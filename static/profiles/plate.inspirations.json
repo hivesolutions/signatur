@@ -19,7 +19,7 @@
         "author": "Hive Solutions",
         "text": [["Helvetica 1L", "SN-2024-00451"]],
         "font_size": 8,
-        "align": "left"
+        "align": "center"
     },
     {
         "id": "warning-label",

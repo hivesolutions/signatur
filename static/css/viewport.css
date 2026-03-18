@@ -11,6 +11,12 @@
     justify-content: center;
     padding: 64px 0px 64px 0px;
     text-align: center;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
     width: 100%;
 }
 
