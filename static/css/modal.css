@@ -220,3 +220,75 @@
 .modal-overlay > .modal > .modal-options > .modal-option {
     cursor: pointer;
 }
+
+.modal-overlay > .modal.modal-inspirations {
+    max-height: 85vh;
+    max-width: 900px;
+    overflow-y: auto;
+    width: 90%;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-search {
+    margin-bottom: 16px;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-search > .modal-search-input {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+    padding: 8px 12px 8px 12px;
+    width: 100%;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-search > .modal-search-input:focus {
+    border-color: #2d2d2d;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 16px;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card {
+    cursor: pointer;
+    text-align: center;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-preview {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 6px;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-description {
+    color: #6d6d6d;
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+.modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-card > .inspiration-card-author {
+    color: #9d9d9d;
+    font-size: 10px;
+    margin-top: 2px;
+}

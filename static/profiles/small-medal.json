@@ -25,6 +25,7 @@
         "align": "center"
     },
     "background": "small-medal.png",
+    "inspirations": "small-medal.inspirations.json",
     "preview": {
         "show_bounds": true,
         "show_safe_area": true,
