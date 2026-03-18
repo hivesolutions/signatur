@@ -696,7 +696,7 @@ jQuery(document).ready(function() {
             const font = inspiration.text[i][0];
             const chars = inspiration.text[i][1];
             if (chars === "\n") {
-                viewer.append('<div class="newline"></div>');
+                viewer.append('<div class="newline" style="height: 0px; width: 100%;"></div>');
             } else {
                 for (let j = 0; j < chars.length; j++) {
                     const value = chars[j] === " " ? "&nbsp;" : chars[j];
