@@ -36,7 +36,7 @@
                 }, 400);
             });
 
-            keys.on("mouseup touchend mouseleave", function() {
+            keys.on("mouseup touchend touchcancel mouseleave", function() {
                 if (longPressTimer) {
                     clearTimeout(longPressTimer);
                     longPressTimer = null;

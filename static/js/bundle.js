@@ -196,7 +196,7 @@ const countLines = function(text) {
                 }, 400);
             });
 
-            keys.on("mouseup touchend mouseleave", function() {
+            keys.on("mouseup touchend touchcancel mouseleave", function() {
                 if (longPressTimer) {
                     clearTimeout(longPressTimer);
                     longPressTimer = null;
@@ -2062,8 +2062,6 @@ jQuery(document).ready(function() {
         let executed = false;
         switch (event.key) {
             case "Dead":
-                event.stopPropagation();
-                event.preventDefault();
                 break;
 
             case "Backspace":
@@ -2270,26 +2268,15 @@ jQuery(document).ready(function() {
             }
         }
 
+        // determines the current line by counting newline entries
+        // up to the caret position, handling empty lines correctly
         let currentLine = 0;
-        if (caretPosition === -1) {
-            currentLine = 0;
-        } else if (text[caretPosition] && text[caretPosition][1] === "\n") {
-            // caret is on a newline, treat as start of next line
-            currentLine = 0;
-            for (let l = 0; l < lines.length - 1; l++) {
-                const lineEnd = lines[l].length > 0 ? lines[l][lines[l].length - 1] : -1;
-                if (caretPosition === lineEnd + 1) {
-                    currentLine = l + 1;
-                    break;
-                }
+        if (caretPosition >= 0) {
+            let line = 0;
+            for (let i = 0; i <= caretPosition; i++) {
+                if (text[i][1] === "\n") line++;
             }
-        } else {
-            for (let l = 0; l < lines.length; l++) {
-                if (lines[l].indexOf(caretPosition) !== -1) {
-                    currentLine = l;
-                    break;
-                }
-            }
+            currentLine = line;
         }
 
         return { lines: lines, currentLine: currentLine };
