@@ -667,7 +667,9 @@ const countLines = function(text) {
                 for (let i = 0; i < entries.length; i++) {
                     const inspiration = entries[i];
                     const thumb = jQuery('<div class="inspiration-thumb"></div>');
-                    const previewContainer = jQuery('<div class="inspiration-thumb-preview"></div>');
+                    const previewContainer = jQuery(
+                        '<div class="inspiration-thumb-preview"></div>'
+                    );
                     const title = jQuery('<div class="inspiration-thumb-title"></div>');
                     title.text(inspiration.title);
                     thumb.append(previewContainer);
@@ -707,9 +709,7 @@ const countLines = function(text) {
                 });
 
                 if (entries.length === 0) {
-                    modalGrid.append(
-                        '<div class="inspiration-empty">No inspirations found.</div>'
-                    );
+                    modalGrid.append('<div class="inspiration-empty">No inspirations found.</div>');
                     return;
                 }
 
@@ -1471,7 +1471,7 @@ jQuery(document).ready(function() {
                 element.click(function() {
                     const el = jQuery(this);
                     el.after(caret);
-                    const pos = el.index(".viewer-container > :not(.caret)");
+                    const pos = viewportContainer.children(":not(.caret)").index(el);
                     body.data("caret_position", pos);
                 });
             } else {
@@ -1483,7 +1483,7 @@ jQuery(document).ready(function() {
                 element.click(function() {
                     const el = jQuery(this);
                     el.after(caret);
-                    const pos = el.index(".viewer-container > :not(.caret)");
+                    const pos = viewportContainer.children(":not(.caret)").index(el);
                     body.data("caret_position", pos);
                 });
             }
@@ -1532,11 +1532,12 @@ jQuery(document).ready(function() {
         // applies the text alignment from the inspiration
         // to match the thumbnail preview layout
         if (inspiration.align) {
-            const justify = inspiration.align === "center"
-                ? "center"
-                : inspiration.align === "right"
-                ? "flex-end"
-                : "flex-start";
+            const justify =
+                inspiration.align === "center"
+                    ? "center"
+                    : inspiration.align === "right"
+                    ? "flex-end"
+                    : "flex-start";
             viewportContainer.css("text-align", inspiration.align);
             viewportContainer.css("justify-content", justify);
         }
@@ -2055,7 +2056,7 @@ jQuery(document).ready(function() {
         element.click(function() {
             const element = jQuery(this);
             element.after(caret);
-            caretPosition = element.index(".viewer-container > :not(.caret)");
+            caretPosition = viewportContainer.children(":not(.caret)").index(element);
             body.data("caret_position", caretPosition);
         });
         text.splice(caretPosition + 1, 0, [font, " "]);
@@ -2078,7 +2079,7 @@ jQuery(document).ready(function() {
         element.click(function() {
             const element = jQuery(this);
             element.after(caret);
-            caretPosition = element.index(".viewer-container > :not(.caret)");
+            caretPosition = viewportContainer.children(":not(.caret)").index(element);
             body.data("caret_position", caretPosition);
         });
         text.splice(caretPosition + 1, 0, [null, "\n"]);
@@ -2209,7 +2210,7 @@ jQuery(document).ready(function() {
         element.click(function() {
             const element = jQuery(this);
             element.after(caret);
-            caretPosition = element.index(".viewer-container > :not(.caret)");
+            caretPosition = viewportContainer.children(":not(.caret)").index(element);
             body.data("caret_position", caretPosition);
         });
         text.splice(caretPosition + 1, 0, [font, value]);
@@ -2295,7 +2296,7 @@ jQuery(document).ready(function() {
             element.click(function() {
                 const element = jQuery(this);
                 viewportContainer.find("> .caret").insertAfter(element);
-                const caretPosition = element.index(".viewer-container > :not(.caret)");
+                const caretPosition = viewportContainer.children(":not(.caret)").index(element);
                 body.data("caret_position", caretPosition);
             });
         });

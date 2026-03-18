@@ -121,7 +121,9 @@
                 for (let i = 0; i < entries.length; i++) {
                     const inspiration = entries[i];
                     const thumb = jQuery('<div class="inspiration-thumb"></div>');
-                    const previewContainer = jQuery('<div class="inspiration-thumb-preview"></div>');
+                    const previewContainer = jQuery(
+                        '<div class="inspiration-thumb-preview"></div>'
+                    );
                     const title = jQuery('<div class="inspiration-thumb-title"></div>');
                     title.text(inspiration.title);
                     thumb.append(previewContainer);
@@ -161,9 +163,7 @@
                 });
 
                 if (entries.length === 0) {
-                    modalGrid.append(
-                        '<div class="inspiration-empty">No inspirations found.</div>'
-                    );
+                    modalGrid.append('<div class="inspiration-empty">No inspirations found.</div>');
                     return;
                 }
 
