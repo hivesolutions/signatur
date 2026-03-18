@@ -1366,12 +1366,9 @@ jQuery(document).ready(function() {
         return true;
     };
 
-    const moveCaretHome = function() {
-        const [text, caret, caretPosition] = getText();
-        if (caret.length === 0) return false;
-
-        // splits the text array into lines separated by newline
-        // entries to determine the current line boundaries
+    // splits the text array into lines and determines which
+    // line the caret is currently on based on its position
+    const getCaretLine = function(text, caretPosition) {
         const lines = [[]];
         for (let i = 0; i < text.length; i++) {
             if (text[i][1] === "\n") {
@@ -1381,15 +1378,16 @@ jQuery(document).ready(function() {
             }
         }
 
-        // finds the current line based on caret position
         let currentLine = 0;
         if (caretPosition === -1) {
             currentLine = 0;
         } else if (text[caretPosition] && text[caretPosition][1] === "\n") {
+            // caret is on a newline, treat as start of next line
+            currentLine = 0;
             for (let l = 0; l < lines.length - 1; l++) {
                 const lineEnd = lines[l].length > 0 ? lines[l][lines[l].length - 1] : -1;
                 if (caretPosition === lineEnd + 1) {
-                    currentLine = l;
+                    currentLine = l + 1;
                     break;
                 }
             }
@@ -1401,6 +1399,14 @@ jQuery(document).ready(function() {
                 }
             }
         }
+
+        return { lines: lines, currentLine: currentLine };
+    };
+
+    const moveCaretHome = function() {
+        const [text, caret, caretPosition] = getText();
+        if (caret.length === 0) return false;
+        const { lines, currentLine } = getCaretLine(text, caretPosition);
 
         // moves the caret to before the first character on the line
         let newPosition;
@@ -1428,38 +1434,7 @@ jQuery(document).ready(function() {
     const moveCaretEnd = function() {
         const [text, caret, caretPosition] = getText();
         if (caret.length === 0) return false;
-
-        // splits the text array into lines separated by newline
-        // entries to determine the current line boundaries
-        const lines = [[]];
-        for (let i = 0; i < text.length; i++) {
-            if (text[i][1] === "\n") {
-                lines.push([]);
-            } else {
-                lines[lines.length - 1].push(i);
-            }
-        }
-
-        // finds the current line based on caret position
-        let currentLine = 0;
-        if (caretPosition === -1) {
-            currentLine = 0;
-        } else if (text[caretPosition] && text[caretPosition][1] === "\n") {
-            for (let l = 0; l < lines.length - 1; l++) {
-                const lineEnd = lines[l].length > 0 ? lines[l][lines[l].length - 1] : -1;
-                if (caretPosition === lineEnd + 1) {
-                    currentLine = l;
-                    break;
-                }
-            }
-        } else {
-            for (let l = 0; l < lines.length; l++) {
-                if (lines[l].indexOf(caretPosition) !== -1) {
-                    currentLine = l;
-                    break;
-                }
-            }
-        }
+        const { lines, currentLine } = getCaretLine(text, caretPosition);
 
         // moves the caret to after the last character on the line
         let newPosition;
