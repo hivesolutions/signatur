@@ -953,6 +953,7 @@ jQuery(document).ready(function() {
         for (let i = 0; i < images.length; i++) {
             const img = jQuery("<img />");
             img.attr("src", images[i]);
+            img.attr("alt", (instructions.title || "Instructions") + " " + (i + 1));
             modalInstructionsImages.append(img);
         }
         modalOverlayInstructions.modal("show");
@@ -2547,7 +2548,7 @@ jQuery(document).ready(function() {
         if (profileKey) {
             params.set("profile", profileKey);
             const variantIndex = variantSelect.val();
-            if (variantIndex !== "" && variantIndex !== "0") {
+            if (variantIndex && variantIndex !== "0") {
                 params.set("variant", variantIndex);
             }
         }

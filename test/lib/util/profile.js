@@ -827,4 +827,97 @@ describe("Profile", function() {
             );
         });
     });
+
+    describe("#validateInstructions()", function() {
+        it("should validate correct instructions", () => {
+            const errors = lib.validateInstructions({
+                title: "Jig Setup",
+                description: "Place the plate on the jig.",
+                images: ["/images/jig.png"]
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate empty instructions", () => {
+            const errors = lib.validateInstructions({});
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-object instructions", () => {
+            const errors = lib.validateInstructions("invalid");
+            assert.deepStrictEqual(errors, ["instructions must be an object"]);
+        });
+
+        it("should reject non-string title", () => {
+            const errors = lib.validateInstructions({ title: 123 });
+            assert.strictEqual(true, errors.includes("instructions.title must be a string"));
+        });
+
+        it("should reject non-string description", () => {
+            const errors = lib.validateInstructions({ description: 123 });
+            assert.strictEqual(true, errors.includes("instructions.description must be a string"));
+        });
+
+        it("should reject non-array images", () => {
+            const errors = lib.validateInstructions({ images: "invalid" });
+            assert.strictEqual(true, errors.includes("instructions.images must be an array"));
+        });
+
+        it("should reject non-string image entries", () => {
+            const errors = lib.validateInstructions({ images: [123] });
+            assert.strictEqual(true, errors.includes("instructions.images[0] must be a string"));
+        });
+    });
+
+    describe("#validateVariants()", function() {
+        it("should validate correct variants", () => {
+            const errors = lib.validateVariants([
+                { name: "Silver", background: "silver.png" },
+                { name: "Gold", background: "gold.png" }
+            ]);
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate empty variants array", () => {
+            const errors = lib.validateVariants([]);
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-array variants", () => {
+            const errors = lib.validateVariants("invalid");
+            assert.deepStrictEqual(errors, ["variants must be an array"]);
+        });
+
+        it("should require variant name", () => {
+            const errors = lib.validateVariants([{}]);
+            assert.strictEqual(true, errors.includes("variants[0].name is required"));
+        });
+
+        it("should reject non-string variant name", () => {
+            const errors = lib.validateVariants([{ name: 123 }]);
+            assert.strictEqual(true, errors.includes("variants[0].name must be a string"));
+        });
+
+        it("should reject non-string variant background", () => {
+            const errors = lib.validateVariants([{ name: "Test", background: 123 }]);
+            assert.strictEqual(true, errors.includes("variants[0].background must be a string"));
+        });
+
+        it("should validate variant with padding", () => {
+            const errors = lib.validateVariants([
+                { name: "Test", padding: { top: 5, right: 5, bottom: 5, left: 5 } }
+            ]);
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject invalid variant padding", () => {
+            const errors = lib.validateVariants([
+                { name: "Test", padding: { top: -1, right: 5, bottom: 5, left: 5 } }
+            ]);
+            assert.strictEqual(
+                true,
+                errors.includes("variants[0] padding.top must be a non-negative number")
+            );
+        });
+    });
 });
