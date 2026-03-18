@@ -396,6 +396,7 @@ jQuery(document).ready(function() {
             if (urlCaret === "0") {
                 caretMode.prop("checked", false);
                 viewportContainer.find("> .caret").hide();
+                viewportContainer.removeClass("caret-active");
             }
             restoring = false;
             updateUrl();
@@ -978,8 +979,10 @@ jQuery(document).ready(function() {
         const caret = viewportContainer.find("> .caret");
         if (showCaret) {
             caret.show();
+            viewportContainer.addClass("caret-active");
         } else {
             caret.hide();
+            viewportContainer.removeClass("caret-active");
         }
         updateUrl();
     });

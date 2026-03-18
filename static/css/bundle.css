@@ -445,6 +445,11 @@ body.ldj .line {
     cursor: pointer;
 }
 
+.viewport > .main-container > .viewer-container.caret-active > span:not(.caret),
+.viewport > .main-container > .viewport-preview > .viewer-container.caret-active > span:not(.caret) {
+    cursor: text;
+}
+
 .viewport > .main-container > .viewer-container > .caret,
 .viewport > .main-container > .viewport-preview > .viewer-container > .caret {
     animation: caret-blink 1s step-end infinite;
