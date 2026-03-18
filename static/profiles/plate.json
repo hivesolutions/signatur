@@ -31,6 +31,16 @@
         "description": "Place the steel plate on the flat jig surface and align it with the corner guides.",
         "images": ["/static/images/jig-plate.png"]
     },
+    "variants": [
+        {
+            "name": "Standard",
+            "padding": { "top": 5, "right": 5, "bottom": 5, "left": 5 }
+        },
+        {
+            "name": "Wide Margins",
+            "padding": { "top": 10, "right": 10, "bottom": 10, "left": 10 }
+        }
+    ],
     "inspirations": "plate.inspirations.json",
     "preview": {
         "show_bounds": true,

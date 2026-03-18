@@ -914,6 +914,8 @@ jQuery(document).ready(function() {
     const profileInfoRawToggle = jQuery(".profile-info-raw-toggle");
     const profileInfoRaw = jQuery(".profile-info-raw");
     const profileSelect = jQuery(".profile-select");
+    const variantSelect = jQuery(".variant-select");
+    const variantContainer = jQuery(".variant-container");
     const profileInfoTitle = jQuery(".profile-info-title");
     const profileInfoToggle = jQuery(".profile-info-toggle");
     const viewportOptionsTitle = jQuery(".viewport-options-title");
@@ -1247,6 +1249,10 @@ jQuery(document).ready(function() {
             const urlProfile = urlParams.get("profile");
             if (urlProfile && profiles[urlProfile]) {
                 profileSelect.val(urlProfile).trigger("change");
+                const urlVariant = urlParams.get("variant");
+                if (urlVariant !== null) {
+                    variantSelect.val(urlVariant).trigger("change");
+                }
             }
 
             // restores the margin values from the URL query
@@ -1780,11 +1786,21 @@ jQuery(document).ready(function() {
         }
     };
 
-    // registers for the change in the profile dropdown so
-    // that the viewport preview and font size controls update
-    profileSelect.bind("change", function() {
-        const key = jQuery(this).val();
-        currentProfile = key ? profiles[key] : null;
+    // applies a variant's overrides onto the base profile
+    // returning a merged profile object for rendering
+    const applyVariant = function(profile, variant) {
+        if (!profile || !variant) return profile;
+        const merged = Object.assign({}, profile);
+        if (variant.padding) merged.padding = variant.padding;
+        if (variant.extra_padding) merged.extra_padding = variant.extra_padding;
+        if (variant.background) merged.background = variant.background;
+        if (variant.font_size) merged.font_size = variant.font_size;
+        return merged;
+    };
+
+    // refreshes the viewport and controls based on the
+    // currently selected profile and variant combination
+    const refreshProfile = function() {
         if (currentProfile) {
             populateMargins(currentProfile);
             const defaultZoom = currentProfile.preview ? currentProfile.preview.zoom || 1 : 1;
@@ -1812,6 +1828,45 @@ jQuery(document).ready(function() {
         updateFontSizeControls(currentProfile);
         applyFontSize();
         inspirationPanel.inspirationpanel("update", currentProfile);
+    };
+
+    // registers for the change in the profile dropdown so
+    // that the viewport preview and font size controls update
+    profileSelect.bind("change", function() {
+        const key = jQuery(this).val();
+        const baseProfile = key ? profiles[key] : null;
+
+        // populates the variant dropdown if the profile has variants
+        variantSelect.empty();
+        if (baseProfile && baseProfile.variants && baseProfile.variants.length > 0) {
+            for (let i = 0; i < baseProfile.variants.length; i++) {
+                const variant = baseProfile.variants[i];
+                const option = jQuery("<option></option>");
+                option.attr("value", i);
+                option.text(variant.name);
+                variantSelect.append(option);
+            }
+            variantContainer.addClass("visible");
+            currentProfile = applyVariant(baseProfile, baseProfile.variants[0]);
+        } else {
+            variantContainer.removeClass("visible");
+            currentProfile = baseProfile;
+        }
+
+        refreshProfile();
+        updateUrl();
+    });
+
+    // registers for the change in the variant dropdown so
+    // that the profile overrides are applied and refreshed
+    variantSelect.bind("change", function() {
+        const key = profileSelect.val();
+        const baseProfile = key ? profiles[key] : null;
+        if (!baseProfile) return;
+        const index = parseInt(jQuery(this).val());
+        const variant = baseProfile.variants ? baseProfile.variants[index] : null;
+        currentProfile = variant ? applyVariant(baseProfile, variant) : baseProfile;
+        refreshProfile();
         updateUrl();
     });
 
@@ -2488,13 +2543,12 @@ jQuery(document).ready(function() {
         if (text.length > 0) params.set("text", serializeText(text));
         const font = body.data("font");
         if (font) params.set("font", font);
-        if (currentProfile) {
-            const keys = Object.keys(profiles);
-            for (const key of keys) {
-                if (profiles[key] === currentProfile) {
-                    params.set("profile", key);
-                    break;
-                }
+        const profileKey = profileSelect.val();
+        if (profileKey) {
+            params.set("profile", profileKey);
+            const variantIndex = variantSelect.val();
+            if (variantIndex !== "" && variantIndex !== "0") {
+                params.set("variant", variantIndex);
             }
         }
         const fontSize = fontSizeRange.val();
