@@ -680,6 +680,43 @@ describe("Profile", function() {
             );
         });
 
+        it("should reject invalid text pair types", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [[123, {}]],
+                    font_size: 4
+                },
+                0
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].text[0][0] must be a string or null")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].text[0][1] must be a string")
+            );
+        });
+
+        it("should accept null font in text pairs", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [[null, "\n"]],
+                    font_size: 4
+                },
+                0
+            );
+            assert.deepStrictEqual(errors, []);
+        });
+
         it("should reject non-positive font size", () => {
             const errors = lib.validateInspiration(
                 {

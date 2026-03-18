@@ -606,16 +606,16 @@ const countLines = function(text) {
                     "min-width": "0px",
                     "font-size": scaledSize + "px",
                     "line-height": Math.round(scaledSize * 1.2) + "px",
-                    "text-align": inspiration.align || "left",
+                    "text-align": inspiration.align || "center",
                     "align-content": "center",
                     display: "flex",
                     "flex-wrap": "wrap",
                     "justify-content":
-                        inspiration.align === "center"
-                            ? "center"
+                        inspiration.align === "left"
+                            ? "flex-start"
                             : inspiration.align === "right"
                             ? "flex-end"
-                            : "flex-start",
+                            : "center",
                     overflow: "hidden"
                 });
 
@@ -1491,26 +1491,8 @@ jQuery(document).ready(function() {
         body.data("text", text);
         body.data("caret_position", text.length - 1);
 
-        // applies the font size from the inspiration
-        if (inspiration.font_size) {
-            fontSizeRange.val(inspiration.font_size);
-            fontSizeValue.text(inspiration.font_size);
-        }
-
-        // applies the padding overrides if defined
-        if (inspiration.padding) {
-            marginLeft.val(inspiration.padding.left);
-            marginRight.val(inspiration.padding.right);
-            marginTop.val(inspiration.padding.top);
-            marginBottom.val(inspiration.padding.bottom);
-            renderViewportPreview(profile);
-        }
-
-        // applies the font size and recalculates layout
-        applyFontSize();
-
         // determines the primary font from the text entries
-        // and clicks the corresponding font element to select it
+        // and skips the preset if the font is not available
         let primaryFont = null;
         for (let i = 0; i < text.length; i++) {
             if (text[i][0] !== null) {
@@ -1520,10 +1502,45 @@ jQuery(document).ready(function() {
         }
         if (primaryFont) {
             const fontEl = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
-            if (fontEl.length > 0 && !fontEl.hasClass("active")) {
-                fontEl.click();
-            }
+            if (fontEl.length === 0) return;
+            if (!fontEl.hasClass("active")) fontEl.click();
         }
+
+        // applies the font size from the inspiration and
+        // forces manual mode so automatic sizing does not
+        // overwrite the inspiration value
+        if (inspiration.font_size) {
+            fontSizeMode.prop("checked", false);
+            fontSizeRange.prop("disabled", false);
+            fontSizeRange.val(inspiration.font_size);
+            fontSizeValue.text(inspiration.font_size);
+        }
+
+        // applies the padding from the inspiration or falls
+        // back to the profile defaults to keep the viewport
+        // consistent with the thumbnail preview
+        const padding = inspiration.padding ||
+            profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+        marginLeft.val(padding.left);
+        marginRight.val(padding.right);
+        marginTop.val(padding.top);
+        marginBottom.val(padding.bottom);
+        renderViewportPreview(profile);
+
+        // applies the text alignment from the inspiration
+        // to match the thumbnail preview layout
+        if (inspiration.align) {
+            const justify = inspiration.align === "center"
+                ? "center"
+                : inspiration.align === "right"
+                ? "flex-end"
+                : "flex-start";
+            viewportContainer.css("text-align", inspiration.align);
+            viewportContainer.css("justify-content", justify);
+        }
+
+        // applies the font size and recalculates layout
+        applyFontSize();
 
         // updates the print button and report URL
         const [textSimple, font] = simplifyText(text);

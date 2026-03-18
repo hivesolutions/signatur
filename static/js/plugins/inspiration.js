@@ -60,16 +60,16 @@
                     "min-width": "0px",
                     "font-size": scaledSize + "px",
                     "line-height": Math.round(scaledSize * 1.2) + "px",
-                    "text-align": inspiration.align || "left",
+                    "text-align": inspiration.align || "center",
                     "align-content": "center",
                     display: "flex",
                     "flex-wrap": "wrap",
                     "justify-content":
-                        inspiration.align === "center"
-                            ? "center"
+                        inspiration.align === "left"
+                            ? "flex-start"
                             : inspiration.align === "right"
                             ? "flex-end"
-                            : "flex-start",
+                            : "center",
                     overflow: "hidden"
                 });
 

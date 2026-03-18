@@ -11,6 +11,7 @@ const CSS_FILES = [
     "css/keyboard.css",
     "css/profile.css",
     "css/modal.css",
+    "css/inspiration.css",
     "css/toast.css",
     "css/report.css",
     "css/text.css",
@@ -24,6 +25,7 @@ const JS_FILES = [
     "js/plugins/modal.js",
     "js/plugins/toast.js",
     "js/plugins/console.js",
+    "js/plugins/inspiration.js",
     "js/main.js"
 ];
 

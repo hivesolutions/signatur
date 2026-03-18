@@ -234,7 +234,8 @@ app.get("/profiles", (req, res, next) => {
         for (const name of Object.keys(profiles)) {
             const profile = profiles[name];
             if (!profile.inspirations) continue;
-            const inspPath = path.join(directoryPath, profile.inspirations);
+            const inspPath = path.resolve(directoryPath, profile.inspirations);
+            if (!inspPath.startsWith(path.resolve(directoryPath) + path.sep)) continue;
             try {
                 const inspContent = await fs.readFile(inspPath, "utf8");
                 const inspArray = JSON.parse(inspContent);
