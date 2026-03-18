@@ -20,6 +20,7 @@
 
             if (action === "hide") {
                 if (!context.hasClass("visible")) return;
+                context.find("input, textarea").blur();
                 context.addClass("dismissing");
                 context.one("transitionend", function() {
                     context.removeClass("visible dismissing");
@@ -143,6 +144,7 @@
             // removing the visible and dismissing classes after completion
             const dismissModal = function(callback) {
                 if (!context.hasClass("visible")) return;
+                context.find("input, textarea").blur();
                 context.addClass("dismissing");
                 context.one("transitionend", function() {
                     context.removeClass("visible dismissing");
