@@ -982,86 +982,28 @@ body.ldj .line {
     vertical-align: middle;
 }
 
-.viewport-options > .viewport-options-body > .viewport-options-rulers {
+.viewport-options > .viewport-options-body > .viewport-options-checkbox {
+    box-sizing: border-box;
     display: none;
+    width: 50%;
 }
 
-.viewport-options > .viewport-options-body > .viewport-options-rulers.visible {
-    display: block;
+.viewport-options > .viewport-options-body > .viewport-options-checkbox.visible {
+    display: inline-block;
 }
 
-.viewport-options > .viewport-options-body > .viewport-options-rulers > .viewport-options-option {
+.viewport-options > .viewport-options-body > .viewport-options-checkbox > .viewport-options-option {
     cursor: pointer;
     font-size: 12px;
 }
 
-.viewport-options > .viewport-options-body > .viewport-options-rulers > .viewport-options-option > .rulers-mode {
+.viewport-options > .viewport-options-body > .viewport-options-checkbox > .viewport-options-option > input {
     cursor: pointer;
     vertical-align: middle;
 }
 
-.viewport-options > .viewport-options-body > .viewport-options-crosshair {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-crosshair.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-crosshair > .viewport-options-option {
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-crosshair > .viewport-options-option > .crosshair-mode {
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-keyboard > .viewport-options-option {
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-keyboard > .viewport-options-option > .keyboard-mode {
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-guidelines {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-guidelines.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-guidelines > .viewport-options-option {
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-guidelines > .viewport-options-option > .guidelines-mode {
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-caret {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-caret.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-caret > .viewport-options-option {
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-caret > .viewport-options-option > .caret-mode {
-    cursor: pointer;
-    vertical-align: middle;
+.viewport-options > .viewport-options-body > .viewport-options-keyboard {
+    display: inline-block;
 }
 
 .viewport-options > .viewport-options-body > .zoom-container {
