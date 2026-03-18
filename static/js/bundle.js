@@ -1187,7 +1187,8 @@ jQuery(document).ready(function() {
     const renderInspirationPreview = function(profile, inspiration, container) {
         const width = profile.width * VIEWPORT_SCALE;
         const height = profile.height * VIEWPORT_SCALE;
-        const padding = inspiration.padding || profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+        const padding = inspiration.padding ||
+            profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
         const fontSize = inspiration.font_size || 3;
         const scaledSize = fontSize * VIEWPORT_SCALE * FONT_SIZE_SCALE;
 
@@ -1226,7 +1227,12 @@ jQuery(document).ready(function() {
             "align-content": "center",
             display: "flex",
             "flex-wrap": "wrap",
-            "justify-content": inspiration.align === "center" ? "center" : (inspiration.align === "right" ? "flex-end" : "flex-start"),
+            "justify-content":
+                inspiration.align === "center"
+                    ? "center"
+                    : inspiration.align === "right"
+                    ? "flex-end"
+                    : "flex-start",
             overflow: "hidden"
         });
 
@@ -1240,7 +1246,9 @@ jQuery(document).ready(function() {
             } else {
                 for (let j = 0; j < chars.length; j++) {
                     const value = chars[j] === " " ? "&nbsp;" : chars[j];
-                    viewer.append("<span style=\"font-family: '" + font + "';\">" + value + "</span>");
+                    viewer.append(
+                        "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+                    );
                 }
             }
         }
@@ -1303,8 +1311,14 @@ jQuery(document).ready(function() {
                 insp.title || "",
                 insp.description || "",
                 insp.author || "",
-                (insp.text || []).map(function(t) { return t[1]; }).join("")
-            ].join(" ").toLowerCase();
+                (insp.text || [])
+                    .map(function(t) {
+                        return t[1];
+                    })
+                    .join("")
+            ]
+                .join(" ")
+                .toLowerCase();
             return haystack.indexOf(query) !== -1;
         });
 
@@ -1373,7 +1387,9 @@ jQuery(document).ready(function() {
                 });
             } else {
                 const value = item[1] === " " ? "&nbsp;" : item[1];
-                const element = jQuery("<span style=\"font-family: '" + item[0] + "';\">" + value + "</span>");
+                const element = jQuery(
+                    "<span style=\"font-family: '" + item[0] + "';\">" + value + "</span>"
+                );
                 caret.before(element);
                 element.click(function() {
                     const el = jQuery(this);

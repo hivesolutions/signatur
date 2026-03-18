@@ -639,10 +639,7 @@ describe("Profile", function() {
                 true,
                 errors.includes("inspirations[0].text is required and must be an array")
             );
-            assert.strictEqual(
-                true,
-                errors.includes("inspirations[0].font_size is required")
-            );
+            assert.strictEqual(true, errors.includes("inspirations[0].font_size is required"));
         });
 
         it("should reject invalid id patterns", () => {
@@ -716,9 +713,7 @@ describe("Profile", function() {
             );
             assert.strictEqual(
                 true,
-                errors.includes(
-                    "inspirations[0].align must be one of: left, center, right"
-                )
+                errors.includes("inspirations[0].align must be one of: left, center, right")
             );
         });
 
@@ -753,9 +748,7 @@ describe("Profile", function() {
             );
             assert.strictEqual(
                 true,
-                errors.includes(
-                    "inspirations[0].padding.top must be a non-negative number"
-                )
+                errors.includes("inspirations[0].padding.top must be a non-negative number")
             );
         });
     });
