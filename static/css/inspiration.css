@@ -144,9 +144,11 @@
 }
 
 .modal-overlay > .modal.modal-inspirations {
+    display: flex;
+    flex-direction: column;
     max-height: 85vh;
     max-width: 900px;
-    overflow-y: auto;
+    overflow: hidden;
     width: 90%;
 }
 
@@ -175,9 +177,13 @@
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid {
     display: grid;
+    flex: 1;
     gap: 16px;
     grid-template-columns: repeat(4, 1fr);
-    margin-bottom: 32px;
+    margin-bottom: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    align-content: start;
 }
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-empty {
