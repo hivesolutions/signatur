@@ -758,6 +758,13 @@ jQuery(document).ready(function() {
             return haystack.indexOf(query) !== -1;
         });
 
+        if (entries.length === 0) {
+            modalInspirationsGrid.append(
+                '<div class="inspiration-empty">No inspirations found.</div>'
+            );
+            return;
+        }
+
         for (let i = 0; i < entries.length; i++) {
             const inspiration = entries[i];
             const card = jQuery('<div class="inspiration-card"></div>');
@@ -1258,6 +1265,11 @@ jQuery(document).ready(function() {
     };
 
     const keyboardHandler = function(event) {
+        // skips keyboard handling when an input field is focused
+        // so that text editing controls work normally in modals
+        const tag = event.target.tagName.toLowerCase();
+        if (tag === "input" || tag === "textarea") return;
+
         const font = body.data("font");
         let executed = false;
         switch (event.key) {
