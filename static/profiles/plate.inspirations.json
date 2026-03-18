@@ -74,7 +74,7 @@
             [null, "\n"],
             ["Script 4L", "Always"]
         ],
-        "font_size": 12,
+        "font_size": 8,
         "align": "center"
     }
 ]
