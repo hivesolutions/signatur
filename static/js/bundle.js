@@ -1811,10 +1811,10 @@ jQuery(document).ready(function() {
     };
 
     const keyboardHandler = function(event) {
-        // skips keyboard handling when an input field is focused
+        // skips keyboard handling when a modal input is focused
         // so that text editing controls work normally in modals
-        const tag = event.target.tagName.toLowerCase();
-        if (tag === "input" || tag === "textarea") return;
+        const target = jQuery(event.target);
+        if (target.closest(".modal-overlay.visible").length > 0) return;
 
         const font = body.data("font");
         let executed = false;
