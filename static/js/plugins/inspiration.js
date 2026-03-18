@@ -236,9 +236,10 @@
             // registers for the view all button to open the
             // full-screen inspirations modal with all entries
             buttonViewAll.click(function() {
-                if (!currentProfile || !currentProfile._inspirations) return;
+                const profile = context.data("_profile");
+                if (!profile || !profile._inspirations) return;
                 modalSearchInput.val("");
-                renderModal(currentProfile);
+                renderModal(profile);
                 modalOverlay.modal("show");
             });
 
@@ -255,8 +256,9 @@
             // registers for the search input to filter the
             // inspirations grid in the full-screen modal
             modalSearchInput.bind("input", function() {
+                const profile = context.data("_profile");
                 const query = jQuery(this).val();
-                renderModal(currentProfile, query);
+                renderModal(profile, query);
             });
         });
 
