@@ -7,9 +7,9 @@
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     display: flex;
-    height: 100%;
+    height: max-content;
     justify-content: center;
-    padding-top: 64px;
+    padding: 64px 0px 64px 0px;
     text-align: center;
     width: 100%;
 }
