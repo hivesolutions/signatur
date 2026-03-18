@@ -26,10 +26,10 @@
             // registers a long press handler on keys that have
             // accented variants defined in the data-accents attribute
             keys.on("mousedown touchstart", function(event) {
+                longPressTriggered = false;
                 const element = jQuery(this);
                 const accents = element.attr("data-accents");
                 if (!accents) return;
-                longPressTriggered = false;
                 longPressTimer = setTimeout(function() {
                     longPressTriggered = true;
                     showAccentPopup(context, element, accents);
