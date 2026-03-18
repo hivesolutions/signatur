@@ -127,23 +127,7 @@ jQuery(document).ready(function() {
     const modalOverlayConfig = jQuery(".modal-overlay-config");
     const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
     const inspirationPanel = jQuery(".inspiration-panel");
-    const inspirationPanelTitle = jQuery(".inspiration-panel-title");
-    const inspirationPanelBody = jQuery(".inspiration-panel-body");
-    const inspirationPanelToggle = jQuery(".inspiration-panel-toggle");
-    const inspirationThumbnails = jQuery(".inspiration-thumbnails");
-    const buttonViewAll = jQuery(".button-view-all");
-    const modalInspirationsGrid = jQuery(".modal-inspirations-grid");
-    const modalSearchInput = jQuery(".modal-search-input");
     const toast = jQuery(".toast");
-
-    inspirationPanelTitle.click(function() {
-        togglePanel(
-            inspirationPanel,
-            inspirationPanelBody,
-            inspirationPanelTitle,
-            inspirationPanelToggle
-        );
-    });
 
     // gathers the values for the form related fields so that the
     // typical form validations and changes may be performed
@@ -636,173 +620,6 @@ jQuery(document).ready(function() {
         });
     };
 
-    // renders a single inspiration thumbnail as a miniature
-    // viewport preview with the text pre-rendered inside it
-    const renderInspirationPreview = function(profile, inspiration, container) {
-        const width = profile.width * VIEWPORT_SCALE;
-        const height = profile.height * VIEWPORT_SCALE;
-        const padding = inspiration.padding ||
-            profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
-        const fontSize = inspiration.font_size || 3;
-        const scaledSize = fontSize * VIEWPORT_SCALE * FONT_SIZE_SCALE;
-
-        const preview = jQuery('<div class="viewport-preview profile-active"></div>');
-        preview.css({ width: width + "px", height: height + "px" });
-
-        // applies the background image if the profile has one
-        if (profile.background) {
-            preview.css({
-                "background-image": "url('/static/profiles/" + profile.background + "')",
-                "background-size": width + "px " + height + "px",
-                "background-repeat": "no-repeat",
-                "background-position": "0px 0px"
-            });
-        }
-
-        // positions the text container over the safe drawable area
-        const safeX = padding.left * VIEWPORT_SCALE;
-        const safeY = padding.top * VIEWPORT_SCALE;
-        const safeW = width - (padding.left + padding.right) * VIEWPORT_SCALE;
-        const safeH = height - (padding.top + padding.bottom) * VIEWPORT_SCALE;
-        const viewer = jQuery('<div class="viewer-container"></div>');
-        viewer.css({
-            position: "absolute",
-            left: safeX + "px",
-            top: safeY + "px",
-            width: safeW + "px",
-            height: safeH + "px",
-            margin: "0px",
-            padding: "0px",
-            border: "none",
-            "min-width": "0px",
-            "font-size": scaledSize + "px",
-            "line-height": Math.round(scaledSize * 1.2) + "px",
-            "text-align": inspiration.align || "left",
-            "align-content": "center",
-            display: "flex",
-            "flex-wrap": "wrap",
-            "justify-content":
-                inspiration.align === "center"
-                    ? "center"
-                    : inspiration.align === "right"
-                    ? "flex-end"
-                    : "flex-start",
-            overflow: "hidden"
-        });
-
-        // renders the text items inside the viewer container
-        // expanding multi-character entries into individual spans
-        for (let i = 0; i < inspiration.text.length; i++) {
-            const font = inspiration.text[i][0];
-            const chars = inspiration.text[i][1];
-            if (chars === "\n") {
-                viewer.append('<div class="newline" style="height: 0px; width: 100%;"></div>');
-            } else {
-                for (let j = 0; j < chars.length; j++) {
-                    const value = chars[j] === " " ? "&nbsp;" : chars[j];
-                    viewer.append(
-                        "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-                    );
-                }
-            }
-        }
-
-        preview.append(viewer);
-
-        // scales the preview to fit inside the container
-        const containerWidth = container.width() || 72;
-        const scale = containerWidth / width;
-        preview.css({
-            transform: "scale(" + scale + ")",
-            "transform-origin": "0 0"
-        });
-        container.css({
-            height: Math.ceil(height * scale) + "px",
-            position: "relative"
-        });
-
-        container.append(preview);
-    };
-
-    // renders the inspiration thumbnails in the side panel
-    // showing the first 3 entries from the profile inspirations
-    const renderInspirationPanel = function(profile) {
-        inspirationThumbnails.empty();
-
-        if (!profile || !profile._inspirations || profile._inspirations.length === 0) {
-            inspirationPanel.removeClass("visible");
-            return;
-        }
-
-        const entries = profile._inspirations.slice(0, 3);
-        for (let i = 0; i < entries.length; i++) {
-            const inspiration = entries[i];
-            const thumb = jQuery('<div class="inspiration-thumb"></div>');
-            const previewContainer = jQuery('<div class="inspiration-thumb-preview"></div>');
-            const title = jQuery('<div class="inspiration-thumb-title"></div>');
-            title.text(inspiration.title);
-            thumb.append(previewContainer);
-            thumb.append(title);
-            thumb.data("inspiration", inspiration);
-            inspirationThumbnails.append(thumb);
-            renderInspirationPreview(profile, inspiration, previewContainer);
-        }
-
-        inspirationPanel.addClass("visible");
-    };
-
-    // renders all inspirations in the full-screen modal grid
-    // with viewport previews and metadata for each entry
-    const renderInspirationModal = function(profile, filter) {
-        modalInspirationsGrid.empty();
-
-        if (!profile || !profile._inspirations) return;
-
-        const query = (filter || "").toLowerCase();
-        const entries = profile._inspirations.filter(function(insp) {
-            if (!query) return true;
-            const haystack = [
-                insp.title || "",
-                insp.description || "",
-                insp.author || "",
-                (insp.text || [])
-                    .map(function(t) {
-                        return t[1];
-                    })
-                    .join("")
-            ]
-                .join(" ")
-                .toLowerCase();
-            return haystack.indexOf(query) !== -1;
-        });
-
-        if (entries.length === 0) {
-            modalInspirationsGrid.append(
-                '<div class="inspiration-empty">No inspirations found.</div>'
-            );
-            return;
-        }
-
-        for (let i = 0; i < entries.length; i++) {
-            const inspiration = entries[i];
-            const card = jQuery('<div class="inspiration-card"></div>');
-            const previewContainer = jQuery('<div class="inspiration-card-preview"></div>');
-            const title = jQuery('<div class="inspiration-card-title"></div>');
-            const description = jQuery('<div class="inspiration-card-description"></div>');
-            const author = jQuery('<div class="inspiration-card-author"></div>');
-            title.text(inspiration.title);
-            description.text(inspiration.description);
-            author.text(inspiration.author);
-            card.append(previewContainer);
-            card.append(title);
-            card.append(description);
-            card.append(author);
-            card.data("inspiration", inspiration);
-            modalInspirationsGrid.append(card);
-            renderInspirationPreview(profile, inspiration, previewContainer);
-        }
-    };
-
     // applies an inspiration configuration to the viewport
     // setting the text, font size, margins, and font selection
     const applyInspiration = function(profile, inspiration) {
@@ -1043,7 +860,7 @@ jQuery(document).ready(function() {
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
         applyFontSize();
-        renderInspirationPanel(currentProfile);
+        inspirationPanel.inspirationpanel("update", currentProfile);
         updateUrl();
     });
 
@@ -1752,39 +1569,16 @@ jQuery(document).ready(function() {
     modalOverlayInspirations.modal();
     toast.toast();
 
-    // registers click handlers for the inspiration panel
-    // thumbnails to apply the selected inspiration preset
-    inspirationThumbnails.on("click", ".inspiration-thumb", function() {
-        const inspiration = jQuery(this).data("inspiration");
+    // initializes the inspiration panel plugin and binds the
+    // apply event to set the viewport text and configuration
+    inspirationPanel.inspirationpanel({
+        viewport_scale: VIEWPORT_SCALE,
+        font_size_scale: FONT_SIZE_SCALE
+    });
+    inspirationPanel.bind("apply", function(event, inspiration) {
         if (inspiration && currentProfile) {
             applyInspiration(currentProfile, inspiration);
         }
-    });
-
-    // registers for the view all button to open the
-    // full-screen inspirations modal with all entries
-    buttonViewAll.click(function() {
-        if (!currentProfile || !currentProfile._inspirations) return;
-        modalSearchInput.val("");
-        renderInspirationModal(currentProfile);
-        modalOverlayInspirations.modal("show");
-    });
-
-    // registers click handlers for the modal inspiration
-    // cards to apply the selected preset and close the modal
-    modalInspirationsGrid.on("click", ".inspiration-card", function() {
-        const inspiration = jQuery(this).data("inspiration");
-        if (inspiration && currentProfile) {
-            applyInspiration(currentProfile, inspiration);
-            modalOverlayInspirations.modal("hide");
-        }
-    });
-
-    // registers for the search input to filter the
-    // inspirations grid in the full-screen modal
-    modalSearchInput.bind("input", function() {
-        const query = jQuery(this).val();
-        renderInspirationModal(currentProfile, query);
     });
 
     formConsole.formconsole();
