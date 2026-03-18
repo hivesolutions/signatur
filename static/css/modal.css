@@ -221,3 +221,27 @@
 .modal-overlay > .modal > .modal-options > .modal-option {
     cursor: pointer;
 }
+
+.modal-overlay > .modal.modal-instructions {
+    max-width: 600px;
+}
+
+.modal-overlay > .modal > .modal-instructions-images {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.modal-overlay > .modal > .modal-instructions-images > img {
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    margin-bottom: 12px;
+    max-width: 100%;
+}
+
+.modal-overlay > .modal > .modal-instructions-images > img:last-child {
+    margin-bottom: 0px;
+}

@@ -37,6 +37,12 @@
                     <option value="">None</option>
                 </select>
             </div>
+            <div class="viewport-options-field variant-container">
+                <label class="viewport-options-label">Variant</label>
+                <select class="variant-select">
+                    <option value="">None</option>
+                </select>
+            </div>
             <div class="viewport-options-field font-size-container">
                 <label class="viewport-options-label">Size</label>
                 <input class="font-size-range" type="range" min="8" max="24" value="12" step="1" />
@@ -106,6 +112,7 @@
                 <label class="viewport-options-label">Position</label>
                 <span class="position-value">—</span>
             </div>
+            <a class="viewport-options-instructions" href="#">Instructions</a>
             </div>
         </div>
         <div class="inspiration-panel">
@@ -454,6 +461,16 @@
                     <input class="modal-search-input" type="text" placeholder="Search inspirations..." />
                 </div>
                 <div class="modal-inspirations-grid"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Close</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-instructions">
+            <div class="modal modal-instructions">
+                <div class="modal-title modal-instructions-title"></div>
+                <div class="modal-message modal-instructions-description"></div>
+                <div class="modal-instructions-images"></div>
                 <div class="modal-buttons">
                     <span class="button button-modal-close">Close</span>
                 </div>

@@ -43,16 +43,12 @@ html {
 }
 
 body {
+    display: flex;
+    flex-direction: column;
     font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
     font-size: 0px;
     height: 100%;
     margin: 0px 0px 0px 0px;
-    user-select: none;
-    -o-user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
     width: 100%;
 }
 
@@ -64,9 +60,11 @@ body {
     -moz-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
     -khtml-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
     -webkit-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
+    left: 0px;
     padding: 16px 0px 16px 0px;
     position: fixed;
     text-align: center;
+    top: 0px;
     width: 100%;
     z-index: 1;
 }
@@ -366,10 +364,16 @@ body.ldj .line {
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     display: flex;
-    height: 100%;
+    flex: 1;
     justify-content: center;
-    padding-top: 64px;
+    padding: 64px 0px 64px 0px;
     text-align: center;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
     width: 100%;
 }
 
@@ -1044,6 +1048,51 @@ body.ldj .line {
     border-color: #2d2d2d;
 }
 
+.viewport-options > .viewport-options-body > .variant-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .variant-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field > .variant-select {
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
+    background-color: #f4f7fa;
+    border: 2px solid #f4f7fa;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    height: 30px;
+    letter-spacing: 0.3px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 10px 0px 10px;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field > .variant-select:focus {
+    background-color: #ffffff;
+    border-color: #2d2d2d;
+}
+
 .viewport-options > .viewport-options-body > .font-size-container {
     display: none;
 }
@@ -1208,6 +1257,18 @@ body.ldj .line {
     color: #6d6d6d;
     font-size: 12px;
     letter-spacing: 0.3px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-instructions {
+    color: #2d2d2d;
+    cursor: pointer;
+    display: none;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-instructions.visible {
+    display: inline-block;
 }
 
 .viewport > .main-container > .viewport-preview {
@@ -1459,6 +1520,30 @@ body.ldj .line {
     cursor: pointer;
 }
 
+.modal-overlay > .modal.modal-instructions {
+    max-width: 600px;
+}
+
+.modal-overlay > .modal > .modal-instructions-images {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.modal-overlay > .modal > .modal-instructions-images > img {
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    margin-bottom: 12px;
+    max-width: 100%;
+}
+
+.modal-overlay > .modal > .modal-instructions-images > img:last-child {
+    margin-bottom: 0px;
+}
+
 .inspiration-panel {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -1642,14 +1727,14 @@ body.ldj .line {
     -moz-box-sizing: border-box;
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    font-size: 14px;
+    font-size: 15px;
     outline: none;
     -o-outline: none;
     -ms-outline: none;
     -moz-outline: none;
     -khtml-outline: none;
     -webkit-outline: none;
-    padding: 8px 12px 8px 12px;
+    padding: 12px 12px 12px 12px;
     width: 100%;
 }
 
@@ -1671,7 +1756,7 @@ body.ldj .line {
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-empty {
     color: #9d9d9d;
-    font-size: 14px;
+    font-size: 17px;
     padding: 32px 0px 32px 0px;
     text-align: center;
     grid-column: 1 / -1;

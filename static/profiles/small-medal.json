@@ -25,6 +25,16 @@
         "align": "center"
     },
     "background": "small-medal.png",
+    "variants": [
+        {
+            "name": "Silver",
+            "background": "small-medal.png"
+        },
+        {
+            "name": "Gold",
+            "background": "small-medal-gold.png"
+        }
+    ],
     "inspirations": "small-medal.inspirations.json",
     "preview": {
         "show_bounds": true,

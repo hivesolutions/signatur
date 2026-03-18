@@ -181,14 +181,14 @@
     -moz-box-sizing: border-box;
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    font-size: 14px;
+    font-size: 15px;
     outline: none;
     -o-outline: none;
     -ms-outline: none;
     -moz-outline: none;
     -khtml-outline: none;
     -webkit-outline: none;
-    padding: 8px 12px 8px 12px;
+    padding: 12px 12px 12px 12px;
     width: 100%;
 }
 
@@ -210,7 +210,7 @@
 
 .modal-overlay > .modal.modal-inspirations > .modal-inspirations-grid > .inspiration-empty {
     color: #9d9d9d;
-    font-size: 14px;
+    font-size: 17px;
     padding: 32px 0px 32px 0px;
     text-align: center;
     grid-column: 1 / -1;
