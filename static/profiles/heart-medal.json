@@ -25,6 +25,16 @@
         "align": "center"
     },
     "background": "heart-medal.png",
+    "variants": [
+        {
+            "name": "Silver",
+            "background": "heart-medal.png"
+        },
+        {
+            "name": "Gold",
+            "background": "heart-medal-gold.png"
+        }
+    ],
     "preview": {
         "show_bounds": true,
         "show_safe_area": true,
