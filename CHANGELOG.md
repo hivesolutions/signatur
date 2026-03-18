@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Show Caret toggle checkbox in viewport options panel to hide/show the blinking caret
 * URL persistence for rulers, crosshair, keyboard, guidelines, and caret visibility toggles
 * Font metrics rendering script (`scripts/font_metrics.py`) for visual glyph metric inspection
+* Inspiration presets system with per-profile pre-built configurations
+* Collapsible inspiration panel on the right side showing 3 thumbnail previews
+* Full-screen inspiration modal with 4-column grid, search, and click-to-apply
+* Inspiration plugin (`plugins/inspiration.js`) with event-driven architecture
+* Dedicated inspiration CSS file (`css/inspiration.css`) for panel and modal styles
+* Hover zoom and active press animations on inspiration preview thumbnails
+* Sample inspirations for small-medal profile including emoji presets
+* Modal `hide` action for programmatic dismiss with animation
 
 ### Fixed
 

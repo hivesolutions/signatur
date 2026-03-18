@@ -125,6 +125,8 @@ jQuery(document).ready(function() {
     const modalOverlayError = jQuery(".modal-overlay-error");
     const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
     const modalOverlayConfig = jQuery(".modal-overlay-config");
+    const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
+    const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
 
     // gathers the values for the form related fields so that the
@@ -618,6 +620,123 @@ jQuery(document).ready(function() {
         });
     };
 
+    // applies an inspiration configuration to the viewport
+    // setting the text, font size, margins, and font selection
+    const applyInspiration = function(profile, inspiration) {
+        // clears the current viewport content
+        viewportContainer.find("> :not(.caret)").remove();
+        const caret = viewportContainer.find("> .caret");
+
+        // expands the inspiration text entries into individual
+        // character pairs so that each character gets its own
+        // DOM element for per-character caret navigation
+        const text = [];
+        const raw = inspiration.text || [];
+        for (let i = 0; i < raw.length; i++) {
+            const font = raw[i][0];
+            const value = raw[i][1];
+            if (value === "\n") {
+                text.push([font, "\n"]);
+            } else {
+                for (let j = 0; j < value.length; j++) {
+                    text.push([font, value[j]]);
+                }
+            }
+        }
+
+        // rebuilds the DOM elements from the expanded text
+        for (let i = 0; i < text.length; i++) {
+            const item = text[i];
+            if (item[1] === "\n") {
+                const element = jQuery('<div class="newline"></div>');
+                caret.before(element);
+                element.click(function() {
+                    const el = jQuery(this);
+                    el.after(caret);
+                    const pos = el.index(".viewer-container > :not(.caret)");
+                    body.data("caret_position", pos);
+                });
+            } else {
+                const value = item[1] === " " ? "&nbsp;" : item[1];
+                const element = jQuery(
+                    "<span style=\"font-family: '" + item[0] + "';\">" + value + "</span>"
+                );
+                caret.before(element);
+                element.click(function() {
+                    const el = jQuery(this);
+                    el.after(caret);
+                    const pos = el.index(".viewer-container > :not(.caret)");
+                    body.data("caret_position", pos);
+                });
+            }
+        }
+
+        // updates the text data and caret position
+        body.data("text", text);
+        body.data("caret_position", text.length - 1);
+
+        // determines the primary font from the text entries
+        // and skips the preset if the font is not available
+        let primaryFont = null;
+        for (let i = 0; i < text.length; i++) {
+            if (text[i][0] !== null) {
+                primaryFont = text[i][0];
+                break;
+            }
+        }
+        if (primaryFont) {
+            const fontEl = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
+            if (fontEl.length === 0) return;
+            if (!fontEl.hasClass("active")) fontEl.click();
+        }
+
+        // applies the font size from the inspiration and
+        // forces manual mode so automatic sizing does not
+        // overwrite the inspiration value
+        if (inspiration.font_size) {
+            fontSizeMode.prop("checked", false);
+            fontSizeRange.prop("disabled", false);
+            fontSizeRange.val(inspiration.font_size);
+            fontSizeValue.text(inspiration.font_size);
+        }
+
+        // applies the padding from the inspiration or falls
+        // back to the profile defaults to keep the viewport
+        // consistent with the thumbnail preview
+        const padding = inspiration.padding ||
+            profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+        marginLeft.val(padding.left);
+        marginRight.val(padding.right);
+        marginTop.val(padding.top);
+        marginBottom.val(padding.bottom);
+        renderViewportPreview(profile);
+
+        // applies the text alignment from the inspiration
+        // to match the thumbnail preview layout
+        if (inspiration.align) {
+            const justify = inspiration.align === "center"
+                ? "center"
+                : inspiration.align === "right"
+                ? "flex-end"
+                : "flex-start";
+            viewportContainer.css("text-align", inspiration.align);
+            viewportContainer.css("justify-content", justify);
+        }
+
+        // applies the font size and recalculates layout
+        applyFontSize();
+
+        // updates the print button and report URL
+        const [textSimple, font] = simplifyText(text);
+        buttonPrint.attr("data-text", textSimple);
+        buttonPrint.attr("data-font", font);
+        buttonPrint.data("multifont", multifontText(text, emojiMapping));
+        const buttonHref = buttonReport.attr("data-href");
+        buttonReport.attr("href", buttonHref + "?text=" + encodeURIComponent(serializeText(text)));
+
+        updateUrl();
+    };
+
     // updates the floating profile info block with the
     // currently selected profile summary information
     const updateProfileInfo = function(profile) {
@@ -758,6 +877,7 @@ jQuery(document).ready(function() {
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
         applyFontSize();
+        inspirationPanel.inspirationpanel("update", currentProfile);
         updateUrl();
     });
 
@@ -1015,6 +1135,11 @@ jQuery(document).ready(function() {
     };
 
     const keyboardHandler = function(event) {
+        // skips keyboard handling when a modal input is focused
+        // so that text editing controls work normally in modals
+        const target = jQuery(event.target);
+        if (target.closest(".modal-overlay.visible").length > 0) return;
+
         const font = body.data("font");
         let executed = false;
         switch (event.key) {
@@ -1458,7 +1583,20 @@ jQuery(document).ready(function() {
     modalOverlayError.modal();
     modalOverlayConfirm.modal();
     modalOverlayConfig.modal();
+    modalOverlayInspirations.modal();
     toast.toast();
+
+    // initializes the inspiration panel plugin and binds the
+    // apply event to set the viewport text and configuration
+    inspirationPanel.inspirationpanel({
+        viewport_scale: VIEWPORT_SCALE,
+        font_size_scale: FONT_SIZE_SCALE
+    });
+    inspirationPanel.bind("apply", function(event, inspiration) {
+        if (inspiration && currentProfile) {
+            applyInspiration(currentProfile, inspiration);
+        }
+    });
 
     formConsole.formconsole();
 

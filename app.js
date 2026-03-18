@@ -228,6 +228,26 @@ app.get("/profiles", (req, res, next) => {
                 profiles[name] = jsonObject;
             }
         }
+
+        // loads and attaches inspiration entries for profiles
+        // that reference an external inspirations file
+        for (const name of Object.keys(profiles)) {
+            const profile = profiles[name];
+            if (!profile.inspirations) continue;
+            const inspPath = path.resolve(directoryPath, profile.inspirations);
+            if (!inspPath.startsWith(path.resolve(directoryPath) + path.sep)) continue;
+            try {
+                const inspContent = await fs.readFile(inspPath, "utf8");
+                const inspArray = JSON.parse(inspContent);
+                const errors = lib.validateInspirations(inspArray);
+                if (errors.length === 0) {
+                    profile._inspirations = inspArray;
+                }
+            } catch (err) {
+                // silently ignores missing or malformed inspiration files
+            }
+        }
+
         res.json(profiles);
     }
     clojure().catch(next);

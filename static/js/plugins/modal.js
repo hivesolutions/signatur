@@ -18,6 +18,16 @@
                 return;
             }
 
+            if (action === "hide") {
+                if (!context.hasClass("visible")) return;
+                context.find("input, textarea").blur();
+                context.addClass("dismissing");
+                context.one("transitionend", function() {
+                    context.removeClass("visible dismissing");
+                });
+                return;
+            }
+
             // renders the printing specs in the confirmation modal
             // and shows it for the user to review before engraving
             if (action === "confirm") {
@@ -134,6 +144,7 @@
             // removing the visible and dismissing classes after completion
             const dismissModal = function(callback) {
                 if (!context.hasClass("visible")) return;
+                context.find("input, textarea").blur();
                 context.addClass("dismissing");
                 context.one("transitionend", function() {
                     context.removeClass("visible dismissing");

@@ -1,0 +1,69 @@
+[
+    {
+        "id": "classic-name",
+        "title": "Classic Name",
+        "description": "A centered name in Script 4L with balanced margins.",
+        "author": "Hive Solutions",
+        "text": [["Script 4L", "Tiago"]],
+        "font_size": 3,
+        "align": "center"
+    },
+    {
+        "id": "bold-initials",
+        "title": "Bold Initials",
+        "description": "Two uppercase initials in Helvetica 4L.",
+        "author": "Hive Solutions",
+        "text": [["Helvetica 4L", "JM"]],
+        "font_size": 6,
+        "align": "center"
+    },
+    {
+        "id": "date-memento",
+        "title": "Date Memento",
+        "description": "A memorable date in Helvetica 1L.",
+        "author": "Hive Solutions",
+        "text": [
+            ["Helvetica 1L", "25.12"],
+            [null, "\n"],
+            ["Helvetica 1L", "2024"]
+        ],
+        "font_size": 3,
+        "align": "center"
+    },
+    {
+        "id": "love-script",
+        "title": "Love Script",
+        "description": "The word Love in elegant Script 4L.",
+        "author": "Hive Solutions",
+        "text": [["Script 4L", "Love"]],
+        "font_size": 4,
+        "align": "center"
+    },
+    {
+        "id": "roman-monogram",
+        "title": "Roman Monogram",
+        "description": "A single letter monogram in Roman 4L.",
+        "author": "Hive Solutions",
+        "text": [["Roman 4L", "A"]],
+        "font_size": 8,
+        "align": "center"
+    },
+    {
+        "id": "mickey-love",
+        "title": "Mickey Love",
+        "description": "Mickey and Minnie with a heart between them.",
+        "author": "Hive Solutions",
+        "text": [["Cool Emojis", "$A@"]],
+        "font_size": 4,
+        "align": "center"
+    },
+    {
+        "id": "pacman-chase",
+        "title": "Pacman Chase",
+        "description": "Pacman chasing ghosts in retro arcade style.",
+        "author": "Hive Solutions",
+        "text": [["Cool Emojis", "rrs"]],
+        "font_size": 4,
+        "align": "center"
+    }
+]

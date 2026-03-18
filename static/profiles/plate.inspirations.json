@@ -1,0 +1,254 @@
+[
+    {
+        "id": "company-nameplate",
+        "title": "Company Nameplate",
+        "description": "A company name with department below in Helvetica 4L.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Helvetica 4L",
+                "Hive Solutions"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Helvetica 1L",
+                "Engineering"
+            ]
+        ],
+        "font_size": 6,
+        "align": "center"
+    },
+    {
+        "id": "serial-number",
+        "title": "Serial Number",
+        "description": "An industrial serial number label in Helvetica 1L.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Helvetica 1L",
+                "SN-2024-00451"
+            ]
+        ],
+        "font_size": 8,
+        "align": "left"
+    },
+    {
+        "id": "warning-label",
+        "title": "Warning Label",
+        "description": "A two-line warning notice in bold Helvetica 4L.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Helvetica 4L",
+                "DANGER"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Helvetica 1L",
+                "High Voltage"
+            ]
+        ],
+        "font_size": 6,
+        "align": "center"
+    },
+    {
+        "id": "property-tag",
+        "title": "Property Tag",
+        "description": "An asset property identification tag with owner and ID.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Helvetica 1L",
+                "Property of"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Helvetica 4L",
+                "Hive Solutions"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Helvetica 1L",
+                "ID: 7842"
+            ]
+        ],
+        "font_size": 6,
+        "align": "center"
+    },
+    {
+        "id": "date-location",
+        "title": "Date & Location",
+        "description": "A commemorative date and location in Roman 4L.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Roman 4L",
+                "Porto"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Roman 4L",
+                "2024"
+            ]
+        ],
+        "font_size": 14,
+        "align": "center"
+    },
+    {
+        "id": "script-dedication",
+        "title": "Script Dedication",
+        "description": "A personal dedication in elegant Script 4L.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Script 4L",
+                "With Love"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Script 4L",
+                "Always"
+            ]
+        ],
+        "font_size": 8,
+        "align": "center"
+    },
+    {
+        "id": "love-forever",
+        "title": "Love Forever",
+        "description": "Hearts and infinity surrounding a name in Script 4L.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Cool Emojis",
+                "A"
+            ],
+            [
+                "Script 4L",
+                " Maria "
+            ],
+            [
+                "Cool Emojis",
+                "A"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Cool Emojis",
+                "C"
+            ]
+        ],
+        "font_size": 6,
+        "align": "center"
+    },
+    {
+        "id": "star-achiever",
+        "title": "Star Achiever",
+        "description": "A trophy and stars celebrating an achievement.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Cool Emojis",
+                "B"
+            ],
+            [
+                "Cool Emojis",
+                "b"
+            ],
+            [
+                "Cool Emojis",
+                "B"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Helvetica 4L",
+                "CHAMPION"
+            ]
+        ],
+        "font_size": 6,
+        "align": "center"
+    },
+    {
+        "id": "peace-and-music",
+        "title": "Peace & Music",
+        "description": "Peace sign and music notes with a feel-good message.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Cool Emojis",
+                "D"
+            ],
+            [
+                "Cool Emojis",
+                "V"
+            ],
+            [
+                "Cool Emojis",
+                "D"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Script 4L",
+                "Good Vibes"
+            ]
+        ],
+        "font_size": 6,
+        "align": "center"
+    },
+    {
+        "id": "royal-couple",
+        "title": "Royal Couple",
+        "description": "King and queen crowns with names in elegant Roman.",
+        "author": "Hive Solutions",
+        "text": [
+            [
+                "Cool Emojis",
+                "d"
+            ],
+            [
+                "Roman 4L",
+                " and "
+            ],
+            [
+                "Cool Emojis",
+                "c"
+            ],
+            [
+                null,
+                "\n"
+            ],
+            [
+                "Script 4L",
+                "Forever"
+            ]
+        ],
+        "font_size": 6,
+        "align": "center"
+    }
+]

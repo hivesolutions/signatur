@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const jQuery = window.jQuery ? window.jQuery : null;
 
 /**
@@ -8,6 +9,7 @@ const jQuery = window.jQuery ? window.jQuery : null;
  * options, that change thickness and global UI.
  * @returns {Object} An object with the setting for the current theme.
  */
+// eslint-disable-next-line no-unused-vars
 const getOptions = function(theme) {
     switch (theme) {
         case "ldj":
@@ -26,11 +28,13 @@ const getOptions = function(theme) {
     }
 };
 
+// eslint-disable-next-line no-unused-vars
 const drawText = function(ctx) {
     ctx.font = "30px Arial";
     ctx.fillText("Hello World", 10, 500);
 };
 
+// eslint-disable-next-line no-unused-vars
 const deserializeText = function(text, separator = "|") {
     if (!text) return null;
     const textL = [];
@@ -55,6 +59,7 @@ const deserializeText = function(text, separator = "|") {
     return textL;
 };
 
+// eslint-disable-next-line no-unused-vars
 const serializeText = function(text, separator = "|") {
     const buffer = [];
     for (let index = 0; index < text.length; index++) {
@@ -68,6 +73,7 @@ const serializeText = function(text, separator = "|") {
     return buffer.join(separator);
 };
 
+// eslint-disable-next-line no-unused-vars
 const simplifyText = function(text, separator = "") {
     const buffer = [];
     let font = null;
@@ -79,6 +85,7 @@ const simplifyText = function(text, separator = "") {
     return [buffer.join(separator), font];
 };
 
+// eslint-disable-next-line no-unused-vars
 const multifontText = function(text, emojiMapping) {
     const result = [];
     for (let index = 0; index < text.length; index++) {
@@ -109,6 +116,7 @@ const multifontText = function(text, emojiMapping) {
     return result;
 };
 
+// eslint-disable-next-line no-unused-vars
 const hasUnsupportedFont = function(text) {
     for (let index = 0; index < text.length; index++) {
         if (text[index][0] === "Cool Emojis Pantograph") return true;
@@ -116,6 +124,7 @@ const hasUnsupportedFont = function(text) {
     return false;
 };
 
+// eslint-disable-next-line no-unused-vars
 const countLines = function(text) {
     let lines = 1;
     for (let index = 0; index < text.length; index++) {
@@ -210,6 +219,16 @@ const countLines = function(text) {
             if (action === "show") {
                 modalMessage.text(message);
                 context.addClass("visible");
+                return;
+            }
+
+            if (action === "hide") {
+                if (!context.hasClass("visible")) return;
+                context.find("input, textarea").blur();
+                context.addClass("dismissing");
+                context.one("transitionend", function() {
+                    context.removeClass("visible dismissing");
+                });
                 return;
             }
 
@@ -329,6 +348,7 @@ const countLines = function(text) {
             // removing the visible and dismissing classes after completion
             const dismissModal = function(callback) {
                 if (!context.hasClass("visible")) return;
+                context.find("input, textarea").blur();
                 context.addClass("dismissing");
                 context.one("transitionend", function() {
                     context.removeClass("visible dismissing");
@@ -524,6 +544,277 @@ const countLines = function(text) {
     };
 })(jQuery);
 
+(function(jQuery) {
+    jQuery.fn.inspirationpanel = function(action, options) {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const panelTitle = jQuery(".inspiration-panel-title", context);
+            const panelBody = jQuery(".inspiration-panel-body", context);
+            const panelToggle = jQuery(".inspiration-panel-toggle", context);
+            const thumbnails = jQuery(".inspiration-thumbnails", context);
+            const buttonViewAll = jQuery(".button-view-all", context);
+            const modalOverlay = jQuery(".modal-overlay-inspirations");
+            const modalGrid = jQuery(".modal-inspirations-grid", modalOverlay);
+            const modalSearchInput = jQuery(".modal-search-input", modalOverlay);
+
+            // stores the current profile reference and scale
+            // constants for use across rendering functions
+            let currentProfile = context.data("_profile") || null;
+            const viewportScale = (options && options.viewport_scale) || 3;
+            const fontSizeScale = (options && options.font_size_scale) || 1.3;
+
+            // renders a single inspiration thumbnail as a miniature
+            // viewport preview with the text pre-rendered inside it
+            const renderPreview = function(profile, inspiration, container) {
+                const width = profile.width * viewportScale;
+                const height = profile.height * viewportScale;
+                const padding = inspiration.padding ||
+                    profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+                const fontSize = inspiration.font_size || 3;
+                const scaledSize = fontSize * viewportScale * fontSizeScale;
+
+                const preview = jQuery('<div class="viewport-preview profile-active"></div>');
+                preview.css({ width: width + "px", height: height + "px" });
+
+                // applies the background image if the profile has one
+                if (profile.background) {
+                    preview.css({
+                        "background-image": "url('/static/profiles/" + profile.background + "')",
+                        "background-size": width + "px " + height + "px",
+                        "background-repeat": "no-repeat",
+                        "background-position": "0px 0px"
+                    });
+                }
+
+                // positions the text container over the safe drawable area
+                const safeX = padding.left * viewportScale;
+                const safeY = padding.top * viewportScale;
+                const safeW = width - (padding.left + padding.right) * viewportScale;
+                const safeH = height - (padding.top + padding.bottom) * viewportScale;
+                const viewer = jQuery('<div class="viewer-container"></div>');
+                viewer.css({
+                    position: "absolute",
+                    left: safeX + "px",
+                    top: safeY + "px",
+                    width: safeW + "px",
+                    height: safeH + "px",
+                    margin: "0px",
+                    padding: "0px",
+                    border: "none",
+                    "min-width": "0px",
+                    "font-size": scaledSize + "px",
+                    "line-height": Math.round(scaledSize * 1.2) + "px",
+                    "text-align": inspiration.align || "center",
+                    "align-content": "center",
+                    display: "flex",
+                    "flex-wrap": "wrap",
+                    "justify-content":
+                        inspiration.align === "left"
+                            ? "flex-start"
+                            : inspiration.align === "right"
+                            ? "flex-end"
+                            : "center",
+                    overflow: "hidden"
+                });
+
+                // renders the text items inside the viewer container
+                // expanding multi-character entries into individual spans
+                for (let i = 0; i < inspiration.text.length; i++) {
+                    const font = inspiration.text[i][0];
+                    const chars = inspiration.text[i][1];
+                    if (chars === "\n") {
+                        viewer.append('<div class="newline"></div>');
+                    } else {
+                        for (let j = 0; j < chars.length; j++) {
+                            const value = chars[j] === " " ? "&nbsp;" : chars[j];
+                            viewer.append(
+                                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+                            );
+                        }
+                    }
+                }
+
+                preview.append(viewer);
+
+                // scales the preview to fit inside the container
+                const containerWidth = container.width() || 72;
+                const scale = containerWidth / width;
+                preview.css({
+                    transform: "scale(" + scale + ")",
+                    "transform-origin": "0 0"
+                });
+                container.css({
+                    height: Math.ceil(height * scale) + "px",
+                    position: "relative"
+                });
+
+                container.append(preview);
+            };
+
+            // renders the inspiration thumbnails in the side panel
+            // showing the first 3 entries from the profile inspirations
+            const renderPanel = function(profile) {
+                thumbnails.empty();
+
+                if (!profile || !profile._inspirations || profile._inspirations.length === 0) {
+                    context.removeClass("visible");
+                    return;
+                }
+
+                const entries = profile._inspirations.slice(0, 3);
+                for (let i = 0; i < entries.length; i++) {
+                    const inspiration = entries[i];
+                    const thumb = jQuery('<div class="inspiration-thumb"></div>');
+                    const previewContainer = jQuery('<div class="inspiration-thumb-preview"></div>');
+                    const title = jQuery('<div class="inspiration-thumb-title"></div>');
+                    title.text(inspiration.title);
+                    thumb.append(previewContainer);
+                    thumb.append(title);
+                    thumb.data("inspiration", inspiration);
+                    thumbnails.append(thumb);
+                    renderPreview(profile, inspiration, previewContainer);
+                }
+
+                context.addClass("visible");
+                panelBody.css("overflow", "visible");
+            };
+
+            // renders all inspirations in the full-screen modal grid
+            // with viewport previews and metadata for each entry
+            const renderModal = function(profile, filter) {
+                modalGrid.empty();
+
+                if (!profile || !profile._inspirations) return;
+
+                const query = (filter || "").toLowerCase();
+                const entries = profile._inspirations.filter(function(insp) {
+                    if (!query) return true;
+                    const haystack = [
+                        insp.title || "",
+                        insp.description || "",
+                        insp.author || "",
+                        (insp.text || [])
+                            .map(function(t) {
+                                return t[1];
+                            })
+                            .join("")
+                    ]
+                        .join(" ")
+                        .toLowerCase();
+                    return haystack.indexOf(query) !== -1;
+                });
+
+                if (entries.length === 0) {
+                    modalGrid.append(
+                        '<div class="inspiration-empty">No inspirations found.</div>'
+                    );
+                    return;
+                }
+
+                for (let i = 0; i < entries.length; i++) {
+                    const inspiration = entries[i];
+                    const card = jQuery('<div class="inspiration-card"></div>');
+                    const previewContainer = jQuery('<div class="inspiration-card-preview"></div>');
+                    const title = jQuery('<div class="inspiration-card-title"></div>');
+                    const description = jQuery('<div class="inspiration-card-description"></div>');
+                    const author = jQuery('<div class="inspiration-card-author"></div>');
+                    title.text(inspiration.title);
+                    description.text(inspiration.description);
+                    author.text(inspiration.author);
+                    card.append(previewContainer);
+                    card.append(title);
+                    card.append(description);
+                    card.append(author);
+                    card.data("inspiration", inspiration);
+                    modalGrid.append(card);
+                    renderPreview(profile, inspiration, previewContainer);
+                }
+            };
+
+            // updates the panel with the inspirations from
+            // the given profile, showing or hiding as needed
+            if (action === "update") {
+                currentProfile = options;
+                context.data("_profile", currentProfile);
+                renderPanel(currentProfile);
+                return;
+            }
+
+            // toggles the panel between expanded and minimized
+            // states using a smooth max-height transition
+            panelTitle.click(function() {
+                const bodyEl = panelBody.get(0);
+                const minimized = context.hasClass("minimized");
+                if (minimized) {
+                    context.removeClass("minimized");
+                    const height = bodyEl.scrollHeight;
+                    panelBody.css("max-height", "0px");
+                    panelTitle.css("margin-bottom", "0px");
+                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    panelBody.css("max-height", height + "px");
+                    panelTitle.css("margin-bottom", "");
+                    panelToggle.text("▾");
+                    panelBody.one("transitionend", function() {
+                        panelBody.css("max-height", "");
+                        panelBody.css("overflow", "visible");
+                    });
+                } else {
+                    panelBody.css("overflow", "");
+                    panelBody.css("max-height", bodyEl.scrollHeight + "px");
+                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    panelBody.css("max-height", "0px");
+                    panelTitle.css("margin-bottom", "0px");
+                    panelToggle.text("▸");
+                    panelBody.one("transitionend", function() {
+                        context.addClass("minimized");
+                    });
+                }
+            });
+
+            // registers click handlers for the panel thumbnails
+            // to emit an apply event with the selected inspiration
+            thumbnails.on("click", ".inspiration-thumb", function() {
+                const inspiration = jQuery(this).data("inspiration");
+                if (inspiration) {
+                    context.triggerHandler("apply", [inspiration]);
+                }
+            });
+
+            // registers for the view all button to open the
+            // full-screen inspirations modal with all entries
+            buttonViewAll.click(function() {
+                const profile = context.data("_profile");
+                if (!profile || !profile._inspirations) return;
+                modalSearchInput.val("");
+                renderModal(profile);
+                modalOverlay.modal("show");
+            });
+
+            // registers click handlers for the modal inspiration
+            // cards to emit an apply event and close the modal
+            modalGrid.on("click", ".inspiration-card", function() {
+                const inspiration = jQuery(this).data("inspiration");
+                if (inspiration) {
+                    context.triggerHandler("apply", [inspiration]);
+                    modalOverlay.modal("hide");
+                }
+            });
+
+            // registers for the search input to filter the
+            // inspirations grid in the full-screen modal
+            modalSearchInput.bind("input", function() {
+                const profile = context.data("_profile");
+                const query = jQuery(this).val();
+                renderModal(profile, query);
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
+
 jQuery(document).ready(function() {
     // runs a series of selections over the current viewport
     const body = jQuery("body");
@@ -651,6 +942,8 @@ jQuery(document).ready(function() {
     const modalOverlayError = jQuery(".modal-overlay-error");
     const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
     const modalOverlayConfig = jQuery(".modal-overlay-config");
+    const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
+    const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
 
     // gathers the values for the form related fields so that the
@@ -813,6 +1106,11 @@ jQuery(document).ready(function() {
     // profiles dictionary for later reference
     let currentProfile = null;
     let profiles = {};
+
+    // if the restoring flag is true, the URL update function will
+    // ignore the call to prevent overwriting the URL state during
+    // the initial restore process on page load, allowing the URL
+    // parameters to properly set the initial state of the app
     let restoring = false;
 
     // fetches the available profiles from the server and
@@ -1049,7 +1347,7 @@ jQuery(document).ready(function() {
                 "background-image": "url('/static/profiles/" + profile.background + "')",
                 "background-size": width + "px " + height + "px",
                 "background-repeat": "no-repeat",
-                "background-position": "0 0"
+                "background-position": "0px 0px"
             });
         } else {
             viewportPreview.css({
@@ -1137,6 +1435,123 @@ jQuery(document).ready(function() {
             "margin-bottom": 16 * zoom + extraHeight + "px",
             "margin-right": extraWidth + "px"
         });
+    };
+
+    // applies an inspiration configuration to the viewport
+    // setting the text, font size, margins, and font selection
+    const applyInspiration = function(profile, inspiration) {
+        // clears the current viewport content
+        viewportContainer.find("> :not(.caret)").remove();
+        const caret = viewportContainer.find("> .caret");
+
+        // expands the inspiration text entries into individual
+        // character pairs so that each character gets its own
+        // DOM element for per-character caret navigation
+        const text = [];
+        const raw = inspiration.text || [];
+        for (let i = 0; i < raw.length; i++) {
+            const font = raw[i][0];
+            const value = raw[i][1];
+            if (value === "\n") {
+                text.push([font, "\n"]);
+            } else {
+                for (let j = 0; j < value.length; j++) {
+                    text.push([font, value[j]]);
+                }
+            }
+        }
+
+        // rebuilds the DOM elements from the expanded text
+        for (let i = 0; i < text.length; i++) {
+            const item = text[i];
+            if (item[1] === "\n") {
+                const element = jQuery('<div class="newline"></div>');
+                caret.before(element);
+                element.click(function() {
+                    const el = jQuery(this);
+                    el.after(caret);
+                    const pos = el.index(".viewer-container > :not(.caret)");
+                    body.data("caret_position", pos);
+                });
+            } else {
+                const value = item[1] === " " ? "&nbsp;" : item[1];
+                const element = jQuery(
+                    "<span style=\"font-family: '" + item[0] + "';\">" + value + "</span>"
+                );
+                caret.before(element);
+                element.click(function() {
+                    const el = jQuery(this);
+                    el.after(caret);
+                    const pos = el.index(".viewer-container > :not(.caret)");
+                    body.data("caret_position", pos);
+                });
+            }
+        }
+
+        // updates the text data and caret position
+        body.data("text", text);
+        body.data("caret_position", text.length - 1);
+
+        // determines the primary font from the text entries
+        // and skips the preset if the font is not available
+        let primaryFont = null;
+        for (let i = 0; i < text.length; i++) {
+            if (text[i][0] !== null) {
+                primaryFont = text[i][0];
+                break;
+            }
+        }
+        if (primaryFont) {
+            const fontEl = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
+            if (fontEl.length === 0) return;
+            if (!fontEl.hasClass("active")) fontEl.click();
+        }
+
+        // applies the font size from the inspiration and
+        // forces manual mode so automatic sizing does not
+        // overwrite the inspiration value
+        if (inspiration.font_size) {
+            fontSizeMode.prop("checked", false);
+            fontSizeRange.prop("disabled", false);
+            fontSizeRange.val(inspiration.font_size);
+            fontSizeValue.text(inspiration.font_size);
+        }
+
+        // applies the padding from the inspiration or falls
+        // back to the profile defaults to keep the viewport
+        // consistent with the thumbnail preview
+        const padding = inspiration.padding ||
+            profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+        marginLeft.val(padding.left);
+        marginRight.val(padding.right);
+        marginTop.val(padding.top);
+        marginBottom.val(padding.bottom);
+        renderViewportPreview(profile);
+
+        // applies the text alignment from the inspiration
+        // to match the thumbnail preview layout
+        if (inspiration.align) {
+            const justify = inspiration.align === "center"
+                ? "center"
+                : inspiration.align === "right"
+                ? "flex-end"
+                : "flex-start";
+            viewportContainer.css("text-align", inspiration.align);
+            viewportContainer.css("justify-content", justify);
+        }
+
+        // applies the font size and recalculates layout
+        applyFontSize();
+
+        // updates the print button and report URL
+        const [textSimple, font] = simplifyText(text);
+        buttonPrint.attr("data-text", textSimple);
+        buttonPrint.attr("data-font", font);
+        buttonPrint.data("multifont", multifontText(text, emojiMapping));
+        const buttonHref = buttonReport.attr("data-href");
+        buttonReport.attr("href", buttonHref + "?text=" + encodeURIComponent(serializeText(text)));
+
+        updateUrl();
     };
 
     // updates the floating profile info block with the
@@ -1279,6 +1694,7 @@ jQuery(document).ready(function() {
         updateProfileInfo(currentProfile);
         updateFontSizeControls(currentProfile);
         applyFontSize();
+        inspirationPanel.inspirationpanel("update", currentProfile);
         updateUrl();
     });
 
@@ -1536,6 +1952,11 @@ jQuery(document).ready(function() {
     };
 
     const keyboardHandler = function(event) {
+        // skips keyboard handling when a modal input is focused
+        // so that text editing controls work normally in modals
+        const target = jQuery(event.target);
+        if (target.closest(".modal-overlay.visible").length > 0) return;
+
         const font = body.data("font");
         let executed = false;
         switch (event.key) {
@@ -1979,7 +2400,20 @@ jQuery(document).ready(function() {
     modalOverlayError.modal();
     modalOverlayConfirm.modal();
     modalOverlayConfig.modal();
+    modalOverlayInspirations.modal();
     toast.toast();
+
+    // initializes the inspiration panel plugin and binds the
+    // apply event to set the viewport text and configuration
+    inspirationPanel.inspirationpanel({
+        viewport_scale: VIEWPORT_SCALE,
+        font_size_scale: FONT_SIZE_SCALE
+    });
+    inspirationPanel.bind("apply", function(event, inspiration) {
+        if (inspiration && currentProfile) {
+            applyInspiration(currentProfile, inspiration);
+        }
+    });
 
     formConsole.formconsole();
 
