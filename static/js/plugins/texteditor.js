@@ -246,7 +246,9 @@
             const space = function(font) {
                 let [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
-                const element = jQuery("<span style=\"font-family: '" + font + "';\">&nbsp;</span>");
+                const element = jQuery(
+                    "<span style=\"font-family: '" + font + "';\">&nbsp;</span>"
+                );
                 caret.before(element);
                 bindCaretClick(element, context, body);
                 text.splice(caretPosition + 1, 0, [font, " "]);
