@@ -819,18 +819,35 @@ jQuery(document).ready(function() {
     });
 
     // initializes the calligraphy canvas inside the viewport
-    // preview constrained to the safe drawable area
+    // preview at the zoomed pixel size so that jSignature mouse
+    // coordinates match screen space, then applies a counter-scale
+    // to fit within the viewport preview transform
     const initCalligraphy = function() {
         if (!currentProfile) return;
         const padding = getMargins();
         const safeW = (currentProfile.width - padding.left - padding.right) * VIEWPORT_SCALE;
         const safeH = (currentProfile.height - padding.top - padding.bottom) * VIEWPORT_SCALE;
+        const zoom = parseFloat(zoomRange.val()) || 1;
         const lineWidth = currentProfile.calligraphy
             ? currentProfile.calligraphy.line_width || 2 : 2;
         calligraphyContainer.calligraphy("init", {
-            width: safeW,
-            height: safeH,
-            lineWidth: lineWidth
+            width: Math.round(safeW * zoom),
+            height: Math.round(safeH * zoom),
+            lineWidth: lineWidth * zoom
+        });
+        calligraphyContainer.css({
+            transform: "scale(" + (1 / zoom) + ")",
+            "-o-transform": "scale(" + (1 / zoom) + ")",
+            "-ms-transform": "scale(" + (1 / zoom) + ")",
+            "-moz-transform": "scale(" + (1 / zoom) + ")",
+            "-khtml-transform": "scale(" + (1 / zoom) + ")",
+            "-webkit-transform": "scale(" + (1 / zoom) + ")",
+            "transform-origin": "0px 0px",
+            "-o-transform-origin": "0px 0px",
+            "-ms-transform-origin": "0px 0px",
+            "-moz-transform-origin": "0px 0px",
+            "-khtml-transform-origin": "0px 0px",
+            "-webkit-transform-origin": "0px 0px"
         });
     };
 
