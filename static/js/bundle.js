@@ -134,6 +134,16 @@ const countLines = function(text) {
 };
 
 (function(jQuery) {
+    /**
+     * Collapsible panel plugin that toggles a panel between
+     * expanded and minimized states using a smooth max-height
+     * transition on the body element.
+     *
+     * Operates on a container element and discovers its children
+     * (.collapsible-title, .collapsible-body, .collapsible-toggle)
+     * by class name convention. Clicks on the title toggle the
+     * panel state and update the toggle icon.
+     */
     jQuery.fn.collapsiblepanel = function() {
         const elements = jQuery(this);
 
@@ -176,6 +186,14 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    /**
+     * Debug console plugin that evaluates arbitrary JavaScript
+     * commands entered in a text input and displays the result.
+     *
+     * Operates on a .form-console element and discovers its
+     * children (.button, .input[name=command]) by class name
+     * convention.
+     */
     jQuery.fn.formconsole = function() {
         const elements = jQuery(this);
 
@@ -203,6 +221,19 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    /**
+     * Font selection plugin that manages a clickable list of
+     * font elements with toggle selection state.
+     *
+     * Operates on a .fonts-container element and discovers its
+     * children (.font) by class name convention.
+     *
+     * Events:
+     *   "font"   - triggered when a font is selected, passing
+     *              the font name from the data-font attribute
+     *   "defont" - triggered when a font is deselected, passing
+     *              the font name from the data-font attribute
+     */
     jQuery.fn.fontscontainer = function() {
         const elements = jQuery(this);
 
@@ -228,6 +259,23 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    /**
+     * Inspiration panel plugin that displays pre-built engraving
+     * presets as clickable thumbnails with a full-screen search
+     * modal for browsing all available inspirations.
+     *
+     * Operates on an .inspiration-panel element and discovers its
+     * children (.inspiration-panel-title, .inspiration-thumbnails,
+     * .button-view-all) by class name convention.
+     *
+     * Actions:
+     *   "update" - refreshes the panel with the given profile's
+     *              inspirations, rendering thumbnail previews
+     *
+     * Events:
+     *   "apply"  - triggered when an inspiration is selected,
+     *              passing the inspiration object as argument
+     */
     jQuery.fn.inspirationpanel = function(action, options) {
         const elements = jQuery(this);
 
@@ -499,6 +547,19 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    /**
+     * Virtual keyboard plugin that handles character input via
+     * clickable key elements with support for long-press accent
+     * popups and keyboard casing toggle.
+     *
+     * Operates on a .keyboard-container element and discovers
+     * its children (.char) by class name convention. Supports
+     * data-accents attribute on keys for accent variant popups.
+     *
+     * Events:
+     *   "key" - triggered when a key is pressed, passing the
+     *           current font name and character value
+     */
     jQuery.fn.keyboardcontainer = function() {
         const elements = jQuery(this);
 
@@ -617,6 +678,21 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    /**
+     * Modal overlay plugin that manages multiple modal types
+     * including error messages, print confirmation with specs
+     * preview, printer configuration, and instructions display.
+     *
+     * Operates on a .modal-overlay element and discovers its
+     * children (.modal, .modal-message, .modal-specs, etc.)
+     * by class name convention.
+     *
+     * Actions:
+     *   "show"    - displays the modal with an optional message
+     *   "hide"    - dismisses the modal with a fade-out animation
+     *   "confirm" - builds and shows the print confirmation modal
+     *               with the given specs object and viewport preview
+     */
     jQuery.fn.modal = function(action, message) {
         const elements = jQuery(this);
 
@@ -918,6 +994,178 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    /**
+     * Profile selector plugin that manages the profile and
+     * variant dropdown selection with automatic variant merging.
+     *
+     * Operates on a container element and discovers its children
+     * (.profile-select, .variant-select, .variant-container) by
+     * class name convention.
+     *
+     * Actions:
+     *   "load"   - populates the profile dropdown with the given
+     *              profiles object keyed by profile ID
+     *   "select" - programmatically selects a profile and optional
+     *              variant by key and index
+     *   "value"  - returns the current selection as an object with
+     *              profile key and variant index
+     *
+     * Events:
+     *   "profile" - triggered when the profile or variant selection
+     *               changes, passing the merged profile, base profile,
+     *               profile key, and variant index as arguments
+     */
+    jQuery.fn.profileselector = function(action, options) {
+        const elements = jQuery(this);
+
+        // applies a variant's overrides onto the base profile
+        // returning a merged profile object for rendering
+        const applyVariant = function(profile, variant) {
+            if (!profile || !variant) return profile;
+            const merged = Object.assign({}, profile);
+            if (variant.padding) merged.padding = variant.padding;
+            if (variant.extra_padding) merged.extra_padding = variant.extra_padding;
+            if (variant.background) merged.background = variant.background;
+            if (variant.font_size) merged.font_size = variant.font_size;
+            return merged;
+        };
+
+        // resolves the current profile from the given context
+        // applying variant overrides if one is selected
+        const resolveProfile = function(context) {
+            const profileSelect = jQuery(".profile-select", context);
+            const variantSelect = jQuery(".variant-select", context);
+            const profiles = context.data("_profiles") || {};
+            const key = profileSelect.val();
+            const baseProfile = key ? profiles[key] : null;
+            const index = parseInt(variantSelect.val());
+            const variant = baseProfile && baseProfile.variants
+                ? baseProfile.variants[index]
+                : null;
+            const mergedProfile = variant
+                ? applyVariant(baseProfile, variant)
+                : baseProfile;
+            return {
+                profile: mergedProfile,
+                baseProfile: baseProfile,
+                key: key,
+                variantIndex: isNaN(index) ? null : index
+            };
+        };
+
+        // returns the current selection as an object with
+        // the profile key and variant index values from
+        // the first matched element only
+        if (action === "value") {
+            return resolveProfile(elements.first());
+        }
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const profileSelect = jQuery(".profile-select", context);
+            const variantSelect = jQuery(".variant-select", context);
+            const variantContainer = jQuery(".variant-container", context);
+
+            // populates the profile dropdown with the given
+            // profiles object and stores it for later lookup
+            if (action === "load") {
+                const profiles = options.profiles;
+                context.data("_profiles", profiles);
+                const keys = Object.keys(profiles);
+                for (const key of keys) {
+                    const profile = profiles[key];
+                    const option = jQuery("<option></option>");
+                    option.attr("value", key);
+                    option.text(profile.name);
+                    profileSelect.append(option);
+                }
+                return;
+            }
+
+            // programmatically selects a profile and optional
+            // variant by key and index triggering the change event
+            if (action === "select") {
+                const profileKey = options.profile;
+                const variantIndex = options.variant;
+                if (profileKey) {
+                    profileSelect.val(profileKey).trigger("change");
+                    if (variantIndex !== undefined && variantIndex !== null) {
+                        variantSelect.val(variantIndex).trigger("change");
+                    }
+                }
+                return;
+            }
+
+            // registers for the change in the profile dropdown
+            // populating the variant dropdown if variants exist
+            profileSelect.bind("change", function() {
+                const key = jQuery(this).val();
+                const profiles = context.data("_profiles") || {};
+                const baseProfile = key ? profiles[key] : null;
+
+                // populates the variant dropdown if the profile
+                // has variants defined in its configuration
+                variantSelect.empty();
+                if (baseProfile && baseProfile.variants && baseProfile.variants.length > 0) {
+                    for (let i = 0; i < baseProfile.variants.length; i++) {
+                        const variant = baseProfile.variants[i];
+                        const option = jQuery("<option></option>");
+                        option.attr("value", i);
+                        option.text(variant.name);
+                        variantSelect.append(option);
+                    }
+                    variantContainer.addClass("visible");
+                } else {
+                    variantContainer.removeClass("visible");
+                }
+
+                const resolved = resolveProfile(context);
+                context.triggerHandler("profile", [
+                    resolved.profile,
+                    resolved.baseProfile,
+                    resolved.key,
+                    resolved.variantIndex
+                ]);
+            });
+
+            // registers for the change in the variant dropdown
+            // applying the variant overrides and emitting change
+            variantSelect.bind("change", function() {
+                const resolved = resolveProfile(context);
+                context.triggerHandler("profile", [
+                    resolved.profile,
+                    resolved.baseProfile,
+                    resolved.key,
+                    resolved.variantIndex
+                ]);
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    /**
+     * Text editor plugin that manages character-by-character
+     * text input with caret positioning, newline handling, and
+     * physical keyboard support including dead-key composition.
+     *
+     * Operates on a .viewer-container element and creates child
+     * span elements for each character and a .caret element for
+     * the insertion point.
+     *
+     * Actions:
+     *   "option"       - updates configuration (maxLines)
+     *   "loadText"     - loads text from an array of [font, char]
+     *                    pairs, replacing the current content
+     *   "bindExisting" - binds click handlers to server-rendered
+     *                    text spans for caret positioning
+     *
+     * Events:
+     *   "change" - triggered when the text content changes,
+     *              passing the updated text array as argument
+     */
     jQuery.fn.texteditor = function(action, options) {
         const elements = jQuery(this);
 
@@ -1428,7 +1676,11 @@ const countLines = function(text) {
     /**
      * Toast notification plugin that displays temporary
      * messages to the user for a fixed duration of 3 seconds.
+     *
      * Operates on a .toast element toggling a .visible class.
+     *
+     * Actions:
+     *   "show" - displays the given message for 3 seconds
      */
     jQuery.fn.toast = function(action, message) {
         const elements = jQuery(this);
@@ -1458,6 +1710,14 @@ const countLines = function(text) {
      * Operates on a .viewport-preview element and discovers its
      * children (.viewport-svg, .viewer-container, .ruler-horizontal,
      * .ruler-vertical) by class name convention.
+     *
+     * Actions:
+     *   "render" - renders the SVG preview with bounds, safe area,
+     *              background image, and viewer container positioning
+     *   "rulers" - renders horizontal and vertical ruler tick marks
+     *              with optional show/hide control
+     *   "zoom"   - applies a CSS transform scale to the preview
+     *              with layout margin compensation
      */
     jQuery.fn.viewportpreview = function(action, options) {
         const elements = jQuery(this);
@@ -1692,9 +1952,7 @@ jQuery(document).ready(function() {
     const profileInfoLines = jQuery(".profile-info-lines");
     const profileInfoRawToggle = jQuery(".profile-info-raw-toggle");
     const profileInfoRaw = jQuery(".profile-info-raw");
-    const profileSelect = jQuery(".profile-select");
-    const variantSelect = jQuery(".variant-select");
-    const variantContainer = jQuery(".variant-container");
+    const profileSelector = jQuery(".viewport-options-body");
     const profileInfoTitle = jQuery(".profile-info-title");
     const viewportOptionsInstructions = jQuery(".viewport-options-instructions");
     const modalOverlayInstructions = jQuery(".modal-overlay-instructions");
@@ -1739,6 +1997,10 @@ jQuery(document).ready(function() {
     // profile info and viewport options panels
     profileInfo.collapsiblepanel();
     viewportOptions.collapsiblepanel();
+
+    // initializes the profile selector plugin on the
+    // profile and variant dropdown container
+    profileSelector.profileselector();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
@@ -1966,13 +2228,7 @@ jQuery(document).ready(function() {
             profiles = await response.json();
             const keys = Object.keys(profiles);
             if (keys.length === 0) return;
-            for (const key of keys) {
-                const profile = profiles[key];
-                const option = jQuery("<option></option>");
-                option.attr("value", key);
-                option.text(profile.name);
-                profileSelect.append(option);
-            }
+            profileSelector.profileselector("load", { profiles: profiles });
             viewportOptions.addClass("visible");
             modalOverlayConfirm.data("profiles", profiles);
 
@@ -1981,11 +2237,11 @@ jQuery(document).ready(function() {
             restoring = true;
             const urlProfile = urlParams.get("profile");
             if (urlProfile && profiles[urlProfile]) {
-                profileSelect.val(urlProfile).trigger("change");
                 const urlVariant = urlParams.get("variant");
-                if (urlVariant !== null) {
-                    variantSelect.val(urlVariant).trigger("change");
-                }
+                profileSelector.profileselector("select", {
+                    profile: urlProfile,
+                    variant: urlVariant !== null ? urlVariant : undefined
+                });
             }
 
             // restores the margin values from the URL query
@@ -2325,18 +2581,6 @@ jQuery(document).ready(function() {
         }
     };
 
-    // applies a variant's overrides onto the base profile
-    // returning a merged profile object for rendering
-    const applyVariant = function(profile, variant) {
-        if (!profile || !variant) return profile;
-        const merged = Object.assign({}, profile);
-        if (variant.padding) merged.padding = variant.padding;
-        if (variant.extra_padding) merged.extra_padding = variant.extra_padding;
-        if (variant.background) merged.background = variant.background;
-        if (variant.font_size) merged.font_size = variant.font_size;
-        return merged;
-    };
-
     // refreshes the viewport and controls based on the
     // currently selected profile and variant combination
     const refreshProfile = function() {
@@ -2372,42 +2616,11 @@ jQuery(document).ready(function() {
         inspirationPanel.inspirationpanel("update", currentProfile);
     };
 
-    // registers for the change in the profile dropdown so
-    // that the viewport preview and font size controls update
-    profileSelect.bind("change", function() {
-        const key = jQuery(this).val();
-        const baseProfile = key ? profiles[key] : null;
-
-        // populates the variant dropdown if the profile has variants
-        variantSelect.empty();
-        if (baseProfile && baseProfile.variants && baseProfile.variants.length > 0) {
-            for (let i = 0; i < baseProfile.variants.length; i++) {
-                const variant = baseProfile.variants[i];
-                const option = jQuery("<option></option>");
-                option.attr("value", i);
-                option.text(variant.name);
-                variantSelect.append(option);
-            }
-            variantContainer.addClass("visible");
-            currentProfile = applyVariant(baseProfile, baseProfile.variants[0]);
-        } else {
-            variantContainer.removeClass("visible");
-            currentProfile = baseProfile;
-        }
-
-        refreshProfile();
-        updateUrl();
-    });
-
-    // registers for the change in the variant dropdown so
-    // that the profile overrides are applied and refreshed
-    variantSelect.bind("change", function() {
-        const key = profileSelect.val();
-        const baseProfile = key ? profiles[key] : null;
-        if (!baseProfile) return;
-        const index = parseInt(jQuery(this).val());
-        const variant = baseProfile.variants ? baseProfile.variants[index] : null;
-        currentProfile = variant ? applyVariant(baseProfile, variant) : baseProfile;
+    // registers for the change event from the profile selector
+    // plugin to update the viewport and controls when the profile
+    // or variant selection changes
+    profileSelector.bind("profile", function(event, profile) {
+        currentProfile = profile;
         refreshProfile();
         updateUrl();
     });
@@ -2680,12 +2893,11 @@ jQuery(document).ready(function() {
         if (text.length > 0) params.set("text", serializeText(text));
         const font = body.data("font");
         if (font) params.set("font", font);
-        const profileKey = profileSelect.val();
-        if (profileKey) {
-            params.set("profile", profileKey);
-            const variantIndex = variantSelect.val();
-            if (variantIndex && variantIndex !== "0") {
-                params.set("variant", variantIndex);
+        const selection = profileSelector.profileselector("value");
+        if (selection && selection.key) {
+            params.set("profile", selection.key);
+            if (selection.variantIndex !== null && selection.variantIndex !== 0) {
+                params.set("variant", selection.variantIndex);
             }
         }
         const fontSize = fontSizeInput.val();

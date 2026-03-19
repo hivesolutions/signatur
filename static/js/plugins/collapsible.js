@@ -1,4 +1,14 @@
 (function(jQuery) {
+    /**
+     * Collapsible panel plugin that toggles a panel between
+     * expanded and minimized states using a smooth max-height
+     * transition on the body element.
+     *
+     * Operates on a container element and discovers its children
+     * (.collapsible-title, .collapsible-body, .collapsible-toggle)
+     * by class name convention. Clicks on the title toggle the
+     * panel state and update the toggle icon.
+     */
     jQuery.fn.collapsiblepanel = function() {
         const elements = jQuery(this);
 

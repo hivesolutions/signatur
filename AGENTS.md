@@ -47,8 +47,31 @@ plugin initialization call. Preserve vendor-prefixed CSS properties with the est
 `-o-`, `-ms-`, `-moz-`, `-khtml-`, `-webkit-` order. Use full variable names - prefer
 `bodyElement` over `bodyEl`, `currentIndex` over `curIdx`, etc.
 
-Reference `static/js/plugins/collapsible.js` and `static/css/plugins/collapsible.css` as the
-canonical example of a well-structured plugin with its companion CSS file.
+Every plugin must have a `/** */` docstring immediately before the `jQuery.fn` assignment
+with the following structure:
+
+```javascript
+/**
+ * Brief description of the plugin's purpose (2-3 lines).
+ *
+ * Operates on a .class-name element and discovers its children
+ * (.child-a, .child-b) by class name convention.
+ *
+ * Actions:
+ *   "action1" - description of what this action does
+ *   "action2" - description of what this action does
+ *
+ * Events:
+ *   "event1" - description of when this event fires and
+ *              what arguments it passes
+ */
+```
+
+Omit the Actions section if the plugin takes no action parameter. Omit the Events section
+if the plugin emits no custom events.
+
+Reference `static/js/plugins/profileselector.js` as the canonical example of a
+well-documented plugin with actions, events, and its companion CSS file.
 
 ## Style Guide
 

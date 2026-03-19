@@ -7,6 +7,14 @@
      * Operates on a .viewport-preview element and discovers its
      * children (.viewport-svg, .viewer-container, .ruler-horizontal,
      * .ruler-vertical) by class name convention.
+     *
+     * Actions:
+     *   "render" - renders the SVG preview with bounds, safe area,
+     *              background image, and viewer container positioning
+     *   "rulers" - renders horizontal and vertical ruler tick marks
+     *              with optional show/hide control
+     *   "zoom"   - applies a CSS transform scale to the preview
+     *              with layout margin compensation
      */
     jQuery.fn.viewportpreview = function(action, options) {
         const elements = jQuery(this);

@@ -1,4 +1,21 @@
 (function(jQuery) {
+    /**
+     * Inspiration panel plugin that displays pre-built engraving
+     * presets as clickable thumbnails with a full-screen search
+     * modal for browsing all available inspirations.
+     *
+     * Operates on an .inspiration-panel element and discovers its
+     * children (.inspiration-panel-title, .inspiration-thumbnails,
+     * .button-view-all) by class name convention.
+     *
+     * Actions:
+     *   "update" - refreshes the panel with the given profile's
+     *              inspirations, rendering thumbnail previews
+     *
+     * Events:
+     *   "apply"  - triggered when an inspiration is selected,
+     *              passing the inspiration object as argument
+     */
     jQuery.fn.inspirationpanel = function(action, options) {
         const elements = jQuery(this);
 

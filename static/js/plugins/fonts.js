@@ -1,4 +1,17 @@
 (function(jQuery) {
+    /**
+     * Font selection plugin that manages a clickable list of
+     * font elements with toggle selection state.
+     *
+     * Operates on a .fonts-container element and discovers its
+     * children (.font) by class name convention.
+     *
+     * Events:
+     *   "font"   - triggered when a font is selected, passing
+     *              the font name from the data-font attribute
+     *   "defont" - triggered when a font is deselected, passing
+     *              the font name from the data-font attribute
+     */
     jQuery.fn.fontscontainer = function() {
         const elements = jQuery(this);
 

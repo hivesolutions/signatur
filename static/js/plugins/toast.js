@@ -2,7 +2,11 @@
     /**
      * Toast notification plugin that displays temporary
      * messages to the user for a fixed duration of 3 seconds.
+     *
      * Operates on a .toast element toggling a .visible class.
+     *
+     * Actions:
+     *   "show" - displays the given message for 3 seconds
      */
     jQuery.fn.toast = function(action, message) {
         const elements = jQuery(this);

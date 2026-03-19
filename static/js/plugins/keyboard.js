@@ -1,4 +1,17 @@
 (function(jQuery) {
+    /**
+     * Virtual keyboard plugin that handles character input via
+     * clickable key elements with support for long-press accent
+     * popups and keyboard casing toggle.
+     *
+     * Operates on a .keyboard-container element and discovers
+     * its children (.char) by class name convention. Supports
+     * data-accents attribute on keys for accent variant popups.
+     *
+     * Events:
+     *   "key" - triggered when a key is pressed, passing the
+     *           current font name and character value
+     */
     jQuery.fn.keyboardcontainer = function() {
         const elements = jQuery(this);
 

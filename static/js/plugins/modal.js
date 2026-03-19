@@ -1,4 +1,19 @@
 (function(jQuery) {
+    /**
+     * Modal overlay plugin that manages multiple modal types
+     * including error messages, print confirmation with specs
+     * preview, printer configuration, and instructions display.
+     *
+     * Operates on a .modal-overlay element and discovers its
+     * children (.modal, .modal-message, .modal-specs, etc.)
+     * by class name convention.
+     *
+     * Actions:
+     *   "show"    - displays the modal with an optional message
+     *   "hide"    - dismisses the modal with a fade-out animation
+     *   "confirm" - builds and shows the print confirmation modal
+     *               with the given specs object and viewport preview
+     */
     jQuery.fn.modal = function(action, message) {
         const elements = jQuery(this);
 

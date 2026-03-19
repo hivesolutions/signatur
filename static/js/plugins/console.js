@@ -1,4 +1,12 @@
 (function(jQuery) {
+    /**
+     * Debug console plugin that evaluates arbitrary JavaScript
+     * commands entered in a text input and displays the result.
+     *
+     * Operates on a .form-console element and discovers its
+     * children (.button, .input[name=command]) by class name
+     * convention.
+     */
     jQuery.fn.formconsole = function() {
         const elements = jQuery(this);
 

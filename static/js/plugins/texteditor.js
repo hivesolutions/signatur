@@ -1,4 +1,24 @@
 (function(jQuery) {
+    /**
+     * Text editor plugin that manages character-by-character
+     * text input with caret positioning, newline handling, and
+     * physical keyboard support including dead-key composition.
+     *
+     * Operates on a .viewer-container element and creates child
+     * span elements for each character and a .caret element for
+     * the insertion point.
+     *
+     * Actions:
+     *   "option"       - updates configuration (maxLines)
+     *   "loadText"     - loads text from an array of [font, char]
+     *                    pairs, replacing the current content
+     *   "bindExisting" - binds click handlers to server-rendered
+     *                    text spans for caret positioning
+     *
+     * Events:
+     *   "change" - triggered when the text content changes,
+     *              passing the updated text array as argument
+     */
     jQuery.fn.texteditor = function(action, options) {
         const elements = jQuery(this);
 

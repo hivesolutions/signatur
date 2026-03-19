@@ -16,9 +16,7 @@ jQuery(document).ready(function() {
     const profileInfoLines = jQuery(".profile-info-lines");
     const profileInfoRawToggle = jQuery(".profile-info-raw-toggle");
     const profileInfoRaw = jQuery(".profile-info-raw");
-    const profileSelect = jQuery(".profile-select");
-    const variantSelect = jQuery(".variant-select");
-    const variantContainer = jQuery(".variant-container");
+    const profileSelector = jQuery(".viewport-options-body");
     const profileInfoTitle = jQuery(".profile-info-title");
     const viewportOptionsInstructions = jQuery(".viewport-options-instructions");
     const modalOverlayInstructions = jQuery(".modal-overlay-instructions");
@@ -63,6 +61,10 @@ jQuery(document).ready(function() {
     // profile info and viewport options panels
     profileInfo.collapsiblepanel();
     viewportOptions.collapsiblepanel();
+
+    // initializes the profile selector plugin on the
+    // profile and variant dropdown container
+    profileSelector.profileselector();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
@@ -290,13 +292,7 @@ jQuery(document).ready(function() {
             profiles = await response.json();
             const keys = Object.keys(profiles);
             if (keys.length === 0) return;
-            for (const key of keys) {
-                const profile = profiles[key];
-                const option = jQuery("<option></option>");
-                option.attr("value", key);
-                option.text(profile.name);
-                profileSelect.append(option);
-            }
+            profileSelector.profileselector("load", { profiles: profiles });
             viewportOptions.addClass("visible");
             modalOverlayConfirm.data("profiles", profiles);
 
@@ -305,11 +301,11 @@ jQuery(document).ready(function() {
             restoring = true;
             const urlProfile = urlParams.get("profile");
             if (urlProfile && profiles[urlProfile]) {
-                profileSelect.val(urlProfile).trigger("change");
                 const urlVariant = urlParams.get("variant");
-                if (urlVariant !== null) {
-                    variantSelect.val(urlVariant).trigger("change");
-                }
+                profileSelector.profileselector("select", {
+                    profile: urlProfile,
+                    variant: urlVariant !== null ? urlVariant : undefined
+                });
             }
 
             // restores the margin values from the URL query
@@ -649,18 +645,6 @@ jQuery(document).ready(function() {
         }
     };
 
-    // applies a variant's overrides onto the base profile
-    // returning a merged profile object for rendering
-    const applyVariant = function(profile, variant) {
-        if (!profile || !variant) return profile;
-        const merged = Object.assign({}, profile);
-        if (variant.padding) merged.padding = variant.padding;
-        if (variant.extra_padding) merged.extra_padding = variant.extra_padding;
-        if (variant.background) merged.background = variant.background;
-        if (variant.font_size) merged.font_size = variant.font_size;
-        return merged;
-    };
-
     // refreshes the viewport and controls based on the
     // currently selected profile and variant combination
     const refreshProfile = function() {
@@ -696,42 +680,11 @@ jQuery(document).ready(function() {
         inspirationPanel.inspirationpanel("update", currentProfile);
     };
 
-    // registers for the change in the profile dropdown so
-    // that the viewport preview and font size controls update
-    profileSelect.bind("change", function() {
-        const key = jQuery(this).val();
-        const baseProfile = key ? profiles[key] : null;
-
-        // populates the variant dropdown if the profile has variants
-        variantSelect.empty();
-        if (baseProfile && baseProfile.variants && baseProfile.variants.length > 0) {
-            for (let i = 0; i < baseProfile.variants.length; i++) {
-                const variant = baseProfile.variants[i];
-                const option = jQuery("<option></option>");
-                option.attr("value", i);
-                option.text(variant.name);
-                variantSelect.append(option);
-            }
-            variantContainer.addClass("visible");
-            currentProfile = applyVariant(baseProfile, baseProfile.variants[0]);
-        } else {
-            variantContainer.removeClass("visible");
-            currentProfile = baseProfile;
-        }
-
-        refreshProfile();
-        updateUrl();
-    });
-
-    // registers for the change in the variant dropdown so
-    // that the profile overrides are applied and refreshed
-    variantSelect.bind("change", function() {
-        const key = profileSelect.val();
-        const baseProfile = key ? profiles[key] : null;
-        if (!baseProfile) return;
-        const index = parseInt(jQuery(this).val());
-        const variant = baseProfile.variants ? baseProfile.variants[index] : null;
-        currentProfile = variant ? applyVariant(baseProfile, variant) : baseProfile;
+    // registers for the change event from the profile selector
+    // plugin to update the viewport and controls when the profile
+    // or variant selection changes
+    profileSelector.bind("profile", function(event, profile) {
+        currentProfile = profile;
         refreshProfile();
         updateUrl();
     });
@@ -1004,12 +957,11 @@ jQuery(document).ready(function() {
         if (text.length > 0) params.set("text", serializeText(text));
         const font = body.data("font");
         if (font) params.set("font", font);
-        const profileKey = profileSelect.val();
-        if (profileKey) {
-            params.set("profile", profileKey);
-            const variantIndex = variantSelect.val();
-            if (variantIndex && variantIndex !== "0") {
-                params.set("variant", variantIndex);
+        const selection = profileSelector.profileselector("value");
+        if (selection && selection.key) {
+            params.set("profile", selection.key);
+            if (selection.variantIndex !== null && selection.variantIndex !== 0) {
+                params.set("variant", selection.variantIndex);
             }
         }
         const fontSize = fontSizeInput.val();

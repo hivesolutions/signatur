@@ -27,6 +27,7 @@ const JS_FILES = [
     "js/plugins/inspiration.js",
     "js/plugins/keyboard.js",
     "js/plugins/modal.js",
+    "js/plugins/profileselector.js",
     "js/plugins/texteditor.js",
     "js/plugins/toast.js",
     "js/plugins/viewportpreview.js",
