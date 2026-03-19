@@ -26,6 +26,7 @@ const JS_FILES = [
     "js/plugins/toast.js",
     "js/plugins/console.js",
     "js/plugins/inspiration.js",
+    "js/plugins/texteditor.js",
     "js/main.js"
 ];
 
@@ -37,7 +38,7 @@ const concat = function(files, output) {
         parts.push(content);
     }
     const outputPath = path.join(STATIC, output);
-    fs.writeFileSync(outputPath, parts.join("\n"), "utf-8");
+    fs.writeFileSync(outputPath, parts.join("\r\n"), "utf-8");
     console.log("Built " + outputPath + " (" + files.length + " files)");
 };
 
