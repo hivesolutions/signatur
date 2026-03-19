@@ -68,7 +68,7 @@ jQuery(document).ready(function() {
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeInput = jQuery(".font-size-input");
     const fontSizeMode = jQuery(".font-size-mode");
-    const viewportPreview = jQuery(".viewport-preview");
+    const viewportPreview = jQuery(".viewport > .main-container > .viewport-preview");
     const viewportSvg = jQuery(".viewport-svg");
     const rulerHorizontal = jQuery(".ruler-horizontal");
     const rulerVertical = jQuery(".ruler-vertical");
@@ -417,197 +417,32 @@ jQuery(document).ready(function() {
         marginBottom.val(padding.bottom);
     };
 
-    // renders the viewport preview SVG based on the selected
-    // profile definition including bounds and safe drawable area
+    // renders the viewport preview using the viewport preview
+    // plugin with the current profile and margin configuration
     const renderViewportPreview = function(profile) {
-        if (!profile) {
-            viewportPreview.removeClass("profile-active");
-            viewportPreview.css({
-                width: "",
-                height: "",
-                transform: "",
-                "margin-bottom": "",
-                "margin-right": "",
-                "background-image": "",
-                "background-size": "",
-                "background-repeat": "",
-                "background-position": ""
-            });
-            viewportContainer.css({
-                position: "",
-                left: "",
-                top: "",
-                width: "",
-                height: "",
-                margin: "",
-                padding: "",
-                border: "",
-                "min-width": ""
-            });
-            return;
-        }
-
-        const width = profile.width * VIEWPORT_SCALE;
-        const height = profile.height * VIEWPORT_SCALE;
-        const showBounds = profile.preview ? profile.preview.show_bounds : false;
-        const showSafeArea = profile.preview ? profile.preview.show_safe_area : false;
-        const padding = getMargins();
-
-        const svg = viewportSvg.get(0);
-        svg.setAttribute("width", width);
-        svg.setAttribute("height", height);
-        svg.setAttribute("viewBox", "0 0 " + width + " " + height);
-
-        // clears existing SVG content before re-rendering
-        while (svg.firstChild) {
-            svg.removeChild(svg.firstChild);
-        }
-
-        // renders the outer bounds as a dashed rectangle
-        if (showBounds) {
-            const bounds = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            bounds.setAttribute("x", 0);
-            bounds.setAttribute("y", 0);
-            bounds.setAttribute("width", width);
-            bounds.setAttribute("height", height);
-            bounds.setAttribute("fill", "none");
-            bounds.setAttribute("stroke", "#2d2d2d");
-            bounds.setAttribute("stroke-width", 2);
-            bounds.setAttribute("stroke-dasharray", "6 3");
-            svg.appendChild(bounds);
-        }
-
-        // renders the safe drawable area defined by padding
-        if (showSafeArea) {
-            const safeX = padding.left * VIEWPORT_SCALE;
-            const safeY = padding.top * VIEWPORT_SCALE;
-            const safeW = width - (padding.left + padding.right) * VIEWPORT_SCALE;
-            const safeH = height - (padding.top + padding.bottom) * VIEWPORT_SCALE;
-            const safe = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            safe.setAttribute("x", safeX);
-            safe.setAttribute("y", safeY);
-            safe.setAttribute("width", safeW);
-            safe.setAttribute("height", safeH);
-            safe.setAttribute("fill", "rgba(45, 45, 45, 0.05)");
-            safe.setAttribute("stroke", "#9d9d9d");
-            safe.setAttribute("stroke-width", 1);
-            safe.setAttribute("stroke-dasharray", "4 2");
-            svg.appendChild(safe);
-        }
-
-        // positions the viewer container over the safe drawable
-        // area so that text renders inside the viewport preview
-        const safeX = padding.left * VIEWPORT_SCALE;
-        const safeY = padding.top * VIEWPORT_SCALE;
-        const safeW = width - (padding.left + padding.right) * VIEWPORT_SCALE;
-        const safeH = height - (padding.top + padding.bottom) * VIEWPORT_SCALE;
-        viewportContainer.css({
-            position: "absolute",
-            left: safeX + "px",
-            top: safeY + "px",
-            width: safeW + "px",
-            height: safeH + "px",
-            margin: "0px",
-            padding: "0px",
-            border: "none",
-            "min-width": "0px"
+        viewportPreview.viewportpreview("render", {
+            profile: profile,
+            scale: VIEWPORT_SCALE,
+            padding: getMargins()
         });
-
-        // applies the background image behind the viewport so that
-        // the user can preview the engraving on a realistic surface
-        if (profile.background) {
-            viewportPreview.css({
-                "background-image": "url('/static/profiles/" + profile.background + "')",
-                "background-size": width + "px " + height + "px",
-                "background-repeat": "no-repeat",
-                "background-position": "0px 0px"
-            });
-        } else {
-            viewportPreview.css({
-                "background-image": "",
-                "background-size": "",
-                "background-repeat": "",
-                "background-position": ""
-            });
-        }
-
-        viewportPreview.css({ width: width + "px", height: height + "px" });
-        viewportPreview.addClass("profile-active");
     };
 
-    // renders the horizontal and vertical rulers adjacent to
-    // the viewport preview based on the profile dimensions
+    // renders the rulers using the viewport preview plugin
+    // with the current profile and rulers visibility state
     const renderRulers = function(profile) {
-        rulerHorizontal.empty();
-        rulerVertical.empty();
-
-        if (!profile) return;
-
-        const width = profile.width * VIEWPORT_SCALE;
-        const height = profile.height * VIEWPORT_SCALE;
-        const unit = profile.unit || "mm";
-        const step = 5;
-
-        rulerHorizontal.css("width", width + "px");
-        rulerVertical.css("height", height + "px");
-
-        for (let mm = 0; mm <= profile.width; mm += step) {
-            const px = mm * VIEWPORT_SCALE;
-            const isMajor = mm % 10 === 0;
-            const tick = jQuery('<div class="ruler-tick"></div>');
-            tick.addClass(isMajor ? "major" : "minor");
-            tick.css("left", px + "px");
-            tick.append('<div class="ruler-line"></div>');
-            if (isMajor) {
-                tick.append('<span class="ruler-label">' + mm + "</span>");
-            }
-            rulerHorizontal.append(tick);
-        }
-        rulerHorizontal.append('<span class="ruler-unit">' + unit + "</span>");
-
-        for (let mm = 0; mm <= profile.height; mm += step) {
-            const px = mm * VIEWPORT_SCALE;
-            const isMajor = mm % 10 === 0;
-            const tick = jQuery('<div class="ruler-tick"></div>');
-            tick.addClass(isMajor ? "major" : "minor");
-            tick.css("top", px + "px");
-            tick.append('<div class="ruler-line"></div>');
-            if (isMajor) {
-                tick.append('<span class="ruler-label">' + mm + "</span>");
-            }
-            rulerVertical.append(tick);
-        }
-        rulerVertical.append('<span class="ruler-unit">' + unit + "</span>");
-
-        // applies the current rulers visibility based on the
-        // show rulers checkbox state in the viewport options
-        const showRulers = rulersMode.prop("checked");
-        if (!showRulers) {
-            rulerHorizontal.hide();
-            rulerVertical.hide();
-        }
+        viewportPreview.viewportpreview("rulers", {
+            profile: profile,
+            scale: VIEWPORT_SCALE,
+            showRulers: rulersMode.prop("checked")
+        });
     };
 
     // applies the current zoom level from the zoom slider
-    // using a CSS transform to scale the viewport preview
-    // and compensating the layout margins for the scaled size
+    // using the viewport preview plugin to scale the preview
     const applyZoom = function() {
         const zoom = parseFloat(zoomRange.val()) || 1;
         zoomValue.text(zoom + "x");
-        const width = parseFloat(viewportPreview.css("width")) || 0;
-        const height = parseFloat(viewportPreview.css("height")) || 0;
-        const extraWidth = width * (zoom - 1);
-        const extraHeight = height * (zoom - 1);
-        viewportPreview.css({
-            transform: "scale(" + zoom + ")",
-            "-o-transform": "scale(" + zoom + ")",
-            "-ms-transform": "scale(" + zoom + ")",
-            "-moz-transform": "scale(" + zoom + ")",
-            "-khtml-transform": "scale(" + zoom + ")",
-            "-webkit-transform": "scale(" + zoom + ")",
-            "margin-bottom": 16 * zoom + extraHeight + "px",
-            "margin-right": extraWidth + "px"
-        });
+        viewportPreview.viewportpreview("zoom", { zoom: zoom });
     };
 
     // applies an inspiration configuration to the viewport

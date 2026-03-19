@@ -61,6 +61,7 @@ canonical example of a well-structured plugin with its companion CSS file.
 - jQuery plugins use the IIFE pattern with `jQuery.fn` extensions.
 - EJS templates in `views/` use server-side rendering with Express.
 - CSS uses vendor prefixes in the order: `-o-`, `-ms-`, `-moz-`, `-khtml-`, `-webkit-`.
+- JS, CSS, and EJS files use CRLF (`\r\n`) line endings.
 
 ## Commit Messages
 
@@ -117,6 +118,7 @@ Before committing, ensure that the following items check:
 - [ ] CHANGELOG.md is updated in [Unreleased] section
 - [ ] No debugging console.log statements or commented-out code
 - [ ] New plugins are registered in both `scripts/build.js` and `views/head.ejs`
+- [ ] CRLF line endings are preserved in JS, CSS, and EJS files
 
 ## New Release
 

@@ -176,6 +176,33 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    jQuery.fn.formconsole = function() {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const button = jQuery(".button", context);
+            const command = jQuery(".input[name=command]", context);
+
+            button.click(function() {
+                const commandValue = command.val();
+                try {
+                    // eslint-disable-next-line no-eval
+                    const result = eval(commandValue);
+                    if (result) alert(result);
+                    else alert("executed");
+                } catch (err) {
+                    alert(err);
+                }
+                command.val("");
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
     jQuery.fn.fontscontainer = function() {
         const elements = jQuery(this);
 
@@ -193,6 +220,277 @@ const countLines = function(text) {
                 fonts.removeClass("selected");
                 _element.addClass("selected");
                 context.triggerHandler("font", [_element.attr("data-font")]);
+            });
+        });
+
+        return this;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    jQuery.fn.inspirationpanel = function(action, options) {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const panelTitle = jQuery(".inspiration-panel-title", context);
+            const panelBody = jQuery(".inspiration-panel-body", context);
+            const panelToggle = jQuery(".inspiration-panel-toggle", context);
+            const thumbnails = jQuery(".inspiration-thumbnails", context);
+            const buttonViewAll = jQuery(".button-view-all", context);
+            const modalOverlay = jQuery(".modal-overlay-inspirations");
+            const modalGrid = jQuery(".modal-inspirations-grid", modalOverlay);
+            const modalSearchInput = jQuery(".modal-search-input", modalOverlay);
+
+            // stores the current profile reference and scale
+            // constants for use across rendering functions
+            let currentProfile = context.data("_profile") || null;
+            const viewportScale = (options && options.viewport_scale) || 3;
+            const fontSizeScale = (options && options.font_size_scale) || 1.3;
+
+            // renders a single inspiration thumbnail as a miniature
+            // viewport preview with the text pre-rendered inside it
+            const renderPreview = function(profile, inspiration, container) {
+                const width = profile.width * viewportScale;
+                const height = profile.height * viewportScale;
+                const padding = inspiration.padding ||
+                    profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+                const fontSize = inspiration.font_size || 3;
+                const scaledSize = fontSize * viewportScale * fontSizeScale;
+
+                const preview = jQuery('<div class="viewport-preview profile-active"></div>');
+                preview.css({ width: width + "px", height: height + "px" });
+
+                // applies the background image if the profile has one
+                if (profile.background) {
+                    preview.css({
+                        "background-image": "url('/static/profiles/" + profile.background + "')",
+                        "background-size": width + "px " + height + "px",
+                        "background-repeat": "no-repeat",
+                        "background-position": "0px 0px"
+                    });
+                }
+
+                // positions the text container over the safe drawable area
+                const safeX = padding.left * viewportScale;
+                const safeY = padding.top * viewportScale;
+                const safeW = width - (padding.left + padding.right) * viewportScale;
+                const safeH = height - (padding.top + padding.bottom) * viewportScale;
+                const viewer = jQuery('<div class="viewer-container"></div>');
+                viewer.css({
+                    position: "absolute",
+                    left: safeX + "px",
+                    top: safeY + "px",
+                    width: safeW + "px",
+                    height: safeH + "px",
+                    margin: "0px",
+                    padding: "0px",
+                    border: "none",
+                    "min-width": "0px",
+                    "font-size": scaledSize + "px",
+                    "line-height": Math.round(scaledSize * 1.2) + "px",
+                    "text-align": inspiration.align || "center",
+                    "align-content": "center",
+                    display: "flex",
+                    "flex-wrap": "wrap",
+                    "justify-content":
+                        inspiration.align === "left"
+                            ? "flex-start"
+                            : inspiration.align === "right"
+                            ? "flex-end"
+                            : "center",
+                    overflow: "hidden"
+                });
+
+                // renders the text items inside the viewer container
+                // expanding multi-character entries into individual spans
+                for (let i = 0; i < inspiration.text.length; i++) {
+                    const font = inspiration.text[i][0];
+                    const chars = inspiration.text[i][1];
+                    if (chars === "\n") {
+                        viewer.append('<div class="newline"></div>');
+                    } else {
+                        for (let j = 0; j < chars.length; j++) {
+                            const value = chars[j] === " " ? "&nbsp;" : chars[j];
+                            viewer.append(
+                                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+                            );
+                        }
+                    }
+                }
+
+                preview.append(viewer);
+
+                // scales the preview to fit inside the container
+                const containerWidth = container.width() || 72;
+                const scale = containerWidth / width;
+                preview.css({
+                    transform: "scale(" + scale + ")",
+                    "transform-origin": "0 0"
+                });
+                container.css({
+                    height: Math.ceil(height * scale) + "px",
+                    position: "relative"
+                });
+
+                container.append(preview);
+            };
+
+            // renders the inspiration thumbnails in the side panel
+            // showing the first 3 entries from the profile inspirations
+            const renderPanel = function(profile) {
+                thumbnails.empty();
+
+                if (!profile || !profile._inspirations || profile._inspirations.length === 0) {
+                    context.removeClass("visible");
+                    return;
+                }
+
+                const entries = profile._inspirations.slice(0, 3);
+                for (let i = 0; i < entries.length; i++) {
+                    const inspiration = entries[i];
+                    const thumb = jQuery('<div class="inspiration-thumb"></div>');
+                    const previewContainer = jQuery(
+                        '<div class="inspiration-thumb-preview"></div>'
+                    );
+                    const title = jQuery('<div class="inspiration-thumb-title"></div>');
+                    title.text(inspiration.title);
+                    thumb.append(previewContainer);
+                    thumb.append(title);
+                    thumb.data("inspiration", inspiration);
+                    thumbnails.append(thumb);
+                    renderPreview(profile, inspiration, previewContainer);
+                }
+
+                context.addClass("visible");
+                panelBody.css("overflow", "visible");
+            };
+
+            // renders all inspirations in the full-screen modal grid
+            // with viewport previews and metadata for each entry
+            const renderModal = function(profile, filter) {
+                modalGrid.empty();
+
+                if (!profile || !profile._inspirations) return;
+
+                const query = (filter || "").toLowerCase();
+                const entries = profile._inspirations.filter(function(insp) {
+                    if (!query) return true;
+                    const haystack = [
+                        insp.title || "",
+                        insp.description || "",
+                        insp.author || "",
+                        (insp.text || [])
+                            .map(function(t) {
+                                return t[1];
+                            })
+                            .join("")
+                    ]
+                        .join(" ")
+                        .toLowerCase();
+                    return haystack.indexOf(query) !== -1;
+                });
+
+                if (entries.length === 0) {
+                    modalGrid.append('<div class="inspiration-empty">No inspirations found.</div>');
+                    return;
+                }
+
+                for (let i = 0; i < entries.length; i++) {
+                    const inspiration = entries[i];
+                    const card = jQuery('<div class="inspiration-card"></div>');
+                    const previewContainer = jQuery('<div class="inspiration-card-preview"></div>');
+                    const title = jQuery('<div class="inspiration-card-title"></div>');
+                    const description = jQuery('<div class="inspiration-card-description"></div>');
+                    const author = jQuery('<div class="inspiration-card-author"></div>');
+                    title.text(inspiration.title);
+                    description.text(inspiration.description);
+                    author.text(inspiration.author);
+                    card.append(previewContainer);
+                    card.append(title);
+                    card.append(description);
+                    card.append(author);
+                    card.data("inspiration", inspiration);
+                    modalGrid.append(card);
+                    renderPreview(profile, inspiration, previewContainer);
+                }
+            };
+
+            // updates the panel with the inspirations from
+            // the given profile, showing or hiding as needed
+            if (action === "update") {
+                currentProfile = options;
+                context.data("_profile", currentProfile);
+                renderPanel(currentProfile);
+                return;
+            }
+
+            // toggles the panel between expanded and minimized
+            // states using a smooth max-height transition
+            panelTitle.click(function() {
+                const bodyEl = panelBody.get(0);
+                const minimized = context.hasClass("minimized");
+                if (minimized) {
+                    context.removeClass("minimized");
+                    const height = bodyEl.scrollHeight;
+                    panelBody.css("max-height", "0px");
+                    panelTitle.css("margin-bottom", "0px");
+                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    panelBody.css("max-height", height + "px");
+                    panelTitle.css("margin-bottom", "");
+                    panelToggle.text("▾");
+                    panelBody.one("transitionend", function() {
+                        panelBody.css("max-height", "");
+                        panelBody.css("overflow", "visible");
+                    });
+                } else {
+                    panelBody.css("overflow", "");
+                    panelBody.css("max-height", bodyEl.scrollHeight + "px");
+                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    panelBody.css("max-height", "0px");
+                    panelTitle.css("margin-bottom", "0px");
+                    panelToggle.text("▸");
+                    panelBody.one("transitionend", function() {
+                        context.addClass("minimized");
+                    });
+                }
+            });
+
+            // registers click handlers for the panel thumbnails
+            // to emit an apply event with the selected inspiration
+            thumbnails.on("click", ".inspiration-thumb", function() {
+                const inspiration = jQuery(this).data("inspiration");
+                if (inspiration) {
+                    context.triggerHandler("apply", [inspiration]);
+                }
+            });
+
+            // registers for the view all button to open the
+            // full-screen inspirations modal with all entries
+            buttonViewAll.click(function() {
+                const profile = context.data("_profile");
+                if (!profile || !profile._inspirations) return;
+                modalSearchInput.val("");
+                renderModal(profile);
+                modalOverlay.modal("show");
+            });
+
+            // registers click handlers for the modal inspiration
+            // cards to emit an apply event and close the modal
+            modalGrid.on("click", ".inspiration-card", function() {
+                const inspiration = jQuery(this).data("inspiration");
+                if (inspiration) {
+                    context.triggerHandler("apply", [inspiration]);
+                    modalOverlay.modal("hide");
+                }
+            });
+
+            // registers for the search input to filter the
+            // inspirations grid in the full-screen modal
+            modalSearchInput.bind("input", function() {
+                const profile = context.data("_profile");
+                const query = jQuery(this).val();
+                renderModal(profile, query);
             });
         });
 
@@ -613,324 +911,6 @@ const countLines = function(text) {
             jQuery(".input[name=node]", context).val(localStorage.getItem("node") || "");
             jQuery(".input[name=printer]", context).val(localStorage.getItem("printer") || "");
             jQuery(".input[name=key]", context).val(localStorage.getItem("key") || "");
-        });
-
-        return this;
-    };
-})(jQuery);
-
-(function(jQuery) {
-    jQuery.fn.toast = function(action, message) {
-        const elements = jQuery(this);
-
-        elements.each(function() {
-            const context = jQuery(this);
-
-            if (action === "show") {
-                context.text(message);
-                context.addClass("visible");
-                setTimeout(function() {
-                    context.removeClass("visible");
-                }, 3000);
-            }
-        });
-
-        return this;
-    };
-})(jQuery);
-
-(function(jQuery) {
-    jQuery.fn.formconsole = function() {
-        const elements = jQuery(this);
-
-        elements.each(function() {
-            const context = jQuery(this);
-            const button = jQuery(".button", context);
-            const command = jQuery(".input[name=command]", context);
-
-            button.click(function() {
-                const commandValue = command.val();
-                try {
-                    // eslint-disable-next-line no-eval
-                    const result = eval(commandValue);
-                    if (result) alert(result);
-                    else alert("executed");
-                } catch (err) {
-                    alert(err);
-                }
-                command.val("");
-            });
-        });
-
-        return this;
-    };
-})(jQuery);
-
-(function(jQuery) {
-    jQuery.fn.inspirationpanel = function(action, options) {
-        const elements = jQuery(this);
-
-        elements.each(function() {
-            const context = jQuery(this);
-            const panelTitle = jQuery(".inspiration-panel-title", context);
-            const panelBody = jQuery(".inspiration-panel-body", context);
-            const panelToggle = jQuery(".inspiration-panel-toggle", context);
-            const thumbnails = jQuery(".inspiration-thumbnails", context);
-            const buttonViewAll = jQuery(".button-view-all", context);
-            const modalOverlay = jQuery(".modal-overlay-inspirations");
-            const modalGrid = jQuery(".modal-inspirations-grid", modalOverlay);
-            const modalSearchInput = jQuery(".modal-search-input", modalOverlay);
-
-            // stores the current profile reference and scale
-            // constants for use across rendering functions
-            let currentProfile = context.data("_profile") || null;
-            const viewportScale = (options && options.viewport_scale) || 3;
-            const fontSizeScale = (options && options.font_size_scale) || 1.3;
-
-            // renders a single inspiration thumbnail as a miniature
-            // viewport preview with the text pre-rendered inside it
-            const renderPreview = function(profile, inspiration, container) {
-                const width = profile.width * viewportScale;
-                const height = profile.height * viewportScale;
-                const padding = inspiration.padding ||
-                    profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
-                const fontSize = inspiration.font_size || 3;
-                const scaledSize = fontSize * viewportScale * fontSizeScale;
-
-                const preview = jQuery('<div class="viewport-preview profile-active"></div>');
-                preview.css({ width: width + "px", height: height + "px" });
-
-                // applies the background image if the profile has one
-                if (profile.background) {
-                    preview.css({
-                        "background-image": "url('/static/profiles/" + profile.background + "')",
-                        "background-size": width + "px " + height + "px",
-                        "background-repeat": "no-repeat",
-                        "background-position": "0px 0px"
-                    });
-                }
-
-                // positions the text container over the safe drawable area
-                const safeX = padding.left * viewportScale;
-                const safeY = padding.top * viewportScale;
-                const safeW = width - (padding.left + padding.right) * viewportScale;
-                const safeH = height - (padding.top + padding.bottom) * viewportScale;
-                const viewer = jQuery('<div class="viewer-container"></div>');
-                viewer.css({
-                    position: "absolute",
-                    left: safeX + "px",
-                    top: safeY + "px",
-                    width: safeW + "px",
-                    height: safeH + "px",
-                    margin: "0px",
-                    padding: "0px",
-                    border: "none",
-                    "min-width": "0px",
-                    "font-size": scaledSize + "px",
-                    "line-height": Math.round(scaledSize * 1.2) + "px",
-                    "text-align": inspiration.align || "center",
-                    "align-content": "center",
-                    display: "flex",
-                    "flex-wrap": "wrap",
-                    "justify-content":
-                        inspiration.align === "left"
-                            ? "flex-start"
-                            : inspiration.align === "right"
-                            ? "flex-end"
-                            : "center",
-                    overflow: "hidden"
-                });
-
-                // renders the text items inside the viewer container
-                // expanding multi-character entries into individual spans
-                for (let i = 0; i < inspiration.text.length; i++) {
-                    const font = inspiration.text[i][0];
-                    const chars = inspiration.text[i][1];
-                    if (chars === "\n") {
-                        viewer.append('<div class="newline"></div>');
-                    } else {
-                        for (let j = 0; j < chars.length; j++) {
-                            const value = chars[j] === " " ? "&nbsp;" : chars[j];
-                            viewer.append(
-                                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-                            );
-                        }
-                    }
-                }
-
-                preview.append(viewer);
-
-                // scales the preview to fit inside the container
-                const containerWidth = container.width() || 72;
-                const scale = containerWidth / width;
-                preview.css({
-                    transform: "scale(" + scale + ")",
-                    "transform-origin": "0 0"
-                });
-                container.css({
-                    height: Math.ceil(height * scale) + "px",
-                    position: "relative"
-                });
-
-                container.append(preview);
-            };
-
-            // renders the inspiration thumbnails in the side panel
-            // showing the first 3 entries from the profile inspirations
-            const renderPanel = function(profile) {
-                thumbnails.empty();
-
-                if (!profile || !profile._inspirations || profile._inspirations.length === 0) {
-                    context.removeClass("visible");
-                    return;
-                }
-
-                const entries = profile._inspirations.slice(0, 3);
-                for (let i = 0; i < entries.length; i++) {
-                    const inspiration = entries[i];
-                    const thumb = jQuery('<div class="inspiration-thumb"></div>');
-                    const previewContainer = jQuery(
-                        '<div class="inspiration-thumb-preview"></div>'
-                    );
-                    const title = jQuery('<div class="inspiration-thumb-title"></div>');
-                    title.text(inspiration.title);
-                    thumb.append(previewContainer);
-                    thumb.append(title);
-                    thumb.data("inspiration", inspiration);
-                    thumbnails.append(thumb);
-                    renderPreview(profile, inspiration, previewContainer);
-                }
-
-                context.addClass("visible");
-                panelBody.css("overflow", "visible");
-            };
-
-            // renders all inspirations in the full-screen modal grid
-            // with viewport previews and metadata for each entry
-            const renderModal = function(profile, filter) {
-                modalGrid.empty();
-
-                if (!profile || !profile._inspirations) return;
-
-                const query = (filter || "").toLowerCase();
-                const entries = profile._inspirations.filter(function(insp) {
-                    if (!query) return true;
-                    const haystack = [
-                        insp.title || "",
-                        insp.description || "",
-                        insp.author || "",
-                        (insp.text || [])
-                            .map(function(t) {
-                                return t[1];
-                            })
-                            .join("")
-                    ]
-                        .join(" ")
-                        .toLowerCase();
-                    return haystack.indexOf(query) !== -1;
-                });
-
-                if (entries.length === 0) {
-                    modalGrid.append('<div class="inspiration-empty">No inspirations found.</div>');
-                    return;
-                }
-
-                for (let i = 0; i < entries.length; i++) {
-                    const inspiration = entries[i];
-                    const card = jQuery('<div class="inspiration-card"></div>');
-                    const previewContainer = jQuery('<div class="inspiration-card-preview"></div>');
-                    const title = jQuery('<div class="inspiration-card-title"></div>');
-                    const description = jQuery('<div class="inspiration-card-description"></div>');
-                    const author = jQuery('<div class="inspiration-card-author"></div>');
-                    title.text(inspiration.title);
-                    description.text(inspiration.description);
-                    author.text(inspiration.author);
-                    card.append(previewContainer);
-                    card.append(title);
-                    card.append(description);
-                    card.append(author);
-                    card.data("inspiration", inspiration);
-                    modalGrid.append(card);
-                    renderPreview(profile, inspiration, previewContainer);
-                }
-            };
-
-            // updates the panel with the inspirations from
-            // the given profile, showing or hiding as needed
-            if (action === "update") {
-                currentProfile = options;
-                context.data("_profile", currentProfile);
-                renderPanel(currentProfile);
-                return;
-            }
-
-            // toggles the panel between expanded and minimized
-            // states using a smooth max-height transition
-            panelTitle.click(function() {
-                const bodyEl = panelBody.get(0);
-                const minimized = context.hasClass("minimized");
-                if (minimized) {
-                    context.removeClass("minimized");
-                    const height = bodyEl.scrollHeight;
-                    panelBody.css("max-height", "0px");
-                    panelTitle.css("margin-bottom", "0px");
-                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
-                    panelBody.css("max-height", height + "px");
-                    panelTitle.css("margin-bottom", "");
-                    panelToggle.text("▾");
-                    panelBody.one("transitionend", function() {
-                        panelBody.css("max-height", "");
-                        panelBody.css("overflow", "visible");
-                    });
-                } else {
-                    panelBody.css("overflow", "");
-                    panelBody.css("max-height", bodyEl.scrollHeight + "px");
-                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
-                    panelBody.css("max-height", "0px");
-                    panelTitle.css("margin-bottom", "0px");
-                    panelToggle.text("▸");
-                    panelBody.one("transitionend", function() {
-                        context.addClass("minimized");
-                    });
-                }
-            });
-
-            // registers click handlers for the panel thumbnails
-            // to emit an apply event with the selected inspiration
-            thumbnails.on("click", ".inspiration-thumb", function() {
-                const inspiration = jQuery(this).data("inspiration");
-                if (inspiration) {
-                    context.triggerHandler("apply", [inspiration]);
-                }
-            });
-
-            // registers for the view all button to open the
-            // full-screen inspirations modal with all entries
-            buttonViewAll.click(function() {
-                const profile = context.data("_profile");
-                if (!profile || !profile._inspirations) return;
-                modalSearchInput.val("");
-                renderModal(profile);
-                modalOverlay.modal("show");
-            });
-
-            // registers click handlers for the modal inspiration
-            // cards to emit an apply event and close the modal
-            modalGrid.on("click", ".inspiration-card", function() {
-                const inspiration = jQuery(this).data("inspiration");
-                if (inspiration) {
-                    context.triggerHandler("apply", [inspiration]);
-                    modalOverlay.modal("hide");
-                }
-            });
-
-            // registers for the search input to filter the
-            // inspirations grid in the full-screen modal
-            modalSearchInput.bind("input", function() {
-                const profile = context.data("_profile");
-                const query = jQuery(this).val();
-                renderModal(profile, query);
-            });
         });
 
         return this;
@@ -1444,6 +1424,248 @@ const countLines = function(text) {
     };
 })(jQuery);
 
+(function(jQuery) {
+    jQuery.fn.toast = function(action, message) {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+
+            if (action === "show") {
+                context.text(message);
+                context.addClass("visible");
+                setTimeout(function() {
+                    context.removeClass("visible");
+                }, 3000);
+            }
+        });
+
+        return this;
+    };
+})(jQuery);
+
+// Viewport preview plugin that manages the visual rendering
+// of the engraving preview area including SVG bounds, safe
+// drawable area, background images, rulers, and zoom scaling.
+// Operates on a .viewport-preview element and discovers its
+// children (.viewport-svg, .viewer-container, .ruler-horizontal,
+// .ruler-vertical) by class name convention.
+(function(jQuery) {
+    jQuery.fn.viewportpreview = function(action, options) {
+        const elements = jQuery(this);
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const svg = jQuery(".viewport-svg", context);
+            const container = jQuery(".viewer-container", context);
+            const rulerHorizontal = jQuery(".ruler-horizontal", context);
+            const rulerVertical = jQuery(".ruler-vertical", context);
+
+            // renders the viewport preview SVG based on the given
+            // profile definition including bounds and safe drawable area
+            if (action === "render") {
+                const profile = options.profile;
+                const scale = options.scale;
+                const padding = options.padding;
+
+                if (!profile) {
+                    context.removeClass("profile-active");
+                    context.css({
+                        width: "",
+                        height: "",
+                        transform: "",
+                        "margin-bottom": "",
+                        "margin-right": "",
+                        "background-image": "",
+                        "background-size": "",
+                        "background-repeat": "",
+                        "background-position": ""
+                    });
+                    container.css({
+                        position: "",
+                        left: "",
+                        top: "",
+                        width: "",
+                        height: "",
+                        margin: "",
+                        padding: "",
+                        border: "",
+                        "min-width": ""
+                    });
+                    return;
+                }
+
+                const width = profile.width * scale;
+                const height = profile.height * scale;
+                const showBounds = profile.preview ? profile.preview.show_bounds : false;
+                const showSafeArea = profile.preview ? profile.preview.show_safe_area : false;
+
+                const svgElement = svg.get(0);
+                svgElement.setAttribute("width", width);
+                svgElement.setAttribute("height", height);
+                svgElement.setAttribute("viewBox", "0 0 " + width + " " + height);
+
+                // clears existing SVG content before re-rendering
+                while (svgElement.firstChild) {
+                    svgElement.removeChild(svgElement.firstChild);
+                }
+
+                // renders the outer bounds as a dashed rectangle
+                if (showBounds) {
+                    const bounds = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    bounds.setAttribute("x", 0);
+                    bounds.setAttribute("y", 0);
+                    bounds.setAttribute("width", width);
+                    bounds.setAttribute("height", height);
+                    bounds.setAttribute("fill", "none");
+                    bounds.setAttribute("stroke", "#2d2d2d");
+                    bounds.setAttribute("stroke-width", 2);
+                    bounds.setAttribute("stroke-dasharray", "6 3");
+                    svgElement.appendChild(bounds);
+                }
+
+                // renders the safe drawable area defined by padding
+                if (showSafeArea) {
+                    const safeX = padding.left * scale;
+                    const safeY = padding.top * scale;
+                    const safeW = width - (padding.left + padding.right) * scale;
+                    const safeH = height - (padding.top + padding.bottom) * scale;
+                    const safe = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    safe.setAttribute("x", safeX);
+                    safe.setAttribute("y", safeY);
+                    safe.setAttribute("width", safeW);
+                    safe.setAttribute("height", safeH);
+                    safe.setAttribute("fill", "rgba(45, 45, 45, 0.05)");
+                    safe.setAttribute("stroke", "#9d9d9d");
+                    safe.setAttribute("stroke-width", 1);
+                    safe.setAttribute("stroke-dasharray", "4 2");
+                    svgElement.appendChild(safe);
+                }
+
+                // positions the viewer container over the safe drawable
+                // area so that text renders inside the viewport preview
+                const safeX = padding.left * scale;
+                const safeY = padding.top * scale;
+                const safeW = width - (padding.left + padding.right) * scale;
+                const safeH = height - (padding.top + padding.bottom) * scale;
+                container.css({
+                    position: "absolute",
+                    left: safeX + "px",
+                    top: safeY + "px",
+                    width: safeW + "px",
+                    height: safeH + "px",
+                    margin: "0px",
+                    padding: "0px",
+                    border: "none",
+                    "min-width": "0px"
+                });
+
+                // applies the background image behind the viewport so that
+                // the user can preview the engraving on a realistic surface
+                if (profile.background) {
+                    context.css({
+                        "background-image": "url('/static/profiles/" + profile.background + "')",
+                        "background-size": width + "px " + height + "px",
+                        "background-repeat": "no-repeat",
+                        "background-position": "0px 0px"
+                    });
+                } else {
+                    context.css({
+                        "background-image": "",
+                        "background-size": "",
+                        "background-repeat": "",
+                        "background-position": ""
+                    });
+                }
+
+                context.css({ width: width + "px", height: height + "px" });
+                context.addClass("profile-active");
+                return;
+            }
+
+            // renders the horizontal and vertical rulers adjacent to
+            // the viewport preview based on the profile dimensions
+            if (action === "rulers") {
+                const profile = options.profile;
+                const scale = options.scale;
+                const showRulers = options.showRulers !== false;
+
+                rulerHorizontal.empty();
+                rulerVertical.empty();
+
+                if (!profile) return;
+
+                const width = profile.width * scale;
+                const height = profile.height * scale;
+                const unit = profile.unit || "mm";
+                const step = 5;
+
+                rulerHorizontal.css("width", width + "px");
+                rulerVertical.css("height", height + "px");
+
+                for (let mm = 0; mm <= profile.width; mm += step) {
+                    const px = mm * scale;
+                    const isMajor = mm % 10 === 0;
+                    const tick = jQuery('<div class="ruler-tick"></div>');
+                    tick.addClass(isMajor ? "major" : "minor");
+                    tick.css("left", px + "px");
+                    tick.append('<div class="ruler-line"></div>');
+                    if (isMajor) {
+                        tick.append('<span class="ruler-label">' + mm + "</span>");
+                    }
+                    rulerHorizontal.append(tick);
+                }
+                rulerHorizontal.append('<span class="ruler-unit">' + unit + "</span>");
+
+                for (let mm = 0; mm <= profile.height; mm += step) {
+                    const px = mm * scale;
+                    const isMajor = mm % 10 === 0;
+                    const tick = jQuery('<div class="ruler-tick"></div>');
+                    tick.addClass(isMajor ? "major" : "minor");
+                    tick.css("top", px + "px");
+                    tick.append('<div class="ruler-line"></div>');
+                    if (isMajor) {
+                        tick.append('<span class="ruler-label">' + mm + "</span>");
+                    }
+                    rulerVertical.append(tick);
+                }
+                rulerVertical.append('<span class="ruler-unit">' + unit + "</span>");
+
+                // applies the current rulers visibility based on
+                // the provided showRulers option
+                if (!showRulers) {
+                    rulerHorizontal.hide();
+                    rulerVertical.hide();
+                }
+                return;
+            }
+
+            // applies the given zoom level using a CSS transform
+            // to scale the viewport preview and compensating the
+            // layout margins for the scaled size
+            if (action === "zoom") {
+                const zoom = options.zoom || 1;
+                const width = parseFloat(context.css("width")) || 0;
+                const height = parseFloat(context.css("height")) || 0;
+                const extraWidth = width * (zoom - 1);
+                const extraHeight = height * (zoom - 1);
+                context.css({
+                    transform: "scale(" + zoom + ")",
+                    "-o-transform": "scale(" + zoom + ")",
+                    "-ms-transform": "scale(" + zoom + ")",
+                    "-moz-transform": "scale(" + zoom + ")",
+                    "-khtml-transform": "scale(" + zoom + ")",
+                    "-webkit-transform": "scale(" + zoom + ")",
+                    "margin-bottom": 16 * zoom + extraHeight + "px",
+                    "margin-right": extraWidth + "px"
+                });
+            }
+        });
+
+        return this;
+    };
+})(jQuery);
+
 jQuery(document).ready(function() {
     // runs a series of selections over the current viewport
     const body = jQuery("body");
@@ -1514,7 +1736,7 @@ jQuery(document).ready(function() {
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeInput = jQuery(".font-size-input");
     const fontSizeMode = jQuery(".font-size-mode");
-    const viewportPreview = jQuery(".viewport-preview");
+    const viewportPreview = jQuery(".viewport > .main-container > .viewport-preview");
     const viewportSvg = jQuery(".viewport-svg");
     const rulerHorizontal = jQuery(".ruler-horizontal");
     const rulerVertical = jQuery(".ruler-vertical");
@@ -1863,197 +2085,32 @@ jQuery(document).ready(function() {
         marginBottom.val(padding.bottom);
     };
 
-    // renders the viewport preview SVG based on the selected
-    // profile definition including bounds and safe drawable area
+    // renders the viewport preview using the viewport preview
+    // plugin with the current profile and margin configuration
     const renderViewportPreview = function(profile) {
-        if (!profile) {
-            viewportPreview.removeClass("profile-active");
-            viewportPreview.css({
-                width: "",
-                height: "",
-                transform: "",
-                "margin-bottom": "",
-                "margin-right": "",
-                "background-image": "",
-                "background-size": "",
-                "background-repeat": "",
-                "background-position": ""
-            });
-            viewportContainer.css({
-                position: "",
-                left: "",
-                top: "",
-                width: "",
-                height: "",
-                margin: "",
-                padding: "",
-                border: "",
-                "min-width": ""
-            });
-            return;
-        }
-
-        const width = profile.width * VIEWPORT_SCALE;
-        const height = profile.height * VIEWPORT_SCALE;
-        const showBounds = profile.preview ? profile.preview.show_bounds : false;
-        const showSafeArea = profile.preview ? profile.preview.show_safe_area : false;
-        const padding = getMargins();
-
-        const svg = viewportSvg.get(0);
-        svg.setAttribute("width", width);
-        svg.setAttribute("height", height);
-        svg.setAttribute("viewBox", "0 0 " + width + " " + height);
-
-        // clears existing SVG content before re-rendering
-        while (svg.firstChild) {
-            svg.removeChild(svg.firstChild);
-        }
-
-        // renders the outer bounds as a dashed rectangle
-        if (showBounds) {
-            const bounds = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            bounds.setAttribute("x", 0);
-            bounds.setAttribute("y", 0);
-            bounds.setAttribute("width", width);
-            bounds.setAttribute("height", height);
-            bounds.setAttribute("fill", "none");
-            bounds.setAttribute("stroke", "#2d2d2d");
-            bounds.setAttribute("stroke-width", 2);
-            bounds.setAttribute("stroke-dasharray", "6 3");
-            svg.appendChild(bounds);
-        }
-
-        // renders the safe drawable area defined by padding
-        if (showSafeArea) {
-            const safeX = padding.left * VIEWPORT_SCALE;
-            const safeY = padding.top * VIEWPORT_SCALE;
-            const safeW = width - (padding.left + padding.right) * VIEWPORT_SCALE;
-            const safeH = height - (padding.top + padding.bottom) * VIEWPORT_SCALE;
-            const safe = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            safe.setAttribute("x", safeX);
-            safe.setAttribute("y", safeY);
-            safe.setAttribute("width", safeW);
-            safe.setAttribute("height", safeH);
-            safe.setAttribute("fill", "rgba(45, 45, 45, 0.05)");
-            safe.setAttribute("stroke", "#9d9d9d");
-            safe.setAttribute("stroke-width", 1);
-            safe.setAttribute("stroke-dasharray", "4 2");
-            svg.appendChild(safe);
-        }
-
-        // positions the viewer container over the safe drawable
-        // area so that text renders inside the viewport preview
-        const safeX = padding.left * VIEWPORT_SCALE;
-        const safeY = padding.top * VIEWPORT_SCALE;
-        const safeW = width - (padding.left + padding.right) * VIEWPORT_SCALE;
-        const safeH = height - (padding.top + padding.bottom) * VIEWPORT_SCALE;
-        viewportContainer.css({
-            position: "absolute",
-            left: safeX + "px",
-            top: safeY + "px",
-            width: safeW + "px",
-            height: safeH + "px",
-            margin: "0px",
-            padding: "0px",
-            border: "none",
-            "min-width": "0px"
+        viewportPreview.viewportpreview("render", {
+            profile: profile,
+            scale: VIEWPORT_SCALE,
+            padding: getMargins()
         });
-
-        // applies the background image behind the viewport so that
-        // the user can preview the engraving on a realistic surface
-        if (profile.background) {
-            viewportPreview.css({
-                "background-image": "url('/static/profiles/" + profile.background + "')",
-                "background-size": width + "px " + height + "px",
-                "background-repeat": "no-repeat",
-                "background-position": "0px 0px"
-            });
-        } else {
-            viewportPreview.css({
-                "background-image": "",
-                "background-size": "",
-                "background-repeat": "",
-                "background-position": ""
-            });
-        }
-
-        viewportPreview.css({ width: width + "px", height: height + "px" });
-        viewportPreview.addClass("profile-active");
     };
 
-    // renders the horizontal and vertical rulers adjacent to
-    // the viewport preview based on the profile dimensions
+    // renders the rulers using the viewport preview plugin
+    // with the current profile and rulers visibility state
     const renderRulers = function(profile) {
-        rulerHorizontal.empty();
-        rulerVertical.empty();
-
-        if (!profile) return;
-
-        const width = profile.width * VIEWPORT_SCALE;
-        const height = profile.height * VIEWPORT_SCALE;
-        const unit = profile.unit || "mm";
-        const step = 5;
-
-        rulerHorizontal.css("width", width + "px");
-        rulerVertical.css("height", height + "px");
-
-        for (let mm = 0; mm <= profile.width; mm += step) {
-            const px = mm * VIEWPORT_SCALE;
-            const isMajor = mm % 10 === 0;
-            const tick = jQuery('<div class="ruler-tick"></div>');
-            tick.addClass(isMajor ? "major" : "minor");
-            tick.css("left", px + "px");
-            tick.append('<div class="ruler-line"></div>');
-            if (isMajor) {
-                tick.append('<span class="ruler-label">' + mm + "</span>");
-            }
-            rulerHorizontal.append(tick);
-        }
-        rulerHorizontal.append('<span class="ruler-unit">' + unit + "</span>");
-
-        for (let mm = 0; mm <= profile.height; mm += step) {
-            const px = mm * VIEWPORT_SCALE;
-            const isMajor = mm % 10 === 0;
-            const tick = jQuery('<div class="ruler-tick"></div>');
-            tick.addClass(isMajor ? "major" : "minor");
-            tick.css("top", px + "px");
-            tick.append('<div class="ruler-line"></div>');
-            if (isMajor) {
-                tick.append('<span class="ruler-label">' + mm + "</span>");
-            }
-            rulerVertical.append(tick);
-        }
-        rulerVertical.append('<span class="ruler-unit">' + unit + "</span>");
-
-        // applies the current rulers visibility based on the
-        // show rulers checkbox state in the viewport options
-        const showRulers = rulersMode.prop("checked");
-        if (!showRulers) {
-            rulerHorizontal.hide();
-            rulerVertical.hide();
-        }
+        viewportPreview.viewportpreview("rulers", {
+            profile: profile,
+            scale: VIEWPORT_SCALE,
+            showRulers: rulersMode.prop("checked")
+        });
     };
 
     // applies the current zoom level from the zoom slider
-    // using a CSS transform to scale the viewport preview
-    // and compensating the layout margins for the scaled size
+    // using the viewport preview plugin to scale the preview
     const applyZoom = function() {
         const zoom = parseFloat(zoomRange.val()) || 1;
         zoomValue.text(zoom + "x");
-        const width = parseFloat(viewportPreview.css("width")) || 0;
-        const height = parseFloat(viewportPreview.css("height")) || 0;
-        const extraWidth = width * (zoom - 1);
-        const extraHeight = height * (zoom - 1);
-        viewportPreview.css({
-            transform: "scale(" + zoom + ")",
-            "-o-transform": "scale(" + zoom + ")",
-            "-ms-transform": "scale(" + zoom + ")",
-            "-moz-transform": "scale(" + zoom + ")",
-            "-khtml-transform": "scale(" + zoom + ")",
-            "-webkit-transform": "scale(" + zoom + ")",
-            "margin-bottom": 16 * zoom + extraHeight + "px",
-            "margin-right": extraWidth + "px"
-        });
+        viewportPreview.viewportpreview("zoom", { zoom: zoom });
     };
 
     // applies an inspiration configuration to the viewport

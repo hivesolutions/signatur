@@ -5,30 +5,31 @@ const STATIC = path.join(__dirname, "..", "static");
 
 const CSS_FILES = [
     "css/layout.css",
-    "css/gateway.css",
-    "css/signature.css",
-    "css/viewport.css",
-    "css/keyboard.css",
     "css/collapsible.css",
-    "css/profile.css",
-    "css/modal.css",
+    "css/console.css",
+    "css/gateway.css",
     "css/inspiration.css",
-    "css/toast.css",
+    "css/keyboard.css",
+    "css/modal.css",
+    "css/profile.css",
     "css/report.css",
+    "css/signature.css",
     "css/text.css",
-    "css/console.css"
+    "css/toast.css",
+    "css/viewport.css"
 ];
 
 const JS_FILES = [
     "js/util.js",
     "js/plugins/collapsible.js",
+    "js/plugins/console.js",
     "js/plugins/fonts.js",
+    "js/plugins/inspiration.js",
     "js/plugins/keyboard.js",
     "js/plugins/modal.js",
-    "js/plugins/toast.js",
-    "js/plugins/console.js",
-    "js/plugins/inspiration.js",
     "js/plugins/texteditor.js",
+    "js/plugins/toast.js",
+    "js/plugins/viewportpreview.js",
     "js/main.js"
 ];
 

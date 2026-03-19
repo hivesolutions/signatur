@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Shared `.options-input` CSS class for consistent number input styling across controls
 * Per-profile jig instructions modal with images, accessible via "Instructions" link in options panel
 * Profile variants support with dropdown selector for sub-type overrides (padding, background, font size)
+* Viewport preview jQuery plugin (`plugins/viewportpreview.js`) for SVG rendering, rulers, and zoom
 * `AGENTS.md` with project conventions for building, testing, plugins, and commit messages
 
 ### Fixed
