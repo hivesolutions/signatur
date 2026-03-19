@@ -8,6 +8,20 @@ Always rebuild bundles before committing to ensure `bundle.js` and `bundle.css` 
 npm run build
 ```
 
+## Linting
+
+Run the ESLint linter before committing new code:
+
+```bash
+npm run lint
+```
+
+To automatically fix linting issues:
+
+```bash
+npm run lint-fix
+```
+
 ## Testing
 
 Run the mocha test suite before committing new code:
@@ -98,6 +112,7 @@ version: 0.8.0
 Before committing, ensure that the following items check:
 
 - [ ] Bundles are rebuilt: `npm run build`
+- [ ] Linting passes: `npm run lint`
 - [ ] Tests pass: `npm test`
 - [ ] CHANGELOG.md is updated in [Unreleased] section
 - [ ] No debugging console.log statements or commented-out code
