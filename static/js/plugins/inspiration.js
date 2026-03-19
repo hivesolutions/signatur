@@ -199,14 +199,14 @@
             // toggles the panel between expanded and minimized
             // states using a smooth max-height transition
             panelTitle.click(function() {
-                const bodyEl = panelBody.get(0);
+                const bodyElement = panelBody.get(0);
                 const minimized = context.hasClass("minimized");
                 if (minimized) {
                     context.removeClass("minimized");
-                    const height = bodyEl.scrollHeight;
+                    const height = bodyElement.scrollHeight;
                     panelBody.css("max-height", "0px");
                     panelTitle.css("margin-bottom", "0px");
-                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
                     panelBody.css("max-height", height + "px");
                     panelTitle.css("margin-bottom", "");
                     panelToggle.text("▾");
@@ -216,8 +216,8 @@
                     });
                 } else {
                     panelBody.css("overflow", "");
-                    panelBody.css("max-height", bodyEl.scrollHeight + "px");
-                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    panelBody.css("max-height", bodyElement.scrollHeight + "px");
+                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
                     panelBody.css("max-height", "0px");
                     panelTitle.css("margin-bottom", "0px");
                     panelToggle.text("▸");

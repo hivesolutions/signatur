@@ -428,14 +428,14 @@ const countLines = function(text) {
             // toggles the panel between expanded and minimized
             // states using a smooth max-height transition
             panelTitle.click(function() {
-                const bodyEl = panelBody.get(0);
+                const bodyElement = panelBody.get(0);
                 const minimized = context.hasClass("minimized");
                 if (minimized) {
                     context.removeClass("minimized");
-                    const height = bodyEl.scrollHeight;
+                    const height = bodyElement.scrollHeight;
                     panelBody.css("max-height", "0px");
                     panelTitle.css("margin-bottom", "0px");
-                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
                     panelBody.css("max-height", height + "px");
                     panelTitle.css("margin-bottom", "");
                     panelToggle.text("▾");
@@ -445,8 +445,8 @@ const countLines = function(text) {
                     });
                 } else {
                     panelBody.css("overflow", "");
-                    panelBody.css("max-height", bodyEl.scrollHeight + "px");
-                    bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
+                    panelBody.css("max-height", bodyElement.scrollHeight + "px");
+                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
                     panelBody.css("max-height", "0px");
                     panelTitle.css("margin-bottom", "0px");
                     panelToggle.text("▸");
@@ -2147,9 +2147,9 @@ jQuery(document).ready(function() {
             }
         }
         if (primaryFont) {
-            const fontEl = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
-            if (fontEl.length === 0) return;
-            if (!fontEl.hasClass("active")) fontEl.click();
+            const fontElement = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
+            if (fontElement.length === 0) return;
+            if (!fontElement.hasClass("active")) fontElement.click();
         }
 
         // applies the font size from the inspiration and
@@ -2713,8 +2713,8 @@ jQuery(document).ready(function() {
     const restoreFont = function() {
         const urlFont = urlParams.get("font");
         if (!urlFont) return;
-        const fontEl = fontsContainer.find('.font[data-font="' + urlFont + '"]');
-        if (fontEl.length > 0) fontEl.click();
+        const fontElement = fontsContainer.find('.font[data-font="' + urlFont + '"]');
+        if (fontElement.length > 0) fontElement.click();
     };
 
     // initializes the text data array from server-rendered

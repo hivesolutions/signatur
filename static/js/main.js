@@ -479,9 +479,9 @@ jQuery(document).ready(function() {
             }
         }
         if (primaryFont) {
-            const fontEl = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
-            if (fontEl.length === 0) return;
-            if (!fontEl.hasClass("active")) fontEl.click();
+            const fontElement = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
+            if (fontElement.length === 0) return;
+            if (!fontElement.hasClass("active")) fontElement.click();
         }
 
         // applies the font size from the inspiration and
@@ -1045,8 +1045,8 @@ jQuery(document).ready(function() {
     const restoreFont = function() {
         const urlFont = urlParams.get("font");
         if (!urlFont) return;
-        const fontEl = fontsContainer.find('.font[data-font="' + urlFont + '"]');
-        if (fontEl.length > 0) fontEl.click();
+        const fontElement = fontsContainer.find('.font[data-font="' + urlFont + '"]');
+        if (fontElement.length > 0) fontElement.click();
     };
 
     // initializes the text data array from server-rendered
