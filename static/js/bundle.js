@@ -1515,7 +1515,7 @@ jQuery(document).ready(function() {
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
-    const fontSizeValue = jQuery(".font-size-value");
+    const fontSizeInput = jQuery(".font-size-input");
     const fontSizeMode = jQuery(".font-size-mode");
     const viewportPreview = jQuery(".viewport-preview");
     const viewportSvg = jQuery(".viewport-svg");
@@ -1659,7 +1659,7 @@ jQuery(document).ready(function() {
             const unit = currentProfile.unit || "";
             specs.profile = currentProfile.name;
             specs.viewport = width + " x " + height + (unit ? " " + unit : "");
-            specs.font_size = fontSizeRange.val() + (unit ? " " + unit : "");
+            specs.font_size = fontSizeInput.val() + (unit ? " " + unit : "");
             const margins = getMargins();
             specs.margins =
                 margins.left +
@@ -1780,12 +1780,12 @@ jQuery(document).ready(function() {
             const urlFontSizeMode = urlParams.get("font_size_mode");
             if (urlFontSizeMode === "automatic") {
                 fontSizeMode.prop("checked", true);
-                fontSizeRange.prop("disabled", true);
+                fontSizeInput.prop("disabled", true);
             }
             const urlFontSize = urlParams.get("font_size");
             if (urlFontSize) {
                 fontSizeRange.val(urlFontSize);
-                fontSizeValue.text(urlFontSize);
+                fontSizeInput.val(urlFontSize);
             }
             applyFontSize();
 
@@ -2104,8 +2104,9 @@ jQuery(document).ready(function() {
         if (inspiration.font_size) {
             fontSizeMode.prop("checked", false);
             fontSizeRange.prop("disabled", false);
+            fontSizeInput.prop("disabled", false);
             fontSizeRange.val(inspiration.font_size);
-            fontSizeValue.text(inspiration.font_size);
+            fontSizeInput.val(inspiration.font_size);
         }
 
         // applies the padding from the inspiration or falls
@@ -2192,13 +2193,20 @@ jQuery(document).ready(function() {
 
         fontSizeMode.prop("checked", isAutomatic);
         fontSizeRange.prop("disabled", isAutomatic);
+        fontSizeInput.prop("disabled", isAutomatic);
 
-        if (fs.min !== undefined) fontSizeRange.attr("min", fs.min);
-        if (fs.max !== undefined) fontSizeRange.attr("max", fs.max);
-        if (fs.step !== undefined) fontSizeRange.attr("step", fs.step);
+        const min = fs.min !== undefined ? fs.min : 4;
+        const max = fs.max !== undefined ? fs.max : 36;
+        const step = fs.step !== undefined ? fs.step : 1;
+        fontSizeRange.attr("min", min);
+        fontSizeRange.attr("max", max);
+        fontSizeRange.attr("step", step);
+        fontSizeInput.attr("min", min);
+        fontSizeInput.attr("max", max);
+        fontSizeInput.attr("step", step);
         if (fs.default !== undefined) {
             fontSizeRange.val(fs.default);
-            fontSizeValue.text(fs.default);
+            fontSizeInput.val(fs.default);
         }
 
         fontSizeContainer.addClass("visible");
@@ -2242,10 +2250,10 @@ jQuery(document).ready(function() {
             size = calculateAutoFontSize(currentProfile);
             if (size !== null) {
                 fontSizeRange.val(size);
-                fontSizeValue.text(size);
+                fontSizeInput.val(size);
             }
         } else {
-            size = parseInt(fontSizeRange.val());
+            size = parseFloat(fontSizeInput.val());
         }
 
         if (size) {
@@ -2343,10 +2351,17 @@ jQuery(document).ready(function() {
     });
 
     // registers for the change in the font size range slider
-    // to update the displayed value and apply the new size
+    // to sync the number input and apply the new size
     fontSizeRange.bind("input", function() {
-        const size = jQuery(this).val();
-        fontSizeValue.text(size);
+        fontSizeInput.val(jQuery(this).val());
+        applyFontSize();
+        updateUrl();
+    });
+
+    // registers for the change in the font size number input
+    // to sync the range slider and apply the new size
+    fontSizeInput.bind("input", function() {
+        fontSizeRange.val(jQuery(this).val());
         applyFontSize();
         updateUrl();
     });
@@ -2355,7 +2370,7 @@ jQuery(document).ready(function() {
     // to toggle between manual and automatic sizing modes
     fontSizeMode.bind("change", function() {
         const isAutomatic = jQuery(this).prop("checked");
-        fontSizeRange.prop("disabled", isAutomatic);
+        fontSizeInput.prop("disabled", isAutomatic);
         applyFontSize();
         updateUrl();
     });
@@ -2611,7 +2626,7 @@ jQuery(document).ready(function() {
                 params.set("variant", variantIndex);
             }
         }
-        const fontSize = fontSizeRange.val();
+        const fontSize = fontSizeInput.val();
         if (fontSize) params.set("font_size", fontSize);
         const isAutomatic = fontSizeMode.prop("checked");
         if (isAutomatic) params.set("font_size_mode", "automatic");
