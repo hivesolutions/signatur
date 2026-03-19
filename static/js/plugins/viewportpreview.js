@@ -1,10 +1,13 @@
-// Viewport preview plugin that manages the visual rendering
-// of the engraving preview area including SVG bounds, safe
-// drawable area, background images, rulers, and zoom scaling.
-// Operates on a .viewport-preview element and discovers its
-// children (.viewport-svg, .viewer-container, .ruler-horizontal,
-// .ruler-vertical) by class name convention.
 (function(jQuery) {
+    /**
+     * Viewport preview plugin that manages the visual rendering
+     * of the engraving preview area including SVG bounds, safe
+     * drawable area, background images, rulers, and zoom scaling.
+     *
+     * Operates on a .viewport-preview element and discovers its
+     * children (.viewport-svg, .viewer-container, .ruler-horizontal,
+     * .ruler-vertical) by class name convention.
+     */
     jQuery.fn.viewportpreview = function(action, options) {
         const elements = jQuery(this);
 

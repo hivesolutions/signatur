@@ -33,7 +33,7 @@ npm test
 ## jQuery Plugin Components
 
 UI components are encapsulated as jQuery plugins following the IIFE pattern with `jQuery.fn`.
-Each plugin must have its own JS file in `static/js/plugins/` and a matching CSS file in `static/css/`.
+Each plugin must have its own JS file in `static/js/plugins/` and a matching CSS file in `static/css/plugins/`.
 Both files must be registered in `scripts/build.js` (bundle order) and `views/head.ejs` (dev mode).
 
 Plugins communicate with `main.js` via custom events using `triggerHandler()` - never by
@@ -47,7 +47,7 @@ plugin initialization call. Preserve vendor-prefixed CSS properties with the est
 `-o-`, `-ms-`, `-moz-`, `-khtml-`, `-webkit-` order. Use full variable names - prefer
 `bodyElement` over `bodyEl`, `currentIndex` over `curIdx`, etc.
 
-Reference `static/js/plugins/collapsible.js` and `static/css/collapsible.css` as the
+Reference `static/js/plugins/collapsible.js` and `static/css/plugins/collapsible.css` as the
 canonical example of a well-structured plugin with its companion CSS file.
 
 ## Style Guide

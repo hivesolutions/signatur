@@ -58,6 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Profile variants support with dropdown selector for sub-type overrides (padding, background, font size)
 * Viewport preview jQuery plugin (`plugins/viewportpreview.js`) for SVG rendering, rulers, and zoom
 * `AGENTS.md` with project conventions for building, testing, plugins, and commit messages
+* Plugin CSS files moved to `static/css/plugins/` mirroring the `static/js/plugins/` structure
+* JSDoc-style `/** */` docstrings on jQuery plugin definitions
 
 ### Fixed
 

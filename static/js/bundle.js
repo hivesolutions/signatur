@@ -1425,6 +1425,11 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    /**
+     * Toast notification plugin that displays temporary
+     * messages to the user for a fixed duration of 3 seconds.
+     * Operates on a .toast element toggling a .visible class.
+     */
     jQuery.fn.toast = function(action, message) {
         const elements = jQuery(this);
 
@@ -1444,13 +1449,16 @@ const countLines = function(text) {
     };
 })(jQuery);
 
-// Viewport preview plugin that manages the visual rendering
-// of the engraving preview area including SVG bounds, safe
-// drawable area, background images, rulers, and zoom scaling.
-// Operates on a .viewport-preview element and discovers its
-// children (.viewport-svg, .viewer-container, .ruler-horizontal,
-// .ruler-vertical) by class name convention.
 (function(jQuery) {
+    /**
+     * Viewport preview plugin that manages the visual rendering
+     * of the engraving preview area including SVG bounds, safe
+     * drawable area, background images, rulers, and zoom scaling.
+     *
+     * Operates on a .viewport-preview element and discovers its
+     * children (.viewport-svg, .viewer-container, .ruler-horizontal,
+     * .ruler-vertical) by class name convention.
+     */
     jQuery.fn.viewportpreview = function(action, options) {
         const elements = jQuery(this);
 

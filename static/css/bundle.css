@@ -324,6 +324,803 @@ body.ldj .line {
     top: calc(80% + 30px);
 }
 
+.gateway {
+    align-items: center;
+    background-color: #f4f7fa;
+    display: flex;
+    min-height: 100%;
+}
+
+.gateway > .form.form-gateway {
+    min-width: 600px;
+}
+
+.gateway > .form > .buttons-container > .button-configure {
+    margin-left: 14px;
+}
+
+.gateway > .footer {
+    bottom: 0px;
+    font-size: 11px;
+    font-weight: 600;
+    height: 24px;
+    letter-spacing: 0.25px;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.profile-info {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    min-width: 120px;
+    opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
+    padding: 14px 18px 14px 18px;
+    pointer-events: none;
+    position: fixed;
+    right: 22px;
+    top: 78px;
+    transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    visibility: hidden;
+    z-index: 100;
+}
+
+.profile-info.visible {
+    opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.profile-info > .profile-info-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.profile-info > .profile-info-body > .profile-info-dimensions {
+    color: #6d6d6d;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+}
+
+.profile-info > .profile-info-body > .profile-info-orientation {
+    color: #6d6d6d;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
+
+.profile-info > .profile-info-body > .profile-info-lines {
+    color: #6d6d6d;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
+
+.profile-info > .profile-info-body > .profile-info-raw-toggle {
+    color: #2d2d2d;
+    cursor: pointer;
+    display: none;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+.profile-info.visible > .profile-info-body > .profile-info-raw-toggle {
+    display: inline-block;
+}
+
+.profile-info > .profile-info-body > .profile-info-raw {
+    background-color: #f4f7fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    display: none;
+    font-size: 11px;
+    line-height: 16px;
+    margin-top: 8px;
+    max-height: 200px;
+    overflow: auto;
+    padding: 8px 10px 8px 10px;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.viewport-options {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
+    left: 22px;
+    max-width: 260px;
+    opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
+    padding: 14px 18px 14px 18px;
+    pointer-events: none;
+    position: fixed;
+    top: 78px;
+    transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    visibility: hidden;
+    width: 260px;
+    z-index: 100;
+}
+
+.viewport-options.visible {
+    opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.viewport-options > .viewport-options-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field {
+    margin-bottom: 10px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field:last-child {
+    margin-bottom: 0px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field > .viewport-options-label {
+    color: #6d6d6d;
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field > .profile-select {
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
+    background-color: #f4f7fa;
+    border: 2px solid #f4f7fa;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    height: 30px;
+    letter-spacing: 0.3px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 10px 0px 10px;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field > .profile-select:focus {
+    background-color: #ffffff;
+    border-color: #2d2d2d;
+}
+
+.viewport-options > .viewport-options-body > .variant-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .variant-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field > .variant-select {
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
+    background-color: #f4f7fa;
+    border: 2px solid #f4f7fa;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    height: 30px;
+    letter-spacing: 0.3px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 10px 0px 10px;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-field > .variant-select:focus {
+    background-color: #ffffff;
+    border-color: #2d2d2d;
+}
+
+.viewport-options .options-input {
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
+    background-color: #f4f7fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px 3px 3px 3px;
+    -o-border-radius: 3px 3px 3px 3px;
+    -ms-border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -khtml-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    height: 22px;
+    letter-spacing: 0.3px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 4px 0px 4px;
+    text-align: center;
+    width: 42px;
+}
+
+.viewport-options .options-input:focus {
+    background-color: #ffffff;
+    border-color: #2d2d2d;
+}
+
+.viewport-options > .viewport-options-body > .font-size-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .font-size-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-range {
+    cursor: pointer;
+    vertical-align: middle;
+    width: 120px;
+}
+
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-input {
+    margin-left: 4px;
+    vertical-align: middle;
+    width: 48px;
+}
+
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label {
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label > .font-size-mode {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-checkbox {
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    display: none;
+    width: 50%;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-checkbox.visible {
+    display: inline-block;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-checkbox > .viewport-options-option {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-checkbox > .viewport-options-option > input {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-keyboard {
+    display: inline-block;
+}
+
+.viewport-options > .viewport-options-body > .zoom-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .zoom-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .zoom-container > .zoom-range {
+    cursor: pointer;
+    vertical-align: middle;
+    width: 120px;
+}
+
+.viewport-options > .viewport-options-body > .zoom-container > .zoom-value {
+    display: inline-block;
+    font-size: 12px;
+    min-width: 24px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.viewport-options > .viewport-options-body > .margin-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .margin-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 4px;
+}
+
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field {
+    align-items: center;
+    display: flex;
+    width: 110px;
+    gap: 4px;
+}
+
+.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-label {
+    color: #6d6d6d;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 50px;
+}
+
+.viewport-options > .viewport-options-body > .position-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .position-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .position-container > .position-value {
+    color: #6d6d6d;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-instructions {
+    color: #2d2d2d;
+    cursor: pointer;
+    display: none;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.viewport-options > .viewport-options-body > .viewport-options-instructions.visible {
+    display: inline-block;
+}
+
+.viewport > .main-container > .viewport-preview {
+    display: inline-block;
+    margin: 0px auto 16px auto;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active {
+    margin: 48px auto 16px 32px;
+    position: relative;
+    transform-origin: 0px 0px;
+    -o-transform-origin: 0px 0px;
+    -ms-transform-origin: 0px 0px;
+    -moz-transform-origin: 0px 0px;
+    -khtml-transform-origin: 0px 0px;
+    -webkit-transform-origin: 0px 0px;
+}
+
+.viewport > .main-container > .viewport-preview > .viewport-svg {
+    display: none;
+    margin: 0px auto 0px auto;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active > .viewport-svg {
+    display: block;
+}
+
+.report {
+    align-items: center;
+    background-color: #f4f7fa;
+    display: flex;
+    font-size: 16px;
+    margin: 0px auto 0px auto;
+    min-height: 100%;
+    user-select: text;
+    -o-user-select: text;
+    -ms-user-select: text;
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -webkit-user-select: text;
+}
+
+.report > .form.form-report {
+    margin-top: 62px;
+    max-width: 820px;
+    min-width: 620px;
+}
+
+.pair > .form.form-report .text > .item {
+    display: inline-block;
+}
+
+.header > .form.form-signature {
+    padding: 0px 0px 0px 0px;
+}
+
+.text {
+    font-size: 32px;
+}
+
+.viewport {
+    align-items: center;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    padding: 64px 0px 64px 0px;
+    text-align: center;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    width: 100%;
+}
+
+.viewport > .main-container {
+    text-align: center;
+}
+
+.viewport > .main-container > .input-container {
+    margin: 0px auto 0px auto;
+    width: 460px;
+}
+
+.viewport > .main-container > .input-container > .input {
+    border: 2px dashed #2d2d2d;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    font-size: 30px;
+    height: 60px;
+    line-height: 60px;
+    padding: 12px 12px 12px 12px;
+    text-align: center;
+    width: 100%;
+}
+
+.viewport > .main-container > .viewer-container,
+.viewport > .main-container > .viewport-preview > .viewer-container {
+    border: 2px dashed #2d2d2d;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    display: inline-block;
+    font-size: 30px;
+    height: 60px;
+    line-height: 32px;
+    margin: 0px auto 0px auto;
+    min-width: 460px;
+    padding: 12px 12px 12px 12px;
+    text-align: center;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
+    border: none;
+    display: flex;
+    justify-content: center;
+    min-width: 0px;
+    overflow: hidden;
+    position: absolute;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.viewport > .main-container > .viewport-preview > .viewer-container > .newline {
+    height: 0px;
+    width: 100%;
+}
+
+.viewport > .main-container > .viewer-container > span:not(.caret),
+.viewport > .main-container > .viewport-preview > .viewer-container > span:not(.caret) {
+    cursor: pointer;
+}
+
+.viewport > .main-container > .viewer-container.caret-active > span:not(.caret),
+.viewport > .main-container > .viewport-preview > .viewer-container.caret-active > span:not(.caret) {
+    cursor: text;
+}
+
+.viewport > .main-container > .viewer-container > .caret,
+.viewport > .main-container > .viewport-preview > .viewer-container > .caret {
+    animation: caret-blink 1s step-end infinite;
+    -o-animation: caret-blink 1s step-end infinite;
+    -ms-animation: caret-blink 1s step-end infinite;
+    -moz-animation: caret-blink 1s step-end infinite;
+    -khtml-animation: caret-blink 1s step-end infinite;
+    -webkit-animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.viewport > .main-container > .fonts-container {
+    margin: 20px auto 0px auto;
+    width: 720px;
+}
+
+.viewport > .main-container > .fonts-container > .font {
+    border: 1px solid #2d2d2d;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 18px;
+    height: 34px;
+    line-height: 34px;
+    margin: 6px 6px 6px 6px;
+    padding: 6px 12px 6px 12px;
+    vertical-align: top;
+}
+
+.viewport > .main-container > .fonts-container > .font.selected,
+.viewport > .main-container > .fonts-container > .font.selected:hover {
+    background-color: #e0e0e0;
+}
+
+.viewport > .main-container > .fonts-container > .font:hover {
+    background-color: #f0f0f0;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler {
+    display: none;
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active > .ruler {
+    display: block;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick {
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-line {
+    background-color: #9d9d9d;
+    position: absolute;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-label {
+    color: #6d6d6d;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler > .ruler-unit {
+    color: #9d9d9d;
+    font-size: 8px;
+    letter-spacing: 0.3px;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal {
+    height: 20px;
+    left: 0px;
+    top: -12px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-line {
+    bottom: 0px;
+    left: 0px;
+    width: 1px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.major > .ruler-line {
+    height: 10px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.minor > .ruler-line {
+    height: 6px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-label {
+    bottom: 12px;
+    left: 2px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-unit {
+    bottom: 0px;
+    right: -24px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical {
+    left: -12px;
+    top: 0px;
+    width: 20px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-line {
+    height: 1px;
+    right: 0px;
+    top: 0px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.major > .ruler-line {
+    width: 10px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.minor > .ruler-line {
+    width: 6px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-label {
+    right: 12px;
+    top: -5px;
+}
+
+.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-unit {
+    bottom: -16px;
+    right: 0px;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair {
+    display: none;
+    pointer-events: none;
+    position: absolute;
+    z-index: 50;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active > .crosshair {
+    display: none;
+}
+
+.viewport > .main-container > .viewport-preview.profile-active.crosshair-active > .crosshair {
+    display: block;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair-horizontal {
+    border-top: 1px dashed #9d9d9d;
+    height: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.viewport > .main-container > .viewport-preview > .crosshair-vertical {
+    border-left: 1px dashed #9d9d9d;
+    height: 100%;
+    top: 0px;
+    width: 0px;
+}
+
 .collapsible > .collapsible-title {
     cursor: pointer;
     margin-bottom: 12px;
@@ -361,33 +1158,6 @@ body.ldj .line {
     background-color: #f4f7fa;
     display: flex;
     min-height: 100%;
-}
-
-.gateway {
-    align-items: center;
-    background-color: #f4f7fa;
-    display: flex;
-    min-height: 100%;
-}
-
-.gateway > .form.form-gateway {
-    min-width: 600px;
-}
-
-.gateway > .form > .buttons-container > .button-configure {
-    margin-left: 14px;
-}
-
-.gateway > .footer {
-    bottom: 0px;
-    font-size: 11px;
-    font-weight: 600;
-    height: 24px;
-    letter-spacing: 0.25px;
-    position: absolute;
-    text-align: center;
-    text-transform: uppercase;
-    width: 100%;
 }
 
 .inspiration-panel {
@@ -1067,502 +1837,6 @@ body.ldj .line {
     margin-bottom: 0px;
 }
 
-.profile-info {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
-    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    min-width: 120px;
-    opacity: 0;
-    -o-opacity: 0;
-    -ms-opacity: 0;
-    -moz-opacity: 0;
-    -khtml-opacity: 0;
-    -webkit-opacity: 0;
-    padding: 14px 18px 14px 18px;
-    pointer-events: none;
-    position: fixed;
-    right: 22px;
-    top: 78px;
-    transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -moz-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    visibility: hidden;
-    z-index: 100;
-}
-
-.profile-info.visible {
-    opacity: 1;
-    -o-opacity: 1;
-    -ms-opacity: 1;
-    -moz-opacity: 1;
-    -khtml-opacity: 1;
-    -webkit-opacity: 1;
-    pointer-events: auto;
-    visibility: visible;
-}
-
-.profile-info > .profile-info-title {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-.profile-info > .profile-info-body > .profile-info-dimensions {
-    color: #6d6d6d;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-    margin-bottom: 2px;
-}
-
-.profile-info > .profile-info-body > .profile-info-orientation {
-    color: #6d6d6d;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-}
-
-.profile-info > .profile-info-body > .profile-info-lines {
-    color: #6d6d6d;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-}
-
-.profile-info > .profile-info-body > .profile-info-raw-toggle {
-    color: #2d2d2d;
-    cursor: pointer;
-    display: none;
-    font-size: 11px;
-    margin-top: 8px;
-}
-
-.profile-info.visible > .profile-info-body > .profile-info-raw-toggle {
-    display: inline-block;
-}
-
-.profile-info > .profile-info-body > .profile-info-raw {
-    background-color: #f4f7fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
-    display: none;
-    font-size: 11px;
-    line-height: 16px;
-    margin-top: 8px;
-    max-height: 200px;
-    overflow: auto;
-    padding: 8px 10px 8px 10px;
-    text-align: left;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.viewport-options {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
-    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -moz-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -khtml-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
-    left: 22px;
-    max-width: 260px;
-    opacity: 0;
-    -o-opacity: 0;
-    -ms-opacity: 0;
-    -moz-opacity: 0;
-    -khtml-opacity: 0;
-    -webkit-opacity: 0;
-    padding: 14px 18px 14px 18px;
-    pointer-events: none;
-    position: fixed;
-    top: 78px;
-    transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -moz-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -khtml-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -webkit-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    visibility: hidden;
-    width: 260px;
-    z-index: 100;
-}
-
-.viewport-options.visible {
-    opacity: 1;
-    -o-opacity: 1;
-    -ms-opacity: 1;
-    -moz-opacity: 1;
-    -khtml-opacity: 1;
-    -webkit-opacity: 1;
-    pointer-events: auto;
-    visibility: visible;
-}
-
-.viewport-options > .viewport-options-title {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-field {
-    margin-bottom: 10px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-field:last-child {
-    margin-bottom: 0px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-field > .viewport-options-label {
-    color: #6d6d6d;
-    display: block;
-    font-size: 11px;
-    letter-spacing: 0.3px;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-field > .profile-select {
-    appearance: none;
-    -o-appearance: none;
-    -ms-appearance: none;
-    -moz-appearance: none;
-    -khtml-appearance: none;
-    -webkit-appearance: none;
-    background-color: #f4f7fa;
-    border: 2px solid #f4f7fa;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
-    cursor: pointer;
-    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    height: 30px;
-    letter-spacing: 0.3px;
-    outline: none;
-    -o-outline: none;
-    -ms-outline: none;
-    -moz-outline: none;
-    -khtml-outline: none;
-    -webkit-outline: none;
-    padding: 0px 10px 0px 10px;
-    text-transform: uppercase;
-    width: 100%;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-field > .profile-select:focus {
-    background-color: #ffffff;
-    border-color: #2d2d2d;
-}
-
-.viewport-options > .viewport-options-body > .variant-container {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .variant-container.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-field > .variant-select {
-    appearance: none;
-    -o-appearance: none;
-    -ms-appearance: none;
-    -moz-appearance: none;
-    -khtml-appearance: none;
-    -webkit-appearance: none;
-    background-color: #f4f7fa;
-    border: 2px solid #f4f7fa;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
-    cursor: pointer;
-    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    height: 30px;
-    letter-spacing: 0.3px;
-    outline: none;
-    -o-outline: none;
-    -ms-outline: none;
-    -moz-outline: none;
-    -khtml-outline: none;
-    -webkit-outline: none;
-    padding: 0px 10px 0px 10px;
-    text-transform: uppercase;
-    width: 100%;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-field > .variant-select:focus {
-    background-color: #ffffff;
-    border-color: #2d2d2d;
-}
-
-.viewport-options .options-input {
-    appearance: none;
-    -o-appearance: none;
-    -ms-appearance: none;
-    -moz-appearance: none;
-    -khtml-appearance: none;
-    -webkit-appearance: none;
-    background-color: #f4f7fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 3px 3px 3px 3px;
-    -o-border-radius: 3px 3px 3px 3px;
-    -ms-border-radius: 3px 3px 3px 3px;
-    -moz-border-radius: 3px 3px 3px 3px;
-    -khtml-border-radius: 3px 3px 3px 3px;
-    -webkit-border-radius: 3px 3px 3px 3px;
-    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    height: 22px;
-    letter-spacing: 0.3px;
-    outline: none;
-    -o-outline: none;
-    -ms-outline: none;
-    -moz-outline: none;
-    -khtml-outline: none;
-    -webkit-outline: none;
-    padding: 0px 4px 0px 4px;
-    text-align: center;
-    width: 42px;
-}
-
-.viewport-options .options-input:focus {
-    background-color: #ffffff;
-    border-color: #2d2d2d;
-}
-
-.viewport-options > .viewport-options-body > .font-size-container {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .font-size-container.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-range {
-    cursor: pointer;
-    vertical-align: middle;
-    width: 120px;
-}
-
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-input {
-    margin-left: 4px;
-    vertical-align: middle;
-    width: 48px;
-}
-
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label {
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    margin-left: 8px;
-    vertical-align: middle;
-}
-
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label > .font-size-mode {
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-checkbox {
-    box-sizing: border-box;
-    -o-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -khtml-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    display: none;
-    width: 50%;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-checkbox.visible {
-    display: inline-block;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-checkbox > .viewport-options-option {
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-checkbox > .viewport-options-option > input {
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-keyboard {
-    display: inline-block;
-}
-
-.viewport-options > .viewport-options-body > .zoom-container {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .zoom-container.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .zoom-container > .zoom-range {
-    cursor: pointer;
-    vertical-align: middle;
-    width: 120px;
-}
-
-.viewport-options > .viewport-options-body > .zoom-container > .zoom-value {
-    display: inline-block;
-    font-size: 12px;
-    min-width: 24px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.viewport-options > .viewport-options-body > .margin-container {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .margin-container.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .margin-container > .margin-fields {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 4px;
-}
-
-.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field {
-    align-items: center;
-    display: flex;
-    width: 110px;
-    gap: 4px;
-}
-
-.viewport-options > .viewport-options-body > .margin-container > .margin-fields > .margin-field > .margin-label {
-    color: #6d6d6d;
-    font-size: 10px;
-    letter-spacing: 0.3px;
-    text-align: center;
-    text-transform: uppercase;
-    width: 50px;
-}
-
-.viewport-options > .viewport-options-body > .position-container {
-    display: none;
-}
-
-.viewport-options > .viewport-options-body > .position-container.visible {
-    display: block;
-}
-
-.viewport-options > .viewport-options-body > .position-container > .position-value {
-    color: #6d6d6d;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-instructions {
-    color: #2d2d2d;
-    cursor: pointer;
-    display: none;
-    font-size: 13px;
-    margin-top: 8px;
-}
-
-.viewport-options > .viewport-options-body > .viewport-options-instructions.visible {
-    display: inline-block;
-}
-
-.viewport > .main-container > .viewport-preview {
-    display: inline-block;
-    margin: 0px auto 16px auto;
-}
-
-.viewport > .main-container > .viewport-preview.profile-active {
-    margin: 48px auto 16px 32px;
-    position: relative;
-    transform-origin: 0px 0px;
-    -o-transform-origin: 0px 0px;
-    -ms-transform-origin: 0px 0px;
-    -moz-transform-origin: 0px 0px;
-    -khtml-transform-origin: 0px 0px;
-    -webkit-transform-origin: 0px 0px;
-}
-
-.viewport > .main-container > .viewport-preview > .viewport-svg {
-    display: none;
-    margin: 0px auto 0px auto;
-}
-
-.viewport > .main-container > .viewport-preview.profile-active > .viewport-svg {
-    display: block;
-}
-
-.report {
-    align-items: center;
-    background-color: #f4f7fa;
-    display: flex;
-    font-size: 16px;
-    margin: 0px auto 0px auto;
-    min-height: 100%;
-    user-select: text;
-    -o-user-select: text;
-    -ms-user-select: text;
-    -moz-user-select: text;
-    -khtml-user-select: text;
-    -webkit-user-select: text;
-}
-
-.report > .form.form-report {
-    margin-top: 62px;
-    max-width: 820px;
-    min-width: 620px;
-}
-
-.pair > .form.form-report .text > .item {
-    display: inline-block;
-}
-
-.header > .form.form-signature {
-    padding: 0px 0px 0px 0px;
-}
-
-.text {
-    font-size: 32px;
-}
-
 .toast {
     background-color: rgba(24, 24, 24, 0.9);
     border-radius: 4px 4px 4px 4px;
@@ -1613,278 +1887,4 @@ body.ldj .line {
 
 body.ldj .toast {
     background-color: rgba(151, 120, 211, 0.9);
-}
-
-.viewport {
-    align-items: center;
-    box-sizing: border-box;
-    -o-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -khtml-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    padding: 64px 0px 64px 0px;
-    text-align: center;
-    user-select: none;
-    -o-user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    width: 100%;
-}
-
-.viewport > .main-container {
-    text-align: center;
-}
-
-.viewport > .main-container > .input-container {
-    margin: 0px auto 0px auto;
-    width: 460px;
-}
-
-.viewport > .main-container > .input-container > .input {
-    border: 2px dashed #2d2d2d;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
-    box-sizing: border-box;
-    -o-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -khtml-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    font-size: 30px;
-    height: 60px;
-    line-height: 60px;
-    padding: 12px 12px 12px 12px;
-    text-align: center;
-    width: 100%;
-}
-
-.viewport > .main-container > .viewer-container,
-.viewport > .main-container > .viewport-preview > .viewer-container {
-    border: 2px dashed #2d2d2d;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
-    box-sizing: border-box;
-    -o-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -khtml-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    display: inline-block;
-    font-size: 30px;
-    height: 60px;
-    line-height: 32px;
-    margin: 0px auto 0px auto;
-    min-width: 460px;
-    padding: 12px 12px 12px 12px;
-    text-align: center;
-}
-
-.viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
-    border: none;
-    display: flex;
-    justify-content: center;
-    min-width: 0px;
-    overflow: hidden;
-    position: absolute;
-    align-content: center;
-    flex-wrap: wrap;
-}
-
-.viewport > .main-container > .viewport-preview > .viewer-container > .newline {
-    height: 0px;
-    width: 100%;
-}
-
-.viewport > .main-container > .viewer-container > span:not(.caret),
-.viewport > .main-container > .viewport-preview > .viewer-container > span:not(.caret) {
-    cursor: pointer;
-}
-
-.viewport > .main-container > .viewer-container.caret-active > span:not(.caret),
-.viewport > .main-container > .viewport-preview > .viewer-container.caret-active > span:not(.caret) {
-    cursor: text;
-}
-
-.viewport > .main-container > .viewer-container > .caret,
-.viewport > .main-container > .viewport-preview > .viewer-container > .caret {
-    animation: caret-blink 1s step-end infinite;
-    -o-animation: caret-blink 1s step-end infinite;
-    -ms-animation: caret-blink 1s step-end infinite;
-    -moz-animation: caret-blink 1s step-end infinite;
-    -khtml-animation: caret-blink 1s step-end infinite;
-    -webkit-animation: caret-blink 1s step-end infinite;
-}
-
-@keyframes caret-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.viewport > .main-container > .fonts-container {
-    margin: 20px auto 0px auto;
-    width: 720px;
-}
-
-.viewport > .main-container > .fonts-container > .font {
-    border: 1px solid #2d2d2d;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 18px;
-    height: 34px;
-    line-height: 34px;
-    margin: 6px 6px 6px 6px;
-    padding: 6px 12px 6px 12px;
-    vertical-align: top;
-}
-
-.viewport > .main-container > .fonts-container > .font.selected,
-.viewport > .main-container > .fonts-container > .font.selected:hover {
-    background-color: #e0e0e0;
-}
-
-.viewport > .main-container > .fonts-container > .font:hover {
-    background-color: #f0f0f0;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler {
-    display: none;
-    position: absolute;
-}
-
-.viewport > .main-container > .viewport-preview.profile-active > .ruler {
-    display: block;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick {
-    position: absolute;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-line {
-    background-color: #9d9d9d;
-    position: absolute;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler > .ruler-tick > .ruler-label {
-    color: #6d6d6d;
-    font-size: 9px;
-    letter-spacing: 0.3px;
-    position: absolute;
-    white-space: nowrap;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler > .ruler-unit {
-    color: #9d9d9d;
-    font-size: 8px;
-    letter-spacing: 0.3px;
-    position: absolute;
-    white-space: nowrap;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-horizontal {
-    height: 20px;
-    left: 0px;
-    top: -12px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-line {
-    bottom: 0px;
-    left: 0px;
-    width: 1px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.major > .ruler-line {
-    height: 10px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick.minor > .ruler-line {
-    height: 6px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-tick > .ruler-label {
-    bottom: 12px;
-    left: 2px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-horizontal > .ruler-unit {
-    bottom: 0px;
-    right: -24px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-vertical {
-    left: -12px;
-    top: 0px;
-    width: 20px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-line {
-    height: 1px;
-    right: 0px;
-    top: 0px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.major > .ruler-line {
-    width: 10px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick.minor > .ruler-line {
-    width: 6px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-tick > .ruler-label {
-    right: 12px;
-    top: -5px;
-}
-
-.viewport > .main-container > .viewport-preview > .ruler-vertical > .ruler-unit {
-    bottom: -16px;
-    right: 0px;
-}
-
-.viewport > .main-container > .viewport-preview > .crosshair {
-    display: none;
-    pointer-events: none;
-    position: absolute;
-    z-index: 50;
-}
-
-.viewport > .main-container > .viewport-preview.profile-active > .crosshair {
-    display: none;
-}
-
-.viewport > .main-container > .viewport-preview.profile-active.crosshair-active > .crosshair {
-    display: block;
-}
-
-.viewport > .main-container > .viewport-preview > .crosshair-horizontal {
-    border-top: 1px dashed #9d9d9d;
-    height: 0px;
-    left: 0px;
-    width: 100%;
-}
-
-.viewport > .main-container > .viewport-preview > .crosshair-vertical {
-    border-left: 1px dashed #9d9d9d;
-    height: 100%;
-    top: 0px;
-    width: 0px;
 }
