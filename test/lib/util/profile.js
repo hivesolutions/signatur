@@ -470,6 +470,40 @@ describe("Profile", function() {
         });
     });
 
+    describe("#validateCalligraphy()", function() {
+        it("should validate correct calligraphy", () => {
+            const errors = lib.validateCalligraphy({
+                line_width: 2
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate empty calligraphy", () => {
+            const errors = lib.validateCalligraphy({});
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-object calligraphy", () => {
+            const errors = lib.validateCalligraphy("invalid");
+            assert.strictEqual(true, errors.includes("calligraphy must be an object"));
+        });
+
+        it("should reject non-positive line width", () => {
+            const errors = lib.validateCalligraphy({ line_width: 0 });
+            assert.strictEqual(true, errors.includes("calligraphy.line_width must be a positive number"));
+        });
+
+        it("should reject negative line width", () => {
+            const errors = lib.validateCalligraphy({ line_width: -1 });
+            assert.strictEqual(true, errors.includes("calligraphy.line_width must be a positive number"));
+        });
+
+        it("should reject non-number line width", () => {
+            const errors = lib.validateCalligraphy({ line_width: "thick" });
+            assert.strictEqual(true, errors.includes("calligraphy.line_width must be a positive number"));
+        });
+    });
+
     describe("#validateMachine()", function() {
         it("should validate correct machine config", () => {
             const errors = lib.validateMachine({

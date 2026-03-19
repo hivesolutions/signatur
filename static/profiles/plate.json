@@ -25,6 +25,9 @@
         "max": 24,
         "step": 1
     },
+    "calligraphy": {
+        "line_width": 2
+    },
     "background": "plate.png",
     "instructions": {
         "title": "Steel Plate Jig Setup",

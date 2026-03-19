@@ -61,6 +61,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Plugin CSS files moved to `static/css/plugins/` mirroring the `static/js/plugins/` structure
 * JSDoc-style `/** */` docstrings on jQuery plugin definitions with actions and events
 * Profile selector jQuery plugin (`plugins/profileselector.js`) for profile and variant dropdown management
+* Calligraphy mode with jSignature canvas overlay on the viewport preview for freehand engraving
+* Calligraphy jQuery plugin (`plugins/calligraphy.js`, `css/plugins/calligraphy.css`) with init, reset, undo, and data actions
+* Calligraphy mode toggle, undo, and clear controls in viewport options panel
+* Per-profile calligraphy configuration with `calligraphy.line_width` field and validation
+* Zoom slider disabled during calligraphy mode to preserve drawing integrity
 
 ### Fixed
 

@@ -100,6 +100,12 @@ jQuery(document).ready(function() {
     const emojisContainer = jQuery(".emojis-container");
     const emojispContainer = jQuery(".emojisp-container");
     const viewportContainer = jQuery(".viewer-container");
+    const calligraphyContainer = jQuery(".calligraphy-container");
+    const calligraphyMode = jQuery(".calligraphy-mode");
+    const calligraphyModeContainer = jQuery(".calligraphy-mode-container");
+    const calligraphyControls = jQuery(".calligraphy-controls");
+    const calligraphyUndo = jQuery(".calligraphy-undo");
+    const calligraphyClear = jQuery(".calligraphy-clear");
     const formConsole = jQuery(".form-console");
     const inputViewport = jQuery(".input-viewport");
     const signature = jQuery(".signature");
@@ -659,6 +665,7 @@ jQuery(document).ready(function() {
             viewportOptionsCaret.addClass("visible");
             zoomContainer.addClass("visible");
             positionContainer.addClass("visible");
+            calligraphyModeContainer.addClass("visible");
         } else {
             marginContainer.removeClass("visible");
             viewportOptionsRulers.removeClass("visible");
@@ -667,7 +674,17 @@ jQuery(document).ready(function() {
             viewportOptionsCaret.removeClass("visible");
             zoomContainer.removeClass("visible");
             positionContainer.removeClass("visible");
+            calligraphyModeContainer.removeClass("visible");
+            calligraphyControls.removeClass("visible");
         }
+        // resets calligraphy mode when switching profiles
+        // since the canvas dimensions change with the profile
+        calligraphyMode.prop("checked", false);
+        viewportPreview.removeClass("calligraphy-active");
+        calligraphyControls.removeClass("visible");
+        calligraphyContainer.calligraphy("reset");
+        body.data("calligraphy", null);
+
         const textConfig = currentProfile ? currentProfile.text || {} : {};
         const maxLines = currentProfile ? textConfig.max_lines || 0 : 1;
         viewportContainer.texteditor("option", { maxLines: maxLines });
@@ -799,6 +816,90 @@ jQuery(document).ready(function() {
             viewportContainer.removeClass("caret-active");
         }
         updateUrl();
+    });
+
+    // initializes the calligraphy canvas inside the viewport
+    // preview constrained to the safe drawable area
+    const initCalligraphy = function() {
+        if (!currentProfile) return;
+        const padding = getMargins();
+        const safeW = (currentProfile.width - padding.left - padding.right) * VIEWPORT_SCALE;
+        const safeH = (currentProfile.height - padding.top - padding.bottom) * VIEWPORT_SCALE;
+        const lineWidth = currentProfile.calligraphy
+            ? currentProfile.calligraphy.line_width || 2 : 2;
+        calligraphyContainer.calligraphy("init", {
+            width: safeW,
+            height: safeH,
+            lineWidth: lineWidth
+        });
+    };
+
+    // registers for the change in the calligraphy mode checkbox
+    // to toggle between text editing and calligraphy drawing
+    calligraphyMode.bind("change", function() {
+        const enabled = calligraphyMode.prop("checked");
+        if (enabled) {
+            viewportPreview.addClass("calligraphy-active");
+            fontsContainer.hide();
+            keyboardContainer.hide();
+            emojisContainer.hide();
+            emojispContainer.hide();
+            fontSizeContainer.removeClass("visible");
+            calligraphyControls.addClass("visible");
+            zoomRange.prop("disabled", true);
+            initCalligraphy();
+            body.data("calligraphy", null);
+        } else {
+            viewportPreview.removeClass("calligraphy-active");
+            calligraphyControls.removeClass("visible");
+            zoomRange.prop("disabled", false);
+            calligraphyContainer.calligraphy("reset");
+            body.data("calligraphy", null);
+            const font = body.data("font");
+            if (font) {
+                fontsContainer.show();
+                const showKeyboard = keyboardMode.prop("checked");
+                if (showKeyboard) {
+                    if (font === "Cool Emojis") {
+                        emojisContainer.show();
+                    } else if (font === "Cool Emojis Pantograph") {
+                        emojispContainer.show();
+                    } else {
+                        keyboardContainer.show();
+                    }
+                }
+            } else {
+                fontsContainer.show();
+            }
+            if (currentProfile && currentProfile.font_size) {
+                fontSizeContainer.addClass("visible");
+            }
+        }
+        updateUrl();
+    });
+
+    // registers for the change event from the calligraphy
+    // canvas to store the SVG data in the body element
+    calligraphyContainer.bind("calligraphy", function(event, hasData) {
+        if (hasData) {
+            const data = calligraphyContainer.calligraphy("data");
+            body.data("calligraphy", data);
+        } else {
+            body.data("calligraphy", null);
+        }
+    });
+
+    // registers for the click on the calligraphy undo button
+    // to remove the last stroke from the drawing
+    calligraphyUndo.click(function() {
+        calligraphyContainer.calligraphy("undo");
+    });
+
+    // registers for the click on the calligraphy clear button
+    // to reset the entire drawing canvas
+    calligraphyClear.click(function() {
+        calligraphyContainer.calligraphy("reset");
+        body.data("calligraphy", null);
     });
 
     // registers for the mouse move event on the viewport preview
