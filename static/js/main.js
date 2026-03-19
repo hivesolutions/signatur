@@ -795,7 +795,7 @@ jQuery(document).ready(function() {
     crosshairMode.bind("change", function() {
         if (!crosshairMode.prop("checked")) {
             viewportPreview.removeClass("crosshair-active");
-            positionValue.text("—");
+            positionValue.text("-");
         }
         updateUrl();
     });
@@ -871,7 +871,7 @@ jQuery(document).ready(function() {
     // to hide the crosshair lines and clear the position readout
     viewportPreview.bind("mouseleave", function() {
         viewportPreview.removeClass("crosshair-active");
-        positionValue.text("—");
+        positionValue.text("-");
     });
 
     // loads the available profiles from the server

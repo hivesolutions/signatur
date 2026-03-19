@@ -36,7 +36,7 @@ UI components are encapsulated as jQuery plugins following the IIFE pattern with
 Each plugin must have its own JS file in `static/js/plugins/` and a matching CSS file in `static/css/`.
 Both files must be registered in `scripts/build.js` (bundle order) and `views/head.ejs` (dev mode).
 
-Plugins communicate with `main.js` via custom events using `triggerHandler()` — never by
+Plugins communicate with `main.js` via custom events using `triggerHandler()` - never by
 accessing global state directly. The container element receives a `.collapsible` or similar
 top-level class, and child elements use `collapsible-*` suffixed classes scoped under it.
 CSS selectors follow the `parent > .child` combinator pattern used throughout the codebase.
@@ -44,7 +44,7 @@ CSS selectors follow the `parent > .child` combinator pattern used throughout th
 When extracting logic from `main.js` into a plugin, remove all related functions, event
 handlers, and unused variable declarations from `main.js`, replacing them with a single
 plugin initialization call. Preserve vendor-prefixed CSS properties with the established
-`-o-`, `-ms-`, `-moz-`, `-khtml-`, `-webkit-` order. Use full variable names — prefer
+`-o-`, `-ms-`, `-moz-`, `-khtml-`, `-webkit-` order. Use full variable names - prefer
 `bodyElement` over `bodyEl`, `currentIndex` over `curIdx`, etc.
 
 Reference `static/js/plugins/collapsible.js` and `static/css/collapsible.css` as the
@@ -57,7 +57,7 @@ canonical example of a well-structured plugin with its companion CSS file.
 - Never bump the version in `package.json`. This is handled by the release process.
 - The implementation should be done in a way that is compatible with the existing codebase.
 - The commenting style of the project is unique, try to keep commenting style consistent.
-- Use full variable names — no abbreviations (e.g. `bodyElement` not `bodyEl`).
+- Use full variable names - no abbreviations (e.g. `bodyElement` not `bodyEl`).
 - jQuery plugins use the IIFE pattern with `jQuery.fn` extensions.
 - EJS templates in `views/` use server-side rendering with Express.
 - CSS uses vendor prefixes in the order: `-o-`, `-ms-`, `-moz-`, `-khtml-`, `-webkit-`.
