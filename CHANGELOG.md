@@ -51,6 +51,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Hover zoom and active press animations on inspiration preview thumbnails
 * Sample inspirations for small-medal profile including emoji presets
 * Modal `hide` action for programmatic dismiss with animation
+* Collapsible panel jQuery plugin (`plugins/collapsible.js`, `css/collapsible.css`) extracted from inline logic
+* Font size number input alongside range slider with per-profile step granularity
+* Shared `.options-input` CSS class for consistent number input styling across controls
+* Per-profile jig instructions modal with images, accessible via "Instructions" link in options panel
+* Profile variants support with dropdown selector for sub-type overrides (padding, background, font size)
+* `AGENTS.md` with project conventions for building, testing, plugins, and commit messages
 
 ### Fixed
 

@@ -1,0 +1,31 @@
+.collapsible > .collapsible-title {
+    cursor: pointer;
+    margin-bottom: 12px;
+    position: relative;
+    transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
+.collapsible > .collapsible-title > .collapsible-toggle {
+    font-size: 14px;
+    position: absolute;
+    right: -4px;
+}
+
+.collapsible > .collapsible-body {
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
+.collapsible.minimized > .collapsible-body {
+    max-height: 0px;
+}

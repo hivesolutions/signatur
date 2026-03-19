@@ -9,6 +9,7 @@ const CSS_FILES = [
     "css/signature.css",
     "css/viewport.css",
     "css/keyboard.css",
+    "css/collapsible.css",
     "css/profile.css",
     "css/modal.css",
     "css/inspiration.css",
@@ -20,6 +21,7 @@ const CSS_FILES = [
 
 const JS_FILES = [
     "js/util.js",
+    "js/plugins/collapsible.js",
     "js/plugins/fonts.js",
     "js/plugins/keyboard.js",
     "js/plugins/modal.js",

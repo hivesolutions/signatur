@@ -773,6 +773,38 @@ body.ldj .line {
     width: 0px;
 }
 
+.collapsible > .collapsible-title {
+    cursor: pointer;
+    margin-bottom: 12px;
+    position: relative;
+    transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
+.collapsible > .collapsible-title > .collapsible-toggle {
+    font-size: 14px;
+    position: absolute;
+    right: -4px;
+}
+
+.collapsible > .collapsible-body {
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
+.collapsible.minimized > .collapsible-body {
+    max-height: 0px;
+}
+
 .profile-info {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -822,39 +854,10 @@ body.ldj .line {
 }
 
 .profile-info > .profile-info-title {
-    cursor: pointer;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    margin-bottom: 12px;
-    position: relative;
     text-transform: uppercase;
-    transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -o-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -ms-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -moz-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -khtml-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -webkit-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-}
-
-.profile-info > .profile-info-title > .profile-info-toggle {
-    font-size: 14px;
-    position: absolute;
-    right: -4px;
-}
-
-.profile-info > .profile-info-body {
-    overflow: hidden;
-    transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -o-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -ms-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -moz-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -khtml-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -webkit-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-}
-
-.profile-info.minimized > .profile-info-body {
-    max-height: 0px;
 }
 
 .profile-info > .profile-info-body > .profile-info-dimensions {
@@ -959,39 +962,10 @@ body.ldj .line {
 }
 
 .viewport-options > .viewport-options-title {
-    cursor: pointer;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    margin-bottom: 12px;
-    position: relative;
     text-transform: uppercase;
-    transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -o-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -ms-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -moz-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -khtml-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -webkit-transition: margin-bottom 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-}
-
-.viewport-options > .viewport-options-title > .viewport-options-toggle {
-    font-size: 14px;
-    position: absolute;
-    right: -4px;
-}
-
-.viewport-options > .viewport-options-body {
-    overflow: hidden;
-    transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -o-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -ms-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -moz-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -khtml-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-    -webkit-transition: max-height 0.25s cubic-bezier(0.645, 0.045, 0.355, 1.0);
-}
-
-.viewport-options.minimized > .viewport-options-body {
-    max-height: 0px;
 }
 
 .viewport-options > .viewport-options-body > .viewport-options-field {

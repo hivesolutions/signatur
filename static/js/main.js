@@ -20,9 +20,6 @@ jQuery(document).ready(function() {
     const variantSelect = jQuery(".variant-select");
     const variantContainer = jQuery(".variant-container");
     const profileInfoTitle = jQuery(".profile-info-title");
-    const profileInfoToggle = jQuery(".profile-info-toggle");
-    const viewportOptionsTitle = jQuery(".viewport-options-title");
-    const viewportOptionsToggle = jQuery(".viewport-options-toggle");
     const viewportOptionsInstructions = jQuery(".viewport-options-instructions");
     const modalOverlayInstructions = jQuery(".modal-overlay-instructions");
     const modalInstructionsTitle = jQuery(".modal-instructions-title");
@@ -62,54 +59,10 @@ jQuery(document).ready(function() {
         modalOverlayInstructions.modal("show");
     });
 
-    const profileInfoBody = jQuery(".profile-info-body");
-    const viewportOptionsBody = jQuery(".viewport-options-body");
-
-    // toggles a collapsible panel between expanded and minimized
-    // states using a smooth max-height transition on the body
-    const togglePanel = function(panel, panelBody, panelTitle, toggleIcon) {
-        const bodyEl = panelBody.get(0);
-        const minimized = panel.hasClass("minimized");
-        if (minimized) {
-            panel.removeClass("minimized");
-            const height = bodyEl.scrollHeight;
-            panelBody.css("max-height", "0px");
-            panelTitle.css("margin-bottom", "0px");
-            bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
-            panelBody.css("max-height", height + "px");
-            panelTitle.css("margin-bottom", "");
-            toggleIcon.text("▾");
-            panelBody.one("transitionend", function() {
-                panelBody.css("max-height", "");
-            });
-        } else {
-            panelBody.css("max-height", bodyEl.scrollHeight + "px");
-            bodyEl.offsetHeight; // eslint-disable-line no-unused-expressions
-            panelBody.css("max-height", "0px");
-            panelTitle.css("margin-bottom", "0px");
-            toggleIcon.text("▸");
-            panelBody.one("transitionend", function() {
-                panel.addClass("minimized");
-            });
-        }
-    };
-
-    // registers for the click operation on the profile info
-    // title to toggle the panel between expanded and minimized
-    profileInfoTitle.click(function() {
-        togglePanel(profileInfo, profileInfoBody, profileInfoTitle, profileInfoToggle);
-    });
-
-    // registers for the click operation on the viewport options
-    // title to toggle the panel between expanded and minimized
-    viewportOptionsTitle.click(function() {
-        togglePanel(
-            viewportOptions,
-            viewportOptionsBody,
-            viewportOptionsTitle,
-            viewportOptionsToggle
-        );
-    });
+    // initializes the collapsible panel plugin on the
+    // profile info and viewport options panels
+    profileInfo.collapsiblepanel();
+    viewportOptions.collapsiblepanel();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
