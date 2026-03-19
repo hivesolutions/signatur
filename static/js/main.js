@@ -1334,6 +1334,7 @@ jQuery(document).ready(function() {
     // initializes the text editor plugin on the viewer container
     // and binds the change event to update button state and URL
     viewportContainer.texteditor();
+    viewportContainer.texteditor("option", { maxLines: 1 });
     viewportContainer.bind("change", function(event, text) {
         updateButtonState(text);
         if (currentProfile && fontSizeMode.prop("checked")) {

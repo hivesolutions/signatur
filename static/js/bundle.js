@@ -920,7 +920,7 @@ const countLines = function(text) {
             // loads text data into the editor from an external
             // source such as an inspiration or session restore
             if (action === "loadText") {
-                const textData = options.text || [];
+                const textData = (options && options.text) || [];
                 const caret = jQuery("> .caret", context);
                 context.find("> :not(.caret)").remove();
                 for (let i = 0; i < textData.length; i++) {
@@ -1365,11 +1365,15 @@ const countLines = function(text) {
                 context.triggerHandler("change", [text, caretPosition]);
             };
 
+            // prevents duplicate bindings if already initialized
+            if (body.data("_texteditor_initialized")) return;
+            body.data("_texteditor_initialized", true);
+
             // binds the key handler to the virtual keyboard containers
             // so that key presses on the on-screen keyboards are forwarded
             jQuery(".keyboard-container").bind("key", keyHandler);
             jQuery(".emojis-container").bind("key", keyHandler);
-            jQuery(".emojis-p-container").bind("key", keyHandler);
+            jQuery(".emojisp-container").bind("key", keyHandler);
 
             body.bind("keydown", keyboardHandler);
         });
@@ -2732,6 +2736,7 @@ jQuery(document).ready(function() {
     // initializes the text editor plugin on the viewer container
     // and binds the change event to update button state and URL
     viewportContainer.texteditor();
+    viewportContainer.texteditor("option", { maxLines: 1 });
     viewportContainer.bind("change", function(event, text) {
         updateButtonState(text);
         if (currentProfile && fontSizeMode.prop("checked")) {
