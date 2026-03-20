@@ -70,7 +70,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
-
 * `/profiles` endpoint now handles async errors through Express error middleware
 * Invalid CSS `background-position` value corrected to valid 2-value syntax
 * Restored text click handler now binds to all non-caret children including newline elements
@@ -84,7 +83,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Corrected Cool Emojis character-to-F3S font mapping using visual glyph recognition
 * Sorted `coolemojis.mapping.json` by font number for better structure
-
 * Line height in viewport preview now scales proportionally to font size (1.2x)
 * Moved profile and font size controls from inline layout to fixed options panel
 

@@ -44,12 +44,9 @@
             const key = profileSelect.val();
             const baseProfile = key ? profiles[key] : null;
             const index = parseInt(variantSelect.val());
-            const variant = baseProfile && baseProfile.variants
-                ? baseProfile.variants[index]
-                : null;
-            const mergedProfile = variant
-                ? applyVariant(baseProfile, variant)
-                : baseProfile;
+            const variant =
+                baseProfile && baseProfile.variants ? baseProfile.variants[index] : null;
+            const mergedProfile = variant ? applyVariant(baseProfile, variant) : baseProfile;
             return {
                 profile: mergedProfile,
                 baseProfile: baseProfile,

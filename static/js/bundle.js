@@ -225,7 +225,6 @@ const countLines = function(text) {
                     // undo button to remove the last stroke
                     context.find("input[type=button]").click();
                 }
-                return;
             }
         });
 
@@ -1139,12 +1138,9 @@ const countLines = function(text) {
             const key = profileSelect.val();
             const baseProfile = key ? profiles[key] : null;
             const index = parseInt(variantSelect.val());
-            const variant = baseProfile && baseProfile.variants
-                ? baseProfile.variants[index]
-                : null;
-            const mergedProfile = variant
-                ? applyVariant(baseProfile, variant)
-                : baseProfile;
+            const variant =
+                baseProfile && baseProfile.variants ? baseProfile.variants[index] : null;
+            const mergedProfile = variant ? applyVariant(baseProfile, variant) : baseProfile;
             return {
                 profile: mergedProfile,
                 baseProfile: baseProfile,
@@ -2873,19 +2869,20 @@ jQuery(document).ready(function() {
         const safeH = (currentProfile.height - padding.top - padding.bottom) * VIEWPORT_SCALE;
         const zoom = parseFloat(zoomRange.val()) || 1;
         const lineWidth = currentProfile.calligraphy
-            ? currentProfile.calligraphy.line_width || 2 : 2;
+            ? currentProfile.calligraphy.line_width || 2
+            : 2;
         calligraphyContainer.calligraphy("init", {
             width: Math.round(safeW * zoom),
             height: Math.round(safeH * zoom),
             lineWidth: lineWidth * zoom
         });
         calligraphyContainer.css({
-            transform: "scale(" + (1 / zoom) + ")",
-            "-o-transform": "scale(" + (1 / zoom) + ")",
-            "-ms-transform": "scale(" + (1 / zoom) + ")",
-            "-moz-transform": "scale(" + (1 / zoom) + ")",
-            "-khtml-transform": "scale(" + (1 / zoom) + ")",
-            "-webkit-transform": "scale(" + (1 / zoom) + ")",
+            transform: "scale(" + 1 / zoom + ")",
+            "-o-transform": "scale(" + 1 / zoom + ")",
+            "-ms-transform": "scale(" + 1 / zoom + ")",
+            "-moz-transform": "scale(" + 1 / zoom + ")",
+            "-khtml-transform": "scale(" + 1 / zoom + ")",
+            "-webkit-transform": "scale(" + 1 / zoom + ")",
             "transform-origin": "0px 0px",
             "-o-transform-origin": "0px 0px",
             "-ms-transform-origin": "0px 0px",

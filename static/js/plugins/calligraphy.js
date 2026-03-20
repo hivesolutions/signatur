@@ -90,7 +90,6 @@
                     // undo button to remove the last stroke
                     context.find("input[type=button]").click();
                 }
-                return;
             }
         });
 

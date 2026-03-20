@@ -490,17 +490,26 @@ describe("Profile", function() {
 
         it("should reject non-positive line width", () => {
             const errors = lib.validateCalligraphy({ line_width: 0 });
-            assert.strictEqual(true, errors.includes("calligraphy.line_width must be a positive number"));
+            assert.strictEqual(
+                true,
+                errors.includes("calligraphy.line_width must be a positive number")
+            );
         });
 
         it("should reject negative line width", () => {
             const errors = lib.validateCalligraphy({ line_width: -1 });
-            assert.strictEqual(true, errors.includes("calligraphy.line_width must be a positive number"));
+            assert.strictEqual(
+                true,
+                errors.includes("calligraphy.line_width must be a positive number")
+            );
         });
 
         it("should reject non-number line width", () => {
             const errors = lib.validateCalligraphy({ line_width: "thick" });
-            assert.strictEqual(true, errors.includes("calligraphy.line_width must be a positive number"));
+            assert.strictEqual(
+                true,
+                errors.includes("calligraphy.line_width must be a positive number")
+            );
         });
     });
 
