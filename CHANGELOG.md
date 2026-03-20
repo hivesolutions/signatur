@@ -61,11 +61,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Plugin CSS files moved to `static/css/plugins/` mirroring the `static/js/plugins/` structure
 * JSDoc-style `/** */` docstrings on jQuery plugin definitions with actions and events
 * Profile selector jQuery plugin (`plugins/profileselector.js`) for profile and variant dropdown management
+* Calligraphy mode with jSignature canvas overlay on the viewport preview for freehand engraving
+* Calligraphy jQuery plugin (`plugins/calligraphy.js`, `css/plugins/calligraphy.css`) with init, reset, undo, and data actions
+* Calligraphy mode toggle, undo, and clear controls in viewport options panel
+* Per-profile calligraphy configuration with `calligraphy.line_width` field and validation
+* Zoom slider disabled during calligraphy mode to preserve drawing integrity
+* Calligraphy mode persisted via URL query parameter (`calligraphy=1`)
+* Calligraphy mode preserved across profile switches with canvas re-initialization
 
 ### Fixed
 
 * Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
-
 * `/profiles` endpoint now handles async errors through Express error middleware
 * Invalid CSS `background-position` value corrected to valid 2-value syntax
 * Restored text click handler now binds to all non-caret children including newline elements
@@ -79,7 +85,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Corrected Cool Emojis character-to-F3S font mapping using visual glyph recognition
 * Sorted `coolemojis.mapping.json` by font number for better structure
-
 * Line height in viewport preview now scales proportionally to font size (1.2x)
 * Moved profile and font size controls from inline layout to fixed options panel
 

@@ -23,6 +23,7 @@
             const context = jQuery(this);
             const svg = jQuery(".viewport-svg", context);
             const container = jQuery(".viewer-container", context);
+            const calligraphyContainer = jQuery(".calligraphy-container", context);
             const rulerHorizontal = jQuery(".ruler-horizontal", context);
             const rulerVertical = jQuery(".ruler-vertical", context);
 
@@ -123,6 +124,13 @@
                     padding: "0px",
                     border: "none",
                     "min-width": "0px"
+                });
+                calligraphyContainer.css({
+                    position: "absolute",
+                    left: safeX + "px",
+                    top: safeY + "px",
+                    width: safeW + "px",
+                    height: safeH + "px"
                 });
 
                 // applies the background image behind the viewport so that

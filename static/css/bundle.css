@@ -1121,6 +1121,55 @@ body.ldj .line {
     width: 0px;
 }
 
+.calligraphy-mode-container {
+    display: none;
+}
+
+.calligraphy-mode-container.visible {
+    display: inline-block;
+}
+
+.viewport-options > .viewport-options-body > .calligraphy-controls {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .calligraphy-controls.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .calligraphy-controls > .calligraphy-undo,
+.viewport-options > .viewport-options-body > .calligraphy-controls > .calligraphy-clear {
+    font-size: 9px;
+    height: 24px;
+    line-height: 24px;
+    margin-right: 6px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.viewport-options > .viewport-options-body > .calligraphy-controls > .calligraphy-clear {
+    margin-right: 0px;
+}
+
+.viewport > .main-container > .viewport-preview > .calligraphy-container {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 10;
+}
+
+.viewport > .main-container > .viewport-preview.calligraphy-active > .calligraphy-container {
+    display: block;
+}
+
+.viewport > .main-container > .viewport-preview.calligraphy-active > .viewer-container {
+    display: none;
+}
+
+.viewport > .main-container > .viewport-preview > .calligraphy-container canvas {
+    cursor: crosshair;
+}
+
 .collapsible > .collapsible-title {
     cursor: pointer;
     margin-bottom: 12px;

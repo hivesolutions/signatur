@@ -52,6 +52,16 @@
                     Auto
                 </label>
             </div>
+            <div class="viewport-options-field viewport-options-checkbox calligraphy-mode-container">
+                <label class="viewport-options-option">
+                    <input class="calligraphy-mode" type="checkbox" />
+                    Calligraphy Mode
+                </label>
+            </div>
+            <div class="viewport-options-field calligraphy-controls">
+                <span class="button button-small calligraphy-undo">Undo</span>
+                <span class="button button-small calligraphy-clear">Clear</span>
+            </div>
             <div class="viewport-options-field viewport-options-checkbox viewport-options-rulers">
                 <label class="viewport-options-option">
                     <input class="rulers-mode" type="checkbox" checked />
@@ -130,6 +140,7 @@
                     <div class="crosshair crosshair-horizontal"></div>
                     <div class="crosshair crosshair-vertical"></div>
                     <svg class="viewport-svg"></svg>
+                    <div class="calligraphy-container"></div>
                     <div class="viewer-container caret-active" data-text="<%= config.text %>">
                     <% if (text) { %>
                         <% text.forEach(function(item){ %>
