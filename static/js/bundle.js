@@ -2119,6 +2119,7 @@ jQuery(document).ready(function() {
     const crosshairMode = jQuery(".crosshair-mode");
     const viewportOptionsCrosshair = jQuery(".viewport-options-crosshair");
     const keyboardMode = jQuery(".keyboard-mode");
+    const viewportOptionsKeyboard = jQuery(".viewport-options-keyboard");
     const guidelinesMode = jQuery(".guidelines-mode");
     const viewportOptionsGuidelines = jQuery(".viewport-options-guidelines");
     const caretMode = jQuery(".caret-mode");
@@ -2913,6 +2914,8 @@ jQuery(document).ready(function() {
             emojisContainer.hide();
             emojispContainer.hide();
             fontSizeContainer.removeClass("visible");
+            viewportOptionsKeyboard.hide();
+            viewportOptionsCaret.hide();
             calligraphyControls.addClass("visible");
             zoomRange.prop("disabled", true);
             initCalligraphy();
@@ -2920,6 +2923,8 @@ jQuery(document).ready(function() {
         } else {
             viewportPreview.removeClass("calligraphy-active");
             calligraphyControls.removeClass("visible");
+            viewportOptionsKeyboard.show();
+            viewportOptionsCaret.show();
             zoomRange.prop("disabled", false);
             calligraphyContainer.calligraphy("reset");
             body.data("calligraphy", null);
