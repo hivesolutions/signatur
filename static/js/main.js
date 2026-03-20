@@ -389,6 +389,13 @@ jQuery(document).ready(function() {
                 viewportContainer.find("> .caret").hide();
                 viewportContainer.removeClass("caret-active");
             }
+
+            // restores the calligraphy mode from the URL
+            // query parameters if it was previously saved
+            const urlCalligraphy = urlParams.get("calligraphy");
+            if (urlCalligraphy === "1" && currentProfile) {
+                calligraphyMode.prop("checked", true).trigger("change");
+            }
             restoring = false;
             updateUrl();
         } catch (err) {
@@ -677,11 +684,8 @@ jQuery(document).ready(function() {
             calligraphyModeContainer.removeClass("visible");
             calligraphyControls.removeClass("visible");
         }
-        // resets calligraphy mode when switching profiles
+        // resets the calligraphy canvas when switching profiles
         // since the canvas dimensions change with the profile
-        calligraphyMode.prop("checked", false);
-        viewportPreview.removeClass("calligraphy-active");
-        calligraphyControls.removeClass("visible");
         calligraphyContainer.calligraphy("reset");
         body.data("calligraphy", null);
 
@@ -695,6 +699,12 @@ jQuery(document).ready(function() {
         updateFontSizeControls(currentProfile);
         applyFontSize();
         inspirationPanel.inspirationpanel("update", currentProfile);
+
+        // re-initializes the calligraphy canvas if the mode
+        // is still active after the profile switch completes
+        if (calligraphyMode.prop("checked") && currentProfile) {
+            initCalligraphy();
+        }
     };
 
     // registers for the change event from the profile selector
@@ -1103,6 +1113,8 @@ jQuery(document).ready(function() {
         if (!showGuidelines) params.set("guidelines", "0");
         const showCaret = caretMode.prop("checked");
         if (!showCaret) params.set("caret", "0");
+        const calligraphyEnabled = calligraphyMode.prop("checked");
+        if (calligraphyEnabled) params.set("calligraphy", "1");
         const fullscreen = urlParams.get("fullscreen");
         if (fullscreen === "1") params.set("fullscreen", "1");
         if (theme !== "default") params.set("theme", theme);

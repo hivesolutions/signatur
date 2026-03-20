@@ -66,6 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Calligraphy mode toggle, undo, and clear controls in viewport options panel
 * Per-profile calligraphy configuration with `calligraphy.line_width` field and validation
 * Zoom slider disabled during calligraphy mode to preserve drawing integrity
+* Calligraphy mode persisted via URL query parameter (`calligraphy=1`)
+* Calligraphy mode preserved across profile switches with canvas re-initialization
 
 ### Fixed
 
