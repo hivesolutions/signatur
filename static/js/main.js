@@ -67,25 +67,10 @@ jQuery(document).ready(function() {
     // profile and variant dropdown container
     profileSelector.profileselector();
 
-    // initializes the welcome plugin on the welcome
-    // screen template catalog container
+    // initializes the welcome plugin on the welcome screen
+    // template catalog container, which fetches and populates
+    // the available profiles from the server on its own
     welcomeContainer.welcome();
-
-    // fetches the available profiles from the server and
-    // populates the welcome screen template catalog with
-    // the results
-    const loadWelcomeProfiles = async function() {
-        try {
-            const response = await fetch("/profiles");
-            if (response.status !== 200) return;
-            const profiles = await response.json();
-            welcomeContainer.welcome("load", { profiles: profiles });
-        } catch (err) {
-            // silently ignores fetch errors so the welcome
-            // screen still renders without a populated catalog
-        }
-    };
-    loadWelcomeProfiles();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
