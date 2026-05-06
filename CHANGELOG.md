@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Welcome screen at `/welcome` with a visual template catalog of the available profiles (image, name, dimensions)
 * Welcome jQuery plugin (`plugins/welcome.js`, `css/welcome.css`) with `load` and `value` actions
 * Forwarding of `profile` and `variant` query parameters from the gateway POST to the editor for template pre-selection
+* Session-tracked entry point so the back arrow in the viewport, signature, and report views returns to the welcome screen or classic gateway depending on where the user came from
+* Restoration of the previously selected template card on the welcome catalog when navigating back from the editor
 
 ### Fixed
 

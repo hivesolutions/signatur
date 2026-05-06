@@ -75,6 +75,11 @@ app.post("/gateway", (req, res, next) => {
     req.session.config = Object.assign({}, req.body);
     const elements = req.session.config.elements;
 
+    // remembers the entry point that submitted the gateway form
+    // so that downstream views can render a back button that
+    // returns to the same place the user came from
+    req.session.entry = req.body.entry === "welcome" ? "welcome" : "gateway";
+
     // builds the optional profile/variant query string so that
     // a template selection made on the welcome screen is forwarded
     // to the editor for automatic pre-selection
@@ -120,7 +125,8 @@ app.get("/signature", (req, res, next) => {
     req.session.theme = theme;
     res.render("signature", {
         fullscreen: fullscreen,
-        theme: theme
+        theme: theme,
+        back: req.session.entry === "welcome" ? "/welcome" : "/"
     });
 });
 
@@ -137,7 +143,8 @@ app.get("/viewport", (req, res, next) => {
         masterb64: masterb64,
         options: master[req.session.config.technology] || {},
         config: req.session.config || {},
-        text: lib.deserializeText(req.session.config.text) || null
+        text: lib.deserializeText(req.session.config.text) || null,
+        back: req.session.entry === "welcome" ? "/welcome" : "/"
     });
 });
 
@@ -157,7 +164,8 @@ app.get("/report", (req, res, next) => {
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null,
         font: lib.fontText(req.session.config.text) || null,
-        localize: (v, f) => lib.localize(v, locale || undefined, f)
+        localize: (v, f) => lib.localize(v, locale || undefined, f),
+        back: req.session.entry === "welcome" ? "/welcome" : "/"
     });
 });
 

@@ -4,7 +4,7 @@
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="header">
             <div class="buttons-left">
-                <a class="button button-small button-back" href="/">←</a>
+                <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>
             </div>
             <div class="buttons-right">
                 <a class="button button-receipt"

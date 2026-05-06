@@ -20,8 +20,9 @@
                         <div class="catalog"></div>
                     </div>
                 </div>
-                <input class="profile-input" type="hidden" name="profile" value="" />
-                <input class="variant-input" type="hidden" name="variant" value="" />
+                <input class="profile-input" type="hidden" name="profile" value="<%= config.profile ? config.profile : '' %>" />
+                <input class="variant-input" type="hidden" name="variant" value="<%= config.variant ? config.variant : '' %>" />
+                <input type="hidden" name="entry" value="welcome" />
                 <div class="welcome-action-bar">
                     <div class="welcome-options">
                         <div class="option-group">
