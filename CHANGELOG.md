@@ -61,6 +61,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Plugin CSS files moved to `static/css/plugins/` mirroring the `static/js/plugins/` structure
 * JSDoc-style `/** */` docstrings on jQuery plugin definitions with actions and events
 * Profile selector jQuery plugin (`plugins/profileselector.js`) for profile and variant dropdown management
+* Welcome screen at `/welcome` with a visual template catalog of the available profiles (image, name, dimensions)
+* Welcome jQuery plugin (`plugins/welcome.js`, `css/welcome.css`) with `load` and `value` actions
+* Forwarding of `profile` and `variant` query parameters from the gateway POST to the editor for template pre-selection
 
 ### Fixed
 

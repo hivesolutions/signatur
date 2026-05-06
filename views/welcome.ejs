@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>" data-master="<%= masterb64 %>">
+        <div class="welcome">
+            <form class="form form-welcome" method="post" action="/gateway">
+                <div class="logo-container">
+                    <% if (theme === "ldj") { %>
+                        <img class="logo" src="/static/images/logo.svg" />
+                    <% } else { %>
+                        <span class="logo">Welcome</span>
+                    <% } %>
+                </div>
+                <div class="welcome-headline">
+                    <h1 class="welcome-title">Choose a Template</h1>
+                    <p class="welcome-subtitle">Select an engraving template to begin.</p>
+                </div>
+                <div class="catalog-container">
+                    <div class="catalog"></div>
+                </div>
+                <input class="profile-input" type="hidden" name="profile" value="" />
+                <input class="variant-input" type="hidden" name="variant" value="" />
+                <div class="field">
+                    <label class="name">Technology</label>
+                    <div class="value" id="technology">
+                        <input class="radio" type="radio" id="diamond" name="technology" value="diamond"
+                            <%= config.technology === "diamond" ? "checked" : '' %>>
+                        <label class="radio-label" for="diamond">Diamond</label>
+                        <input class="radio" type="radio" id="laser" name="technology" value="laser"
+                            <%= config.technology === "laser" ? "checked" : '' %>>
+                        <label class="radio-label" for="laser">Laser</label>
+                        <input class="radio" type="radio" id="fresa" name="technology" value="fresa"
+                            <%= config.technology === "fresa" ? "checked" : '' %>>
+                        <label class="radio-label" for="fresa">Fresa</label>
+                        <input class="radio" type="radio" id="pantograph" name="technology" value="pantograph"
+                            <%= config.technology === "pantograph" ? "checked" : '' %>>
+                        <label class="radio-label" for="pantograph">Pantograph</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="name">Elements</label>
+                    <div class="value" id="elements">
+                        <input class="radio" type="radio" id="text" name="elements" value="text"
+                            <%= config.elements === "text" ? "checked" : '' %>>
+                        <label class="radio-label" for="text">Text</label>
+                        <input class="radio" type="radio" id="calligraphy" name="elements" value="calligraphy"
+                            <%= config.elements === "calligraphy" ? "checked" : '' %>>
+                        <label class="radio-label" for="calligraphy">Calligraphy</label>
+                        <input class="radio" type="radio" id="digital-printing" name="elements" value="digital_printing"
+                            <%= config.elements === "digital_printing" ? "checked" : '' %>>
+                        <label class="radio-label" for="digital-printing">Dig. print</label>
+                        <input class="radio" type="radio" id="graphic-element" name="elements" value="graphic_element"
+                            <%= config.elements === "graphic_element" ? "checked" : '' %>>
+                        <label class="radio-label" for="graphic-element">Graphic element</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="name">Location</label>
+                    <div class="value" id="location">
+                        <input class="radio" type="radio" id="interior" name="location" value="interior"
+                            <%= config.location === "interior" ? "checked" : '' %>>
+                        <label class="radio-label" for="interior">Interior</label>
+                        <input class="radio" type="radio" id="exterior" name="location" value="exterior"
+                            <%= config.location === "exterior" ? "checked" : '' %>>
+                        <label class="radio-label" for="exterior">Exterior</label>
+                    </div>
+                </div>
+                <div class="buttons-container">
+                    <button type="submit" class="button button-start" disabled>Start</button>
+                    <a class="button button-classic" href="/gateway">Classic</a>
+                </div>
+            </form>
+            <div class="footer">
+                <div class="version">
+                    Version <%= info.version %>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

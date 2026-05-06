@@ -1,0 +1,202 @@
+.welcome {
+    align-items: center;
+    background-color: #f4f7fa;
+    display: flex;
+    min-height: 100%;
+    padding: 48px 0px 64px 0px;
+}
+
+.welcome > .form.form-welcome {
+    max-width: 960px;
+    min-width: 720px;
+}
+
+.welcome > .form > .welcome-headline {
+    margin: 8px 0px 24px 0px;
+    text-align: center;
+}
+
+.welcome > .form > .welcome-headline > .welcome-title {
+    color: #2d2d2d;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    margin: 0px 0px 8px 0px;
+}
+
+.welcome > .form > .welcome-headline > .welcome-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.25px;
+    margin: 0px 0px 0px 0px;
+}
+
+.welcome > .form > .catalog-container {
+    margin: 0px 0px 24px 0px;
+}
+
+.welcome > .form > .catalog-container > .catalog {
+    -ms-grid-columns: 1fr 12px 1fr 12px 1fr;
+    display: -ms-grid;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card {
+    background-color: #ffffff;
+    border: 2px solid #ececec;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 0px 0px 0px 0px;
+    text-align: center;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    -o-transition: border-color 0.2s ease, transform 0.2s ease;
+    -ms-transition: border-color 0.2s ease, transform 0.2s ease;
+    -moz-transition: border-color 0.2s ease, transform 0.2s ease;
+    -khtml-transition: border-color 0.2s ease, transform 0.2s ease;
+    -webkit-transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card:hover {
+    border-color: #d0d0d0;
+    transform: translateY(-2px);
+    -o-transform: translateY(-2px);
+    -ms-transform: translateY(-2px);
+    -moz-transform: translateY(-2px);
+    -khtml-transform: translateY(-2px);
+    -webkit-transform: translateY(-2px);
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card.selected {
+    border-color: #2d2d2d;
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card > .catalog-card-image {
+    background-color: #f4f7fa;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 160px;
+    width: 100%;
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card > .catalog-card-body {
+    padding: 12px 12px 12px 12px;
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
+    color: #2d2d2d;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.25px;
+    margin: 0px 0px 4px 0px;
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card.empty {
+    color: #6b7280;
+    cursor: default;
+    font-size: 13px;
+    font-weight: 400;
+    grid-column: 1 / -1;
+    padding: 32px 0px 32px 0px;
+    text-align: center;
+}
+
+.welcome > .form > .catalog-container > .catalog > .catalog-card.empty:hover {
+    border-color: #ececec;
+    transform: none;
+    -o-transform: none;
+    -ms-transform: none;
+    -moz-transform: none;
+    -khtml-transform: none;
+    -webkit-transform: none;
+}
+
+.welcome > .form > .buttons-container > .button-classic {
+    margin-left: 14px;
+}
+
+.welcome > .form > .buttons-container > .button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+    -o-opacity: 0.5;
+    -ms-opacity: 0.5;
+    -moz-opacity: 0.5;
+    -khtml-opacity: 0.5;
+    -webkit-opacity: 0.5;
+}
+
+.welcome > .footer {
+    bottom: 0px;
+    font-size: 11px;
+    font-weight: 600;
+    height: 24px;
+    letter-spacing: 0.25px;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+body.ldj .welcome {
+    background-color: #faf8fc;
+}
+
+body.ldj .welcome > .form > .welcome-headline > .welcome-title {
+    color: #1f1430;
+    font-weight: 200;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+body.ldj .welcome > .form > .welcome-headline > .welcome-subtitle {
+    color: #6b5a8a;
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+body.ldj .welcome > .form > .catalog-container > .catalog > .catalog-card {
+    border-color: #ece4f5;
+}
+
+body.ldj .welcome > .form > .catalog-container > .catalog > .catalog-card:hover {
+    border-color: #c9b6e5;
+}
+
+body.ldj .welcome > .form > .catalog-container > .catalog > .catalog-card.selected {
+    border-color: #9678d3;
+}
+
+body.ldj .welcome > .form > .catalog-container > .catalog > .catalog-card > .catalog-card-image {
+    background-color: #f5f0fa;
+}
+
+body.ldj .welcome > .form > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
+    color: #1f1430;
+}
+
+body.ldj .welcome > .form > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
+    color: #6b5a8a;
+}

@@ -66,6 +66,17 @@ jQuery(document).ready(function() {
     // profile and variant dropdown container
     profileSelector.profileselector();
 
+    // initializes the welcome plugin on the welcome screen
+    // and populates the template catalog with the available
+    // profiles fetched from the server
+    const welcomeContainer = jQuery(".form-welcome");
+    if (welcomeContainer.length > 0) {
+        welcomeContainer.welcome();
+        jQuery.getJSON("/profiles", function(profiles) {
+            welcomeContainer.welcome("load", { profiles: profiles });
+        });
+    }
+
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeInput = jQuery(".font-size-input");
