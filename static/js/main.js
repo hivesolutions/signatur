@@ -23,6 +23,7 @@ jQuery(document).ready(function() {
     const modalInstructionsTitle = jQuery(".modal-instructions-title");
     const modalInstructionsDescription = jQuery(".modal-instructions-description");
     const modalInstructionsImages = jQuery(".modal-instructions-images");
+    const welcomeContainer = jQuery(".form-welcome");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -66,16 +67,25 @@ jQuery(document).ready(function() {
     // profile and variant dropdown container
     profileSelector.profileselector();
 
-    // initializes the welcome plugin on the welcome screen
-    // and populates the template catalog with the available
-    // profiles fetched from the server
-    const welcomeContainer = jQuery(".form-welcome");
-    if (welcomeContainer.length > 0) {
-        welcomeContainer.welcome();
-        jQuery.getJSON("/profiles", function(profiles) {
+    // initializes the welcome plugin on the welcome
+    // screen template catalog container
+    welcomeContainer.welcome();
+
+    // fetches the available profiles from the server and
+    // populates the welcome screen template catalog with
+    // the results
+    const loadWelcomeProfiles = async function() {
+        try {
+            const response = await fetch("/profiles");
+            if (response.status !== 200) return;
+            const profiles = await response.json();
             welcomeContainer.welcome("load", { profiles: profiles });
-        });
-    }
+        } catch (err) {
+            // silently ignores fetch errors so the welcome
+            // screen still renders without a populated catalog
+        }
+    };
+    loadWelcomeProfiles();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");

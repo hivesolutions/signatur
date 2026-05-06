@@ -109,7 +109,7 @@ app.get("/welcome", (req, res, next) => {
     const locale = req.query.locale || req.session.locale || "";
     req.session.theme = theme;
     req.session.locale = locale;
-    res.render("welcome", {
+    res.render("welcome" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
         master: master,

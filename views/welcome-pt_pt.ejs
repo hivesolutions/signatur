@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>" data-master="<%= masterb64 %>">
+        <div class="welcome">
+            <form class="form form-welcome" method="post" action="/gateway">
+                <div class="welcome-hero">
+                    <div class="welcome-hero-mark">
+                        <% if (theme === "ldj") { %>
+                            <img class="logo" src="/static/images/logo.svg" />
+                        <% } else { %>
+                            <span class="logo">Signatur</span>
+                        <% } %>
+                    </div>
+                    <div class="welcome-hero-eyebrow">Estúdio de Gravação</div>
+                    <div class="welcome-hero-divider"></div>
+                </div>
+                <div class="welcome-catalog">
+                    <div class="catalog-container">
+                        <div class="catalog"></div>
+                    </div>
+                </div>
+                <input class="profile-input" type="hidden" name="profile" value="<%= config.profile ? config.profile : '' %>" />
+                <input class="variant-input" type="hidden" name="variant" value="<%= config.variant ? config.variant : '' %>" />
+                <input type="hidden" name="entry" value="welcome" />
+                <div class="welcome-action-bar">
+                    <div class="welcome-options">
+                        <div class="option-group">
+                            <span class="option-group-label">Tecnologia</span>
+                            <div class="option-chips" id="technology">
+                                <input class="option-chip-input" type="radio" id="diamond" name="technology" value="diamond"
+                                    <%= !config.technology || config.technology === "diamond" ? "checked" : '' %>>
+                                <label class="option-chip" for="diamond">Diamante</label>
+                                <input class="option-chip-input" type="radio" id="laser" name="technology" value="laser"
+                                    <%= config.technology === "laser" ? "checked" : '' %>>
+                                <label class="option-chip" for="laser">Laser</label>
+                                <input class="option-chip-input" type="radio" id="fresa" name="technology" value="fresa"
+                                    <%= config.technology === "fresa" ? "checked" : '' %>>
+                                <label class="option-chip" for="fresa">Fresa</label>
+                                <input class="option-chip-input" type="radio" id="pantograph" name="technology" value="pantograph"
+                                    <%= config.technology === "pantograph" ? "checked" : '' %>>
+                                <label class="option-chip" for="pantograph">Pantógrafo</label>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <span class="option-group-label">Elementos</span>
+                            <div class="option-chips" id="elements">
+                                <input class="option-chip-input" type="radio" id="text" name="elements" value="text"
+                                    <%= !config.elements || config.elements === "text" ? "checked" : '' %>>
+                                <label class="option-chip" for="text">Texto</label>
+                                <input class="option-chip-input" type="radio" id="calligraphy" name="elements" value="calligraphy"
+                                    <%= config.elements === "calligraphy" ? "checked" : '' %>>
+                                <label class="option-chip" for="calligraphy">Caligrafia</label>
+                                <input class="option-chip-input" type="radio" id="digital-printing" name="elements" value="digital_printing"
+                                    <%= config.elements === "digital_printing" ? "checked" : '' %>>
+                                <label class="option-chip" for="digital-printing">Impr. digital</label>
+                                <input class="option-chip-input" type="radio" id="graphic-element" name="elements" value="graphic_element"
+                                    <%= config.elements === "graphic_element" ? "checked" : '' %>>
+                                <label class="option-chip" for="graphic-element">Gráfico</label>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <span class="option-group-label">Localização</span>
+                            <div class="option-chips" id="location">
+                                <input class="option-chip-input" type="radio" id="interior" name="location" value="interior"
+                                    <%= !config.location || config.location === "interior" ? "checked" : '' %>>
+                                <label class="option-chip" for="interior">Interior</label>
+                                <input class="option-chip-input" type="radio" id="exterior" name="location" value="exterior"
+                                    <%= config.location === "exterior" ? "checked" : '' %>>
+                                <label class="option-chip" for="exterior">Exterior</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="welcome-actions">
+                        <a class="button button-ghost button-classic" href="/gateway">Clássico</a>
+                        <button type="submit" class="button button-start" disabled>Iniciar</button>
+                    </div>
+                </div>
+                <div class="welcome-version">
+                    <span>Versão <%= info.version %></span>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
