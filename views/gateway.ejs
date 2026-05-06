@@ -43,7 +43,7 @@
                     <label class="name">Technology</label>
                     <div class="value" id="technology">
                         <input class="radio" type="radio" id="diamond" name="technology" value="diamond"
-                            <%= config.technology === "diamond" ? "checked" : '' %>>
+                            <%= !config.technology || config.technology === "diamond" ? "checked" : '' %>>
                         <label class="radio-label" for="diamond">Diamond</label>
                         <input class="radio" type="radio" id="laser" name="technology" value="laser"
                             <%= config.technology === "laser" ? "checked" : '' %>>
@@ -60,7 +60,7 @@
                     <label class="name">Elements</label>
                     <div class="value" id="elements">
                         <input class="radio" type="radio" id="text" name="elements" value="text"
-                            <%= config.elements === "text" ? "checked" : '' %>>
+                            <%= !config.elements || config.elements === "text" ? "checked" : '' %>>
                         <label class="radio-label" for="text">Text</label>
                         <input class="radio" type="radio" id="calligraphy" name="elements" value="calligraphy"
                             <%= config.elements === "calligraphy" ? "checked" : '' %>>
@@ -77,7 +77,7 @@
                     <label class="name">Location</label>
                     <div class="value" id="location">
                         <input class="radio" type="radio" id="interior" name="location" value="interior"
-                            <%= config.location === "interior" ? "checked" : '' %>>
+                            <%= !config.location || config.location === "interior" ? "checked" : '' %>>
                         <label class="radio-label" for="interior">Interior</label>
                         <input class="radio" type="radio" id="exterior" name="location" value="exterior"
                             <%= config.location === "exterior" ? "checked" : '' %>>

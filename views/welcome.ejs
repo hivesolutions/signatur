@@ -28,7 +28,7 @@
                             <span class="option-group-label">Technology</span>
                             <div class="option-chips" id="technology">
                                 <input class="option-chip-input" type="radio" id="diamond" name="technology" value="diamond"
-                                    <%= config.technology === "diamond" ? "checked" : '' %>>
+                                    <%= !config.technology || config.technology === "diamond" ? "checked" : '' %>>
                                 <label class="option-chip" for="diamond">Diamond</label>
                                 <input class="option-chip-input" type="radio" id="laser" name="technology" value="laser"
                                     <%= config.technology === "laser" ? "checked" : '' %>>
@@ -45,7 +45,7 @@
                             <span class="option-group-label">Elements</span>
                             <div class="option-chips" id="elements">
                                 <input class="option-chip-input" type="radio" id="text" name="elements" value="text"
-                                    <%= config.elements === "text" ? "checked" : '' %>>
+                                    <%= !config.elements || config.elements === "text" ? "checked" : '' %>>
                                 <label class="option-chip" for="text">Text</label>
                                 <input class="option-chip-input" type="radio" id="calligraphy" name="elements" value="calligraphy"
                                     <%= config.elements === "calligraphy" ? "checked" : '' %>>
@@ -62,7 +62,7 @@
                             <span class="option-group-label">Location</span>
                             <div class="option-chips" id="location">
                                 <input class="option-chip-input" type="radio" id="interior" name="location" value="interior"
-                                    <%= config.location === "interior" ? "checked" : '' %>>
+                                    <%= !config.location || config.location === "interior" ? "checked" : '' %>>
                                 <label class="option-chip" for="interior">Interior</label>
                                 <input class="option-chip-input" type="radio" id="exterior" name="location" value="exterior"
                                     <%= config.location === "exterior" ? "checked" : '' %>>
