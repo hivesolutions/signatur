@@ -1468,6 +1468,7 @@ body.ldj .line {
 }
 
 .welcome .welcome-version {
+    background-color: #ffffff;
     color: #9aa0ad;
     flex: 0 0 auto;
     font-size: 9px;
