@@ -67,6 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Session-tracked entry point so the back arrow in the viewport, signature, and report views returns to the welcome screen or classic gateway depending on where the user came from
 * Restoration of the previously selected template card on the welcome catalog when navigating back from the editor
 * Portuguese (`pt_pt`) translation of the welcome screen mirroring the existing `welcome.ejs` layout
+* Documentation of the supported HTTP query parameters in `README.md`, grouped per route with type, default, and description columns
+* White background on the welcome screen version footer so it visually matches the action bar above it
 
 ### Fixed
 
