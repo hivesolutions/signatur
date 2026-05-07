@@ -74,19 +74,49 @@ app.get(["/", "/gateway"], (req, res, next) => {
 app.post("/gateway", (req, res, next) => {
     req.session.config = Object.assign({}, req.body);
     const elements = req.session.config.elements;
+
+    // remembers the entry point that submitted the gateway form
+    // so that downstream views can render a back button that
+    // returns to the same place the user came from
+    req.session.entry = req.body.entry === "welcome" ? "welcome" : "gateway";
+
+    // builds the optional profile/variant query string so that
+    // a template selection made on the welcome screen is forwarded
+    // to the editor for automatic pre-selection
+    const params = new URLSearchParams();
+    if (req.session.config.profile) params.set("profile", req.session.config.profile);
+    if (req.session.config.variant) params.set("variant", req.session.config.variant);
+    const query = params.toString() ? "?" + params.toString() : "";
+
     switch (elements) {
         case "text":
-            res.redirect(302, "/viewport");
+            res.redirect(302, "/viewport" + query);
             break;
         case "digital_printing":
         case "graphic_element":
-            res.redirect(302, "/report");
+            res.redirect(302, "/report" + query);
             break;
         case "calligraphy":
         default:
-            res.redirect(302, "/signature");
+            res.redirect(302, "/signature" + query);
             break;
     }
+});
+
+app.get("/welcome", (req, res, next) => {
+    const fullscreen = req.query.fullscreen === "1";
+    const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
+    req.session.theme = theme;
+    req.session.locale = locale;
+    res.render("welcome" + (locale ? `-${locale}` : ""), {
+        fullscreen: fullscreen,
+        theme: theme,
+        master: master,
+        masterb64: masterb64,
+        config: req.session.config || {},
+        info: info || {}
+    });
 });
 
 app.get("/signature", (req, res, next) => {
@@ -95,7 +125,8 @@ app.get("/signature", (req, res, next) => {
     req.session.theme = theme;
     res.render("signature", {
         fullscreen: fullscreen,
-        theme: theme
+        theme: theme,
+        back: req.session.entry === "welcome" ? "/welcome" : "/"
     });
 });
 
@@ -112,7 +143,8 @@ app.get("/viewport", (req, res, next) => {
         masterb64: masterb64,
         options: master[req.session.config.technology] || {},
         config: req.session.config || {},
-        text: lib.deserializeText(req.session.config.text) || null
+        text: lib.deserializeText(req.session.config.text) || null,
+        back: req.session.entry === "welcome" ? "/welcome" : "/"
     });
 });
 
@@ -132,7 +164,8 @@ app.get("/report", (req, res, next) => {
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null,
         font: lib.fontText(req.session.config.text) || null,
-        localize: (v, f) => lib.localize(v, locale || undefined, f)
+        localize: (v, f) => lib.localize(v, locale || undefined, f),
+        back: req.session.entry === "welcome" ? "/welcome" : "/"
     });
 });
 

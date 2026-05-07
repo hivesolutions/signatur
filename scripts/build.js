@@ -11,6 +11,7 @@ const CSS_FILES = [
     "css/signature.css",
     "css/text.css",
     "css/viewport.css",
+    "css/welcome.css",
     "css/plugins/collapsible.css",
     "css/plugins/console.css",
     "css/plugins/inspiration.css",
@@ -31,6 +32,7 @@ const JS_FILES = [
     "js/plugins/texteditor.js",
     "js/plugins/toast.js",
     "js/plugins/viewportpreview.js",
+    "js/plugins/welcome.js",
     "js/main.js"
 ];
 

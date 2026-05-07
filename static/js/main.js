@@ -23,6 +23,7 @@ jQuery(document).ready(function() {
     const modalInstructionsTitle = jQuery(".modal-instructions-title");
     const modalInstructionsDescription = jQuery(".modal-instructions-description");
     const modalInstructionsImages = jQuery(".modal-instructions-images");
+    const welcomeContainer = jQuery(".form-welcome");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -65,6 +66,11 @@ jQuery(document).ready(function() {
     // initializes the profile selector plugin on the
     // profile and variant dropdown container
     profileSelector.profileselector();
+
+    // initializes the welcome plugin on the welcome screen
+    // template catalog container, which fetches and populates
+    // the available profiles from the server on its own
+    welcomeContainer.welcome();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");

@@ -61,6 +61,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Plugin CSS files moved to `static/css/plugins/` mirroring the `static/js/plugins/` structure
 * JSDoc-style `/** */` docstrings on jQuery plugin definitions with actions and events
 * Profile selector jQuery plugin (`plugins/profileselector.js`) for profile and variant dropdown management
+* Welcome screen at `/welcome` with a visual template catalog of the available profiles (image, name, dimensions)
+* Welcome jQuery plugin (`plugins/welcome.js`, `css/welcome.css`) with `load` and `value` actions
+* Forwarding of `profile` and `variant` query parameters from the gateway POST to the editor for template pre-selection
+* Session-tracked entry point so the back arrow in the viewport, signature, and report views returns to the welcome screen or classic gateway depending on where the user came from
+* Restoration of the previously selected template card on the welcome catalog when navigating back from the editor
+* Portuguese (`pt_pt`) translation of the welcome screen mirroring the existing `welcome.ejs` layout
 
 ### Fixed
 
@@ -74,6 +80,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Font deselection handler now clears stored font state and updates URL
 * Backspace at caret start position no longer corrupts text state
 * Server-side validation for `preview.zoom` field in profile schema
+* `lang` attribute on Portuguese views (`welcome-pt_pt.ejs`, `gateway-pt_pt.ejs`, `report-pt_pt.ejs`) corrected from `en` to `pt`
+* Welcome catalog `background-image` URLs now pass profile filenames through `encodeURI` to guard against malformed CSS
 
 ### Changed
 
