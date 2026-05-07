@@ -225,6 +225,10 @@
     padding: 16px 48px 16px 48px;
 }
 
+.welcome .welcome-action-bar.centered {
+    justify-content: center;
+}
+
 .welcome .welcome-action-bar > .welcome-options {
     display: flex;
     flex: 1;

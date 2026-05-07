@@ -23,7 +23,7 @@
                 <input class="profile-input" type="hidden" name="profile" value="<%= config.profile ? config.profile : '' %>" />
                 <input class="variant-input" type="hidden" name="variant" value="<%= config.variant ? config.variant : '' %>" />
                 <input type="hidden" name="entry" value="welcome" />
-                <div class="welcome-action-bar">
+                <div class="welcome-action-bar<%= showOptions ? '' : ' centered' %>">
                     <% if (showOptions) { %>
                         <div class="welcome-options">
                             <div class="option-group">
