@@ -1,0 +1,35 @@
+.welcome > .form.form-settings > .welcome-catalog > .settings-container {
+    margin: 6px auto 12px auto;
+    max-height: 560px;
+    max-width: 480px;
+    padding: 8px 0px 8px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-action-bar {
+    justify-content: center;
+}
+
+.welcome > .form.form-settings > .welcome-action-bar > .welcome-options {
+    display: none;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group {
+    margin: 0px 0px 24px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group:last-child {
+    margin-bottom: 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-group-label {
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-group-label {
+    color: #9b87c2;
+}

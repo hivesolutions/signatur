@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="welcome">
+            <form class="form form-settings" method="post" action="/settings">
+                <div class="welcome-hero">
+                    <div class="welcome-hero-mark">
+                        <% if (theme === "ldj") { %>
+                            <img class="logo" src="/static/images/logo.svg" />
+                        <% } else { %>
+                            <span class="logo">Signatur</span>
+                        <% } %>
+                    </div>
+                    <div class="welcome-hero-eyebrow">Definições</div>
+                    <div class="welcome-hero-divider"></div>
+                </div>
+                <div class="welcome-catalog">
+                    <div class="settings-container">
+                        <div class="settings-group">
+                            <div class="settings-group-label">Tema</div>
+                            <div class="option-chips" id="theme-options">
+                                <input class="option-chip-input" type="radio" id="theme-default" name="theme" value=""
+                                    <%= !theme ? "checked" : '' %>>
+                                <label class="option-chip" for="theme-default">Predefinido</label>
+                                <input class="option-chip-input" type="radio" id="theme-ldj" name="theme" value="ldj"
+                                    <%= theme === "ldj" ? "checked" : '' %>>
+                                <label class="option-chip" for="theme-ldj">Lugar da Joia</label>
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Idioma</div>
+                            <div class="option-chips" id="locale-options">
+                                <input class="option-chip-input" type="radio" id="locale-default" name="locale" value=""
+                                    <%= !locale ? "checked" : '' %>>
+                                <label class="option-chip" for="locale-default">English</label>
+                                <input class="option-chip-input" type="radio" id="locale-pt-pt" name="locale" value="pt_pt"
+                                    <%= locale === "pt_pt" ? "checked" : '' %>>
+                                <label class="option-chip" for="locale-pt-pt">Português</label>
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Ecrã Inteiro</div>
+                            <div class="option-chips" id="fullscreen-options">
+                                <input class="option-chip-input" type="radio" id="fullscreen-off" name="fullscreen" value="0"
+                                    <%= !fullscreen ? "checked" : '' %>>
+                                <label class="option-chip" for="fullscreen-off">Desligado</label>
+                                <input class="option-chip-input" type="radio" id="fullscreen-on" name="fullscreen" value="1"
+                                    <%= fullscreen ? "checked" : '' %>>
+                                <label class="option-chip" for="fullscreen-on">Ligado</label>
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Página Inicial</div>
+                            <div class="option-chips" id="home-options">
+                                <input class="option-chip-input" type="radio" id="home-gateway" name="home" value="gateway"
+                                    <%= home !== "welcome" ? "checked" : '' %>>
+                                <label class="option-chip" for="home-gateway">Entrada</label>
+                                <input class="option-chip-input" type="radio" id="home-welcome" name="home" value="welcome"
+                                    <%= home === "welcome" ? "checked" : '' %>>
+                                <label class="option-chip" for="home-welcome">Boas-vindas</label>
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Mostrar Opções</div>
+                            <div class="option-chips" id="show-options">
+                                <input class="option-chip-input" type="radio" id="show-options-on" name="show_options" value="1"
+                                    <%= showOptions ? "checked" : '' %>>
+                                <label class="option-chip" for="show-options-on">Ligado</label>
+                                <input class="option-chip-input" type="radio" id="show-options-off" name="show_options" value="0"
+                                    <%= !showOptions ? "checked" : '' %>>
+                                <label class="option-chip" for="show-options-off">Desligado</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="next" value="<%= next ? next : '' %>" />
+                <div class="welcome-action-bar">
+                    <div class="welcome-options"></div>
+                    <div class="welcome-actions">
+                        <a class="button button-ghost button-cancel" href="<%= next ? next : '/welcome' %>">Cancelar</a>
+                        <button type="submit" class="button button-start">Guardar</button>
+                    </div>
+                </div>
+                <div class="welcome-version">
+                    <span>Versão <%= info.version %></span>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

@@ -39,51 +39,57 @@
                                value="<%= config.observations ? config.observations : '' %>" />
                     </div>
                 </div>
-                <div class="field">
-                    <label class="name">Technology</label>
-                    <div class="value" id="technology">
-                        <input class="radio" type="radio" id="diamond" name="technology" value="diamond"
-                            <%= !config.technology || config.technology === "diamond" ? "checked" : '' %>>
-                        <label class="radio-label" for="diamond">Diamond</label>
-                        <input class="radio" type="radio" id="laser" name="technology" value="laser"
-                            <%= config.technology === "laser" ? "checked" : '' %>>
-                        <label class="radio-label" for="laser">Laser</label>
-                        <input class="radio" type="radio" id="fresa" name="technology" value="fresa"
-                            <%= config.technology === "fresa" ? "checked" : '' %>>
-                        <label class="radio-label" for="fresa">Fresa</label>
-                        <input class="radio" type="radio" id="pantograph" name="technology" value="pantograph"
-                        <%= config.technology === "pantograph" ? "checked" : '' %>>
-                    <label class="radio-label" for="pantograph">Pantograph</label>
+                <% if (showOptions) { %>
+                    <div class="field">
+                        <label class="name">Technology</label>
+                        <div class="value" id="technology">
+                            <input class="radio" type="radio" id="diamond" name="technology" value="diamond"
+                                <%= !config.technology || config.technology === "diamond" ? "checked" : '' %>>
+                            <label class="radio-label" for="diamond">Diamond</label>
+                            <input class="radio" type="radio" id="laser" name="technology" value="laser"
+                                <%= config.technology === "laser" ? "checked" : '' %>>
+                            <label class="radio-label" for="laser">Laser</label>
+                            <input class="radio" type="radio" id="fresa" name="technology" value="fresa"
+                                <%= config.technology === "fresa" ? "checked" : '' %>>
+                            <label class="radio-label" for="fresa">Fresa</label>
+                            <input class="radio" type="radio" id="pantograph" name="technology" value="pantograph"
+                            <%= config.technology === "pantograph" ? "checked" : '' %>>
+                        <label class="radio-label" for="pantograph">Pantograph</label>
+                        </div>
                     </div>
-                </div>
-                <div class="field">
-                    <label class="name">Elements</label>
-                    <div class="value" id="elements">
-                        <input class="radio" type="radio" id="text" name="elements" value="text"
-                            <%= !config.elements || config.elements === "text" ? "checked" : '' %>>
-                        <label class="radio-label" for="text">Text</label>
-                        <input class="radio" type="radio" id="calligraphy" name="elements" value="calligraphy"
-                            <%= config.elements === "calligraphy" ? "checked" : '' %>>
-                        <label class="radio-label" for="calligraphy">Calligraphy</label>
-                        <input class="radio" type="radio" id="digital-printing" name="elements" value="digital_printing"
-                            <%= config.elements === "digital_printing" ? "checked" : '' %>>
-                        <label class="radio-label" for="digital-printing">Dig. print</label>
-                        <input class="radio" type="radio" id="graphic-element" name="elements" value="graphic_element"
-                            <%= config.elements === "graphic_element" ? "checked" : '' %>>
-                        <label class="radio-label" for="graphic-element">Graphic element</label>
+                    <div class="field">
+                        <label class="name">Elements</label>
+                        <div class="value" id="elements">
+                            <input class="radio" type="radio" id="text" name="elements" value="text"
+                                <%= !config.elements || config.elements === "text" ? "checked" : '' %>>
+                            <label class="radio-label" for="text">Text</label>
+                            <input class="radio" type="radio" id="calligraphy" name="elements" value="calligraphy"
+                                <%= config.elements === "calligraphy" ? "checked" : '' %>>
+                            <label class="radio-label" for="calligraphy">Calligraphy</label>
+                            <input class="radio" type="radio" id="digital-printing" name="elements" value="digital_printing"
+                                <%= config.elements === "digital_printing" ? "checked" : '' %>>
+                            <label class="radio-label" for="digital-printing">Dig. print</label>
+                            <input class="radio" type="radio" id="graphic-element" name="elements" value="graphic_element"
+                                <%= config.elements === "graphic_element" ? "checked" : '' %>>
+                            <label class="radio-label" for="graphic-element">Graphic element</label>
+                        </div>
                     </div>
-                </div>
-                <div class="field">
-                    <label class="name">Location</label>
-                    <div class="value" id="location">
-                        <input class="radio" type="radio" id="interior" name="location" value="interior"
-                            <%= !config.location || config.location === "interior" ? "checked" : '' %>>
-                        <label class="radio-label" for="interior">Interior</label>
-                        <input class="radio" type="radio" id="exterior" name="location" value="exterior"
-                            <%= config.location === "exterior" ? "checked" : '' %>>
-                        <label class="radio-label" for="exterior">Exterior</label>
+                    <div class="field">
+                        <label class="name">Location</label>
+                        <div class="value" id="location">
+                            <input class="radio" type="radio" id="interior" name="location" value="interior"
+                                <%= !config.location || config.location === "interior" ? "checked" : '' %>>
+                            <label class="radio-label" for="interior">Interior</label>
+                            <input class="radio" type="radio" id="exterior" name="location" value="exterior"
+                                <%= config.location === "exterior" ? "checked" : '' %>>
+                            <label class="radio-label" for="exterior">Exterior</label>
+                        </div>
                     </div>
-                </div>
+                <% } else { %>
+                    <input type="hidden" name="technology" value="<%= config.technology ? config.technology : 'diamond' %>" />
+                    <input type="hidden" name="elements" value="<%= config.elements ? config.elements : 'text' %>" />
+                    <input type="hidden" name="location" value="<%= config.location ? config.location : 'interior' %>" />
+                <% } %>
                 <input type="hidden" name="entry" value="gateway" />
                 <div class="buttons-container">
                     <button type="submit" class="button">Submit</button>

@@ -1163,12 +1163,12 @@ body.ldj .line {
 
 .welcome .welcome-hero {
     flex: 0 0 auto;
-    padding: 32px 48px 20px 48px;
+    padding: 12px 48px 12px 48px;
     text-align: center;
 }
 
 .welcome .welcome-hero > .welcome-hero-mark {
-    margin-bottom: 12px;
+    margin: 12px auto 12px auto;
 }
 
 .welcome .welcome-hero > .welcome-hero-mark > .logo {
@@ -1348,6 +1348,10 @@ body.ldj .line {
     padding: 16px 48px 16px 48px;
 }
 
+.welcome .welcome-action-bar.centered {
+    justify-content: center;
+}
+
 .welcome .welcome-action-bar > .welcome-options {
     display: flex;
     flex: 1;
@@ -1370,13 +1374,13 @@ body.ldj .line {
     text-transform: uppercase;
 }
 
-.welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips {
+.welcome .option-chips {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
-.welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips > .option-chip-input {
+.welcome .option-chips > .option-chip-input {
     height: 0px;
     margin: 0px 0px 0px 0px;
     opacity: 0;
@@ -1390,7 +1394,7 @@ body.ldj .line {
     width: 0px;
 }
 
-.welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips > .option-chip {
+.welcome .option-chips > .option-chip {
     background-color: #f4f5f8;
     border: 1px solid #e6e8ee;
     border-radius: 999px 999px 999px 999px;
@@ -1416,12 +1420,12 @@ body.ldj .line {
     -webkit-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips > .option-chip:hover {
+.welcome .option-chips > .option-chip:hover {
     border-color: #cfd4de;
     color: #1f2330;
 }
 
-.welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips > .option-chip-input:checked + .option-chip {
+.welcome .option-chips > .option-chip-input:checked + .option-chip {
     background-color: #1f2330;
     border-color: #1f2330;
     color: #ffffff;
@@ -1468,6 +1472,7 @@ body.ldj .line {
 }
 
 .welcome .welcome-version {
+    background-color: #ffffff;
     color: #9aa0ad;
     flex: 0 0 auto;
     font-size: 9px;
@@ -1528,18 +1533,18 @@ body.ldj .welcome .welcome-action-bar > .welcome-options > .option-group > .opti
     color: #9b87c2;
 }
 
-body.ldj .welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips > .option-chip {
+body.ldj .welcome .option-chips > .option-chip {
     background-color: #f5f0fa;
     border-color: #ece4f5;
     color: #6b5a8a;
 }
 
-body.ldj .welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips > .option-chip:hover {
+body.ldj .welcome .option-chips > .option-chip:hover {
     border-color: #c9b6e5;
     color: #1f1430;
 }
 
-body.ldj .welcome .welcome-action-bar > .welcome-options > .option-group > .option-chips > .option-chip-input:checked + .option-chip {
+body.ldj .welcome .option-chips > .option-chip-input:checked + .option-chip {
     background-color: #9678d3;
     border-color: #9678d3;
     color: #ffffff;
@@ -1552,6 +1557,42 @@ body.ldj .welcome .welcome-action-bar > .welcome-actions > .button.button-ghost 
 
 body.ldj .welcome .welcome-action-bar > .welcome-actions > .button.button-ghost:hover {
     background-color: #f5f0fa;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container {
+    margin: 6px auto 12px auto;
+    max-height: 560px;
+    max-width: 480px;
+    padding: 8px 0px 8px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-action-bar {
+    justify-content: center;
+}
+
+.welcome > .form.form-settings > .welcome-action-bar > .welcome-options {
+    display: none;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group {
+    margin: 0px 0px 24px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group:last-child {
+    margin-bottom: 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-group-label {
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-group-label {
+    color: #9b87c2;
 }
 
 .collapsible > .collapsible-title {
