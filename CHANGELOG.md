@@ -80,6 +80,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Font deselection handler now clears stored font state and updates URL
 * Backspace at caret start position no longer corrupts text state
 * Server-side validation for `preview.zoom` field in profile schema
+* `lang` attribute on Portuguese views (`welcome-pt_pt.ejs`, `gateway-pt_pt.ejs`, `report-pt_pt.ejs`) corrected from `en` to `pt`
+* Welcome catalog `background-image` URLs now pass profile filenames through `encodeURI` to guard against malformed CSS
 
 ### Changed
 

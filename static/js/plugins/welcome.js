@@ -74,7 +74,7 @@
                 if (profile.background) {
                     image.css(
                         "background-image",
-                        "url(/static/profiles/" + profile.background + ")"
+                        "url(/static/profiles/" + encodeURI(profile.background) + ")"
                     );
                 }
                 card.append(image);
