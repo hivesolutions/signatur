@@ -55,7 +55,15 @@ app.locals.dev = process.env.NODE_ENV !== "production";
 app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get(["/", "/gateway"], (req, res, next) => {
+app.get("/", (req, res, next) => {
+    // forwards the bare root URL to the user's preferred home
+    // landing page, defaulting to the classic gateway when no
+    // explicit preference has been stored on the session yet
+    const home = req.session.home === "welcome" ? "/welcome" : "/gateway";
+    res.redirect(302, home);
+});
+
+app.get("/gateway", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
@@ -67,6 +75,7 @@ app.get(["/", "/gateway"], (req, res, next) => {
         master: master,
         masterb64: masterb64,
         config: req.session.config || {},
+        showOptions: req.session.show_options !== "0",
         info: info || {}
     });
 });
@@ -103,6 +112,55 @@ app.post("/gateway", (req, res, next) => {
     }
 });
 
+app.get("/settings", (req, res, next) => {
+    const fullscreen = req.query.fullscreen === "1";
+    const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
+    req.session.theme = theme;
+    req.session.locale = locale;
+
+    // resolves the next URL to redirect to after saving so the user
+    // returns to the screen they came from instead of always landing
+    // on the welcome page
+    const nextUrl = typeof req.query.next === "string" ? req.query.next : "";
+    res.render("settings" + (locale ? `-${locale}` : ""), {
+        fullscreen: fullscreen,
+        theme: theme,
+        locale: locale,
+        home: req.session.home === "welcome" ? "welcome" : "gateway",
+        showOptions: req.session.show_options !== "0",
+        next: nextUrl,
+        info: info || {}
+    });
+});
+
+app.post("/settings", (req, res, next) => {
+    const theme = req.body.theme || "";
+    const locale = req.body.locale || "";
+    req.session.theme = theme;
+    req.session.locale = locale;
+    req.session.home = req.body.home === "welcome" ? "welcome" : "gateway";
+    req.session.show_options = req.body.show_options === "0" ? "0" : "1";
+
+    // resolves the redirect target from the submitted next field
+    // restricting it to local paths so the form cannot be used as
+    // an open redirect
+    const target =
+        typeof req.body.next === "string" && req.body.next.startsWith("/")
+            ? req.body.next
+            : "/welcome";
+
+    // forwards the fullscreen flag onto the redirect query string
+    // since fullscreen is not session-persisted and would otherwise
+    // be lost on the next request
+    const fullscreen = req.body.fullscreen === "1";
+    const params = new URLSearchParams();
+    if (fullscreen) params.set("fullscreen", "1");
+    const query = params.toString() ? "?" + params.toString() : "";
+
+    res.redirect(302, target + query);
+});
+
 app.get("/welcome", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
@@ -115,6 +173,7 @@ app.get("/welcome", (req, res, next) => {
         master: master,
         masterb64: masterb64,
         config: req.session.config || {},
+        showOptions: req.session.show_options !== "0",
         info: info || {}
     });
 });

@@ -30,7 +30,23 @@ Supported file format include:
 
 ## Query Parameters
 
-The following query parameters are honored by the Signatur HTTP routes. Most of them are also persisted on the user session (`theme`, `locale`, `text`) or restored from the URL on page load (viewport editor state) so they survive navigation.
+The following query parameters are honored by the Signatur HTTP routes. Some of them are also persisted on the user session so they survive navigation (`theme`, `locale`, `text`); others live exclusively on the URL and are either round-tripped by the client (viewport editor state) or only read once per request (`fullscreen`, `engine`, `format`).
+
+### Session persistence
+
+| Parameter      | Session-persisted | Notes                                                                                                                              |
+| -------------- | :---------------: | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `theme`        |        yes        | Written to `req.session.theme` on every page that reads it except `/console`, which reads but does not write.                      |
+| `locale`       |        yes        | Written to `req.session.locale` on every page that reads it.                                                                       |
+| `text`         |        yes        | Written to `req.session.config.text` on every page that reads it.                                                                  |
+| `home`         |        yes        | Set via the `/settings` POST body. Controls whether `/` redirects to `/gateway` (default) or `/welcome`.                           |
+| `show_options` |        yes        | Set via the `/settings` POST body. Controls whether the technology / elements / location selectors render on welcome and gateway.  |
+| `fullscreen`   |        no         | Only read per-request via `req.query.fullscreen === "1"`. Preserved across navigation by the viewport editor through the URL only. |
+| `profile`      |        no         | Stored on the session via the `/gateway` POST body (form field), then forwarded as a query string to the editor on redirect.       |
+| `variant`      |        no         | Same handling as `profile`.                                                                                                        |
+| editor state   |        no         | `font`, `font_size`, `font_size_mode`, `zoom`, `margins`, `rulers`, `crosshair`, `keyboard`, `guidelines`, `caret` are URL-only.   |
+| `engine`       |        no         | Read once per `/convert` POST.                                                                                                     |
+| `format`       |        no         | Read once per `/convert` POST.                                                                                                     |
 
 ### Theme and locale
 
@@ -50,7 +66,7 @@ The following query parameters are honored by the Signatur HTTP routes. Most of 
 | ------------ | ----- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `theme`      | `str` | `""`    | Visual theme identifier applied to the body (e.g. `ldj`). Persisted on the session for subsequent requests.                                |
 | `locale`     | `str` | `""`    | Locale identifier used to pick a localized view (e.g. `pt_pt`). Persisted on the session and used to load the matching `*-${locale}.ejs`.  |
-| `fullscreen` | `str` | `"0"`   | When set to `"1"`, enables the `apple-mobile-web-app-capable` meta. The viewport editor preserves the value across `history.replaceState`. |
+| `fullscreen` | `str` | `"0"`   | When set to `"1"`, enables the `apple-mobile-web-app-capable` meta. URL-only (not session-persisted).                                      |
 
 ### Text payload (`/viewport`, `/report`, `/text`, `/image`, `/receipt`)
 

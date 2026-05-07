@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Portuguese (`pt_pt`) translation of the welcome screen mirroring the existing `welcome.ejs` layout
 * Documentation of the supported HTTP query parameters in `README.md`, grouped per route with type, default, and description columns
 * White background on the welcome screen version footer so it visually matches the action bar above it
+* Settings page at `/settings` for selecting the session-persisted `theme`, `locale`, and `fullscreen` values, with a Portuguese translation and a link from the welcome screen action bar
+* Session-persisted `home` preference selecting whether the bare `/` URL redirects to the classic gateway or to the welcome screen, defaulting to gateway
+* Session-persisted `show_options` preference toggling whether the technology, elements, and location selectors are rendered on the welcome screen and classic gateway, defaulting to on; when off the previously selected values are submitted via hidden inputs so the form still routes correctly
 
 ### Fixed
 
