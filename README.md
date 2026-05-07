@@ -28,6 +28,56 @@ Supported file format include:
 | `PRINT_PRINTER` | `str` | `printer`                            | The name of printer (within print node) to be used by Colony Print.                                                    |
 | `PRINT_KEY`     | `str` | `null`                               | The secret key to be used when accessing Colony Print service.                                                         |
 
+## Query Parameters
+
+The following query parameters are honored by the Signatur HTTP routes. Most of them are also persisted on the user session (theme, locale, text) or restored from the URL on page load (viewport editor state) so they survive navigation.
+
+### Common (`/`, `/gateway`, `/welcome`, `/signature`, `/viewport`, `/report`, `/receipt`)
+
+| Name         | Type  | Default | Description                                                                                                  |
+| ------------ | ----- | ------- | ------------------------------------------------------------------------------------------------------------ |
+| `theme`      | `str` | `""`    | Visual theme identifier applied to the body (e.g. `ldj`). Persisted on the session for subsequent requests.  |
+| `locale`     | `str` | `""`    | Locale identifier used to pick a localized view (e.g. `pt_pt`). Persisted on the session.                    |
+| `fullscreen` | `str` | `"0"`   | When set to `"1"`, enables the `apple-mobile-web-app-capable` meta and is preserved by the editor on reload. |
+
+### `/viewport`, `/report`, `/text`, `/image`, `/receipt`
+
+| Name   | Type  | Default | Description                                                                                                           |
+| ------ | ----- | ------- | --------------------------------------------------------------------------------------------------------------------- |
+| `text` | `str` | `null`  | Serialized text payload to seed the editor with (font/character pairs). Persisted on the session config when present. |
+
+### `/viewport`, `/report` (template pre-selection)
+
+These are forwarded automatically by the gateway POST when the welcome screen is used, but they can also be passed directly to deep-link into the editor with a specific template.
+
+| Name      | Type  | Default | Description                                                                                                |
+| --------- | ----- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| `profile` | `str` | `null`  | Profile ID (matches a file under `static/profiles/*.json`) to pre-select in the profile dropdown.          |
+| `variant` | `str` | `null`  | Index of the variant to pre-select within the chosen profile, applied after `profile` is restored.         |
+
+### `/viewport` (editor state)
+
+These are read by the client and written back via `history.replaceState` so the editor URL always reflects the current state and can be shared or reloaded.
+
+| Name             | Type  | Default | Description                                                                                             |
+| ---------------- | ----- | ------- | ------------------------------------------------------------------------------------------------------- |
+| `font`           | `str` | `null`  | Currently selected font name; restored by clicking the matching font element on load.                   |
+| `font_size`      | `int` | `null`  | Manual font size in profile units; applied to both the slider and the number input.                     |
+| `font_size_mode` | `str` | `null`  | Either `manual` or `automatic` for the font size mode toggle.                                           |
+| `zoom`           | `int` | `null`  | Zoom percentage applied to the viewport preview; clamped to the slider's min/max range.                 |
+| `margins`        | `str` | `null`  | Four comma-separated values (`left,right,top,bottom`) overriding the profile padding, in profile units. |
+| `rulers`         | `str` | `"1"`   | When `"0"` hides the horizontal and vertical rulers; any other value (or absent) keeps them visible.    |
+| `crosshair`      | `str` | `"1"`   | When `"0"` disables the hover crosshair lines on the viewport preview.                                  |
+| `keyboard`       | `str` | `"1"`   | When `"0"` hides the visual keyboard panel until re-toggled.                                            |
+| `guidelines`     | `str` | `"1"`   | When `"0"` hides the SVG profile bounds and safe area outlines on the preview.                          |
+| `caret`          | `str` | `"1"`   | When `"0"` hides the blinking caret in the viewport preview.                                            |
+
+### `/convert`
+
+| Name     | Type  | Default      | Description                                                                              |
+| -------- | ----- | ------------ | ---------------------------------------------------------------------------------------- |
+| `engine` | `str` | `"inkscape"` | Conversion engine identifier; resolved against the registered engines (e.g. `inkscape`). |
+
 ## Printing
 
 To be able to enable printing the following JavaScript code should be used inside Browser's JavaScript console:
