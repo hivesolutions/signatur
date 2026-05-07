@@ -30,34 +30,46 @@ Supported file format include:
 
 ## Query Parameters
 
-The following query parameters are honored by the Signatur HTTP routes. Most of them are also persisted on the user session (theme, locale, text) or restored from the URL on page load (viewport editor state) so they survive navigation.
+The following query parameters are honored by the Signatur HTTP routes. Most of them are also persisted on the user session (`theme`, `locale`, `text`) or restored from the URL on page load (viewport editor state) so they survive navigation.
 
-### Common (`/`, `/gateway`, `/welcome`, `/signature`, `/viewport`, `/report`, `/receipt`)
+### Theme and locale
 
-| Name         | Type  | Default | Description                                                                                                  |
-| ------------ | ----- | ------- | ------------------------------------------------------------------------------------------------------------ |
-| `theme`      | `str` | `""`    | Visual theme identifier applied to the body (e.g. `ldj`). Persisted on the session for subsequent requests.  |
-| `locale`     | `str` | `""`    | Locale identifier used to pick a localized view (e.g. `pt_pt`). Persisted on the session.                    |
-| `fullscreen` | `str` | `"0"`   | When set to `"1"`, enables the `apple-mobile-web-app-capable` meta and is preserved by the editor on reload. |
+| Route        | `theme` | `locale` | `fullscreen` |
+| ------------ | :-----: | :------: | :----------: |
+| `/`          |    ✓    |    ✓     |      ✓       |
+| `/gateway`   |    ✓    |    ✓     |      ✓       |
+| `/welcome`   |    ✓    |    ✓     |      ✓       |
+| `/signature` |    ✓    |    —     |      ✓       |
+| `/viewport`  |    ✓    |    —     |      ✓       |
+| `/report`    |    ✓    |    ✓     |      ✓       |
+| `/console`   |    ✓    |    —     |      —       |
+| `/receipt`   |    —    |    ✓     |      —       |
+| `/image`     |    —    |    ✓     |      —       |
 
-### `/viewport`, `/report`, `/text`, `/image`, `/receipt`
+| Name         | Type  | Default | Description                                                                                                                                |
+| ------------ | ----- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `theme`      | `str` | `""`    | Visual theme identifier applied to the body (e.g. `ldj`). Persisted on the session for subsequent requests.                                |
+| `locale`     | `str` | `""`    | Locale identifier used to pick a localized view (e.g. `pt_pt`). Persisted on the session and used to load the matching `*-${locale}.ejs`.  |
+| `fullscreen` | `str` | `"0"`   | When set to `"1"`, enables the `apple-mobile-web-app-capable` meta. The viewport editor preserves the value across `history.replaceState`. |
 
-| Name   | Type  | Default | Description                                                                                                           |
-| ------ | ----- | ------- | --------------------------------------------------------------------------------------------------------------------- |
-| `text` | `str` | `null`  | Serialized text payload to seed the editor with (font/character pairs). Persisted on the session config when present. |
+### Text payload (`/viewport`, `/report`, `/text`, `/image`, `/receipt`)
 
-### `/viewport`, `/report` (template pre-selection)
+| Name   | Type  | Default | Description                                                                                                                |
+| ------ | ----- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `text` | `str` | `null`  | Serialized text payload to seed the editor or render with (`font/character` pairs). Persisted on the session config field. |
 
-These are forwarded automatically by the gateway POST when the welcome screen is used, but they can also be passed directly to deep-link into the editor with a specific template.
+### Template pre-selection (`/viewport`, `/report`)
 
-| Name      | Type  | Default | Description                                                                                                |
-| --------- | ----- | ------- | ---------------------------------------------------------------------------------------------------------- |
-| `profile` | `str` | `null`  | Profile ID (matches a file under `static/profiles/*.json`) to pre-select in the profile dropdown.          |
-| `variant` | `str` | `null`  | Index of the variant to pre-select within the chosen profile, applied after `profile` is restored.         |
+Forwarded automatically by the gateway POST when the welcome screen is used, but they can also be passed directly to deep-link into the editor with a specific template.
 
-### `/viewport` (editor state)
+| Name      | Type  | Default | Description                                                                                        |
+| --------- | ----- | ------- | -------------------------------------------------------------------------------------------------- |
+| `profile` | `str` | `null`  | Profile ID (matches a file under `static/profiles/*.json`) to pre-select in the profile dropdown.  |
+| `variant` | `str` | `null`  | Index of the variant to pre-select within the chosen profile, applied after `profile` is restored. |
 
-These are read by the client and written back via `history.replaceState` so the editor URL always reflects the current state and can be shared or reloaded.
+### Viewport editor state (`/viewport`)
+
+Read by the client and written back via `history.replaceState` so the editor URL always reflects the current state and can be shared or reloaded.
 
 | Name             | Type  | Default | Description                                                                                             |
 | ---------------- | ----- | ------- | ------------------------------------------------------------------------------------------------------- |
@@ -77,6 +89,7 @@ These are read by the client and written back via `history.replaceState` so the 
 | Name     | Type  | Default      | Description                                                                              |
 | -------- | ----- | ------------ | ---------------------------------------------------------------------------------------- |
 | `engine` | `str` | `"inkscape"` | Conversion engine identifier; resolved against the registered engines (e.g. `inkscape`). |
+| `format` | `str` | `"hpgl"`     | Target output format honored by the inkscape engine; one of `svg`, `pdf`, or `hpgl`.     |
 
 ## Printing
 
