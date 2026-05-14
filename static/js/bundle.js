@@ -1039,12 +1039,9 @@ const countLines = function(text) {
             const key = profileSelect.val();
             const baseProfile = key ? profiles[key] : null;
             const index = parseInt(variantSelect.val());
-            const variant = baseProfile && baseProfile.variants
-                ? baseProfile.variants[index]
-                : null;
-            const mergedProfile = variant
-                ? applyVariant(baseProfile, variant)
-                : baseProfile;
+            const variant =
+                baseProfile && baseProfile.variants ? baseProfile.variants[index] : null;
+            const mergedProfile = variant ? applyVariant(baseProfile, variant) : baseProfile;
             return {
                 profile: mergedProfile,
                 baseProfile: baseProfile,
@@ -1163,8 +1160,12 @@ const countLines = function(text) {
      *                    text spans for caret positioning
      *
      * Events:
-     *   "change" - triggered when the text content changes,
-     *              passing the updated text array as argument
+     *   "change"      - triggered when the text content changes,
+     *                   passing the updated text array as argument
+     *   "caretchange" - triggered when the caret position changes
+     *                   without altering the text content, passing
+     *                   the text array and new caret position as
+     *                   arguments
      */
     jQuery.fn.texteditor = function(action, options) {
         const elements = jQuery(this);
@@ -1450,6 +1451,7 @@ const countLines = function(text) {
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -1505,6 +1507,7 @@ const countLines = function(text) {
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -1534,6 +1537,7 @@ const countLines = function(text) {
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -1596,6 +1600,7 @@ const countLines = function(text) {
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -1637,6 +1642,14 @@ const countLines = function(text) {
                 context.triggerHandler("change", [text, caretPosition]);
             };
 
+            // notifies listeners that the caret has moved without
+            // changing the text content so that downstream consumers
+            // (e.g. the font selector) can react to the new position
+            const notifyCaretChange = function(caretPosition) {
+                const text = body.data("text") || [];
+                context.triggerHandler("caretchange", [text, caretPosition]);
+            };
+
             // prevents duplicate bindings if already initialized
             if (body.data("_texteditor_initialized")) return;
             body.data("_texteditor_initialized", true);
@@ -1655,19 +1668,47 @@ const countLines = function(text) {
 
     /**
      * Binds a click handler on a DOM element that repositions
-     * the caret after the clicked element when selected.
+     * the caret either before or after the clicked element based
+     * on which horizontal half of the element received the click,
+     * so that all caret positions including the start of a line
+     * are reachable by mouse.
      *
      * @param {Element} element The DOM element to bind the click handler on.
      * @param {Element} container The viewer container holding all elements.
      * @param {Element} body The body element used for state storage.
      */
     const bindCaretClick = function(element, container, body) {
-        element.click(function() {
+        element.click(function(event) {
             const el = jQuery(this);
             const caret = container.find("> .caret");
-            el.after(caret);
-            const pos = container.children(":not(.caret)").index(el);
+            const index = container.children(":not(.caret)").index(el);
+
+            // newline elements are logical breaks; clicking one always
+            // places the caret right after the newline so the caret
+            // lands at column 0 of the line that follows the newline
+            let pos;
+            if (el.hasClass("newline")) {
+                el.after(caret);
+                pos = index;
+            } else {
+                // splits the clicked element horizontally so that the
+                // left half places the caret before it and the right
+                // half places it after, matching standard text editor
+                // click-to-position semantics
+                const rect = this.getBoundingClientRect();
+                const midpoint = rect.left + rect.width / 2;
+                if (event.clientX < midpoint) {
+                    el.before(caret);
+                    pos = index - 1;
+                } else {
+                    el.after(caret);
+                    pos = index;
+                }
+            }
+
             body.data("caret_position", pos);
+            const text = body.data("text") || [];
+            container.triggerHandler("caretchange", [text, pos]);
         });
     };
 })(jQuery);
@@ -2038,11 +2079,8 @@ const countLines = function(text) {
             // the first card so that the form is immediately
             // submittable without an extra click
             const previousKey = profileInput.val();
-            const initialKey =
-                previousKey && profiles[previousKey] ? previousKey : keys[0];
-            catalog
-                .children(".catalog-card[data-profile=" + initialKey + "]")
-                .addClass("selected");
+            const initialKey = previousKey && profiles[previousKey] ? previousKey : keys[0];
+            catalog.children(".catalog-card[data-profile=" + initialKey + "]").addClass("selected");
             context.data("_selected", initialKey);
             profileInput.val(initialKey);
             buttonStart.prop("disabled", false);
@@ -3220,6 +3258,41 @@ jQuery(document).ready(function() {
             applyFontSize();
         }
         updateUrl();
+    });
+
+    // registers for the caret change event from the text editor
+    // to keep the selected font in sync with the character around
+    // the caret, falling back to the right-side character when the
+    // caret sits before the first character of the text
+    viewportContainer.bind("caretchange", function(event, text, caretPosition) {
+        // searches left from the caret for the nearest character
+        // that has a font defined, skipping newline entries since
+        // they have no visual font of their own
+        let font = null;
+        for (let i = caretPosition; i >= 0; i--) {
+            if (text[i] && text[i][0]) {
+                font = text[i][0];
+                break;
+            }
+        }
+
+        // searches right from the caret when no character was found
+        // to the left, applying the same newline skipping logic so
+        // that a caret at position -1 picks the first visible font
+        if (!font) {
+            for (let i = caretPosition + 1; i < text.length; i++) {
+                if (text[i] && text[i][0]) {
+                    font = text[i][0];
+                    break;
+                }
+            }
+        }
+
+        if (!font) return;
+        if (body.data("font") === font) return;
+        const fontElement = fontsContainer.find('.font[data-font="' + font + '"]');
+        if (fontElement.length === 0) return;
+        fontElement.click();
     });
 
     // initializes the inspiration panel plugin and binds the

@@ -1104,6 +1104,41 @@ jQuery(document).ready(function() {
         updateUrl();
     });
 
+    // registers for the caret change event from the text editor
+    // to keep the selected font in sync with the character around
+    // the caret, falling back to the right-side character when the
+    // caret sits before the first character of the text
+    viewportContainer.bind("caretchange", function(event, text, caretPosition) {
+        // searches left from the caret for the nearest character
+        // that has a font defined, skipping newline entries since
+        // they have no visual font of their own
+        let font = null;
+        for (let i = caretPosition; i >= 0; i--) {
+            if (text[i] && text[i][0]) {
+                font = text[i][0];
+                break;
+            }
+        }
+
+        // searches right from the caret when no character was found
+        // to the left, applying the same newline skipping logic so
+        // that a caret at position -1 picks the first visible font
+        if (!font) {
+            for (let i = caretPosition + 1; i < text.length; i++) {
+                if (text[i] && text[i][0]) {
+                    font = text[i][0];
+                    break;
+                }
+            }
+        }
+
+        if (!font) return;
+        if (body.data("font") === font) return;
+        const fontElement = fontsContainer.find('.font[data-font="' + font + '"]');
+        if (fontElement.length === 0) return;
+        fontElement.click();
+    });
+
     // initializes the inspiration panel plugin and binds the
     // apply event to set the viewport text and configuration
     inspirationPanel.inspirationpanel({

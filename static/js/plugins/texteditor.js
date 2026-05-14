@@ -16,8 +16,12 @@
      *                    text spans for caret positioning
      *
      * Events:
-     *   "change" - triggered when the text content changes,
-     *              passing the updated text array as argument
+     *   "change"      - triggered when the text content changes,
+     *                   passing the updated text array as argument
+     *   "caretchange" - triggered when the caret position changes
+     *                   without altering the text content, passing
+     *                   the text array and new caret position as
+     *                   arguments
      */
     jQuery.fn.texteditor = function(action, options) {
         const elements = jQuery(this);
@@ -303,6 +307,7 @@
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -358,6 +363,7 @@
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -387,6 +393,7 @@
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -449,6 +456,7 @@
                     elements.eq(newPosition).after(caret);
                 }
                 body.data("caret_position", newPosition);
+                notifyCaretChange(newPosition);
                 return true;
             };
 
@@ -490,6 +498,14 @@
                 context.triggerHandler("change", [text, caretPosition]);
             };
 
+            // notifies listeners that the caret has moved without
+            // changing the text content so that downstream consumers
+            // (e.g. the font selector) can react to the new position
+            const notifyCaretChange = function(caretPosition) {
+                const text = body.data("text") || [];
+                context.triggerHandler("caretchange", [text, caretPosition]);
+            };
+
             // prevents duplicate bindings if already initialized
             if (body.data("_texteditor_initialized")) return;
             body.data("_texteditor_initialized", true);
@@ -508,19 +524,47 @@
 
     /**
      * Binds a click handler on a DOM element that repositions
-     * the caret after the clicked element when selected.
+     * the caret either before or after the clicked element based
+     * on which horizontal half of the element received the click,
+     * so that all caret positions including the start of a line
+     * are reachable by mouse.
      *
      * @param {Element} element The DOM element to bind the click handler on.
      * @param {Element} container The viewer container holding all elements.
      * @param {Element} body The body element used for state storage.
      */
     const bindCaretClick = function(element, container, body) {
-        element.click(function() {
+        element.click(function(event) {
             const el = jQuery(this);
             const caret = container.find("> .caret");
-            el.after(caret);
-            const pos = container.children(":not(.caret)").index(el);
+            const index = container.children(":not(.caret)").index(el);
+
+            // newline elements are logical breaks; clicking one always
+            // places the caret right after the newline so the caret
+            // lands at column 0 of the line that follows the newline
+            let pos;
+            if (el.hasClass("newline")) {
+                el.after(caret);
+                pos = index;
+            } else {
+                // splits the clicked element horizontally so that the
+                // left half places the caret before it and the right
+                // half places it after, matching standard text editor
+                // click-to-position semantics
+                const rect = this.getBoundingClientRect();
+                const midpoint = rect.left + rect.width / 2;
+                if (event.clientX < midpoint) {
+                    el.before(caret);
+                    pos = index - 1;
+                } else {
+                    el.after(caret);
+                    pos = index;
+                }
+            }
+
             body.data("caret_position", pos);
+            const text = body.data("text") || [];
+            container.triggerHandler("caretchange", [text, pos]);
         });
     };
 })(jQuery);
