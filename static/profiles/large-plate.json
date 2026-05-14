@@ -2,6 +2,7 @@
     "id": "large-plate",
     "name": "Large Plate",
     "description": "A large engraving plate.",
+    "enabled": false,
     "width": 200,
     "height": 60,
     "unit": "mm",

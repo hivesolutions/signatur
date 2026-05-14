@@ -1160,8 +1160,10 @@ const countLines = function(text) {
             const referenceDetailImage = jQuery(".manager-reference-detail-image", templateTab);
             const referenceDetailName = jQuery(".manager-reference-detail-name", templateTab);
             const referenceDetailMeta = jQuery(".manager-reference-detail-meta", templateTab);
+            const referenceDetailStatus = jQuery(".manager-reference-detail-status", templateTab);
             const referenceDetailApply = jQuery(".manager-reference-detail-apply", templateTab);
             const referenceDetailEdit = jQuery(".manager-reference-detail-edit", templateTab);
+            const referenceDetailToggle = jQuery(".manager-reference-detail-toggle", templateTab);
             const referenceDetailDelete = jQuery(".manager-reference-detail-delete", templateTab);
             const previewInvalid = jQuery(".manager-reference-preview-invalid", previewTab);
             const previewDetail = jQuery(".manager-reference-preview", previewTab);
@@ -1191,6 +1193,7 @@ const countLines = function(text) {
                 ".button-modal-restore-bundle",
                 modalRestoreBundle
             );
+            const dismissLabel = context.attr("data-dismiss-label") || "Dismiss";
             let cachedProfiles = null;
             let selectedKey = null;
             let pendingDeleteKey = null;
@@ -1299,7 +1302,7 @@ const countLines = function(text) {
             // do not need to hit the server again
             const renderReferenceSelect = async function() {
                 try {
-                    const response = await fetch("/profiles");
+                    const response = await fetch("/profiles?include_disabled=1");
                     if (response.status !== 200) return;
                     cachedProfiles = await response.json();
                     const previousValue = referenceSelect.val() || "";
@@ -1309,7 +1312,8 @@ const countLines = function(text) {
                         const profile = cachedProfiles[key];
                         const option = jQuery("<option></option>");
                         option.attr("value", key);
-                        option.text(profile.name || key);
+                        const label = profile.name || key;
+                        option.text(profile.enabled === false ? label + " (disabled)" : label);
                         referenceSelect.append(option);
                     }
                     if (previousValue && cachedProfiles[previousValue]) {
@@ -1353,12 +1357,21 @@ const countLines = function(text) {
                     referenceEmpty.prop("hidden", false);
                     return;
                 }
+                const profile = cachedProfiles[key];
                 renderDetail(
-                    cachedProfiles[key],
+                    profile,
                     referenceDetailImage,
                     referenceDetailName,
                     referenceDetailMeta,
                     null
+                );
+                const disabled = profile.enabled === false;
+                referenceDetail.toggleClass("disabled", disabled);
+                referenceDetailStatus.prop("hidden", !disabled);
+                referenceDetailToggle.text(
+                    disabled
+                        ? referenceDetailToggle.attr("data-enable-label")
+                        : referenceDetailToggle.attr("data-disable-label")
                 );
                 referenceEmpty.prop("hidden", true);
                 referenceDetail.prop("hidden", false);
@@ -1428,6 +1441,43 @@ const countLines = function(text) {
                 buttonSave.text(buttonSave.attr("data-create-label"));
                 editBannerTarget.text("");
                 editBanner.prop("hidden", true);
+            });
+
+            // dismisses an error or validation banner when its close
+            // button is clicked so the panels do not stay sticky after
+            // the user has acknowledged the message and moved on
+            context.on("click", ".manager-banner-close", function() {
+                const banner = jQuery(this).closest(".manager-errors, .manager-validation");
+                if (banner.hasClass("manager-validation")) {
+                    banner.prop("hidden", true);
+                } else {
+                    banner.remove();
+                }
+            });
+
+            // flips the enabled flag of the picked profile via the
+            // dedicated toggle endpoint, refreshing the catalog so the
+            // dropdown and detail panel reflect the new state and the
+            // welcome and viewport selectors filter accordingly
+            referenceDetailToggle.click(async function() {
+                if (!selectedKey || !cachedProfiles) return;
+                const profile = cachedProfiles[selectedKey];
+                const nextEnabled = profile.enabled === false;
+                referenceDetailToggle.prop("disabled", true);
+                try {
+                    const formData = new FormData();
+                    formData.append("enabled", nextEnabled ? "1" : "0");
+                    const response = await fetch(
+                        "/profiles/" + encodeURIComponent(selectedKey) + "/enabled",
+                        { method: "POST", body: formData }
+                    );
+                    if (response.status !== 200) return;
+                    const previousKey = selectedKey;
+                    await renderReferenceSelect();
+                    referenceSelect.val(previousKey).trigger("change");
+                } finally {
+                    referenceDetailToggle.prop("disabled", false);
+                }
             });
 
             // opens the delete confirmation modal pre-populated with
@@ -1774,6 +1824,11 @@ const countLines = function(text) {
                     const payload = await response.json();
                     const errors = payload.errors || [];
                     validationContainer.empty();
+                    const close = jQuery("<button type=\"button\"></button>");
+                    close.addClass("manager-banner-close");
+                    close.attr("aria-label", dismissLabel);
+                    close.text(dismissLabel);
+                    validationContainer.append(close);
                     if (errors.length === 0) {
                         validationContainer.addClass("valid");
                         const title = jQuery("<div></div>");
@@ -1816,6 +1871,11 @@ const countLines = function(text) {
                 if (!errors || errors.length === 0) return;
                 const banner = jQuery("<div></div>");
                 banner.addClass("manager-errors");
+                const close = jQuery("<button type=\"button\"></button>");
+                close.addClass("manager-banner-close");
+                close.attr("aria-label", dismissLabel);
+                close.text(dismissLabel);
+                banner.append(close);
                 const title = jQuery("<div></div>");
                 title.addClass("manager-errors-title");
                 title.text("Could not save profile");
@@ -3079,6 +3139,7 @@ jQuery(document).ready(function() {
     const modalInstructionsDescription = jQuery(".modal-instructions-description");
     const modalInstructionsImages = jQuery(".modal-instructions-images");
     const welcomeContainer = jQuery(".form-welcome");
+    const formManager = jQuery(".form-manager");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -3087,10 +3148,10 @@ jQuery(document).ready(function() {
         const visible = profileInfoRaw.is(":visible");
         if (visible) {
             profileInfoRaw.hide();
-            profileInfoRawToggle.text("Show Raw");
+            profileInfoRawToggle.text(profileInfoRawToggle.attr("data-show-label") || "Show Raw");
         } else {
             profileInfoRaw.show();
-            profileInfoRawToggle.text("Hide Raw");
+            profileInfoRawToggle.text(profileInfoRawToggle.attr("data-hide-label") || "Hide Raw");
         }
     });
 
@@ -3128,10 +3189,8 @@ jQuery(document).ready(function() {
     welcomeContainer.welcome();
 
     // initializes the profile manager plugin on the profile
-    // manager screen form, which owns the inline editors,
-    // the reference dropdown, the live preview, the background
-    // asset manager, and the validate and save flows
-    jQuery(".form-manager").profilemanager();
+    // manager screen form, which owns its editors and tabs
+    formManager.profilemanager();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
@@ -3593,11 +3652,13 @@ jQuery(document).ready(function() {
     // updates the floating profile info block with the
     // currently selected profile summary information
     const updateProfileInfo = function(profile) {
+        const defaultTitle = profileInfoTitle.attr("data-default-label") || "Profile ";
+        const showLabel = profileInfoRawToggle.attr("data-show-label") || "Show Raw";
         if (!profile) {
             profileInfo.removeClass("visible");
             profileInfoRaw.hide();
-            profileInfoRawToggle.text("Show Raw");
-            profileInfoTitle.contents().first().replaceWith("Profile ");
+            profileInfoRawToggle.text(showLabel);
+            profileInfoTitle.contents().first().replaceWith(defaultTitle);
             viewportOptionsInstructions.removeClass("visible");
             return;
         }
@@ -3614,13 +3675,17 @@ jQuery(document).ready(function() {
         const text = profile.text || {};
         const maxLines = text.max_lines || 0;
         if (maxLines > 0) {
-            profileInfoLines.text("max " + maxLines + (maxLines === 1 ? " line" : " lines"));
+            const template =
+                maxLines === 1
+                    ? profileInfoLines.attr("data-singular") || "max {n} line"
+                    : profileInfoLines.attr("data-plural") || "max {n} lines";
+            profileInfoLines.text(template.replace("{n}", maxLines));
         } else {
             profileInfoLines.text("");
         }
         profileInfoRaw.text(JSON.stringify(profile, null, 4));
         profileInfoRaw.hide();
-        profileInfoRawToggle.text("Show Raw");
+        profileInfoRawToggle.text(showLabel);
         profileInfo.addClass("visible");
         if (profile.instructions) {
             viewportOptionsInstructions.addClass("visible");

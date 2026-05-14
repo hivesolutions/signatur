@@ -12,20 +12,20 @@
     -moz-box-shadow: none;
     -khtml-box-shadow: none;
     -webkit-box-shadow: none;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     margin: 0px 0px 0px 0px;
     max-width: none;
+    min-height: 0;
     min-width: 0;
     padding: 0px 0px 0px 0px;
     width: 100%;
 }
 
-.welcome > .form.form-manager > .welcome-catalog {
-    flex: 0 0 auto;
-}
-
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout {
     display: grid;
-    margin: 32px auto 0px auto;
+    margin: 32px auto 32px auto;
     max-width: 1200px;
     padding: 0px 24px 0px 24px;
     -ms-grid-columns: minmax(0, 65fr) 24px minmax(0, 35fr);
@@ -123,7 +123,47 @@
     -webkit-border-radius: 4px 4px 4px 4px;
     color: #7a2018;
     margin-bottom: 20px;
-    padding: 12px 14px 12px 14px;
+    padding: 12px 90px 12px 14px;
+    position: relative;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors > .manager-banner-close,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation > .manager-banner-close {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    -o-opacity: 0.6;
+    -ms-opacity: 0.6;
+    -moz-opacity: 0.6;
+    -khtml-opacity: 0.6;
+    -webkit-opacity: 0.6;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 0px 0px 0px;
+    position: absolute;
+    right: 14px;
+    text-transform: uppercase;
+    top: 14px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors > .manager-banner-close:hover,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation > .manager-banner-close:hover {
+    opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
 }
 
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation.valid {
@@ -458,6 +498,7 @@
 
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply,
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle,
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete {
     background-color: transparent;
     border: 1px solid #1f2330;
@@ -499,9 +540,37 @@
 
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply:hover,
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit:hover,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle:hover,
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete:hover {
     background-color: #1f2330;
     color: #ffffff;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-status {
+    background-color: #f3f4f7;
+    border-radius: 2px 2px 2px 2px;
+    -o-border-radius: 2px 2px 2px 2px;
+    -ms-border-radius: 2px 2px 2px 2px;
+    -moz-border-radius: 2px 2px 2px 2px;
+    -khtml-border-radius: 2px 2px 2px 2px;
+    -webkit-border-radius: 2px 2px 2px 2px;
+    color: #6b7280;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin: 0px 0px 12px 0px;
+    padding: 2px 8px 2px 8px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail.disabled > .manager-reference-detail-image {
+    opacity: 0.5;
+    -o-opacity: 0.5;
+    -ms-opacity: 0.5;
+    -moz-opacity: 0.5;
+    -khtml-opacity: 0.5;
+    -webkit-opacity: 0.5;
 }
 
 .modal-overlay-delete-profile > .modal > .modal-target {
@@ -590,6 +659,7 @@ body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .m
 
 body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply,
 body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle,
 body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete {
     border-color: #9678d3;
     color: #9678d3;
@@ -597,6 +667,7 @@ body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .m
 
 body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply:hover,
 body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit:hover,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle:hover,
 body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete:hover {
     background-color: #9678d3;
     color: #ffffff;

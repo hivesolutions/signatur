@@ -1,16 +1,16 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>" data-master="<%= masterb64 %>">
         <div class="header">
             <div class="buttons-left">
                 <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>
-                <span class="button button-clear">Clear</span>
+                <span class="button button-clear">Limpar</span>
             </div>
             <div class="buttons-right">
-                <a class="button button-report" href="/report" data-href="/report">Report</a>
-                <a class="button button-print" data-href="/report">Engrave</a>
+                <a class="button button-report" href="/report" data-href="/report">Relatório</a>
+                <a class="button button-print" data-href="/report">Gravar</a>
             </div>
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />
@@ -19,32 +19,32 @@
             <% } %>
         </div>
         <div class="profile-info collapsible">
-            <div class="profile-info-title collapsible-title" data-default-label="Profile ">Profile <span class="profile-info-toggle collapsible-toggle">▾</span></div>
+            <div class="profile-info-title collapsible-title" data-default-label="Perfil ">Perfil <span class="profile-info-toggle collapsible-toggle">▾</span></div>
             <div class="profile-info-body collapsible-body">
                 <div class="profile-info-dimensions"></div>
                 <div class="profile-info-orientation"></div>
-                <div class="profile-info-lines" data-singular="max {n} line" data-plural="max {n} lines"></div>
-                <a class="profile-info-raw-toggle" href="#" data-show-label="Show Raw" data-hide-label="Hide Raw">Show Raw</a>
+                <div class="profile-info-lines" data-singular="máx {n} linha" data-plural="máx {n} linhas"></div>
+                <a class="profile-info-raw-toggle" href="#" data-show-label="Mostrar JSON" data-hide-label="Ocultar JSON">Mostrar JSON</a>
                 <pre class="profile-info-raw"></pre>
             </div>
         </div>
         <div class="viewport-options collapsible">
-            <div class="viewport-options-title collapsible-title">Options <span class="viewport-options-toggle collapsible-toggle">▾</span></div>
+            <div class="viewport-options-title collapsible-title">Opções <span class="viewport-options-toggle collapsible-toggle">▾</span></div>
             <div class="viewport-options-body collapsible-body">
             <div class="viewport-options-field">
-                <label class="viewport-options-label">Profile</label>
+                <label class="viewport-options-label">Perfil</label>
                 <select class="profile-select">
-                    <option value="">None</option>
+                    <option value="">Nenhum</option>
                 </select>
             </div>
             <div class="viewport-options-field variant-container">
-                <label class="viewport-options-label">Variant</label>
+                <label class="viewport-options-label">Variante</label>
                 <select class="variant-select">
-                    <option value="">None</option>
+                    <option value="">Nenhuma</option>
                 </select>
             </div>
             <div class="viewport-options-field font-size-container">
-                <label class="viewport-options-label">Size</label>
+                <label class="viewport-options-label">Tamanho</label>
                 <input class="font-size-range" type="range" min="8" max="24" value="12" step="1" />
                 <input class="font-size-input options-input" type="number" min="8" max="24" value="12" step="1" />
                 <label class="font-size-mode-label">
@@ -55,31 +55,31 @@
             <div class="viewport-options-field viewport-options-checkbox viewport-options-rulers">
                 <label class="viewport-options-option">
                     <input class="rulers-mode" type="checkbox" checked />
-                    Show Rulers
+                    Mostrar Réguas
                 </label>
             </div>
             <div class="viewport-options-field viewport-options-checkbox viewport-options-crosshair">
                 <label class="viewport-options-option">
                     <input class="crosshair-mode" type="checkbox" checked />
-                    Show Crosshair
+                    Mostrar Mira
                 </label>
             </div>
             <div class="viewport-options-field viewport-options-checkbox viewport-options-keyboard">
                 <label class="viewport-options-option">
                     <input class="keyboard-mode" type="checkbox" checked />
-                    Show Keyboard
+                    Mostrar Teclado
                 </label>
             </div>
             <div class="viewport-options-field viewport-options-checkbox viewport-options-guidelines">
                 <label class="viewport-options-option">
                     <input class="guidelines-mode" type="checkbox" checked />
-                    Show Guidelines
+                    Mostrar Guias
                 </label>
             </div>
             <div class="viewport-options-field viewport-options-checkbox viewport-options-caret">
                 <label class="viewport-options-option">
                     <input class="caret-mode" type="checkbox" checked />
-                    Show Caret
+                    Mostrar Cursor
                 </label>
             </div>
             <div class="viewport-options-field zoom-container">
@@ -88,38 +88,38 @@
                 <span class="zoom-value">1x</span>
             </div>
             <div class="viewport-options-field margin-container">
-                <label class="viewport-options-label">Margins (mm)</label>
+                <label class="viewport-options-label">Margens (mm)</label>
                 <div class="margin-fields">
                     <div class="margin-field">
-                        <label class="margin-label">Left</label>
+                        <label class="margin-label">Esquerda</label>
                         <input class="margin-input options-input margin-left" type="number" min="0" step="1" value="0" />
                     </div>
                     <div class="margin-field">
-                        <label class="margin-label">Right</label>
+                        <label class="margin-label">Direita</label>
                         <input class="margin-input options-input margin-right" type="number" min="0" step="1" value="0" />
                     </div>
                     <div class="margin-field">
-                        <label class="margin-label">Top</label>
+                        <label class="margin-label">Topo</label>
                         <input class="margin-input options-input margin-top" type="number" min="0" step="1" value="0" />
                     </div>
                     <div class="margin-field">
-                        <label class="margin-label">Bottom</label>
+                        <label class="margin-label">Fundo</label>
                         <input class="margin-input options-input margin-bottom" type="number" min="0" step="1" value="0" />
                     </div>
                 </div>
             </div>
             <div class="viewport-options-field position-container">
-                <label class="viewport-options-label">Position</label>
+                <label class="viewport-options-label">Posição</label>
                 <span class="position-value">-</span>
             </div>
-            <a class="viewport-options-instructions" href="#">Instructions</a>
+            <a class="viewport-options-instructions" href="#">Instruções</a>
             </div>
         </div>
         <div class="inspiration-panel">
-            <div class="inspiration-panel-title">Inspirations <span class="inspiration-panel-toggle">▾</span></div>
+            <div class="inspiration-panel-title">Inspirações <span class="inspiration-panel-toggle">▾</span></div>
             <div class="inspiration-panel-body">
                 <div class="inspiration-thumbnails"></div>
-                <span class="button button-small button-view-all">View all</span>
+                <span class="button button-small button-view-all">Ver todas</span>
             </div>
         </div>
         <div class="viewport">
@@ -393,18 +393,18 @@
         <div class="toast"></div>
         <div class="modal-overlay modal-overlay-confirm">
             <div class="modal">
-                <div class="modal-title">Confirm Engraving</div>
+                <div class="modal-title">Confirmar Gravação</div>
                 <div class="modal-preview"></div>
                 <div class="modal-specs"></div>
                 <div class="modal-options">
                     <label class="modal-option">
                         <input class="modal-dry-run" type="checkbox" />
-                        Dry Run
+                        Simulação
                     </label>
                 </div>
                 <div class="modal-buttons">
-                    <span class="button button-modal-engrave">Engrave</span>
-                    <span class="button button-modal-close">Cancel</span>
+                    <span class="button button-modal-engrave">Gravar</span>
+                    <span class="button button-modal-close">Cancelar</span>
                 </div>
             </div>
         </div>
@@ -412,14 +412,14 @@
             <div class="modal">
                 <div class="modal-message"></div>
                 <div class="modal-buttons">
-                    <span class="button button-modal-configure">Configure</span>
-                    <span class="button button-modal-close">Close</span>
+                    <span class="button button-modal-configure">Configurar</span>
+                    <span class="button button-modal-close">Fechar</span>
                 </div>
             </div>
         </div>
         <div class="modal-overlay modal-overlay-config">
             <div class="modal modal-config">
-                <div class="modal-title">Printer Configuration</div>
+                <div class="modal-title">Configuração da Impressora</div>
                 <div class="field field-text">
                     <label class="name">URL</label>
                     <div class="value">
@@ -435,34 +435,34 @@
                     </div>
                 </div>
                 <div class="field field-text">
-                    <label class="name">Printer</label>
+                    <label class="name">Impressora</label>
                     <div class="value">
                         <input class="input" type="text" name="printer"
                                placeholder="printer" />
                     </div>
                 </div>
                 <div class="field field-text">
-                    <label class="name">Key</label>
+                    <label class="name">Chave</label>
                     <div class="value">
                         <input class="input" type="text" name="key"
                                placeholder="secret-key" />
                     </div>
                 </div>
                 <div class="modal-buttons">
-                    <span class="button button-modal-save">Save</span>
-                    <span class="button button-modal-close">Close</span>
+                    <span class="button button-modal-save">Guardar</span>
+                    <span class="button button-modal-close">Fechar</span>
                 </div>
             </div>
         </div>
         <div class="modal-overlay modal-overlay-inspirations">
             <div class="modal modal-inspirations">
-                <div class="modal-title">Inspirations</div>
+                <div class="modal-title">Inspirações</div>
                 <div class="modal-search">
-                    <input class="modal-search-input" type="text" placeholder="Search inspirations..." />
+                    <input class="modal-search-input" type="text" placeholder="Procurar inspirações..." />
                 </div>
                 <div class="modal-inspirations-grid"></div>
                 <div class="modal-buttons">
-                    <span class="button button-modal-close">Close</span>
+                    <span class="button button-modal-close">Fechar</span>
                 </div>
             </div>
         </div>
@@ -472,7 +472,7 @@
                 <div class="modal-message modal-instructions-description"></div>
                 <div class="modal-instructions-images"></div>
                 <div class="modal-buttons">
-                    <span class="button button-modal-close">Close</span>
+                    <span class="button button-modal-close">Fechar</span>
                 </div>
             </div>
         </div>

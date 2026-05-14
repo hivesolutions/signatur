@@ -183,8 +183,10 @@ app.get("/welcome", (req, res, next) => {
 app.get("/signature", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
     req.session.theme = theme;
-    res.render("signature", {
+    req.session.locale = locale;
+    res.render("signature" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
         back: req.session.entry === "welcome" ? "/welcome" : "/"
@@ -194,10 +196,12 @@ app.get("/signature", (req, res, next) => {
 app.get("/viewport", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
     req.session.theme = theme;
+    req.session.locale = locale;
     req.session.config = req.session.config || {};
     req.session.config.text = req.query.text || req.session.config.text || null;
-    res.render("viewport", {
+    res.render("viewport" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
         master: master,
@@ -232,7 +236,8 @@ app.get("/report", (req, res, next) => {
 
 app.get("/console", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
-    res.render("console", {
+    const locale = req.query.locale || req.session.locale || "";
+    res.render("console" + (locale ? `-${locale}` : ""), {
         theme: theme
     });
 });
@@ -263,9 +268,10 @@ app.get("/receipt", (req, res, next) => {
 });
 
 app.get("/text", (req, res, next) => {
+    const locale = req.query.locale || req.session.locale || "";
     req.session.config = req.session.config || {};
     req.session.config.text = req.query.text || req.session.config.text || null;
-    res.render("text", {
+    res.render("text" + (locale ? `-${locale}` : ""), {
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null
     });
@@ -562,6 +568,45 @@ app.post("/profiles", profileUpload, (req, res, next) => {
     clojure().catch(next);
 });
 
+app.post("/profiles/:id/enabled", profileUpload, (req, res, next) => {
+    async function clojure() {
+        const id = req.params.id;
+        if (!PROFILE_ID_PATTERN.test(id)) {
+            res.status(400).json({ error: "invalid profile id" });
+            return;
+        }
+
+        // resolves the requested state from the submitted form field,
+        // accepting only the canonical "1" and "0" tokens used across
+        // the rest of the form endpoints to keep the API consistent
+        if (req.body.enabled !== "1" && req.body.enabled !== "0") {
+            res.status(400).json({ error: "invalid enabled value" });
+            return;
+        }
+        const enabled = req.body.enabled === "1";
+
+        // reads the existing profile JSON, flips the enabled flag and
+        // writes the file back so the change persists through the
+        // catalog filter without going through the full save flow
+        const directoryPath = path.join(__dirname, "static", "profiles");
+        const target = path.join(directoryPath, `${id}.json`);
+        let profile;
+        try {
+            const content = await fs.readFile(target, "utf8");
+            profile = JSON.parse(content);
+        } catch (err) {
+            res.status(404).json({ error: "profile not found" });
+            return;
+        }
+
+        profile.enabled = enabled;
+        await fs.writeFile(target, JSON.stringify(profile, null, 4) + "\n");
+
+        res.json({ status: "ok", enabled: enabled });
+    }
+    clojure().catch(next);
+});
+
 app.post("/profiles/:id/delete", (req, res, next) => {
     async function clojure() {
         const id = req.params.id;
@@ -789,6 +834,7 @@ app.post("/profiles/bundle", bundleUpload, (req, res, next) => {
 
 app.get("/profiles", (req, res, next) => {
     async function clojure() {
+        const includeDisabled = req.query.include_disabled === "1";
         const directoryPath = path.join(__dirname, "static", "profiles");
         const files = await fs.readdir(directoryPath);
         const profiles = {};
@@ -799,6 +845,7 @@ app.get("/profiles", (req, res, next) => {
                 const jsonObject = JSON.parse(fileContent);
                 const errors = lib.validateProfile(jsonObject);
                 if (errors.length > 0) continue;
+                if (!includeDisabled && jsonObject.enabled === false) continue;
                 const name = path.basename(file, ".json");
                 profiles[name] = jsonObject;
             }

@@ -3,7 +3,7 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="welcome">
-            <form class="form form-manager" method="post" action="/profiles" data-toast-saved="Perfil guardado" data-toast-asset-saved="Fundo carregado" data-toast-asset-deleted="Fundo removido" data-toast-bundle-restored="Pacote restaurado">
+            <form class="form form-manager" method="post" action="/profiles" data-toast-saved="Perfil guardado" data-toast-asset-saved="Fundo carregado" data-toast-asset-deleted="Fundo removido" data-toast-bundle-restored="Pacote restaurado" data-dismiss-label="Dispensar">
                 <div class="welcome-hero">
                     <div class="welcome-hero-mark">
                         <% if (theme === "ldj") { %>
@@ -26,6 +26,7 @@
                             </div>
                             <% if (errors && errors.length > 0) { %>
                                 <div class="manager-errors">
+                                    <button type="button" class="manager-banner-close" aria-label="Dispensar">Dispensar</button>
                                     <div class="manager-errors-title">Não foi possível guardar o perfil</div>
                                     <ul class="manager-errors-list">
                                         <% errors.forEach(function(error) { %>
@@ -76,10 +77,12 @@
                                     <div class="manager-reference-detail-image"></div>
                                     <div class="manager-reference-detail-body">
                                         <div class="manager-reference-detail-name"></div>
+                                        <div class="manager-reference-detail-status" data-enable-label="Ativar" data-disable-label="Desativar" hidden>Desativado</div>
                                         <div class="manager-reference-detail-meta"></div>
                                         <div class="manager-reference-detail-actions">
                                             <button type="button" class="manager-reference-detail-apply">Usar como ponto de partida</button>
                                             <button type="button" class="manager-reference-detail-edit">Editar este perfil</button>
+                                            <button type="button" class="manager-reference-detail-toggle" data-enable-label="Ativar" data-disable-label="Desativar">Desativar</button>
                                             <button type="button" class="manager-reference-detail-delete">Eliminar</button>
                                         </div>
                                     </div>

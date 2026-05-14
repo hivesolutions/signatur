@@ -9,14 +9,7 @@
     display: flex;
     flex: 1;
     min-height: 0;
-    overflow-scrolling: touch;
-    -o-overflow-scrolling: touch;
-    -ms-overflow-scrolling: touch;
-    -moz-overflow-scrolling: touch;
-    -khtml-overflow-scrolling: touch;
-    -webkit-overflow-scrolling: touch;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     width: 100%;
 }
 
@@ -87,6 +80,14 @@
 .welcome .welcome-catalog {
     flex: 1;
     min-height: 0;
+    overflow-scrolling: touch;
+    -o-overflow-scrolling: touch;
+    -ms-overflow-scrolling: touch;
+    -moz-overflow-scrolling: touch;
+    -khtml-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding: 8px 0px 8px 0px;
 }
 

@@ -2,6 +2,7 @@
     "id": "ring",
     "name": "Ring",
     "description": "A ring for interior engraving.",
+    "enabled": false,
     "width": 120,
     "height": 10,
     "unit": "mm",

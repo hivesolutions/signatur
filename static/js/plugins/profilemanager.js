@@ -37,8 +37,10 @@
             const referenceDetailImage = jQuery(".manager-reference-detail-image", templateTab);
             const referenceDetailName = jQuery(".manager-reference-detail-name", templateTab);
             const referenceDetailMeta = jQuery(".manager-reference-detail-meta", templateTab);
+            const referenceDetailStatus = jQuery(".manager-reference-detail-status", templateTab);
             const referenceDetailApply = jQuery(".manager-reference-detail-apply", templateTab);
             const referenceDetailEdit = jQuery(".manager-reference-detail-edit", templateTab);
+            const referenceDetailToggle = jQuery(".manager-reference-detail-toggle", templateTab);
             const referenceDetailDelete = jQuery(".manager-reference-detail-delete", templateTab);
             const previewInvalid = jQuery(".manager-reference-preview-invalid", previewTab);
             const previewDetail = jQuery(".manager-reference-preview", previewTab);
@@ -68,6 +70,7 @@
                 ".button-modal-restore-bundle",
                 modalRestoreBundle
             );
+            const dismissLabel = context.attr("data-dismiss-label") || "Dismiss";
             let cachedProfiles = null;
             let selectedKey = null;
             let pendingDeleteKey = null;
@@ -176,7 +179,7 @@
             // do not need to hit the server again
             const renderReferenceSelect = async function() {
                 try {
-                    const response = await fetch("/profiles");
+                    const response = await fetch("/profiles?include_disabled=1");
                     if (response.status !== 200) return;
                     cachedProfiles = await response.json();
                     const previousValue = referenceSelect.val() || "";
@@ -186,7 +189,8 @@
                         const profile = cachedProfiles[key];
                         const option = jQuery("<option></option>");
                         option.attr("value", key);
-                        option.text(profile.name || key);
+                        const label = profile.name || key;
+                        option.text(profile.enabled === false ? label + " (disabled)" : label);
                         referenceSelect.append(option);
                     }
                     if (previousValue && cachedProfiles[previousValue]) {
@@ -230,12 +234,21 @@
                     referenceEmpty.prop("hidden", false);
                     return;
                 }
+                const profile = cachedProfiles[key];
                 renderDetail(
-                    cachedProfiles[key],
+                    profile,
                     referenceDetailImage,
                     referenceDetailName,
                     referenceDetailMeta,
                     null
+                );
+                const disabled = profile.enabled === false;
+                referenceDetail.toggleClass("disabled", disabled);
+                referenceDetailStatus.prop("hidden", !disabled);
+                referenceDetailToggle.text(
+                    disabled
+                        ? referenceDetailToggle.attr("data-enable-label")
+                        : referenceDetailToggle.attr("data-disable-label")
                 );
                 referenceEmpty.prop("hidden", true);
                 referenceDetail.prop("hidden", false);
@@ -305,6 +318,43 @@
                 buttonSave.text(buttonSave.attr("data-create-label"));
                 editBannerTarget.text("");
                 editBanner.prop("hidden", true);
+            });
+
+            // dismisses an error or validation banner when its close
+            // button is clicked so the panels do not stay sticky after
+            // the user has acknowledged the message and moved on
+            context.on("click", ".manager-banner-close", function() {
+                const banner = jQuery(this).closest(".manager-errors, .manager-validation");
+                if (banner.hasClass("manager-validation")) {
+                    banner.prop("hidden", true);
+                } else {
+                    banner.remove();
+                }
+            });
+
+            // flips the enabled flag of the picked profile via the
+            // dedicated toggle endpoint, refreshing the catalog so the
+            // dropdown and detail panel reflect the new state and the
+            // welcome and viewport selectors filter accordingly
+            referenceDetailToggle.click(async function() {
+                if (!selectedKey || !cachedProfiles) return;
+                const profile = cachedProfiles[selectedKey];
+                const nextEnabled = profile.enabled === false;
+                referenceDetailToggle.prop("disabled", true);
+                try {
+                    const formData = new FormData();
+                    formData.append("enabled", nextEnabled ? "1" : "0");
+                    const response = await fetch(
+                        "/profiles/" + encodeURIComponent(selectedKey) + "/enabled",
+                        { method: "POST", body: formData }
+                    );
+                    if (response.status !== 200) return;
+                    const previousKey = selectedKey;
+                    await renderReferenceSelect();
+                    referenceSelect.val(previousKey).trigger("change");
+                } finally {
+                    referenceDetailToggle.prop("disabled", false);
+                }
             });
 
             // opens the delete confirmation modal pre-populated with
@@ -651,6 +701,11 @@
                     const payload = await response.json();
                     const errors = payload.errors || [];
                     validationContainer.empty();
+                    const close = jQuery("<button type=\"button\"></button>");
+                    close.addClass("manager-banner-close");
+                    close.attr("aria-label", dismissLabel);
+                    close.text(dismissLabel);
+                    validationContainer.append(close);
                     if (errors.length === 0) {
                         validationContainer.addClass("valid");
                         const title = jQuery("<div></div>");
@@ -693,6 +748,11 @@
                 if (!errors || errors.length === 0) return;
                 const banner = jQuery("<div></div>");
                 banner.addClass("manager-errors");
+                const close = jQuery("<button type=\"button\"></button>");
+                close.addClass("manager-banner-close");
+                close.attr("aria-label", dismissLabel);
+                close.text(dismissLabel);
+                banner.append(close);
                 const title = jQuery("<div></div>");
                 title.addClass("manager-errors-title");
                 title.text("Could not save profile");

@@ -3,7 +3,7 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="welcome">
-            <form class="form form-manager" method="post" action="/profiles" data-toast-saved="Profile saved" data-toast-asset-saved="Background uploaded" data-toast-asset-deleted="Background removed" data-toast-bundle-restored="Bundle restored">
+            <form class="form form-manager" method="post" action="/profiles" data-toast-saved="Profile saved" data-toast-asset-saved="Background uploaded" data-toast-asset-deleted="Background removed" data-toast-bundle-restored="Bundle restored" data-dismiss-label="Dismiss">
                 <div class="welcome-hero">
                     <div class="welcome-hero-mark">
                         <% if (theme === "ldj") { %>
@@ -26,6 +26,7 @@
                             </div>
                             <% if (errors && errors.length > 0) { %>
                                 <div class="manager-errors">
+                                    <button type="button" class="manager-banner-close" aria-label="Dismiss">Dismiss</button>
                                     <div class="manager-errors-title">Could not save profile</div>
                                     <ul class="manager-errors-list">
                                         <% errors.forEach(function(error) { %>
@@ -76,10 +77,12 @@
                                     <div class="manager-reference-detail-image"></div>
                                     <div class="manager-reference-detail-body">
                                         <div class="manager-reference-detail-name"></div>
+                                        <div class="manager-reference-detail-status" data-enable-label="Enable" data-disable-label="Disable" hidden>Disabled</div>
                                         <div class="manager-reference-detail-meta"></div>
                                         <div class="manager-reference-detail-actions">
                                             <button type="button" class="manager-reference-detail-apply">Use as starting point</button>
                                             <button type="button" class="manager-reference-detail-edit">Edit this profile</button>
+                                            <button type="button" class="manager-reference-detail-toggle" data-enable-label="Enable" data-disable-label="Disable">Disable</button>
                                             <button type="button" class="manager-reference-detail-delete">Delete</button>
                                         </div>
                                     </div>
