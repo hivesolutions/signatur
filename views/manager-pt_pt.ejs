@@ -3,7 +3,25 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="welcome">
-            <form class="form form-manager" method="post" action="/profiles" data-toast-saved="Perfil guardado" data-toast-asset-saved="Fundo carregado" data-toast-asset-deleted="Fundo removido" data-toast-bundle-restored="Pacote restaurado" data-dismiss-label="Dispensar">
+            <form class="form form-manager" method="post" action="/profiles"
+                  data-toast-saved="Perfil guardado"
+                  data-toast-asset-saved="Fundo carregado"
+                  data-toast-asset-deleted="Fundo removido"
+                  data-toast-bundle-restored="Pacote restaurado"
+                  data-dismiss-label="Dispensar"
+                  data-disabled-suffix=" (desativado)"
+                  data-meta-id-label="ID"
+                  data-meta-size-label="Tamanho"
+                  data-meta-orientation-label="Orientação"
+                  data-meta-shape-label="Forma"
+                  data-meta-max-lines-label="Máx. Linhas"
+                  data-meta-inspirations-label="Inspirações"
+                  data-asset-error-filename="o nome do ficheiro é obrigatório"
+                  data-asset-error-file="o ficheiro é obrigatório"
+                  data-validation-ok="Tudo certo"
+                  data-validation-issues-singular="{n} problema encontrado"
+                  data-validation-issues-plural="{n} problemas encontrados"
+                  data-save-error-title="Não foi possível guardar o perfil">
                 <div class="welcome-hero">
                     <div class="welcome-hero-mark">
                         <% if (theme === "ldj") { %>

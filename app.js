@@ -260,6 +260,7 @@ app.get("/report", (req, res, next) => {
 app.get("/console", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.locale = locale;
     res.render("console" + (locale ? `-${locale}` : ""), {
         theme: theme
     });
@@ -292,6 +293,7 @@ app.get("/receipt", (req, res, next) => {
 
 app.get("/text", (req, res, next) => {
     const locale = req.query.locale || req.session.locale || "";
+    req.session.locale = locale;
     req.session.config = req.session.config || {};
     req.session.config.text = req.query.text || req.session.config.text || null;
     res.render("text" + (locale ? `-${locale}` : ""), {
@@ -703,6 +705,15 @@ app.post("/profiles/bundle", bundleUpload, (req, res, next) => {
             if (name === "manifest.json") continue;
             if (name.includes("/") || name.includes("\\") || name.includes("..")) continue;
             entries.push(entry);
+        }
+
+        // refuses an empty archive so a bundle that survived the
+        // upload but carries no payload (manifest only, or only
+        // rejected entries) cannot wipe the catalog and leave it
+        // empty under the guise of a successful restore
+        if (entries.length === 0) {
+            res.status(400).json({ error: "bundle has no profile entries" });
+            return;
         }
 
         // wipes every regular file from the profiles directory

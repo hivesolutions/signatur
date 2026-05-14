@@ -1194,6 +1194,25 @@ const countLines = function(text) {
                 modalRestoreBundle
             );
             const dismissLabel = context.attr("data-dismiss-label") || "Dismiss";
+            const disabledSuffix = context.attr("data-disabled-suffix") || " (disabled)";
+            const metaIdLabel = context.attr("data-meta-id-label") || "ID";
+            const metaSizeLabel = context.attr("data-meta-size-label") || "Size";
+            const metaOrientationLabel =
+                context.attr("data-meta-orientation-label") || "Orientation";
+            const metaShapeLabel = context.attr("data-meta-shape-label") || "Shape";
+            const metaMaxLinesLabel = context.attr("data-meta-max-lines-label") || "Max Lines";
+            const metaInspirationsLabel =
+                context.attr("data-meta-inspirations-label") || "Inspirations";
+            const assetErrorFilename =
+                context.attr("data-asset-error-filename") || "filename is required";
+            const assetErrorFile = context.attr("data-asset-error-file") || "file is required";
+            const validationOkLabel = context.attr("data-validation-ok") || "Looks good";
+            const validationIssuesSingular =
+                context.attr("data-validation-issues-singular") || "{n} issue found";
+            const validationIssuesPlural =
+                context.attr("data-validation-issues-plural") || "{n} issues found";
+            const saveErrorTitle =
+                context.attr("data-save-error-title") || "Could not save profile";
             let cachedProfiles = null;
             let selectedKey = null;
             let pendingDeleteKey = null;
@@ -1241,24 +1260,24 @@ const countLines = function(text) {
                 }
                 nameElement.text(profile.name || profile.id || "");
                 metaElement.empty();
-                appendMetaRow(metaElement, "ID", profile.id);
+                appendMetaRow(metaElement, metaIdLabel, profile.id);
                 const unit = profile.unit || "mm";
                 if (profile.width !== undefined && profile.height !== undefined) {
                     appendMetaRow(
                         metaElement,
-                        "Size",
+                        metaSizeLabel,
                         profile.width + "x" + profile.height + " " + unit
                     );
                 }
                 if (profile.orientation) {
-                    appendMetaRow(metaElement, "Orientation", profile.orientation);
+                    appendMetaRow(metaElement, metaOrientationLabel, profile.orientation);
                 }
-                if (profile.shape) appendMetaRow(metaElement, "Shape", profile.shape);
+                if (profile.shape) appendMetaRow(metaElement, metaShapeLabel, profile.shape);
                 if (profile.text && profile.text.max_lines !== undefined) {
-                    appendMetaRow(metaElement, "Max Lines", profile.text.max_lines);
+                    appendMetaRow(metaElement, metaMaxLinesLabel, profile.text.max_lines);
                 }
                 if (profile._inspirations && profile._inspirations.length) {
-                    appendMetaRow(metaElement, "Inspirations", profile._inspirations.length);
+                    appendMetaRow(metaElement, metaInspirationsLabel, profile._inspirations.length);
                 }
             };
 
@@ -1314,7 +1333,7 @@ const countLines = function(text) {
                         const option = jQuery("<option></option>");
                         option.attr("value", key);
                         const label = profile.name || key;
-                        option.text(profile.enabled === false ? label + " (disabled)" : label);
+                        option.text(profile.enabled === false ? label + disabledSuffix : label);
                         referenceSelect.append(option);
                     }
                     if (previousValue && cachedProfiles[previousValue]) {
@@ -1636,8 +1655,8 @@ const countLines = function(text) {
                 const filename = (assetsFilename.val() || "").trim();
                 const file = assetsFile.get(0).files[0];
                 const localErrors = [];
-                if (!filename) localErrors.push("filename is required");
-                if (!file) localErrors.push("file is required");
+                if (!filename) localErrors.push(assetErrorFilename);
+                if (!file) localErrors.push(assetErrorFile);
                 if (localErrors.length > 0) {
                     renderAssetErrors(localErrors);
                     return;
@@ -1834,15 +1853,15 @@ const countLines = function(text) {
                         validationContainer.addClass("valid");
                         const title = jQuery("<div></div>");
                         title.addClass("manager-validation-title");
-                        title.text("Looks good");
+                        title.text(validationOkLabel);
                         validationContainer.append(title);
                     } else {
                         validationContainer.removeClass("valid");
                         const title = jQuery("<div></div>");
                         title.addClass("manager-validation-title");
-                        title.text(
-                            errors.length + " issue" + (errors.length === 1 ? "" : "s") + " found"
-                        );
+                        const template =
+                            errors.length === 1 ? validationIssuesSingular : validationIssuesPlural;
+                        title.text(template.replace("{n}", errors.length));
                         validationContainer.append(title);
                         const list = jQuery("<ul></ul>");
                         list.addClass("manager-validation-list");
@@ -1879,7 +1898,7 @@ const countLines = function(text) {
                 banner.append(close);
                 const title = jQuery("<div></div>");
                 title.addClass("manager-errors-title");
-                title.text("Could not save profile");
+                title.text(saveErrorTitle);
                 banner.append(title);
                 const list = jQuery("<ul></ul>");
                 list.addClass("manager-errors-list");

@@ -3,7 +3,25 @@
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="welcome">
-            <form class="form form-manager" method="post" action="/profiles" data-toast-saved="Profile saved" data-toast-asset-saved="Background uploaded" data-toast-asset-deleted="Background removed" data-toast-bundle-restored="Bundle restored" data-dismiss-label="Dismiss">
+            <form class="form form-manager" method="post" action="/profiles"
+                  data-toast-saved="Profile saved"
+                  data-toast-asset-saved="Background uploaded"
+                  data-toast-asset-deleted="Background removed"
+                  data-toast-bundle-restored="Bundle restored"
+                  data-dismiss-label="Dismiss"
+                  data-disabled-suffix=" (disabled)"
+                  data-meta-id-label="ID"
+                  data-meta-size-label="Size"
+                  data-meta-orientation-label="Orientation"
+                  data-meta-shape-label="Shape"
+                  data-meta-max-lines-label="Max Lines"
+                  data-meta-inspirations-label="Inspirations"
+                  data-asset-error-filename="filename is required"
+                  data-asset-error-file="file is required"
+                  data-validation-ok="Looks good"
+                  data-validation-issues-singular="{n} issue found"
+                  data-validation-issues-plural="{n} issues found"
+                  data-save-error-title="Could not save profile">
                 <div class="welcome-hero">
                     <div class="welcome-hero-mark">
                         <% if (theme === "ldj") { %>
