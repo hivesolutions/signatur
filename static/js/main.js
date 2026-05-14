@@ -24,6 +24,7 @@ jQuery(document).ready(function() {
     const modalInstructionsDescription = jQuery(".modal-instructions-description");
     const modalInstructionsImages = jQuery(".modal-instructions-images");
     const welcomeContainer = jQuery(".form-welcome");
+    const formManager = jQuery(".form-manager");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -32,10 +33,10 @@ jQuery(document).ready(function() {
         const visible = profileInfoRaw.is(":visible");
         if (visible) {
             profileInfoRaw.hide();
-            profileInfoRawToggle.text("Show Raw");
+            profileInfoRawToggle.text(profileInfoRawToggle.attr("data-show-label") || "Show Raw");
         } else {
             profileInfoRaw.show();
-            profileInfoRawToggle.text("Hide Raw");
+            profileInfoRawToggle.text(profileInfoRawToggle.attr("data-hide-label") || "Hide Raw");
         }
     });
 
@@ -71,6 +72,10 @@ jQuery(document).ready(function() {
     // template catalog container, which fetches and populates
     // the available profiles from the server on its own
     welcomeContainer.welcome();
+
+    // initializes the profile manager plugin on the profile
+    // manager screen form, which owns its editors and tabs
+    formManager.profilemanager();
 
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
@@ -532,11 +537,13 @@ jQuery(document).ready(function() {
     // updates the floating profile info block with the
     // currently selected profile summary information
     const updateProfileInfo = function(profile) {
+        const defaultTitle = profileInfoTitle.attr("data-default-label") || "Profile ";
+        const showLabel = profileInfoRawToggle.attr("data-show-label") || "Show Raw";
         if (!profile) {
             profileInfo.removeClass("visible");
             profileInfoRaw.hide();
-            profileInfoRawToggle.text("Show Raw");
-            profileInfoTitle.contents().first().replaceWith("Profile ");
+            profileInfoRawToggle.text(showLabel);
+            profileInfoTitle.contents().first().replaceWith(defaultTitle);
             viewportOptionsInstructions.removeClass("visible");
             return;
         }
@@ -553,13 +560,17 @@ jQuery(document).ready(function() {
         const text = profile.text || {};
         const maxLines = text.max_lines || 0;
         if (maxLines > 0) {
-            profileInfoLines.text("max " + maxLines + (maxLines === 1 ? " line" : " lines"));
+            const template =
+                maxLines === 1
+                    ? profileInfoLines.attr("data-singular") || "max {n} line"
+                    : profileInfoLines.attr("data-plural") || "max {n} lines";
+            profileInfoLines.text(template.replace("{n}", maxLines));
         } else {
             profileInfoLines.text("");
         }
         profileInfoRaw.text(JSON.stringify(profile, null, 4));
         profileInfoRaw.hide();
-        profileInfoRawToggle.text("Show Raw");
+        profileInfoRawToggle.text(showLabel);
         profileInfo.addClass("visible");
         if (profile.instructions) {
             viewportOptionsInstructions.addClass("visible");

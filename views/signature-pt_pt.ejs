@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="header">
+            <div class="buttons-left">
+                <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>
+                <span class="button button-clear">Limpar</span>
+            </div>
+            <div class="buttons-right">
+                <span class="button button-download">Transferir</span>
+                <a class="button button-report" href="/report" data-href="/report">Relatório</a>
+            </div>
+            <% if (theme === "ldj") { %>
+                <img class="logo" src="/static/images/logo.svg" />
+            <% } else { %>
+                <span class="logo"></span>
+            <% } %>
+            <form class="form form-signature" action="/convert" method="post">
+                <input type="hidden" name="svg_base64" />
+            </form>
+        </div>
+        <div class="line"></div>
+        <div class="signature"></div>
+    </body>
+</html>

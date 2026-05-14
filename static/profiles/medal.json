@@ -2,6 +2,7 @@
     "id": "medal",
     "name": "Medal",
     "description": "A standard medal.",
+    "enabled": false,
     "width": 80,
     "height": 100,
     "unit": "mm",

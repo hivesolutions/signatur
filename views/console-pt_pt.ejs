@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="console">
+            <div class="form form-console">
+                <div class="logo-container">
+                    <% if (theme === "ldj") { %>
+                        <img class="logo" src="/static/images/logo.svg" />
+                    <% } else { %>
+                        <span class="logo">Consola</span>
+                    <% } %>
+                </div>
+                <div class="field">
+                    <label class="name">Comando</label>
+                    <div class="value">
+                        <input class="input" type="text" name="command" />
+                    </div>
+                </div>
+                <div class="buttons-container">
+                    <span class="button">Executar</span>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

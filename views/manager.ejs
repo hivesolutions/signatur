@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="welcome">
+            <form class="form form-manager" method="post" action="/profiles"
+                  data-toast-saved="Profile saved"
+                  data-toast-asset-saved="Background uploaded"
+                  data-toast-asset-deleted="Background removed"
+                  data-toast-bundle-restored="Bundle restored"
+                  data-dismiss-label="Dismiss"
+                  data-disabled-suffix=" (disabled)"
+                  data-meta-id-label="ID"
+                  data-meta-size-label="Size"
+                  data-meta-orientation-label="Orientation"
+                  data-meta-shape-label="Shape"
+                  data-meta-max-lines-label="Max Lines"
+                  data-meta-inspirations-label="Inspirations"
+                  data-asset-error-filename="filename is required"
+                  data-asset-error-file="file is required"
+                  data-validation-ok="Looks good"
+                  data-validation-issues-singular="{n} issue found"
+                  data-validation-issues-plural="{n} issues found"
+                  data-save-error-title="Could not save profile">
+                <div class="welcome-hero">
+                    <div class="welcome-hero-mark">
+                        <% if (theme === "ldj") { %>
+                            <img class="logo" src="/static/images/logo.svg" />
+                        <% } else { %>
+                            <span class="logo">Signatur</span>
+                        <% } %>
+                    </div>
+                    <div class="welcome-hero-eyebrow" data-create-label="Profile Manager" data-edit-label="Profile Manager">Profile Manager</div>
+                    <div class="welcome-hero-divider"></div>
+                </div>
+                <div class="welcome-catalog">
+                    <div class="manager-layout">
+                        <div class="manager-form-pane">
+                            <div class="manager-edit-banner"<%= editTarget ? '' : ' hidden' %>>
+                                <span class="manager-edit-banner-label">
+                                    Editing profile <span class="manager-edit-banner-target"><%= editTarget ? editTarget : '' %></span>
+                                </span>
+                                <button type="button" class="manager-edit-banner-exit">Exit edit mode</button>
+                            </div>
+                            <% if (errors && errors.length > 0) { %>
+                                <div class="manager-errors">
+                                    <button type="button" class="manager-banner-close" aria-label="Dismiss">Dismiss</button>
+                                    <div class="manager-errors-title">Could not save profile</div>
+                                    <ul class="manager-errors-list">
+                                        <% errors.forEach(function(error) { %>
+                                            <li class="manager-errors-item"><%= error %></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            <% } %>
+                            <div class="manager-validation" hidden></div>
+                            <div class="manager-field">
+                                <div class="manager-field-header">
+                                    <label class="manager-field-label" for="manager-profile-json">Profile JSON</label>
+                                    <label class="manager-field-loader">
+                                        Load from file
+                                        <input class="manager-field-loader-input" type="file" data-target="manager-profile-json" accept="application/json,.json" />
+                                    </label>
+                                </div>
+                                <div class="manager-field-hint">Required. Schema validated against the engraving profile definition.</div>
+                                <textarea class="manager-field-editor" id="manager-profile-json" name="profile_json" spellcheck="false" required><%= profileJson ? profileJson : '' %></textarea>
+                            </div>
+                            <div class="manager-field">
+                                <div class="manager-field-header">
+                                    <label class="manager-field-label" for="manager-inspirations-json">Inspirations JSON</label>
+                                    <label class="manager-field-loader">
+                                        Load from file
+                                        <input class="manager-field-loader-input" type="file" data-target="manager-inspirations-json" accept="application/json,.json" />
+                                    </label>
+                                </div>
+                                <div class="manager-field-hint">Optional. Referenced from the profile's <code>inspirations</code> field.</div>
+                                <textarea class="manager-field-editor" id="manager-inspirations-json" name="inspirations_json" spellcheck="false"><%= inspirationsJson ? inspirationsJson : '' %></textarea>
+                            </div>
+                        </div>
+                        <div class="manager-reference-pane">
+                            <div class="manager-reference-tabs">
+                                <button type="button" class="manager-reference-tab active" data-tab="template">Profile</button>
+                                <button type="button" class="manager-reference-tab" data-tab="preview">Preview</button>
+                                <button type="button" class="manager-reference-tab" data-tab="backgrounds">Backgrounds</button>
+                                <button type="button" class="manager-reference-tab" data-tab="bundle">Export / Import</button>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="template">
+                                <div class="manager-reference-title">Existing Profiles</div>
+                                <div class="manager-reference-hint">Pick a profile to preview, then use it as a starting point or edit it in place.</div>
+                                <select class="manager-reference-select">
+                                    <option value="">Select a profile…</option>
+                                </select>
+                                <div class="manager-reference-empty">No profile selected.</div>
+                                <div class="manager-reference-detail" hidden>
+                                    <div class="manager-reference-detail-image"></div>
+                                    <div class="manager-reference-detail-body">
+                                        <div class="manager-reference-detail-name"></div>
+                                        <div class="manager-reference-detail-status" data-enable-label="Enable" data-disable-label="Disable" hidden>Disabled</div>
+                                        <div class="manager-reference-detail-meta"></div>
+                                        <div class="manager-reference-detail-actions">
+                                            <button type="button" class="manager-reference-detail-apply">Use as starting point</button>
+                                            <button type="button" class="manager-reference-detail-edit">Edit this profile</button>
+                                            <button type="button" class="manager-reference-detail-toggle" data-enable-label="Enable" data-disable-label="Disable">Disable</button>
+                                            <button type="button" class="manager-reference-detail-delete">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="preview" hidden>
+                                <div class="manager-reference-title">Live Preview</div>
+                                <div class="manager-reference-hint">Reflects the current contents of the editor on the left.</div>
+                                <div class="manager-reference-preview-invalid">Invalid JSON.</div>
+                                <div class="manager-reference-detail manager-reference-preview" hidden>
+                                    <div class="manager-reference-detail-image"></div>
+                                    <div class="manager-reference-detail-body">
+                                        <div class="manager-reference-detail-name"></div>
+                                        <div class="manager-reference-detail-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="backgrounds" hidden>
+                                <div class="manager-reference-title">Background Assets</div>
+                                <div class="manager-reference-hint">Manage the PNG files referenced by the profile and variant <code>background</code> fields.</div>
+                                <div class="manager-assets-upload">
+                                    <input type="text" class="manager-assets-filename" placeholder="filename.png" />
+                                    <label class="manager-assets-picker">
+                                        Pick PNG
+                                        <input type="file" class="manager-assets-file" accept="image/png,.png" />
+                                    </label>
+                                    <button type="button" class="manager-assets-submit">Upload</button>
+                                </div>
+                                <div class="manager-assets-errors" hidden></div>
+                                <div class="manager-assets-empty">No backgrounds available.</div>
+                                <div class="manager-assets-grid"></div>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="bundle" hidden>
+                                <div class="manager-reference-title">Export</div>
+                                <div class="manager-reference-hint">Download a zip archive with every profile, inspirations file, and background asset under <code>static/profiles/</code>.</div>
+                                <a class="manager-bundle-download" href="/profiles/bundle" download>Download bundle</a>
+                                <div class="manager-bundle-divider"></div>
+                                <div class="manager-reference-title">Import</div>
+                                <div class="manager-reference-hint">Restore from a previously exported bundle. The full profiles catalog is replaced with the archive contents.</div>
+                                <div class="manager-bundle-upload">
+                                    <label class="manager-bundle-picker">
+                                        Pick bundle
+                                        <input type="file" class="manager-bundle-file" accept="application/zip,.zip" />
+                                    </label>
+                                    <button type="button" class="manager-bundle-submit">Restore</button>
+                                </div>
+                                <div class="manager-bundle-errors" hidden></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="edit_target" class="manager-edit-target" value="<%= editTarget ? editTarget : '' %>" />
+                <div class="welcome-action-bar centered">
+                    <div class="welcome-actions">
+                        <a class="button button-ghost button-cancel" href="/welcome">Cancel</a>
+                        <button type="button" class="button button-ghost button-validate">Validate</button>
+                        <button type="submit" class="button button-start button-save" data-create-label="Save Profile" data-edit-label="Update Profile"><%= editTarget ? 'Update Profile' : 'Save Profile' %></button>
+                    </div>
+                </div>
+                <div class="welcome-version">
+                    <span>Version <%= info.version %></span>
+                </div>
+            </form>
+        </div>
+        <div class="toast"></div>
+        <div class="modal-overlay modal-overlay-delete-profile">
+            <div class="modal">
+                <div class="modal-title">Delete profile</div>
+                <div class="modal-message">This will permanently remove the profile and its inspirations from disk. Background assets are managed separately and are left untouched. This action cannot be undone.</div>
+                <div class="modal-target"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Cancel</span>
+                    <span class="button button-modal-delete">Delete</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-delete-asset">
+            <div class="modal">
+                <div class="modal-title">Delete background</div>
+                <div class="modal-message">This will permanently remove the PNG asset from disk. Profiles or variants that reference it will need to be updated. This action cannot be undone.</div>
+                <div class="modal-target"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Cancel</span>
+                    <span class="button button-modal-delete-asset">Delete</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-restore-bundle">
+            <div class="modal">
+                <div class="modal-title">Restore bundle</div>
+                <div class="modal-message">This will permanently remove every profile, inspirations file, and background asset from disk and replace them with the contents of the uploaded bundle. This action cannot be undone.</div>
+                <div class="modal-target"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Cancel</span>
+                    <span class="button button-modal-restore-bundle">Restore</span>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

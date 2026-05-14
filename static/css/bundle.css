@@ -1138,12 +1138,12 @@ body.ldj .line {
 
 .welcome > .form.form-welcome {
     background-color: transparent;
-    border-radius: 0px;
-    -o-border-radius: 0px;
-    -ms-border-radius: 0px;
-    -moz-border-radius: 0px;
-    -khtml-border-radius: 0px;
-    -webkit-border-radius: 0px;
+    border-radius: 0px 0px 0px 0px;
+    -o-border-radius: 0px 0px 0px 0px;
+    -ms-border-radius: 0px 0px 0px 0px;
+    -moz-border-radius: 0px 0px 0px 0px;
+    -khtml-border-radius: 0px 0px 0px 0px;
+    -webkit-border-radius: 0px 0px 0px 0px;
     box-shadow: none;
     -o-box-shadow: none;
     -ms-box-shadow: none;
@@ -1203,9 +1203,15 @@ body.ldj .line {
 .welcome .welcome-catalog {
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
+    overflow-scrolling: touch;
+    -o-overflow-scrolling: touch;
+    -ms-overflow-scrolling: touch;
+    -moz-overflow-scrolling: touch;
+    -khtml-overflow-scrolling: touch;
     -webkit-overflow-scrolling: touch;
-    padding: 8px 48px 8px 48px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 8px 0px 8px 0px;
 }
 
 .welcome .welcome-catalog > .catalog-container {
@@ -1214,14 +1220,13 @@ body.ldj .line {
 }
 
 .welcome .welcome-catalog > .catalog-container > .catalog {
-    -ms-grid-columns: 1fr 12px 1fr 12px 1fr 12px 1fr;
-    display: -ms-grid;
     display: grid;
+    -ms-grid-columns: 1fr 12px 1fr 12px 1fr 12px 1fr;
     gap: 12px;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card {
+.welcome .catalog > .catalog-card {
     background-color: #ffffff;
     border: 1px solid #e6e8ee;
     border-radius: 4px 4px 4px 4px;
@@ -1248,7 +1253,7 @@ body.ldj .line {
     -webkit-transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card:hover {
+.welcome .catalog > .catalog-card:hover {
     border-color: #cfd4de;
     box-shadow: 0px 4px 12px rgba(31, 35, 48, 0.06);
     -o-box-shadow: 0px 4px 12px rgba(31, 35, 48, 0.06);
@@ -1264,7 +1269,7 @@ body.ldj .line {
     -webkit-transform: translateY(-2px);
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card.selected {
+.welcome .catalog > .catalog-card.selected {
     border-color: #1f2330;
     box-shadow: 0px 4px 12px rgba(31, 35, 48, 0.1);
     -o-box-shadow: 0px 4px 12px rgba(31, 35, 48, 0.1);
@@ -1274,20 +1279,20 @@ body.ldj .line {
     -webkit-box-shadow: 0px 4px 12px rgba(31, 35, 48, 0.1);
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card > .catalog-card-image {
+.welcome .catalog > .catalog-card > .catalog-card-image {
     background-color: #f4f5f8;
     background-position: center center;
-    background-repeat: no-repeat;
     background-size: contain;
+    background-repeat: no-repeat;
     height: 110px;
     width: 100%;
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card > .catalog-card-body {
+.welcome .catalog > .catalog-card > .catalog-card-body {
     padding: 8px 8px 10px 8px;
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
+.welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
     color: #1f2330;
     font-size: 12px;
     font-weight: 600;
@@ -1298,7 +1303,7 @@ body.ldj .line {
     white-space: nowrap;
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
+.welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
     color: #9aa0ad;
     font-size: 9px;
     font-weight: 500;
@@ -1306,17 +1311,17 @@ body.ldj .line {
     text-transform: uppercase;
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card.empty {
+.welcome .catalog > .catalog-card.empty {
     color: #9aa0ad;
     cursor: default;
     font-size: 12px;
     font-weight: 400;
-    grid-column: 1 / -1;
     padding: 32px 0px 32px 0px;
     text-align: center;
+    grid-column: 1 / -1;
 }
 
-.welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card.empty:hover {
+.welcome .catalog > .catalog-card.empty:hover {
     border-color: #e6e8ee;
     box-shadow: none;
     -o-box-shadow: none;
@@ -1343,9 +1348,9 @@ body.ldj .line {
     -webkit-box-sizing: border-box;
     display: flex;
     flex: 0 0 auto;
+    padding: 16px 48px 16px 48px;
     flex-wrap: wrap;
     gap: 16px;
-    padding: 16px 48px 16px 48px;
 }
 
 .welcome .welcome-action-bar.centered {
@@ -1355,9 +1360,9 @@ body.ldj .line {
 .welcome .welcome-action-bar > .welcome-options {
     display: flex;
     flex: 1;
+    min-width: 0;
     flex-wrap: wrap;
     gap: 20px;
-    min-width: 0;
 }
 
 .welcome .welcome-action-bar > .welcome-options > .option-group {
@@ -1474,9 +1479,9 @@ body.ldj .line {
 .welcome .welcome-version {
     background-color: #ffffff;
     color: #9aa0ad;
-    flex: 0 0 auto;
     font-size: 9px;
     font-weight: 500;
+    flex: 0 0 auto;
     letter-spacing: 1px;
     padding: 6px 48px 10px 48px;
     text-align: center;
@@ -1495,15 +1500,15 @@ body.ldj .welcome .welcome-hero > .welcome-hero-divider {
     background-color: #c9b6e5;
 }
 
-body.ldj .welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card {
+body.ldj .welcome .catalog > .catalog-card {
     border-color: #ece4f5;
 }
 
-body.ldj .welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card:hover {
+body.ldj .welcome .catalog > .catalog-card:hover {
     border-color: #c9b6e5;
 }
 
-body.ldj .welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card.selected {
+body.ldj .welcome .catalog > .catalog-card.selected {
     border-color: #9678d3;
     box-shadow: 0px 4px 14px rgba(151, 120, 211, 0.18);
     -o-box-shadow: 0px 4px 14px rgba(151, 120, 211, 0.18);
@@ -1513,15 +1518,15 @@ body.ldj .welcome .welcome-catalog > .catalog-container > .catalog > .catalog-ca
     -webkit-box-shadow: 0px 4px 14px rgba(151, 120, 211, 0.18);
 }
 
-body.ldj .welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card > .catalog-card-image {
+body.ldj .welcome .catalog > .catalog-card > .catalog-card-image {
     background-color: #f5f0fa;
 }
 
-body.ldj .welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
+body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
     color: #1f1430;
 }
 
-body.ldj .welcome .welcome-catalog > .catalog-container > .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
+body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
     color: #9b87c2;
 }
 
@@ -1919,6 +1924,97 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     margin-top: 2px;
 }
 
+.jsonhighlight-wrapper {
+    background-color: #ffffff;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    position: relative;
+    width: 100%;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay {
+    background-color: transparent;
+    border: 1px solid transparent;
+    bottom: 0px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #1f2330;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 12px;
+    left: 0px;
+    line-height: 1.5;
+    margin: 0px 0px 0px 0px;
+    overflow: hidden;
+    padding: 12px 14px 12px 14px;
+    pointer-events: none;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code {
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-input {
+    background-color: transparent !important;
+    color: transparent !important;
+    position: relative;
+    -webkit-text-fill-color: transparent !important;
+    caret-color: #1f2330;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-input::selection {
+    background-color: rgba(31, 35, 48, 0.18);
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-input::-moz-selection {
+    background-color: rgba(31, 35, 48, 0.18);
+    color: transparent;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-key {
+    color: #1f3a8a;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-string {
+    color: #1f5733;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-number {
+    color: #6f1e9a;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-boolean {
+    color: #b34a3b;
+    font-weight: 600;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-null {
+    color: #9aa0ad;
+    font-style: italic;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-punctuation {
+    color: #6b7280;
+}
+
 .viewport > .main-container > .emojis-container,
 .viewport > .main-container > .emojisp-container,
 .viewport > .main-container > .keyboard-container {
@@ -2309,6 +2405,1029 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
 
 .modal-overlay > .modal > .modal-instructions-images > img:last-child {
     margin-bottom: 0px;
+}
+
+.welcome > .form.form-manager {
+    background-color: transparent;
+    border-radius: 0px 0px 0px 0px;
+    -o-border-radius: 0px 0px 0px 0px;
+    -ms-border-radius: 0px 0px 0px 0px;
+    -moz-border-radius: 0px 0px 0px 0px;
+    -khtml-border-radius: 0px 0px 0px 0px;
+    -webkit-border-radius: 0px 0px 0px 0px;
+    box-shadow: none;
+    -o-box-shadow: none;
+    -ms-box-shadow: none;
+    -moz-box-shadow: none;
+    -khtml-box-shadow: none;
+    -webkit-box-shadow: none;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin: 0px 0px 0px 0px;
+    max-width: none;
+    min-height: 0;
+    min-width: 0;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout {
+    display: grid;
+    margin: 32px auto 32px auto;
+    max-width: 1200px;
+    padding: 0px 24px 0px 24px;
+    -ms-grid-columns: minmax(0, 65fr) 24px minmax(0, 35fr);
+    gap: 24px;
+    grid-template-columns: minmax(0, 65fr) minmax(0, 35fr);
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane {
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 8px 0px 8px 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner {
+    align-items: center;
+    background-color: #fff4d6;
+    border: 1px solid #f0d68a;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #735200;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px 14px 10px 14px;
+    gap: 12px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner[hidden] {
+    display: none;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner > .manager-edit-banner-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner > .manager-edit-banner-label > .manager-edit-banner-target {
+    background-color: rgba(115, 82, 0, 0.12);
+    border-radius: 2px 2px 2px 2px;
+    -o-border-radius: 2px 2px 2px 2px;
+    -ms-border-radius: 2px 2px 2px 2px;
+    -moz-border-radius: 2px 2px 2px 2px;
+    -khtml-border-radius: 2px 2px 2px 2px;
+    -webkit-border-radius: 2px 2px 2px 2px;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-weight: 500;
+    letter-spacing: 0px;
+    padding: 1px 6px 1px 6px;
+    text-transform: none;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner > .manager-edit-banner-exit {
+    background-color: transparent;
+    border: none;
+    color: #735200;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 0px 0px 0px;
+    text-decoration: underline;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner > .manager-edit-banner-exit:hover {
+    color: #4a3500;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation {
+    background-color: #fdecea;
+    border: 1px solid #f3b9b1;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #7a2018;
+    margin-bottom: 20px;
+    padding: 12px 90px 12px 14px;
+    position: relative;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors > .manager-banner-close,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation > .manager-banner-close {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    -o-opacity: 0.6;
+    -ms-opacity: 0.6;
+    -moz-opacity: 0.6;
+    -khtml-opacity: 0.6;
+    -webkit-opacity: 0.6;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 0px 0px 0px;
+    position: absolute;
+    right: 14px;
+    text-transform: uppercase;
+    top: 14px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors > .manager-banner-close:hover,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation > .manager-banner-close:hover {
+    opacity: 1;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -khtml-opacity: 1;
+    -webkit-opacity: 1;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation.valid {
+    background-color: #e8f5ec;
+    border-color: #b6dec2;
+    color: #1f5733;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors > .manager-errors-title,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation > .manager-validation-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation.valid > .manager-validation-title {
+    margin-bottom: 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors > .manager-errors-list,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation > .manager-validation-list {
+    font-size: 12px;
+    list-style-position: inside;
+    list-style-type: disc;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-errors > .manager-errors-list > .manager-errors-item,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-validation > .manager-validation-list > .manager-validation-item {
+    line-height: 1.5;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field {
+    margin-bottom: 18px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field:last-child {
+    margin-bottom: 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    gap: 12px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-label,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-label {
+    color: #6b7280;
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin: 0px 0px 0px 0px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-loader {
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-decoration: underline;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-loader:hover {
+    color: #1f2330;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-loader > .manager-field-loader-input {
+    display: none;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-hint {
+    color: #9aa0ad;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0px 0px 8px 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-hint > code {
+    background-color: #f4f5f8;
+    border-radius: 2px 2px 2px 2px;
+    -o-border-radius: 2px 2px 2px 2px;
+    -ms-border-radius: 2px 2px 2px 2px;
+    -moz-border-radius: 2px 2px 2px 2px;
+    -khtml-border-radius: 2px 2px 2px 2px;
+    -webkit-border-radius: 2px 2px 2px 2px;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 10px;
+    padding: 1px 4px 1px 4px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field .manager-field-editor {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #1f2330;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    min-height: 280px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 12px 14px 12px 14px;
+    resize: vertical;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field .manager-field-editor:focus {
+    border-color: #cfd4de;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane {
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    min-width: 0;
+    padding: 8px 0px 8px 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tabs {
+    border-bottom: 1px solid #e6e8ee;
+    display: flex;
+    margin-bottom: 14px;
+    gap: 4px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tabs > .manager-reference-tab {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #9aa0ad;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: -1px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 8px 14px 8px 14px;
+    text-transform: uppercase;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    -o-transition: color 0.15s ease, border-color 0.15s ease;
+    -ms-transition: color 0.15s ease, border-color 0.15s ease;
+    -moz-transition: color 0.15s ease, border-color 0.15s ease;
+    -khtml-transition: color 0.15s ease, border-color 0.15s ease;
+    -webkit-transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tabs > .manager-reference-tab:hover {
+    color: #1f2330;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tabs > .manager-reference-tab.active {
+    border-bottom-color: #1f2330;
+    color: #1f2330;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tab-content {
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tab-content > .manager-reference-title {
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tab-content > .manager-reference-hint {
+    color: #9aa0ad;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane > .manager-reference-tab-content > .manager-reference-preview-invalid {
+    background-color: #f4f5f8;
+    border: 1px dashed #d8dde6;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #9aa0ad;
+    font-size: 12px;
+    font-style: italic;
+    padding: 32px 0px 32px 0px;
+    text-align: center;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-select {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #1f2330;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 12px;
+    margin-bottom: 16px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 8px 12px 8px 12px;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-empty {
+    color: #9aa0ad;
+    font-size: 12px;
+    font-style: italic;
+    padding: 24px 0px 24px 0px;
+    text-align: center;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    overflow: hidden;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-image {
+    background-color: #f4f5f8;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 200px;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body {
+    padding: 14px 16px 16px 16px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-name {
+    color: #1f2330;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.25px;
+    margin: 0px 0px 12px 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-meta {
+    font-size: 11px;
+    margin: 0px 0px 16px 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-meta > .manager-reference-detail-meta-row {
+    display: flex;
+    justify-content: space-between;
+    line-height: 1.7;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-meta > .manager-reference-detail-meta-row > .manager-reference-detail-meta-key {
+    color: #9aa0ad;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-meta > .manager-reference-detail-meta-row > .manager-reference-detail-meta-value {
+    color: #1f2330;
+    font-weight: 500;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete {
+    background-color: transparent;
+    border: 1px solid #1f2330;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #1f2330;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 8px 14px 8px 14px;
+    text-transform: uppercase;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    -o-transition: background-color 0.15s ease, color 0.15s ease;
+    -ms-transition: background-color 0.15s ease, color 0.15s ease;
+    -moz-transition: background-color 0.15s ease, color 0.15s ease;
+    -khtml-transition: background-color 0.15s ease, color 0.15s ease;
+    -webkit-transition: background-color 0.15s ease, color 0.15s ease;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply:hover,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit:hover,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle:hover,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete:hover {
+    background-color: #1f2330;
+    color: #ffffff;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-status {
+    background-color: #f3f4f7;
+    border-radius: 2px 2px 2px 2px;
+    -o-border-radius: 2px 2px 2px 2px;
+    -ms-border-radius: 2px 2px 2px 2px;
+    -moz-border-radius: 2px 2px 2px 2px;
+    -khtml-border-radius: 2px 2px 2px 2px;
+    -webkit-border-radius: 2px 2px 2px 2px;
+    color: #6b7280;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin: 0px 0px 12px 0px;
+    padding: 2px 8px 2px 8px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail.disabled > .manager-reference-detail-image {
+    opacity: 0.5;
+    -o-opacity: 0.5;
+    -ms-opacity: 0.5;
+    -moz-opacity: 0.5;
+    -khtml-opacity: 0.5;
+    -webkit-opacity: 0.5;
+}
+
+.modal-overlay-delete-profile > .modal > .modal-target {
+    color: #6b7280;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 12px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner {
+    background-color: #f5f0fa;
+    border-color: #c9b6e5;
+    color: #4d3b6e;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner > .manager-edit-banner-label > .manager-edit-banner-target {
+    background-color: rgba(77, 59, 110, 0.12);
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner > .manager-edit-banner-exit {
+    color: #4d3b6e;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-edit-banner > .manager-edit-banner-exit:hover {
+    color: #1f1430;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-label,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-label,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-title {
+    color: #9b87c2;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-loader {
+    color: #9b87c2;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-loader:hover {
+    color: #1f1430;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-hint,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-hint {
+    color: #6b5a8a;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-hint > code {
+    background-color: #f5f0fa;
+    color: #6b5a8a;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field .manager-field-editor {
+    border-color: #ece4f5;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field .manager-field-editor:focus {
+    border-color: #c9b6e5;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-tabs > .manager-reference-tab.active {
+    border-bottom-color: #9678d3;
+    color: #1f1430;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-select,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail {
+    border-color: #ece4f5;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-image {
+    background-color: #f5f0fa;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-name {
+    color: #1f1430;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-meta > .manager-reference-detail-meta-row > .manager-reference-detail-meta-key {
+    color: #9b87c2;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-meta > .manager-reference-detail-meta-row > .manager-reference-detail-meta-value {
+    color: #1f1430;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete {
+    border-color: #9678d3;
+    color: #9678d3;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-apply:hover,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-edit:hover,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-toggle:hover,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail > .manager-reference-detail-body > .manager-reference-detail-actions > .manager-reference-detail-delete:hover {
+    background-color: #9678d3;
+    color: #ffffff;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-upload {
+    display: flex;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-filename {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #1f2330;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 12px;
+    flex: 1;
+    min-width: 0px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 6px 10px 6px 10px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-picker {
+    background-color: #f4f5f8;
+    border: 1px solid #e6e8ee;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #4b5260;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 6px 12px 6px 12px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-picker > .manager-assets-file {
+    display: none;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-picker.has-file {
+    background-color: #1f2330;
+    border-color: #1f2330;
+    color: #ffffff;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-submit {
+    background-color: #1f2330;
+    border: 1px solid #1f2330;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #ffffff;
+    cursor: pointer;
+    font-family: Lato, -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 6px 14px 6px 14px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-errors {
+    background-color: #fdecea;
+    border: 1px solid #f3b9b1;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #7a2018;
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    padding: 12px 16px 12px 16px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-errors > .manager-assets-errors-item {
+    margin-bottom: 4px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-errors > .manager-assets-errors-item:last-child {
+    margin-bottom: 0px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-empty {
+    color: #9aa0ad;
+    font-size: 12px;
+    font-style: italic;
+    padding: 24px 0px 24px 0px;
+    text-align: center;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid {
+    display: grid;
+    -ms-grid-columns: 1fr 12px 1fr;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-image {
+    background-color: #f4f5f8;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 100px;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-name {
+    color: #1f2330;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 10px;
+    overflow: hidden;
+    padding: 8px 10px 8px 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-download,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-delete {
+    background-color: rgba(31, 35, 48, 0.7);
+    border: none;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+    height: 22px;
+    line-height: 22px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 0px 0px 0px;
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    top: 6px;
+    width: 22px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-download {
+    right: 34px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-delete {
+    right: 6px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-download:hover,
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card > .manager-assets-card-delete:hover {
+    background-color: rgba(31, 35, 48, 0.95);
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-filename,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-grid > .manager-assets-card {
+    border-color: #ece4f5;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-submit {
+    background-color: #9678d3;
+    border-color: #9678d3;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-assets-picker.has-file {
+    background-color: #9678d3;
+    border-color: #9678d3;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-download {
+    background-color: #1f2330;
+    border: 1px solid #1f2330;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #ffffff;
+    cursor: pointer;
+    display: block;
+    font-family: Lato, -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 8px 14px 8px 14px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-divider {
+    background-color: #e6e8ee;
+    height: 1px;
+    margin: 20px 0px 20px 0px;
+    width: 100%;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-upload {
+    display: flex;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-picker {
+    background-color: #f4f5f8;
+    border: 1px solid #e6e8ee;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #4b5260;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    flex: 1;
+    letter-spacing: 0.5px;
+    min-width: 0px;
+    padding: 6px 12px 6px 12px;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-picker > .manager-bundle-file {
+    display: none;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-picker.has-file {
+    background-color: #1f2330;
+    border-color: #1f2330;
+    color: #ffffff;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-submit {
+    background-color: #1f2330;
+    border: 1px solid #1f2330;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #ffffff;
+    cursor: pointer;
+    font-family: Lato, -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 6px 14px 6px 14px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-errors {
+    background-color: #fdecea;
+    border: 1px solid #f3b9b1;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    color: #7a2018;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 12px 16px 12px 16px;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-download,
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-submit {
+    background-color: #9678d3;
+    border-color: #9678d3;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-picker.has-file {
+    background-color: #9678d3;
+    border-color: #9678d3;
+}
+
+body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-bundle-picker {
+    border-color: #ece4f5;
 }
 
 .toast {

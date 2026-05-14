@@ -1,0 +1,90 @@
+.jsonhighlight-wrapper {
+    background-color: #ffffff;
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    position: relative;
+    width: 100%;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay {
+    background-color: transparent;
+    border: 1px solid transparent;
+    bottom: 0px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #1f2330;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 12px;
+    left: 0px;
+    line-height: 1.5;
+    margin: 0px 0px 0px 0px;
+    overflow: hidden;
+    padding: 12px 14px 12px 14px;
+    pointer-events: none;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code {
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-input {
+    background-color: transparent !important;
+    color: transparent !important;
+    position: relative;
+    -webkit-text-fill-color: transparent !important;
+    caret-color: #1f2330;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-input::selection {
+    background-color: rgba(31, 35, 48, 0.18);
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-input::-moz-selection {
+    background-color: rgba(31, 35, 48, 0.18);
+    color: transparent;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-key {
+    color: #1f3a8a;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-string {
+    color: #1f5733;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-number {
+    color: #6f1e9a;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-boolean {
+    color: #b34a3b;
+    font-weight: 600;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-null {
+    color: #9aa0ad;
+    font-style: italic;
+}
+
+.jsonhighlight-wrapper > .jsonhighlight-overlay > code > .jsonhighlight-punctuation {
+    color: #6b7280;
+}

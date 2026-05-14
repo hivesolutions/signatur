@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="welcome">
+            <form class="form form-manager" method="post" action="/profiles"
+                  data-toast-saved="Perfil guardado"
+                  data-toast-asset-saved="Fundo carregado"
+                  data-toast-asset-deleted="Fundo removido"
+                  data-toast-bundle-restored="Pacote restaurado"
+                  data-dismiss-label="Dispensar"
+                  data-disabled-suffix=" (desativado)"
+                  data-meta-id-label="ID"
+                  data-meta-size-label="Tamanho"
+                  data-meta-orientation-label="Orientação"
+                  data-meta-shape-label="Forma"
+                  data-meta-max-lines-label="Máx. Linhas"
+                  data-meta-inspirations-label="Inspirações"
+                  data-asset-error-filename="o nome do ficheiro é obrigatório"
+                  data-asset-error-file="o ficheiro é obrigatório"
+                  data-validation-ok="Tudo certo"
+                  data-validation-issues-singular="{n} problema encontrado"
+                  data-validation-issues-plural="{n} problemas encontrados"
+                  data-save-error-title="Não foi possível guardar o perfil">
+                <div class="welcome-hero">
+                    <div class="welcome-hero-mark">
+                        <% if (theme === "ldj") { %>
+                            <img class="logo" src="/static/images/logo.svg" />
+                        <% } else { %>
+                            <span class="logo">Signatur</span>
+                        <% } %>
+                    </div>
+                    <div class="welcome-hero-eyebrow" data-create-label="Gestor de Perfis" data-edit-label="Gestor de Perfis">Gestor de Perfis</div>
+                    <div class="welcome-hero-divider"></div>
+                </div>
+                <div class="welcome-catalog">
+                    <div class="manager-layout">
+                        <div class="manager-form-pane">
+                            <div class="manager-edit-banner"<%= editTarget ? '' : ' hidden' %>>
+                                <span class="manager-edit-banner-label">
+                                    A editar o perfil <span class="manager-edit-banner-target"><%= editTarget ? editTarget : '' %></span>
+                                </span>
+                                <button type="button" class="manager-edit-banner-exit">Sair do modo de edição</button>
+                            </div>
+                            <% if (errors && errors.length > 0) { %>
+                                <div class="manager-errors">
+                                    <button type="button" class="manager-banner-close" aria-label="Dispensar">Dispensar</button>
+                                    <div class="manager-errors-title">Não foi possível guardar o perfil</div>
+                                    <ul class="manager-errors-list">
+                                        <% errors.forEach(function(error) { %>
+                                            <li class="manager-errors-item"><%= error %></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            <% } %>
+                            <div class="manager-validation" hidden></div>
+                            <div class="manager-field">
+                                <div class="manager-field-header">
+                                    <label class="manager-field-label" for="manager-profile-json">JSON do Perfil</label>
+                                    <label class="manager-field-loader">
+                                        Carregar do ficheiro
+                                        <input class="manager-field-loader-input" type="file" data-target="manager-profile-json" accept="application/json,.json" />
+                                    </label>
+                                </div>
+                                <div class="manager-field-hint">Obrigatório. Validado contra a definição de perfil de gravação.</div>
+                                <textarea class="manager-field-editor" id="manager-profile-json" name="profile_json" spellcheck="false" required><%= profileJson ? profileJson : '' %></textarea>
+                            </div>
+                            <div class="manager-field">
+                                <div class="manager-field-header">
+                                    <label class="manager-field-label" for="manager-inspirations-json">JSON de Inspirações</label>
+                                    <label class="manager-field-loader">
+                                        Carregar do ficheiro
+                                        <input class="manager-field-loader-input" type="file" data-target="manager-inspirations-json" accept="application/json,.json" />
+                                    </label>
+                                </div>
+                                <div class="manager-field-hint">Opcional. Referenciado pelo campo <code>inspirations</code> do perfil.</div>
+                                <textarea class="manager-field-editor" id="manager-inspirations-json" name="inspirations_json" spellcheck="false"><%= inspirationsJson ? inspirationsJson : '' %></textarea>
+                            </div>
+                        </div>
+                        <div class="manager-reference-pane">
+                            <div class="manager-reference-tabs">
+                                <button type="button" class="manager-reference-tab active" data-tab="template">Perfil</button>
+                                <button type="button" class="manager-reference-tab" data-tab="preview">Pré-visualização</button>
+                                <button type="button" class="manager-reference-tab" data-tab="backgrounds">Fundos</button>
+                                <button type="button" class="manager-reference-tab" data-tab="bundle">Exportar / Importar</button>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="template">
+                                <div class="manager-reference-title">Perfis Existentes</div>
+                                <div class="manager-reference-hint">Escolha um perfil para pré-visualizar e use-o como ponto de partida ou edite-o.</div>
+                                <select class="manager-reference-select">
+                                    <option value="">Escolher um perfil…</option>
+                                </select>
+                                <div class="manager-reference-empty">Nenhum perfil selecionado.</div>
+                                <div class="manager-reference-detail" hidden>
+                                    <div class="manager-reference-detail-image"></div>
+                                    <div class="manager-reference-detail-body">
+                                        <div class="manager-reference-detail-name"></div>
+                                        <div class="manager-reference-detail-status" data-enable-label="Ativar" data-disable-label="Desativar" hidden>Desativado</div>
+                                        <div class="manager-reference-detail-meta"></div>
+                                        <div class="manager-reference-detail-actions">
+                                            <button type="button" class="manager-reference-detail-apply">Usar como ponto de partida</button>
+                                            <button type="button" class="manager-reference-detail-edit">Editar este perfil</button>
+                                            <button type="button" class="manager-reference-detail-toggle" data-enable-label="Ativar" data-disable-label="Desativar">Desativar</button>
+                                            <button type="button" class="manager-reference-detail-delete">Eliminar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="preview" hidden>
+                                <div class="manager-reference-title">Pré-visualização</div>
+                                <div class="manager-reference-hint">Reflete o conteúdo atual do editor à esquerda.</div>
+                                <div class="manager-reference-preview-invalid">JSON inválido.</div>
+                                <div class="manager-reference-detail manager-reference-preview" hidden>
+                                    <div class="manager-reference-detail-image"></div>
+                                    <div class="manager-reference-detail-body">
+                                        <div class="manager-reference-detail-name"></div>
+                                        <div class="manager-reference-detail-meta"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="backgrounds" hidden>
+                                <div class="manager-reference-title">Imagens de Fundo</div>
+                                <div class="manager-reference-hint">Faça a gestão dos ficheiros PNG referenciados pelos campos <code>background</code> dos perfis e variantes.</div>
+                                <div class="manager-assets-upload">
+                                    <input type="text" class="manager-assets-filename" placeholder="ficheiro.png" />
+                                    <label class="manager-assets-picker">
+                                        Escolher PNG
+                                        <input type="file" class="manager-assets-file" accept="image/png,.png" />
+                                    </label>
+                                    <button type="button" class="manager-assets-submit">Carregar</button>
+                                </div>
+                                <div class="manager-assets-errors" hidden></div>
+                                <div class="manager-assets-empty">Nenhum fundo disponível.</div>
+                                <div class="manager-assets-grid"></div>
+                            </div>
+                            <div class="manager-reference-tab-content" data-tab-content="bundle" hidden>
+                                <div class="manager-reference-title">Exportar</div>
+                                <div class="manager-reference-hint">Descarregue um arquivo zip com todos os perfis, ficheiros de inspirações e fundos em <code>static/profiles/</code>.</div>
+                                <a class="manager-bundle-download" href="/profiles/bundle" download>Descarregar pacote</a>
+                                <div class="manager-bundle-divider"></div>
+                                <div class="manager-reference-title">Importar</div>
+                                <div class="manager-reference-hint">Restaurar a partir de um pacote previamente exportado. O catálogo de perfis completo é substituído pelo conteúdo do arquivo.</div>
+                                <div class="manager-bundle-upload">
+                                    <label class="manager-bundle-picker">
+                                        Escolher pacote
+                                        <input type="file" class="manager-bundle-file" accept="application/zip,.zip" />
+                                    </label>
+                                    <button type="button" class="manager-bundle-submit">Restaurar</button>
+                                </div>
+                                <div class="manager-bundle-errors" hidden></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="edit_target" class="manager-edit-target" value="<%= editTarget ? editTarget : '' %>" />
+                <div class="welcome-action-bar centered">
+                    <div class="welcome-actions">
+                        <a class="button button-ghost button-cancel" href="/welcome">Cancelar</a>
+                        <button type="button" class="button button-ghost button-validate">Validar</button>
+                        <button type="submit" class="button button-start button-save" data-create-label="Guardar Perfil" data-edit-label="Atualizar Perfil"><%= editTarget ? 'Atualizar Perfil' : 'Guardar Perfil' %></button>
+                    </div>
+                </div>
+                <div class="welcome-version">
+                    <span>Versão <%= info.version %></span>
+                </div>
+            </form>
+        </div>
+        <div class="toast"></div>
+        <div class="modal-overlay modal-overlay-delete-profile">
+            <div class="modal">
+                <div class="modal-title">Eliminar perfil</div>
+                <div class="modal-message">Esta acção remove permanentemente o perfil e respectivas inspirações do disco. Os fundos são geridos separadamente e não são afectados. Esta acção não pode ser revertida.</div>
+                <div class="modal-target"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Cancelar</span>
+                    <span class="button button-modal-delete">Eliminar</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-delete-asset">
+            <div class="modal">
+                <div class="modal-title">Eliminar fundo</div>
+                <div class="modal-message">Esta acção remove permanentemente o ficheiro PNG do disco. Os perfis ou variantes que o referenciam terão de ser actualizados. Esta acção não pode ser revertida.</div>
+                <div class="modal-target"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Cancelar</span>
+                    <span class="button button-modal-delete-asset">Eliminar</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-restore-bundle">
+            <div class="modal">
+                <div class="modal-title">Restaurar pacote</div>
+                <div class="modal-message">Esta acção remove permanentemente todos os perfis, ficheiros de inspirações e fundos do disco e substitui-os pelo conteúdo do pacote carregado. Esta acção não pode ser revertida.</div>
+                <div class="modal-target"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Cancelar</span>
+                    <span class="button button-modal-restore-bundle">Restaurar</span>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Profile manager screen at `/profiles/manager` with inline JSON editors for the profile and inspirations payloads, validated server side via the existing profile and inspirations schemas before being written to `static/profiles/` under the validated profile id
+* Optional `Load from file` picker next to each JSON editor that reads the selected file as text into the editor textarea so the editor remains the source of truth on submit
+* Reference panel on the upload screen with a profile dropdown that previews the picked profile (image, name, key metadata) and a `Use as starting point` button that loads its profile JSON (and matching inspirations when present) into the editor
+* `Validate` button on the upload screen that posts the current editor contents to a new `/profiles/validate` endpoint and surfaces the server returned errors inline
+* `Preview` tab on the upload reference pane that renders a live summary of the editor payload (image, name, key metadata) using the freshly picked background image as the preview surface, debounced on every input
+* `Edit this profile` action on the upload reference pane that opens the selected profile in the editor and flips the form into edit mode so the next save overwrites the existing files via `POST /profiles` with an `edit_target` field, including support for renaming the profile id during edit (the old assets are removed after the new ones are written)
+* Mode aware validation that lets create mode reject duplicate ids while edit mode accepts in place updates and renames, refusing only when the edited profile no longer exists on disk or when a rename would clobber another profile, with the same rules applied by `POST /profiles/validate` so the `Validate` button surfaces every error that would block a save
+* AJAX save flow on the profile manager that posts the form via `fetch`, returns JSON from `POST /profiles` instead of a redirect, refreshes the reference dropdown in place, surfaces success through the existing toast plugin, and switches the form into edit mode pointing at the freshly saved id so the user never loses the editor context
+* Dedicated background asset manager on the profile manager (new `Backgrounds` tab) backed by `GET /profiles/assets`, `POST /profiles/assets`, and `POST /profiles/assets/:filename/delete`, listing every PNG file under `static/profiles/` and offering inline upload and delete with confirmation modal so multiple variants can share the same asset
+* Per-asset download button on each background card that points at the public `/static/profiles/<filename>` URL with the native browser `download` attribute so individual PNG assets can be saved locally without leaving the manager
+* Profiles bundle export and restore on the profile manager (new `Export / Import` tab) backed by `GET /profiles/bundle` (streams a zip of every profile JSON, inspirations JSON, and PNG asset plus a `manifest.json` entry) and `POST /profiles/bundle` (wipes the profiles directory before unpacking the uploaded archive), with a confirmation modal guarding the destructive full replace semantics
+* Decoupled the PNG asset lifecycle from the profile lifecycle: the background picker has been removed from the profile editor, the profile JSON `background` and `variant.background` fields remain plain filename references, profile renames no longer rewrite or delete PNG files, and profile deletes leave PNG assets untouched
+* `Editing profile "<id>"` banner at the top of the upload form pane shown only while in edit mode, with an `Exit edit mode` link that reverts the hero, save button, and hidden target field back to the create state without reloading
+* `Delete` action on the upload reference pane that opens a confirmation modal and removes the profile assets via `POST /profiles/:id/delete` after the user confirms
+* `?edit=<id>` query parameter on `/profiles/manager` that pre-loads the profile and inspirations payloads into the editor on render
+* Portuguese (`pt_pt`) translation of the profile manager screen mirroring the existing `manager.ejs` layout
+* `Profile Manager` link on the welcome action bar pointing to `/profiles/manager`
+* Profile manager jQuery plugin (`plugins/profilemanager.js`, `css/plugins/profilemanager.css`) that encapsulates the manager screen behavior previously inlined in `main.js`, initialized via a single `.form-manager.profilemanager()` call
+* JSON syntax highlight jQuery plugin (`plugins/jsonhighlight.js`, `css/plugins/jsonhighlight.css`) that overlays a tokenized colored preview on top of the profile and inspirations textareas, applied automatically by the profile manager so keys, strings, numbers, booleans, null, and punctuation are colored while the native textarea behavior is preserved
 * Support for toggling the visual keyboard by clicking the same font again
 * Support for multiple lines with Enter key and visual keyboard `↵` button
 * Enforcement of `max_lines` profile constraint when inserting newlines
@@ -76,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
+
 * `/profiles` endpoint now handles async errors through Express error middleware
 * Invalid CSS `background-position` value corrected to valid 2-value syntax
 * Restored text click handler now binds to all non-caret children including newline elements
@@ -86,8 +106,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Server-side validation for `preview.zoom` field in profile schema
 * `lang` attribute on Portuguese views (`welcome-pt_pt.ejs`, `gateway-pt_pt.ejs`, `report-pt_pt.ejs`) corrected from `en` to `pt`
 * Welcome catalog `background-image` URLs now pass profile filenames through `encodeURI` to guard against malformed CSS
-* Click on a character now positions the caret before or after the character based on which horizontal half received the click, restoring access to column 0 of every line via the mouse
-* Selected font now follows caret movement, mirroring the font of the character to the left (or the first visible character to the right when the caret sits before the text), updated on both mouse clicks and keyboard navigation
 
 ### Changed
 
