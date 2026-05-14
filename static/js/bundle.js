@@ -1250,8 +1250,9 @@ const countLines = function(text) {
                         profile.width + "x" + profile.height + " " + unit
                     );
                 }
-                if (profile.orientation)
-                    { appendMetaRow(metaElement, "Orientation", profile.orientation); }
+                if (profile.orientation) {
+                    appendMetaRow(metaElement, "Orientation", profile.orientation);
+                }
                 if (profile.shape) appendMetaRow(metaElement, "Shape", profile.shape);
                 if (profile.text && profile.text.max_lines !== undefined) {
                     appendMetaRow(metaElement, "Max Lines", profile.text.max_lines);
@@ -1824,7 +1825,7 @@ const countLines = function(text) {
                     const payload = await response.json();
                     const errors = payload.errors || [];
                     validationContainer.empty();
-                    const close = jQuery("<button type=\"button\"></button>");
+                    const close = jQuery('<button type="button"></button>');
                     close.addClass("manager-banner-close");
                     close.attr("aria-label", dismissLabel);
                     close.text(dismissLabel);
@@ -1871,7 +1872,7 @@ const countLines = function(text) {
                 if (!errors || errors.length === 0) return;
                 const banner = jQuery("<div></div>");
                 banner.addClass("manager-errors");
-                const close = jQuery("<button type=\"button\"></button>");
+                const close = jQuery('<button type="button"></button>');
                 close.addClass("manager-banner-close");
                 close.attr("aria-label", dismissLabel);
                 close.text(dismissLabel);
