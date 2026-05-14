@@ -16,8 +16,10 @@ const CSS_FILES = [
     "css/plugins/collapsible.css",
     "css/plugins/console.css",
     "css/plugins/inspiration.css",
+    "css/plugins/jsonhighlight.css",
     "css/plugins/keyboard.css",
     "css/plugins/modal.css",
+    "css/plugins/profilemanager.css",
     "css/plugins/toast.css"
 ];
 
@@ -27,8 +29,10 @@ const JS_FILES = [
     "js/plugins/console.js",
     "js/plugins/fonts.js",
     "js/plugins/inspiration.js",
+    "js/plugins/jsonhighlight.js",
     "js/plugins/keyboard.js",
     "js/plugins/modal.js",
+    "js/plugins/profilemanager.js",
     "js/plugins/profileselector.js",
     "js/plugins/texteditor.js",
     "js/plugins/toast.js",

@@ -72,6 +72,12 @@ jQuery(document).ready(function() {
     // the available profiles from the server on its own
     welcomeContainer.welcome();
 
+    // initializes the profile manager plugin on the profile
+    // manager screen form, which owns the inline editors,
+    // the reference dropdown, the live preview, the background
+    // asset manager, and the validate and save flows
+    jQuery(".form-manager").profilemanager();
+
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeInput = jQuery(".font-size-input");
