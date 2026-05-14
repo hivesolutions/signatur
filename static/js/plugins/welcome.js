@@ -102,11 +102,8 @@
             // the first card so that the form is immediately
             // submittable without an extra click
             const previousKey = profileInput.val();
-            const initialKey =
-                previousKey && profiles[previousKey] ? previousKey : keys[0];
-            catalog
-                .children(".catalog-card[data-profile=" + initialKey + "]")
-                .addClass("selected");
+            const initialKey = previousKey && profiles[previousKey] ? previousKey : keys[0];
+            catalog.children(".catalog-card[data-profile=" + initialKey + "]").addClass("selected");
             context.data("_selected", initialKey);
             profileInput.val(initialKey);
             buttonStart.prop("disabled", false);

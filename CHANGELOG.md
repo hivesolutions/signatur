@@ -76,7 +76,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
-
 * `/profiles` endpoint now handles async errors through Express error middleware
 * Invalid CSS `background-position` value corrected to valid 2-value syntax
 * Restored text click handler now binds to all non-caret children including newline elements
@@ -87,6 +86,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Server-side validation for `preview.zoom` field in profile schema
 * `lang` attribute on Portuguese views (`welcome-pt_pt.ejs`, `gateway-pt_pt.ejs`, `report-pt_pt.ejs`) corrected from `en` to `pt`
 * Welcome catalog `background-image` URLs now pass profile filenames through `encodeURI` to guard against malformed CSS
+* Click on a character now positions the caret before or after the character based on which horizontal half received the click, restoring access to column 0 of every line via the mouse
+* Selected font now follows caret movement, mirroring the font of the character to the left (or the first visible character to the right when the caret sits before the text), updated on both mouse clicks and keyboard navigation
 
 ### Changed
 
