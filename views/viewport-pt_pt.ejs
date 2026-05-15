@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="pt">
     <%- include("head"); -%>
-    <body class="<%= theme %>" data-theme="<%= theme %>" data-master="<%= masterb64 %>">
+    <body class="<%= theme %> <%= viewportMode === 'store' ? 'store-mode' : '' %>" data-theme="<%= theme %>" data-viewport-mode="<%= viewportMode %>" data-master="<%= masterb64 %>">
         <div class="header">
             <div class="buttons-left">
                 <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>
@@ -31,7 +31,7 @@
         <div class="viewport-options collapsible">
             <div class="viewport-options-title collapsible-title">Opções <span class="viewport-options-toggle collapsible-toggle">▾</span></div>
             <div class="viewport-options-body collapsible-body">
-            <div class="viewport-options-field">
+            <div class="viewport-options-field profile-container">
                 <label class="viewport-options-label">Perfil</label>
                 <select class="profile-select">
                     <option value="">Nenhum</option>

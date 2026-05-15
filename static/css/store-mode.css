@@ -1,0 +1,20 @@
+.store-mode .profile-info {
+    display: none;
+}
+
+.store-mode .inspiration-panel {
+    top: 78px;
+}
+
+.store-mode .viewport-options > .viewport-options-body > .profile-container,
+.store-mode .viewport-options > .viewport-options-body > .variant-container,
+.store-mode .viewport-options > .viewport-options-body > .viewport-options-rulers,
+.store-mode .viewport-options > .viewport-options-body > .viewport-options-crosshair,
+.store-mode .viewport-options > .viewport-options-body > .viewport-options-keyboard,
+.store-mode .viewport-options > .viewport-options-body > .viewport-options-guidelines,
+.store-mode .viewport-options > .viewport-options-body > .viewport-options-caret,
+.store-mode .viewport-options > .viewport-options-body > .zoom-container,
+.store-mode .viewport-options > .viewport-options-body > .margin-container,
+.store-mode .viewport-options > .viewport-options-body > .position-container {
+    display: none;
+}

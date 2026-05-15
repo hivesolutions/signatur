@@ -154,6 +154,7 @@ app.get("/settings", (req, res, next) => {
         locale: locale,
         home: req.session.home === "welcome" ? "welcome" : "gateway",
         showOptions: req.session.show_options !== "0",
+        viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
         next: nextUrl,
         info: info || {}
     });
@@ -166,6 +167,7 @@ app.post("/settings", (req, res, next) => {
     req.session.locale = locale;
     req.session.home = req.body.home === "welcome" ? "welcome" : "gateway";
     req.session.show_options = req.body.show_options === "0" ? "0" : "1";
+    req.session.viewport_mode = req.body.viewport_mode === "store" ? "store" : "technical";
 
     // resolves the redirect target from the submitted next field
     // restricting it to local paths so the form cannot be used as
@@ -232,6 +234,7 @@ app.get("/viewport", (req, res, next) => {
         options: master[req.session.config.technology] || {},
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null,
+        viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
         back: req.session.entry === "welcome" ? "/welcome" : "/"
     });
 });

@@ -72,6 +72,17 @@
                                 <label class="option-chip" for="show-options-off">Desligado</label>
                             </div>
                         </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Modo do Viewport</div>
+                            <div class="option-chips" id="viewport-mode-options">
+                                <input class="option-chip-input" type="radio" id="viewport-mode-technical" name="viewport_mode" value="technical"
+                                    <%= viewportMode !== "store" ? "checked" : '' %>>
+                                <label class="option-chip" for="viewport-mode-technical">Técnico</label>
+                                <input class="option-chip-input" type="radio" id="viewport-mode-store" name="viewport_mode" value="store"
+                                    <%= viewportMode === "store" ? "checked" : '' %>>
+                                <label class="option-chip" for="viewport-mode-store">Loja</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <input type="hidden" name="next" value="<%= next ? next : '' %>" />

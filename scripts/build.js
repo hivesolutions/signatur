@@ -13,6 +13,7 @@ const CSS_FILES = [
     "css/viewport.css",
     "css/welcome.css",
     "css/settings.css",
+    "css/store-mode.css",
     "css/plugins/collapsible.css",
     "css/plugins/console.css",
     "css/plugins/inspiration.css",

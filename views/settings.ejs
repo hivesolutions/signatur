@@ -72,6 +72,17 @@
                                 <label class="option-chip" for="show-options-off">Off</label>
                             </div>
                         </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Viewport Mode</div>
+                            <div class="option-chips" id="viewport-mode-options">
+                                <input class="option-chip-input" type="radio" id="viewport-mode-technical" name="viewport_mode" value="technical"
+                                    <%= viewportMode !== "store" ? "checked" : '' %>>
+                                <label class="option-chip" for="viewport-mode-technical">Technical</label>
+                                <input class="option-chip-input" type="radio" id="viewport-mode-store" name="viewport_mode" value="store"
+                                    <%= viewportMode === "store" ? "checked" : '' %>>
+                                <label class="option-chip" for="viewport-mode-store">Store</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <input type="hidden" name="next" value="<%= next ? next : '' %>" />
