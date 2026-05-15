@@ -91,9 +91,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Settings page at `/settings` for selecting the session-persisted `theme`, `locale`, and `fullscreen` values, with a Portuguese translation and a link from the welcome screen action bar
 * Session-persisted `home` preference selecting whether the bare `/` URL redirects to the classic gateway or to the welcome screen, defaulting to gateway
 * Session-persisted `show_options` preference toggling whether the technology, elements, and location selectors are rendered on the welcome screen and classic gateway, defaulting to on; when off the previously selected values are submitted via hidden inputs so the form still routes correctly
+* `docs/profile-spec.md` documenting the profile and inspirations JSON schema sourced from the `lib/util/profile.js` validator, with a pointer from `README.md`
 
 ### Fixed
 
+* `text.max_lines` profile constraint now also enforced on programmatic text loads (inspirations, deep-link `?text=…`, session restore) and when the active profile changes, trimming any overflow newlines and emitting a `change` event so the URL state and button state stay in sync
 * Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
 
 * `/profiles` endpoint now handles async errors through Express error middleware

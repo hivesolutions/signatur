@@ -107,6 +107,10 @@ Read by the client and written back via `history.replaceState` so the editor URL
 | `engine` | `str` | `"inkscape"` | Conversion engine identifier; resolved against the registered engines (e.g. `inkscape`). |
 | `format` | `str` | `"hpgl"`     | Target output format honored by the inkscape engine; one of `svg`, `pdf`, or `hpgl`.     |
 
+## Profiles
+
+The engraving surfaces (medals, plates, rings, etc.) are described by JSON profile files under `static/profiles/`. The schema of these files (and of their companion `*.inspirations.json` files) is documented in [docs/profile-spec.md](docs/profile-spec.md). The authoritative validator lives in `lib/util/profile.js` and is the source the spec document tracks.
+
 ## Printing
 
 To be able to enable printing the following JavaScript code should be used inside Browser's JavaScript console:
