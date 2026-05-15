@@ -16,29 +16,29 @@ PNG background assets live alongside the JSON files under `static/profiles/` and
 
 ## Top-level fields
 
-| Field           | Type    | Required | Notes                                                                                  |
-| --------------- | ------- | :------: | -------------------------------------------------------------------------------------- |
-| `id`            | string  |   yes    | Matches `^[a-z0-9]+(?:-[a-z0-9]+)*$`. Must equal the filename stem.                    |
-| `name`          | string  |   yes    | Human readable name shown in the UI.                                                   |
-| `description`   | string  |    no    | Free form description.                                                                 |
-| `width`         | number  |   yes    | Positive. In `unit`s.                                                                  |
-| `height`        | number  |   yes    | Positive. In `unit`s.                                                                  |
-| `unit`          | string  |   yes    | One of `mm`, `px`.                                                                     |
-| `orientation`   | string  |   yes    | One of `portrait`, `landscape`.                                                        |
-| `shape`         | string  |    no    | One of `rectangle`, `circle`, `heart`. Drives boundary rendering.                      |
-| `background`    | string  |    no    | PNG filename under `static/profiles/` used as the preview background.                  |
-| `default_font`  | string  |    no    | Font name (e.g. `Helvetica 4L`) auto-selected on initial load when no font is active.  |
-| `enabled`       | boolean |    no    | When `false`, the profile is hidden from the catalog.                                  |
-| `inspirations`  | string  |    no    | Filename of an inspirations JSON file (without the `.json` extension is not enough).   |
-| `font_size`     | object  |   yes    | See [font_size](#font_size).                                                           |
-| `padding`       | object  |    no    | See [padding](#padding).                                                               |
-| `extra_padding` | object  |    no    | See [extra_padding](#extra_padding).                                                   |
-| `preview`       | object  |    no    | See [preview](#preview).                                                               |
-| `instructions`  | object  |    no    | See [instructions](#instructions).                                                     |
-| `variants`      | array   |    no    | See [variants](#variants).                                                             |
-| `machine`       | object  |    no    | See [machine](#machine).                                                               |
-| `text`          | object  |    no    | See [text](#text).                                                                     |
-| `metadata`      | object  |    no    | See [metadata](#metadata).                                                             |
+| Field           | Type    | Required | Notes                                                                                 |
+| --------------- | ------- | :------: | ------------------------------------------------------------------------------------- |
+| `id`            | string  |   yes    | Matches `^[a-z0-9]+(?:-[a-z0-9]+)*$`. Must equal the filename stem.                   |
+| `name`          | string  |   yes    | Human readable name shown in the UI.                                                  |
+| `description`   | string  |    no    | Free form description.                                                                |
+| `width`         | number  |   yes    | Positive. In `unit`s.                                                                 |
+| `height`        | number  |   yes    | Positive. In `unit`s.                                                                 |
+| `unit`          | string  |   yes    | One of `mm`, `px`.                                                                    |
+| `orientation`   | string  |   yes    | One of `portrait`, `landscape`.                                                       |
+| `shape`         | string  |    no    | One of `rectangle`, `circle`, `heart`. Drives boundary rendering.                     |
+| `background`    | string  |    no    | PNG filename under `static/profiles/` used as the preview background.                 |
+| `default_font`  | string  |    no    | Font name (e.g. `Helvetica 4L`) auto-selected on initial load when no font is active. |
+| `enabled`       | boolean |    no    | When `false`, the profile is hidden from the catalog.                                 |
+| `inspirations`  | string  |    no    | Filename of an inspirations JSON file (without the `.json` extension is not enough).  |
+| `font_size`     | object  |   yes    | See [font_size](#font_size).                                                          |
+| `padding`       | object  |    no    | See [padding](#padding).                                                              |
+| `extra_padding` | object  |    no    | See [extra_padding](#extra_padding).                                                  |
+| `preview`       | object  |    no    | See [preview](#preview).                                                              |
+| `instructions`  | object  |    no    | See [instructions](#instructions).                                                    |
+| `variants`      | array   |    no    | See [variants](#variants).                                                            |
+| `machine`       | object  |    no    | See [machine](#machine).                                                              |
+| `text`          | object  |    no    | See [text](#text).                                                                    |
+| `metadata`      | object  |    no    | See [metadata](#metadata).                                                            |
 
 ## font_size
 
