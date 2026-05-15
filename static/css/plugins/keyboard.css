@@ -1,8 +1,22 @@
 .viewport > .main-container > .emojis-container,
 .viewport > .main-container > .emojisp-container,
 .viewport > .main-container > .keyboard-container {
+    background: linear-gradient(180deg, rgba(244, 245, 248, 0.6) 0%, rgba(231, 234, 240, 0.5) 100%);
+    border-radius: 16px 16px 16px 16px;
+    -o-border-radius: 16px 16px 16px 16px;
+    -ms-border-radius: 16px 16px 16px 16px;
+    -moz-border-radius: 16px 16px 16px 16px;
+    -khtml-border-radius: 16px 16px 16px 16px;
+    -webkit-border-radius: 16px 16px 16px 16px;
+    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
+    -o-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
+    -ms-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
+    -moz-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
+    -khtml-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
+    -webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
     font-size: 0px;
     margin: 20px auto 0px auto;
+    padding: 12px 12px 12px 12px;
 }
 
 .viewport > .main-container > .keyboard-container {
@@ -30,19 +44,27 @@
 .viewport > .main-container > .emojis-container > .char,
 .viewport > .main-container > .emojisp-container > .char,
 .viewport > .main-container > .keyboard-container > .char {
-    border: 1px solid #9d9d9d;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
+    background-color: #fafbfd;
+    border: none;
+    border-radius: 10px 10px 10px 10px;
+    -o-border-radius: 10px 10px 10px 10px;
+    -ms-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -khtml-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    box-shadow: 0px 1px 2px rgba(31, 35, 48, 0.06);
+    -o-box-shadow: 0px 1px 2px rgba(31, 35, 48, 0.06);
+    -ms-box-shadow: 0px 1px 2px rgba(31, 35, 48, 0.06);
+    -moz-box-shadow: 0px 1px 2px rgba(31, 35, 48, 0.06);
+    -khtml-box-shadow: 0px 1px 2px rgba(31, 35, 48, 0.06);
+    -webkit-box-shadow: 0px 1px 2px rgba(31, 35, 48, 0.06);
     box-sizing: border-box;
     -o-box-sizing: border-box;
     -ms-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -khtml-box-sizing: border-box;
     -webkit-box-sizing: border-box;
+    color: #1f2330;
     cursor: pointer;
     display: inline-block;
     font-size: 26px;
@@ -51,34 +73,48 @@
     min-height: 48px;
     min-width: 48px;
     padding: 0px 8px 0px 8px;
+    transition: background-color 0.12s ease;
+    -o-transition: background-color 0.12s ease;
+    -ms-transition: background-color 0.12s ease;
+    -moz-transition: background-color 0.12s ease;
+    -khtml-transition: background-color 0.12s ease;
+    -webkit-transition: background-color 0.12s ease;
 }
 
 .viewport > .main-container > .emojis-container > .char:hover,
 .viewport > .main-container > .emojisp-container > .char:hover,
 .viewport > .main-container > .keyboard-container > .char:hover {
-    background-color: #e2e2e2;
-    box-shadow: 1px 1px 1px #cccccc;
-    -o-box-shadow: 1px 1px 1px #cccccc;
-    -ms-box-shadow: 1px 1px 1px #cccccc;
-    -moz-box-shadow: 1px 1px 1px #cccccc;
-    -khtml-box-shadow: 1px 1px 1px #cccccc;
-    -webkit-box-shadow: 1px 1px 1px #cccccc;
+    background-color: #ffffff;
 }
 
 .viewport > .main-container > .emojis-container > .char:active,
 .viewport > .main-container > .emojisp-container > .char:active,
 .viewport > .main-container > .keyboard-container > .char:active {
-    background-color: #d2d2d2;
-    box-shadow: none;
-    -o-box-shadow: none;
-    -ms-box-shadow: none;
-    -moz-box-shadow: none;
-    -khtml-box-shadow: none;
-    -webkit-box-shadow: none;
+    background-color: #e8eaf0;
+}
+
+.viewport > .main-container > .emojis-container > .char.utility,
+.viewport > .main-container > .emojisp-container > .char.utility,
+.viewport > .main-container > .keyboard-container > .char.utility {
+    background-color: #eef0f4;
+    color: #4b5260;
+    font-size: 22px;
+}
+
+.viewport > .main-container > .emojis-container > .char.utility:hover,
+.viewport > .main-container > .emojisp-container > .char.utility:hover,
+.viewport > .main-container > .keyboard-container > .char.utility:hover {
+    background-color: #e4e7ed;
 }
 
 .viewport > .main-container > .keyboard-container:not(.lowercase) > .char.shift {
-    background-color: #e2e2e2;
+    background-color: rgba(24, 24, 24, 0.12);
+    color: #1f2330;
+}
+
+body.ldj .viewport > .main-container > .keyboard-container:not(.lowercase) > .char.shift {
+    background-color: rgba(151, 120, 211, 0.18);
+    color: #4b3a7a;
 }
 
 .viewport > .main-container > .keyboard-container > .accent-popup {

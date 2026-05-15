@@ -3123,6 +3123,34 @@ const countLines = function(text) {
                 context.triggerHandler("template", [profile, key, null]);
             });
 
+            // registers for the double click on each catalog card
+            // to skip the start button and submit the welcome form
+            // immediately, routing the user straight to the viewport
+            // editor with the chosen template pre-selected
+            catalog.on("dblclick", ".catalog-card:not(.empty)", function() {
+                context.closest("form").trigger("submit");
+            });
+
+            // tracks the previous touchend timestamp and target on
+            // each catalog card so that two quick taps on the same
+            // card trigger the same submit flow as a double click,
+            // since mobile browsers do not fire a reliable dblclick
+            let lastTapTime = 0;
+            let lastTapTarget = null;
+            catalog.on("touchend", ".catalog-card:not(.empty)", function(event) {
+                const now = Date.now();
+                const card = event.currentTarget;
+                if (now - lastTapTime < 300 && lastTapTarget === card) {
+                    event.preventDefault();
+                    context.closest("form").trigger("submit");
+                    lastTapTime = 0;
+                    lastTapTarget = null;
+                    return;
+                }
+                lastTapTime = now;
+                lastTapTarget = card;
+            });
+
             // fetches and populates the catalog automatically on
             // plain initialization so callers do not need to
             // manage the network request themselves
