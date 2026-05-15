@@ -3830,6 +3830,21 @@ jQuery(document).ready(function() {
         updateFontSizeControls(currentProfile);
         applyFontSize();
         inspirationPanel.inspirationpanel("update", currentProfile);
+        applyDefaultFont(currentProfile);
+    };
+
+    // applies the profile's default font on initial load by clicking
+    // the matching font element so the keyboard plugin selects the
+    // corresponding keyboard, skipping when a font is already active
+    // or when the URL font parameter takes precedence
+    const applyDefaultFont = function(profile) {
+        if (!profile || !profile.default_font) return;
+        if (body.data("font")) return;
+        if (urlParams.get("font")) return;
+        const fontElement = fontsContainer.find(
+            '.font[data-font="' + profile.default_font + '"]'
+        );
+        if (fontElement.length > 0) fontElement.click();
     };
 
     // registers for the change event from the profile selector

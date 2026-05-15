@@ -30,6 +30,7 @@
         "align": "center"
     },
     "background": "plate.png",
+    "default_font": "Roman 4L",
     "instructions": {
         "title": "Steel Plate Jig Setup",
         "description": "Place the steel plate on the flat jig surface and align it with the corner guides.",
