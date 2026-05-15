@@ -1,12 +1,12 @@
 .inspiration-panel {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
@@ -24,7 +24,7 @@
     pointer-events: none;
     position: fixed;
     right: 22px;
-    top: 220px;
+    top: 226px;
     transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);

@@ -113,6 +113,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Refreshed the site-wide button visual language to a softer, rounder feel: full pill `border-radius`, taller comfortable 38px height, breathable horizontal padding, smooth color and press transitions; viewport header `Back`, `Clear` and `Report` buttons now read as soft-surface secondaries (light grey fill) while `Engrave` keeps the dark filled primary treatment, restoring visual hierarchy on the action bar
+* Aligned the surrounding surface chrome with the new rounder language by bumping `.input` and the floating profile info / inspiration panel border radii from 6px to 12px, and re-anchoring the panels under the slightly taller header (78px → 84px / 220px → 226px) so the breathing room above each panel is preserved
+* Welcome action bar `button-ghost` variant now uses the same soft-surface fill instead of a 1px outlined pill so it matches the new system
 * Corrected Cool Emojis character-to-F3S font mapping using visual glyph recognition
 * Sorted `coolemojis.mapping.json` by font number for better structure
 

@@ -124,20 +124,20 @@ body {
     -webkit-appearance: none;
     background-color: rgba(24, 24, 24, 1.0);
     border: none;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
     color: #ffffff;
     cursor: pointer;
     display: inline-block;
     font-size: 10px;
     font-weight: 600;
-    height: 32px;
+    height: 38px;
     letter-spacing: 0.5px;
-    line-height: 32px;
+    line-height: 38px;
     min-width: 160px;
     outline: none;
     -o-outline: none;
@@ -145,29 +145,62 @@ body {
     -moz-outline: none;
     -khtml-outline: none;
     -webkit-outline: none;
-    padding: 0px 0px 0px 0px;
+    padding: 0px 22px 0px 22px;
     text-decoration: none;
     text-transform: uppercase;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    -o-transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    -ms-transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    -moz-transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    -khtml-transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    -webkit-transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
 .button:hover,
 .signature > div:last-child > input[type=button]:hover {
-    background-color: rgba(24, 24, 24, 0.85);
+    background-color: rgba(13, 13, 13, 1.0);
+}
+
+.button:active,
+.signature > div:last-child > input[type=button]:active {
+    transform: translateY(1px);
+    -o-transform: translateY(1px);
+    -ms-transform: translateY(1px);
+    -moz-transform: translateY(1px);
+    -khtml-transform: translateY(1px);
+    -webkit-transform: translateY(1px);
 }
 
 .button.button-small {
-    min-width: 32px;
+    height: 38px;
+    line-height: 38px;
+    min-width: 38px;
+    padding: 0px 0px 0px 0px;
+    width: 38px;
+}
+
+.header .button.button-back,
+.header .button.button-clear,
+.header .button.button-report {
+    background-color: #f4f5f8;
+    color: #4b5260;
+}
+
+.header .button.button-back:hover,
+.header .button.button-clear:hover,
+.header .button.button-report:hover {
+    background-color: #e7eaf0;
 }
 
 .input {
     background-color: #f4f7fa;
     border: 2px solid #f4f7fa;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
     box-sizing: border-box;
     -o-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -354,12 +387,12 @@ body.ldj .line {
 .profile-info {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
@@ -377,7 +410,7 @@ body.ldj .line {
     pointer-events: none;
     position: fixed;
     right: 22px;
-    top: 78px;
+    top: 84px;
     transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
@@ -461,12 +494,12 @@ body.ldj .line {
 .viewport-options {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
@@ -484,7 +517,7 @@ body.ldj .line {
     padding: 14px 18px 14px 18px;
     pointer-events: none;
     position: fixed;
-    top: 78px;
+    top: 84px;
     transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
@@ -1456,13 +1489,13 @@ body.ldj .line {
 }
 
 .welcome .welcome-action-bar > .welcome-actions > .button.button-ghost {
-    background-color: transparent;
-    border: 1px solid #d8dde6;
+    background-color: #f4f5f8;
+    border: none;
     color: #4b5260;
 }
 
 .welcome .welcome-action-bar > .welcome-actions > .button.button-ghost:hover {
-    background-color: #f4f5f8;
+    background-color: #e7eaf0;
 }
 
 .welcome .welcome-action-bar > .welcome-actions > .button[disabled] {
@@ -1605,7 +1638,7 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
 }
 
 .store-mode .inspiration-panel {
-    top: 78px;
+    top: 84px;
 }
 
 .store-mode .viewport-options > .viewport-options-body > .profile-container,
@@ -1663,12 +1696,12 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
 .inspiration-panel {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 6px 6px 6px 6px;
-    -o-border-radius: 6px 6px 6px 6px;
-    -ms-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px 6px;
-    -khtml-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -o-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
     -ms-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.07);
@@ -1686,7 +1719,7 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     pointer-events: none;
     position: fixed;
     right: 22px;
-    top: 220px;
+    top: 226px;
     transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
