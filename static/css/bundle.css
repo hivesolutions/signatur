@@ -43,6 +43,7 @@ html {
 }
 
 body {
+    background-color: #f7f8fb;
     display: flex;
     font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
     font-size: 0px;
@@ -53,13 +54,20 @@ body {
 }
 
 .header {
-    background-color: #ffffff;
-    box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
-    -o-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
-    -ms-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
-    -moz-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
-    -khtml-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
-    -webkit-box-shadow: 0px 1px 1px rgba(64, 64, 64, 0.2);
+    backdrop-filter: saturate(160%) blur(12px);
+    -o-backdrop-filter: saturate(160%) blur(12px);
+    -ms-backdrop-filter: saturate(160%) blur(12px);
+    -moz-backdrop-filter: saturate(160%) blur(12px);
+    -khtml-backdrop-filter: saturate(160%) blur(12px);
+    -webkit-backdrop-filter: saturate(160%) blur(12px);
+    background-color: rgba(255, 255, 255, 0.78);
+    border-bottom: 1px solid rgba(31, 35, 48, 0.06);
+    box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.04);
+    -o-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.04);
+    -ms-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.04);
+    -moz-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.04);
+    -khtml-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.04);
+    -webkit-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.04);
     left: 0px;
     padding: 16px 0px 16px 0px;
     position: fixed;
@@ -341,6 +349,20 @@ body.ldj .input:focus {
     letter-spacing: 0.5px;
     margin-bottom: 8px;
     text-transform: uppercase;
+}
+
+body.ldj {
+    background-color: #faf8fc;
+}
+
+body.ldj .header {
+    border-bottom: 1px solid rgba(151, 120, 211, 0.16);
+    box-shadow: 0px 1px 0px rgba(151, 120, 211, 0.08);
+    -o-box-shadow: 0px 1px 0px rgba(151, 120, 211, 0.08);
+    -ms-box-shadow: 0px 1px 0px rgba(151, 120, 211, 0.08);
+    -moz-box-shadow: 0px 1px 0px rgba(151, 120, 211, 0.08);
+    -khtml-box-shadow: 0px 1px 0px rgba(151, 120, 211, 0.08);
+    -webkit-box-shadow: 0px 1px 0px rgba(151, 120, 211, 0.08);
 }
 
 body.ldj .button,
