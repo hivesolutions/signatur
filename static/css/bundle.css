@@ -2347,11 +2347,17 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
 }
 
 .modal-overlay > .modal > .modal-buttons {
+    display: flex;
+    flex-wrap: wrap;
     font-size: 0px;
+    gap: 10px 14px;
+    justify-content: center;
 }
 
 .modal-overlay > .modal > .modal-buttons > .button {
-    margin-right: 14px;
+    flex: 0 0 auto;
+    margin-right: 0px;
+    min-width: 140px;
 }
 
 .modal-overlay > .modal > .modal-buttons > .button:last-child {
