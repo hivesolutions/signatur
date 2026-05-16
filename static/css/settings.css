@@ -1,8 +1,63 @@
+.welcome > .form.form-settings {
+    background-color: transparent;
+    border-radius: 0px 0px 0px 0px;
+    -o-border-radius: 0px 0px 0px 0px;
+    -ms-border-radius: 0px 0px 0px 0px;
+    -moz-border-radius: 0px 0px 0px 0px;
+    -khtml-border-radius: 0px 0px 0px 0px;
+    -webkit-border-radius: 0px 0px 0px 0px;
+    box-shadow: none;
+    -o-box-shadow: none;
+    -ms-box-shadow: none;
+    -moz-box-shadow: none;
+    -khtml-box-shadow: none;
+    -webkit-box-shadow: none;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin: 0px 0px 0px 0px;
+    max-width: none;
+    min-height: 0;
+    min-width: 0;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
+}
+
 .welcome > .form.form-settings > .welcome-catalog > .settings-container {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 18px 18px 18px 18px;
+    -o-border-radius: 18px 18px 18px 18px;
+    -ms-border-radius: 18px 18px 18px 18px;
+    -moz-border-radius: 18px 18px 18px 18px;
+    -khtml-border-radius: 18px 18px 18px 18px;
+    -webkit-border-radius: 18px 18px 18px 18px;
+    box-shadow: 0px 10px 30px rgba(31, 35, 48, 0.06), 0px 1px 2px rgba(31, 35, 48, 0.04);
+    -o-box-shadow: 0px 10px 30px rgba(31, 35, 48, 0.06), 0px 1px 2px rgba(31, 35, 48, 0.04);
+    -ms-box-shadow: 0px 10px 30px rgba(31, 35, 48, 0.06), 0px 1px 2px rgba(31, 35, 48, 0.04);
+    -moz-box-shadow: 0px 10px 30px rgba(31, 35, 48, 0.06), 0px 1px 2px rgba(31, 35, 48, 0.04);
+    -khtml-box-shadow: 0px 10px 30px rgba(31, 35, 48, 0.06), 0px 1px 2px rgba(31, 35, 48, 0.04);
+    -webkit-box-shadow: 0px 10px 30px rgba(31, 35, 48, 0.06), 0px 1px 2px rgba(31, 35, 48, 0.04);
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     margin: 6px auto 12px auto;
     max-height: 560px;
     max-width: 480px;
-    padding: 8px 0px 8px 0px;
+    padding: 28px 32px 28px 32px;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container {
+    border-color: #ece4f5;
+    box-shadow: 0px 10px 30px rgba(151, 120, 211, 0.1), 0px 1px 2px rgba(151, 120, 211, 0.06);
+    -o-box-shadow: 0px 10px 30px rgba(151, 120, 211, 0.1), 0px 1px 2px rgba(151, 120, 211, 0.06);
+    -ms-box-shadow: 0px 10px 30px rgba(151, 120, 211, 0.1), 0px 1px 2px rgba(151, 120, 211, 0.06);
+    -moz-box-shadow: 0px 10px 30px rgba(151, 120, 211, 0.1), 0px 1px 2px rgba(151, 120, 211, 0.06);
+    -khtml-box-shadow: 0px 10px 30px rgba(151, 120, 211, 0.1), 0px 1px 2px rgba(151, 120, 211, 0.06);
+    -webkit-box-shadow: 0px 10px 30px rgba(151, 120, 211, 0.1), 0px 1px 2px rgba(151, 120, 211, 0.06);
 }
 
 .welcome > .form.form-settings > .welcome-action-bar {
@@ -32,4 +87,26 @@
 
 body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-group-label {
     color: #9b87c2;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-readout {
+    background-color: #f4f5f8;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    color: #4b5260;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 8px 16px 8px 16px;
+    text-transform: uppercase;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-readout {
+    background-color: #f5f0fa;
+    color: #6b5a8a;
 }

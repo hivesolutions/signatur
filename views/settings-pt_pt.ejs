@@ -83,18 +83,19 @@
                                 <label class="option-chip" for="viewport-mode-store">Loja</label>
                             </div>
                         </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Versão</div>
+                            <div class="settings-readout"><%= info.version %></div>
+                        </div>
                     </div>
                 </div>
                 <input type="hidden" name="next" value="<%= next ? next : '' %>" />
                 <div class="welcome-action-bar">
                     <div class="welcome-options"></div>
                     <div class="welcome-actions">
-                        <a class="button button-ghost button-cancel" href="<%= next ? next : '/welcome' %>">Cancelar</a>
+                        <a class="button button-ghost button-cancel" href="<%= next ? next : '/welcome' %>">Voltar</a>
                         <button type="submit" class="button button-start">Guardar</button>
                     </div>
-                </div>
-                <div class="welcome-version">
-                    <span>Versão <%= info.version %></span>
                 </div>
             </form>
         </div>
