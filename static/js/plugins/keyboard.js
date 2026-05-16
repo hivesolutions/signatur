@@ -2,7 +2,8 @@
     /**
      * Virtual keyboard plugin that handles character input via
      * clickable key elements with support for long-press accent
-     * popups and keyboard casing toggle.
+     * popups, keyboard casing toggle, and a letters/symbols mode
+     * toggle that swaps the visible key set.
      *
      * Operates on a .keyboard-container element and discovers
      * its children (.char) by class name convention. Supports
@@ -19,8 +20,17 @@
             const context = jQuery(this);
             const body = jQuery("body");
             const keys = jQuery("> .char", context);
+            const tabs = jQuery("> .emojis-tabs > .emojis-tab", context);
             let longPressTimer = null;
             let longPressTriggered = false;
+
+            tabs.click(function() {
+                const element = jQuery(this);
+                const category = element.attr("data-category");
+                tabs.removeClass("active");
+                element.addClass("active");
+                context.attr("data-active", category);
+            });
 
             keys.click(function() {
                 if (longPressTriggered) return;
@@ -30,6 +40,8 @@
                 value = casing === "lowercase" ? value.toLowerCase() : value;
                 if (value === "⇧") {
                     toggleCasing(context);
+                } else if (element.hasClass("mode")) {
+                    toggleMode(context, element);
                 } else {
                     const font = body.data("font");
                     context.triggerHandler("key", [font, value]);
@@ -122,6 +134,29 @@
             } else {
                 context.data("casing", "uppercase");
                 context.removeClass("lowercase");
+            }
+        };
+
+        /**
+         * Toggle the keyboard between the letters layout and the
+         * symbols layout, swapping the visible key set and updating
+         * the mode key label to mirror the active state.
+         *
+         * @param {Element} context The context that is going to be used
+         * for the toggling.
+         * @param {Element} element The mode toggle key element whose label
+         * is going to be updated to reflect the new state.
+         */
+        const toggleMode = function(context, element) {
+            const mode = context.data("mode") || "letters";
+            if (mode === "letters") {
+                context.data("mode", "symbols");
+                context.addClass("symbols");
+                element.text("ABC");
+            } else {
+                context.data("mode", "letters");
+                context.removeClass("symbols");
+                element.text("123");
             }
         };
 

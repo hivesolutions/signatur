@@ -57,16 +57,91 @@
     text-transform: lowercase;
 }
 
+.viewport > .main-container > .keyboard-container:not(.symbols) > .char.symbols,
+.viewport > .main-container > .keyboard-container:not(.symbols) > br.symbols {
+    display: none;
+}
+
+.viewport > .main-container > .keyboard-container.symbols > .char.letters,
+.viewport > .main-container > .keyboard-container.symbols > br.letters {
+    display: none;
+}
+
 .viewport > .main-container > .emojis-container {
     display: none;
     font-family: "Cool Emojis";
-    width: 720px;
+    width: 564px;
 }
 
 .viewport > .main-container > .emojisp-container {
     display: none;
     font-family: "Cool Emojis Pantograph";
-    width: 720px;
+    width: 564px;
+}
+
+.viewport > .main-container > .emojis-container > .emojis-tabs,
+.viewport > .main-container > .emojisp-container > .emojis-tabs {
+    border-bottom: 1px solid #e6e8ee;
+    display: flex;
+    gap: 4px;
+    margin: 0px 3px 8px 3px;
+}
+
+.viewport > .main-container > .emojis-container > .emojis-tabs > .emojis-tab,
+.viewport > .main-container > .emojisp-container > .emojis-tabs > .emojis-tab {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #9aa0ad;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: -1px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 8px 14px 8px 14px;
+    text-transform: uppercase;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    -o-transition: color 0.15s ease, border-color 0.15s ease;
+    -ms-transition: color 0.15s ease, border-color 0.15s ease;
+    -moz-transition: color 0.15s ease, border-color 0.15s ease;
+    -khtml-transition: color 0.15s ease, border-color 0.15s ease;
+    -webkit-transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.viewport > .main-container > .emojis-container > .emojis-tabs > .emojis-tab:hover,
+.viewport > .main-container > .emojisp-container > .emojis-tabs > .emojis-tab:hover {
+    color: #1f2330;
+}
+
+.viewport > .main-container > .emojis-container > .emojis-tabs > .emojis-tab.active,
+.viewport > .main-container > .emojisp-container > .emojis-tabs > .emojis-tab.active {
+    border-bottom-color: #1f2330;
+    color: #1f2330;
+}
+
+body.ldj .viewport > .main-container > .emojis-container > .emojis-tabs > .emojis-tab.active,
+body.ldj .viewport > .main-container > .emojisp-container > .emojis-tabs > .emojis-tab.active {
+    border-bottom-color: #9678d3;
+    color: #1f1430;
+}
+
+.viewport > .main-container > .emojis-container[data-active="symbols"] > .char[data-category]:not([data-category="symbols"]),
+.viewport > .main-container > .emojis-container[data-active="nature"] > .char[data-category]:not([data-category="nature"]),
+.viewport > .main-container > .emojis-container[data-active="people"] > .char[data-category]:not([data-category="people"]),
+.viewport > .main-container > .emojis-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]),
+.viewport > .main-container > .emojis-container[data-active="phrases"] > .char[data-category]:not([data-category="phrases"]),
+.viewport > .main-container > .emojisp-container[data-active="symbols"] > .char[data-category]:not([data-category="symbols"]),
+.viewport > .main-container > .emojisp-container[data-active="nature"] > .char[data-category]:not([data-category="nature"]),
+.viewport > .main-container > .emojisp-container[data-active="people"] > .char[data-category]:not([data-category="people"]),
+.viewport > .main-container > .emojisp-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]) {
+    display: none;
 }
 
 .viewport > .main-container > .emojis-container > .char,
