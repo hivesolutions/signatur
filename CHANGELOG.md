@@ -103,6 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* Hide the floating viewport options panel on `/viewport` in store mode when no profile is selected since every visible field inside it requires an active profile, so the panel no longer renders as an empty chrome card; the rule lives in `static/css/store-mode.css` and relies on the existing `.profile-active` signal so the panel reappears immediately when a profile is picked
+* Stop applying the zoom compensating `margin-bottom` and `margin-right` on the viewport preview when no profile is active, so the extra bottom and right space no longer appears under the empty engraving surface or when entering preview mode without a selected template; detection uses the existing `.profile-active` class on the preview element so every caller of the `zoom` action benefits without per call site changes
 * `text.max_lines` profile constraint now also enforced on programmatic text loads (inspirations, deep-link `?text=…`, session restore) and when the active profile changes, trimming any overflow newlines and emitting a `change` event so the URL state and button state stay in sync
 * Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
 

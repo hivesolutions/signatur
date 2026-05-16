@@ -207,9 +207,14 @@
 
             // applies the given zoom level using a CSS transform
             // to scale the viewport preview and compensating the
-            // layout margins for the scaled size
+            // layout margins for the scaled size; the compensating
+            // margins are only required when a profile is active
+            // and the preview has an explicit size driven by it,
+            // so they are cleared otherwise to avoid the spurious
+            // bottom and right space at rest
             if (action === "zoom") {
                 const zoom = options.zoom || 1;
+                const hasProfile = context.hasClass("profile-active");
                 const width = parseFloat(context.css("width")) || 0;
                 const height = parseFloat(context.css("height")) || 0;
                 const extraWidth = width * (zoom - 1);
@@ -221,8 +226,8 @@
                     "-moz-transform": "scale(" + zoom + ")",
                     "-khtml-transform": "scale(" + zoom + ")",
                     "-webkit-transform": "scale(" + zoom + ")",
-                    "margin-bottom": 16 * zoom + extraHeight + "px",
-                    "margin-right": extraWidth + "px"
+                    "margin-bottom": hasProfile ? 16 * zoom + extraHeight + "px" : "",
+                    "margin-right": hasProfile ? extraWidth + "px" : ""
                 });
             }
         });
