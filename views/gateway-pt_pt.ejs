@@ -2,96 +2,102 @@
 <html lang="pt">
     <%- include("head"); -%>
     <body class="<%= theme %>" data-theme="<%= theme %>" data-master="<%= masterb64 %>">
-        <div class="gateway">
+        <div class="welcome">
             <form class="form form-gateway" method="post" action="/gateway">
-                <div class="logo-container">
-                    <% if (theme === "ldj") { %>
-                        <img class="logo" src="/static/images/logo.svg" />
-                    <% } else { %>
-                        <span class="logo">Entrada</span>
-                    <% } %>
-                </div>
-                <div class="field field-text">
-                    <label class="name">Responsável</label>
-                    <div class="value">
-                        <input class="input" type="text" name="responsible"
-                               value="<%= config.responsible ? config.responsible : '' %>" />
+                <div class="welcome-hero">
+                    <div class="welcome-hero-mark">
+                        <% if (theme === "ldj") { %>
+                            <img class="logo" src="/static/images/logo.svg" />
+                        <% } else { %>
+                            <span class="logo">Signatur</span>
+                        <% } %>
                     </div>
+                    <div class="welcome-hero-eyebrow">Entrada</div>
+                    <div class="welcome-hero-divider"></div>
                 </div>
-                <div class="field field-text field-half first">
-                    <label class="name">Nr. Encomenda</label>
-                    <div class="value">
-                        <input class="input" type="text" name="orderno"
-                               value="<%= config.orderno ? config.orderno : '' %>" />
-                    </div>
-                </div>
-                <div class="field field-text field-half second">
-                    <label class="name">Tamanho</label>
-                    <div class="value">
-                        <input class="input" type="text" name="size"
-                               value="<%= config.size ? config.size : '' %>" />
-                    </div>
-                </div>
-                <div class="field field-text">
-                    <label class="name">Observações</label>
-                    <div class="value">
-                        <input class="input" type="text" name="observations"
-                               value="<%= config.observations ? config.observations : '' %>" />
-                    </div>
-                </div>
-                <% if (showOptions) { %>
-                    <div class="field">
-                        <label class="name">Tecnologia</label>
-                        <div class="value" id="technology">
-                            <input class="radio" type="radio" id="diamond" name="technology" value="diamond"
-                                <%= config.technology === "diamond" ? "checked" : '' %>>
-                            <label class="radio-label" for="diamond">Diamante</label>
-                            <input class="radio" type="radio" id="laser" name="technology" value="laser"
-                                <%= config.technology === "laser" ? "checked" : '' %>>
-                            <label class="radio-label" for="laser">Laser</label>
-                            <input class="radio" type="radio" id="fresa" name="technology" value="fresa"
-                                <%= config.technology === "fresa" ? "checked" : '' %>>
-                            <label class="radio-label" for="fresa">Fresa</label>
-                            <input class="radio" type="radio" id="pantograph" name="technology" value="pantograph"
-                                <%= config.technology === "pantograph" ? "checked" : '' %>>
-                            <label class="radio-label" for="pantograph">Pantógrafo</label>
+                <div class="welcome-catalog">
+                    <div class="gateway-container">
+                        <div class="settings-group">
+                            <div class="settings-group-label">Responsável</div>
+                            <input class="input" type="text" name="responsible"
+                                   value="<%= config.responsible ? config.responsible : '' %>" />
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="name">Elementos</label>
-                        <div class="value" id="elements">
-                            <input class="radio" type="radio" id="text" name="elements" value="text"
-                                <%= config.elements === "text" ? "checked" : '' %>>
-                            <label class="radio-label" for="text">Texto</label>
-                            <input class="radio" type="radio" id="calligraphy" name="elements" value="calligraphy"
-                                <%= config.elements === "calligraphy" ? "checked" : '' %>>
-                            <label class="radio-label" for="calligraphy">Caligrafia</label>
-                            <input class="radio" type="radio" id="digital-printing" name="elements" value="digital_printing"
-                                <%= config.elements === "digital_printing" ? "checked" : '' %>>
-                            <label class="radio-label" for="digital-printing">Impr. digital</label>
-                            <input class="radio" type="radio" id="graphic-element" name="elements" value="graphic_element"
-                                <%= config.elements === "graphic_element" ? "checked" : '' %>>
-                            <label class="radio-label" for="graphic-element">Elemento gráfico</label>
+                        <div class="gateway-row">
+                            <div class="settings-group">
+                                <div class="settings-group-label">Nr. Encomenda</div>
+                                <input class="input" type="text" name="orderno"
+                                       value="<%= config.orderno ? config.orderno : '' %>" />
+                            </div>
+                            <div class="settings-group">
+                                <div class="settings-group-label">Tamanho</div>
+                                <input class="input" type="text" name="size"
+                                       value="<%= config.size ? config.size : '' %>" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="name">Localização</label>
-                        <div class="value" id="location">
-                            <input class="radio" type="radio" id="interior" name="location" value="interior"
-                                <%= config.location === "interior" ? "checked" : '' %>>
-                            <label class="radio-label" for="interior">Interior</label>
-                            <input class="radio" type="radio" id="exterior" name="location" value="exterior"
-                                <%= config.location === "exterior" ? "checked" : '' %>>
-                            <label class="radio-label" for="exterior">Exterior</label>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Observações</div>
+                            <input class="input" type="text" name="observations"
+                                   value="<%= config.observations ? config.observations : '' %>" />
                         </div>
+                        <% if (showOptions) { %>
+                            <div class="settings-group">
+                                <div class="settings-group-label">Tecnologia</div>
+                                <div class="option-chips" id="technology-options">
+                                    <input class="option-chip-input" type="radio" id="technology-diamond" name="technology" value="diamond"
+                                        <%= !config.technology || config.technology === "diamond" ? "checked" : '' %>>
+                                    <label class="option-chip" for="technology-diamond">Diamante</label>
+                                    <input class="option-chip-input" type="radio" id="technology-laser" name="technology" value="laser"
+                                        <%= config.technology === "laser" ? "checked" : '' %>>
+                                    <label class="option-chip" for="technology-laser">Laser</label>
+                                    <input class="option-chip-input" type="radio" id="technology-fresa" name="technology" value="fresa"
+                                        <%= config.technology === "fresa" ? "checked" : '' %>>
+                                    <label class="option-chip" for="technology-fresa">Fresa</label>
+                                    <input class="option-chip-input" type="radio" id="technology-pantograph" name="technology" value="pantograph"
+                                        <%= config.technology === "pantograph" ? "checked" : '' %>>
+                                    <label class="option-chip" for="technology-pantograph">Pantógrafo</label>
+                                </div>
+                            </div>
+                            <div class="settings-group">
+                                <div class="settings-group-label">Elementos</div>
+                                <div class="option-chips" id="elements-options">
+                                    <input class="option-chip-input" type="radio" id="elements-text" name="elements" value="text"
+                                        <%= !config.elements || config.elements === "text" ? "checked" : '' %>>
+                                    <label class="option-chip" for="elements-text">Texto</label>
+                                    <input class="option-chip-input" type="radio" id="elements-calligraphy" name="elements" value="calligraphy"
+                                        <%= config.elements === "calligraphy" ? "checked" : '' %>>
+                                    <label class="option-chip" for="elements-calligraphy">Caligrafia</label>
+                                    <input class="option-chip-input" type="radio" id="elements-digital-printing" name="elements" value="digital_printing"
+                                        <%= config.elements === "digital_printing" ? "checked" : '' %>>
+                                    <label class="option-chip" for="elements-digital-printing">Impr. digital</label>
+                                    <input class="option-chip-input" type="radio" id="elements-graphic-element" name="elements" value="graphic_element"
+                                        <%= config.elements === "graphic_element" ? "checked" : '' %>>
+                                    <label class="option-chip" for="elements-graphic-element">Elemento gráfico</label>
+                                </div>
+                            </div>
+                            <div class="settings-group">
+                                <div class="settings-group-label">Localização</div>
+                                <div class="option-chips" id="location-options">
+                                    <input class="option-chip-input" type="radio" id="location-interior" name="location" value="interior"
+                                        <%= !config.location || config.location === "interior" ? "checked" : '' %>>
+                                    <label class="option-chip" for="location-interior">Interior</label>
+                                    <input class="option-chip-input" type="radio" id="location-exterior" name="location" value="exterior"
+                                        <%= config.location === "exterior" ? "checked" : '' %>>
+                                    <label class="option-chip" for="location-exterior">Exterior</label>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <input type="hidden" name="technology" value="<%= config.technology ? config.technology : 'diamond' %>" />
+                            <input type="hidden" name="elements" value="<%= config.elements ? config.elements : 'text' %>" />
+                            <input type="hidden" name="location" value="<%= config.location ? config.location : 'interior' %>" />
+                        <% } %>
+                        <input type="hidden" name="entry" value="gateway" />
                     </div>
-                <% } else { %>
-                    <input type="hidden" name="technology" value="<%= config.technology ? config.technology : 'diamond' %>" />
-                    <input type="hidden" name="elements" value="<%= config.elements ? config.elements : 'text' %>" />
-                    <input type="hidden" name="location" value="<%= config.location ? config.location : 'interior' %>" />
-                <% } %>
-                <div class="buttons-container">
-                    <button type="submit" class="button">Submeter</span>
+                </div>
+                <div class="welcome-action-bar">
+                    <div class="welcome-options"></div>
+                    <div class="welcome-actions">
+                        <button type="submit" class="button button-start">Submeter</button>
+                    </div>
                 </div>
             </form>
         </div>
