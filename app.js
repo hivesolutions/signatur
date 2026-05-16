@@ -92,9 +92,13 @@ app.get("/", (req, res, next) => {
 });
 
 app.get("/gateway", (req, res, next) => {
-    const fullscreen = req.query.fullscreen === "1";
+    const fullscreen =
+        req.query.fullscreen !== undefined
+            ? req.query.fullscreen === "1"
+            : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
     res.render("gateway" + (locale ? `-${locale}` : ""), {
@@ -141,9 +145,13 @@ app.post("/gateway", (req, res, next) => {
 });
 
 app.get("/settings", (req, res, next) => {
-    const fullscreen = req.query.fullscreen === "1";
+    const fullscreen =
+        req.query.fullscreen !== undefined
+            ? req.query.fullscreen === "1"
+            : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
 
@@ -180,21 +188,22 @@ app.post("/settings", (req, res, next) => {
             ? req.body.next
             : "/welcome";
 
-    // forwards the fullscreen flag onto the redirect query string
-    // since fullscreen is not session-persisted and would otherwise
-    // be lost on the next request
-    const fullscreen = req.body.fullscreen === "1";
-    const params = new URLSearchParams();
-    if (fullscreen) params.set("fullscreen", "1");
-    const query = params.toString() ? "?" + params.toString() : "";
+    // persists the fullscreen flag onto the session so that it
+    // survives the next request without polluting the redirect
+    // query string
+    req.session.fullscreen = req.body.fullscreen === "1" ? "1" : "0";
 
-    res.redirect(302, target + query);
+    res.redirect(302, target);
 });
 
 app.get("/welcome", (req, res, next) => {
-    const fullscreen = req.query.fullscreen === "1";
+    const fullscreen =
+        req.query.fullscreen !== undefined
+            ? req.query.fullscreen === "1"
+            : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
     res.render("welcome" + (locale ? `-${locale}` : ""), {
@@ -209,9 +218,13 @@ app.get("/welcome", (req, res, next) => {
 });
 
 app.get("/signature", (req, res, next) => {
-    const fullscreen = req.query.fullscreen === "1";
+    const fullscreen =
+        req.query.fullscreen !== undefined
+            ? req.query.fullscreen === "1"
+            : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
     res.render("signature" + (locale ? `-${locale}` : ""), {
@@ -222,9 +235,13 @@ app.get("/signature", (req, res, next) => {
 });
 
 app.get("/viewport", (req, res, next) => {
-    const fullscreen = req.query.fullscreen === "1";
+    const fullscreen =
+        req.query.fullscreen !== undefined
+            ? req.query.fullscreen === "1"
+            : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
     req.session.config = req.session.config || {};
@@ -243,9 +260,13 @@ app.get("/viewport", (req, res, next) => {
 });
 
 app.get("/report", (req, res, next) => {
-    const fullscreen = req.query.fullscreen === "1";
+    const fullscreen =
+        req.query.fullscreen !== undefined
+            ? req.query.fullscreen === "1"
+            : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
     req.session.config = req.session.config || {};
@@ -345,9 +366,13 @@ app.get("/config", (req, res, next) => {
 
 app.get("/profiles/manager", (req, res, next) => {
     async function clojure() {
-        const fullscreen = req.query.fullscreen === "1";
+        const fullscreen =
+            req.query.fullscreen !== undefined
+                ? req.query.fullscreen === "1"
+                : req.session.fullscreen === "1";
         const theme = req.query.theme || req.session.theme || "";
         const locale = req.query.locale || req.session.locale || "";
+        req.session.fullscreen = fullscreen ? "1" : "0";
         req.session.theme = theme;
         req.session.locale = locale;
 

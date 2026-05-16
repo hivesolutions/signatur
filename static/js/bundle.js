@@ -3693,7 +3693,7 @@ jQuery(document).ready(function() {
                 guidelinesMode.prop("checked", false).trigger("change");
             }
             restoring = false;
-            updateUrl();
+            updateUrl("restore");
         } catch (err) {
             restoring = false;
             // silently ignores profile loading errors
@@ -3829,7 +3829,7 @@ jQuery(document).ready(function() {
 
         // updates the print button and report URL
         updateButtonState(text);
-        updateUrl();
+        updateUrl("restore");
     };
 
     // updates the floating profile info block with the
@@ -4016,7 +4016,7 @@ jQuery(document).ready(function() {
     profileSelector.bind("profile", function(event, profile) {
         currentProfile = profile;
         refreshProfile();
-        updateUrl();
+        updateUrl("profile");
     });
 
     // registers for the change in the font size range slider
@@ -4024,7 +4024,7 @@ jQuery(document).ready(function() {
     fontSizeRange.bind("input", function() {
         fontSizeInput.val(jQuery(this).val());
         applyFontSize();
-        updateUrl();
+        updateUrl("font_size");
     });
 
     // registers for the change in the font size number input
@@ -4032,7 +4032,7 @@ jQuery(document).ready(function() {
     fontSizeInput.bind("input", function() {
         fontSizeRange.val(jQuery(this).val());
         applyFontSize();
-        updateUrl();
+        updateUrl("font_size");
     });
 
     // registers for the change in the font size mode checkbox
@@ -4041,7 +4041,7 @@ jQuery(document).ready(function() {
         const isAutomatic = jQuery(this).prop("checked");
         fontSizeInput.prop("disabled", isAutomatic);
         applyFontSize();
-        updateUrl();
+        updateUrl("font_size");
     });
 
     // registers for the change in the rulers mode checkbox
@@ -4055,14 +4055,14 @@ jQuery(document).ready(function() {
             rulerHorizontal.hide();
             rulerVertical.hide();
         }
-        updateUrl();
+        updateUrl("toggle");
     });
 
     // registers for the change in the zoom range slider
     // to apply the zoom transform to the viewport preview
     zoomRange.bind("input", function() {
         applyZoom();
-        updateUrl();
+        updateUrl("zoom");
     });
 
     // registers for the change in the margin input fields
@@ -4070,7 +4070,7 @@ jQuery(document).ready(function() {
     jQuery(".margin-input").bind("input", function() {
         renderViewportPreview(currentProfile);
         applyFontSize();
-        updateUrl();
+        updateUrl("margins");
     });
 
     // registers for the change in the crosshair mode checkbox
@@ -4080,7 +4080,7 @@ jQuery(document).ready(function() {
             viewportPreview.removeClass("crosshair-active");
             positionValue.text("-");
         }
-        updateUrl();
+        updateUrl("toggle");
     });
 
     // registers for the change in the keyboard mode checkbox
@@ -4101,7 +4101,7 @@ jQuery(document).ready(function() {
             hideKeyboardContainer(emojisContainer);
             hideKeyboardContainer(emojispContainer);
         }
-        updateUrl();
+        updateUrl("toggle");
     });
 
     // registers for the change in the guidelines mode checkbox
@@ -4113,7 +4113,7 @@ jQuery(document).ready(function() {
         } else {
             viewportSvg.hide();
         }
-        updateUrl();
+        updateUrl("toggle");
     });
 
     // registers for the change in the caret mode checkbox
@@ -4128,7 +4128,7 @@ jQuery(document).ready(function() {
             caret.hide();
             viewportContainer.removeClass("caret-active");
         }
-        updateUrl();
+        updateUrl("toggle");
     });
 
     // tracks the previous visibility state of the visual toggles
@@ -4321,7 +4321,7 @@ jQuery(document).ready(function() {
         keyboardContainer.css("font-family", '"' + font + '"');
         inputViewport.css("font-family", '"' + font + '"');
         body.data("font", font);
-        updateUrl();
+        updateUrl("font");
     });
     fontsContainer.bind("defont", function(event, font) {
         hideKeyboardContainer(keyboardContainer);
@@ -4331,7 +4331,7 @@ jQuery(document).ready(function() {
         emojisContainer.removeClass("selected");
         emojispContainer.removeClass("selected");
         body.data("font", null);
-        updateUrl();
+        updateUrl("font");
     });
 
     const updateForm = function(value) {
@@ -4375,28 +4375,74 @@ jQuery(document).ready(function() {
         buttonReport.attr("href", buttonHref + "?text=" + encodeURIComponent(serializeText(text)));
     };
 
-    // updates the browser URL with the current session state
+    // updates the browser URL with the current viewport state
     // using history.replaceState so that the URL can be shared
     // or bookmarked to resume an engraving session later; the
-    // viewport-only visual toggles (rulers, crosshair, keyboard,
-    // guidelines, caret, zoom, margins, font_size, font_size_mode,
-    // font, theme) are intentionally not written to the URL because
-    // they are local viewport state with no semantic value when
-    // shared and would only pollute downstream pages
-    const updateUrl = function() {
+    // function is scoped to a specific action so callers only
+    // refresh the URL fragment they are responsible for and the
+    // remaining viewport-only fields are preserved verbatim from
+    // the previous query string instead of being recomputed from
+    // possibly stale DOM state; the semantic state (`text`,
+    // `profile`, `variant`, `fullscreen`) is always rewritten so
+    // page navigation can resume the session, and the function
+    // bails out entirely when the viewport editor is not mounted
+    // on the current page so non viewport pages never end up
+    // with viewport only query parameters in their address bar
+    const updateUrl = function(action) {
         if (restoring) return;
-        const params = new URLSearchParams();
+        if (viewportContainer.length === 0) return;
+        const params = new URLSearchParams(window.location.search);
         const text = body.data("text") || [];
+        params.delete("text");
         if (text.length > 0) params.set("text", serializeText(text));
         const selection = profileSelector.profileselector("value");
+        params.delete("profile");
+        params.delete("variant");
         if (selection && selection.key) {
             params.set("profile", selection.key);
             if (selection.variantIndex !== null && selection.variantIndex !== 0) {
                 params.set("variant", selection.variantIndex);
             }
         }
-        const fullscreen = urlParams.get("fullscreen");
-        if (fullscreen === "1") params.set("fullscreen", "1");
+        if (action === "font" || action === "restore") {
+            params.delete("font");
+            const font = body.data("font");
+            if (font) params.set("font", font);
+        }
+        if (action === "font_size" || action === "restore") {
+            params.delete("font_size");
+            params.delete("font_size_mode");
+            const fontSize = fontSizeInput.val();
+            if (fontSize) params.set("font_size", fontSize);
+            const isAutomatic = fontSizeMode.prop("checked");
+            if (isAutomatic) params.set("font_size_mode", "automatic");
+        }
+        if (action === "zoom" || action === "restore") {
+            params.delete("zoom");
+            const zoom = zoomRange.val();
+            if (zoom && zoom !== "1") params.set("zoom", zoom);
+        }
+        if (action === "margins" || action === "restore") {
+            params.delete("margins");
+            const margins = getMargins();
+            const marginStr =
+                margins.left + "," + margins.right + "," + margins.top + "," + margins.bottom;
+            if (marginStr !== "0,0,0,0") params.set("margins", marginStr);
+        }
+        if (action === "toggle" || action === "restore") {
+            params.delete("rulers");
+            params.delete("crosshair");
+            params.delete("keyboard");
+            params.delete("guidelines");
+            params.delete("caret");
+            if (!rulersMode.prop("checked")) params.set("rulers", "0");
+            if (!crosshairMode.prop("checked")) params.set("crosshair", "0");
+            if (!keyboardMode.prop("checked")) params.set("keyboard", "0");
+            if (!guidelinesMode.prop("checked")) params.set("guidelines", "0");
+            if (!caretMode.prop("checked")) params.set("caret", "0");
+        }
+        params.delete("fullscreen");
+        params.delete("theme");
         const query = params.toString();
         const url = window.location.pathname + (query ? "?" + query : "");
         history.replaceState(null, "", url);
@@ -4505,7 +4551,7 @@ jQuery(document).ready(function() {
         if (currentProfile && fontSizeMode.prop("checked")) {
             applyFontSize();
         }
-        updateUrl();
+        updateUrl("text");
     });
 
     // registers for the caret change event from the text editor

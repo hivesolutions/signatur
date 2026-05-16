@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* `/viewport` `updateUrl` is now an action scoped serializer that takes the change source as an argument (`text`, `profile`, `font`, `font_size`, `zoom`, `margins`, `toggle`, `restore`) and only rewrites the matching URL fragment while preserving the rest of the query string verbatim, so callers no longer recompute the full URL from possibly stale DOM state; the function also bails out early when the viewport editor is not mounted on the current page (`viewer-container` absent) so non viewport pages never accumulate viewport only query parameters in their address bar, with `theme` dropped from the URL writes entirely since it lives in the cookie session
+* `fullscreen` flag is now persisted on the cookie session alongside the other UI preferences, so it survives the next request without having to be forwarded through redirect query strings; every page route reads `req.query.fullscreen` first as an override and falls back to `req.session.fullscreen`, the `/settings` POST stores it on the session and redirects without appending the flag to the target URL, and the front end `updateUrl` no longer writes it back into the address bar
+
 ### Added
 
 * QWERTY layout on the on screen text keyboard with `<br>` row separators that respect the existing `.keyboard-container > .char` styling, an iOS style utility row at the bottom (`123` mode toggle, spacebar, return) and a dedicated `Shift`/`Backspace` placement at the edges of the Z row; a letters/symbols toggle mirrors the existing `.lowercase` casing toggle pattern by adding a `.symbols` class on the container that swaps a 3 row symbols layout (10/10/5) in place of the letters rows, with a separate backspace inside the symbols section so it remains reachable when the Z row is hidden
