@@ -3410,6 +3410,8 @@ jQuery(document).ready(function() {
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeInput = jQuery(".font-size-input");
     const fontSizeMode = jQuery(".font-size-mode");
+    const fontSizePresets = jQuery(".font-size-preset");
+    const fontSizeBubble = jQuery(".font-size-bubble");
     const viewportPreview = jQuery(".viewport > .main-container > .viewport-preview");
     const viewportSvg = jQuery(".viewport-svg");
     const rulerHorizontal = jQuery(".ruler-horizontal");
@@ -3425,7 +3427,8 @@ jQuery(document).ready(function() {
     const viewportOptionsCaret = jQuery(".viewport-options-caret");
     const zoomContainer = jQuery(".zoom-container");
     const zoomRange = jQuery(".zoom-range");
-    const zoomValue = jQuery(".zoom-value");
+    const zoomPresets = jQuery(".zoom-preset");
+    const zoomBubble = jQuery(".zoom-bubble");
     const crosshairHorizontal = jQuery(".crosshair-horizontal");
     const crosshairVertical = jQuery(".crosshair-vertical");
     const positionContainer = jQuery(".position-container");
@@ -3824,7 +3827,8 @@ jQuery(document).ready(function() {
     // using the viewport preview plugin to scale the preview
     const applyZoom = function() {
         const zoom = parseFloat(zoomRange.val()) || 1;
-        zoomValue.text(zoom + "x");
+        refreshZoomBubble();
+        refreshZoomPresets();
         viewportPreview.viewportpreview("zoom", { zoom: zoom });
     };
 
@@ -3955,6 +3959,91 @@ jQuery(document).ready(function() {
         }
     };
 
+    // computes the four named preset values (S/M/L/XL) by anchoring
+    // them at relative positions within the profile font size range
+    // and rounding to the configured step so each preset always lands
+    // on a value the slider can actually take
+    const computeFontSizePresets = function(min, max, step) {
+        const snap = function(value) {
+            const steps = Math.round((value - min) / step);
+            return min + steps * step;
+        };
+        return {
+            s: snap(min),
+            m: snap(min + (max - min) * 0.33),
+            l: snap(min + (max - min) * 0.66),
+            xl: snap(max)
+        };
+    };
+
+    // tracks the current per-profile preset value map so the chip
+    // click handlers and the chip active state sync can pick the
+    // right value without recomputing it on every change
+    let currentFontSizePresets = {};
+
+    // refreshes the active state of the preset chips so the chip
+    // that matches the current value (or `auto` when automatic mode
+    // is on) is highlighted; falls back to no active chip when the
+    // value sits between two named presets so the user knows they
+    // are in a custom range
+    const refreshFontSizePresets = function() {
+        fontSizePresets.removeClass("active");
+        if (fontSizeMode.prop("checked")) {
+            fontSizePresets.filter('[data-preset="auto"]').addClass("active");
+            return;
+        }
+        const value = parseFloat(fontSizeRange.val());
+        for (const name of ["s", "m", "l", "xl"]) {
+            if (currentFontSizePresets[name] === value) {
+                fontSizePresets.filter('[data-preset="' + name + '"]').addClass("active");
+                return;
+            }
+        }
+    };
+
+    // refreshes a slider bubble label and horizontal position so it
+    // floats above the slider thumb showing the live value as the
+    // user drags, delegating the value formatting to the caller so
+    // each slider can pick its own unit suffix
+    const refreshSliderBubble = function(range, bubble, formatter) {
+        const value = parseFloat(range.val());
+        const min = parseFloat(range.attr("min")) || 0;
+        const max = parseFloat(range.attr("max")) || 1;
+        const ratio = max === min ? 0 : (value - min) / (max - min);
+        bubble.text(formatter ? formatter(value) : value);
+        bubble.css("left", ratio * 100 + "%");
+    };
+
+    // refreshes the font size bubble using the slider helper with
+    // the current profile unit as the formatter suffix
+    const refreshFontSizeBubble = function() {
+        refreshSliderBubble(fontSizeRange, fontSizeBubble, function(value) {
+            const unit = currentProfile && currentProfile.unit ? currentProfile.unit : "";
+            return value + (unit ? " " + unit : "");
+        });
+    };
+
+    // refreshes the zoom bubble using the slider helper with the
+    // `x` suffix that matches the chip preset labels
+    const refreshZoomBubble = function() {
+        refreshSliderBubble(zoomRange, zoomBubble, function(value) {
+            return value + "x";
+        });
+    };
+
+    // refreshes the active state of the zoom preset chips so the
+    // chip that matches the current value is highlighted, falling
+    // back to no active chip when the value sits between two named
+    // presets so the user knows they are in a custom zoom level
+    const refreshZoomPresets = function() {
+        zoomPresets.removeClass("active");
+        const value = parseFloat(zoomRange.val());
+        zoomPresets.each(function() {
+            const preset = parseFloat(jQuery(this).attr("data-preset"));
+            if (preset === value) jQuery(this).addClass("active");
+        });
+    };
+
     // updates the font size controls based on the selected
     // profile configuration for manual or automatic mode
     const updateFontSizeControls = function(profile) {
@@ -3983,6 +4072,10 @@ jQuery(document).ready(function() {
             fontSizeRange.val(fs.default);
             fontSizeInput.val(fs.default);
         }
+
+        currentFontSizePresets = computeFontSizePresets(min, max, step);
+        refreshFontSizePresets();
+        refreshFontSizeBubble();
 
         fontSizeContainer.addClass("visible");
     };
@@ -4026,6 +4119,7 @@ jQuery(document).ready(function() {
             if (size !== null) {
                 fontSizeRange.val(size);
                 fontSizeInput.val(size);
+                refreshFontSizeBubble();
             }
         } else {
             size = parseFloat(fontSizeInput.val());
@@ -4102,6 +4196,8 @@ jQuery(document).ready(function() {
     fontSizeRange.bind("input", function() {
         fontSizeInput.val(jQuery(this).val());
         applyFontSize();
+        refreshFontSizePresets();
+        refreshFontSizeBubble();
         updateUrl("font_size");
     });
 
@@ -4110,6 +4206,8 @@ jQuery(document).ready(function() {
     fontSizeInput.bind("input", function() {
         fontSizeRange.val(jQuery(this).val());
         applyFontSize();
+        refreshFontSizePresets();
+        refreshFontSizeBubble();
         updateUrl("font_size");
     });
 
@@ -4118,8 +4216,43 @@ jQuery(document).ready(function() {
     fontSizeMode.bind("change", function() {
         const isAutomatic = jQuery(this).prop("checked");
         fontSizeInput.prop("disabled", isAutomatic);
+        fontSizeRange.prop("disabled", isAutomatic);
         applyFontSize();
+        refreshFontSizePresets();
+        refreshFontSizeBubble();
         updateUrl("font_size");
+    });
+
+    // registers for the click on each font size preset chip so
+    // the slider, the hidden inputs and the automatic mode toggle
+    // stay in sync with the named preset that was picked, routing
+    // every change through the existing input handlers so the URL
+    // update and the viewport render run through their normal paths
+    fontSizePresets.click(function() {
+        const preset = jQuery(this).attr("data-preset");
+        if (preset === "auto") {
+            if (!fontSizeMode.prop("checked")) {
+                fontSizeMode.prop("checked", true).trigger("change");
+            }
+            return;
+        }
+        if (fontSizeMode.prop("checked")) {
+            fontSizeMode.prop("checked", false).trigger("change");
+        }
+        const value = currentFontSizePresets[preset];
+        if (value === undefined) return;
+        fontSizeRange.val(value).trigger("input");
+    });
+
+    // shows the bubble while the user is actively interacting with
+    // the slider so the live value is visible above the thumb, and
+    // hides it again when the interaction ends so the bubble does
+    // not linger over the panel
+    fontSizeRange.bind("mousedown touchstart focus", function() {
+        fontSizeContainer.addClass("slider-dragging");
+    });
+    fontSizeRange.bind("mouseup touchend touchcancel blur", function() {
+        fontSizeContainer.removeClass("slider-dragging");
     });
 
     // registers for the change in the rulers mode checkbox
@@ -4141,6 +4274,27 @@ jQuery(document).ready(function() {
     zoomRange.bind("input", function() {
         applyZoom();
         updateUrl("zoom");
+    });
+
+    // registers for the click on each zoom preset chip so the
+    // slider jumps to the preset value and routes the change
+    // through the existing zoom input handler so the URL update
+    // and the preview transform run through their normal paths
+    zoomPresets.click(function() {
+        const value = parseFloat(jQuery(this).attr("data-preset"));
+        if (isNaN(value)) return;
+        zoomRange.val(value).trigger("input");
+    });
+
+    // shows the bubble while the user is actively interacting with
+    // the zoom slider so the live value is visible above the thumb,
+    // and hides it again when the interaction ends so the bubble
+    // does not linger over the panel
+    zoomRange.bind("mousedown touchstart focus", function() {
+        zoomContainer.addClass("slider-dragging");
+    });
+    zoomRange.bind("mouseup touchend touchcancel blur", function() {
+        zoomContainer.removeClass("slider-dragging");
     });
 
     // registers for the change in the margin input fields

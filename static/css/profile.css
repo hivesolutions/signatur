@@ -298,29 +298,187 @@
     display: block;
 }
 
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-range {
-    cursor: pointer;
-    vertical-align: middle;
-    width: 120px;
+.viewport-options > .viewport-options-body > .slider-field > .slider-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0px 12px 0px;
 }
 
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-input {
-    margin-left: 4px;
-    vertical-align: middle;
-    width: 48px;
+.viewport-options > .viewport-options-body > .slider-field > .slider-presets > .slider-preset {
+    background-color: #f4f5f8;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    color: #4b5260;
+    cursor: pointer;
+    flex: 1 1 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    min-width: 32px;
+    padding: 6px 10px 6px 10px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    -o-transition: background-color 0.15s ease, color 0.15s ease;
+    -ms-transition: background-color 0.15s ease, color 0.15s ease;
+    -moz-transition: background-color 0.15s ease, color 0.15s ease;
+    -khtml-transition: background-color 0.15s ease, color 0.15s ease;
+    -webkit-transition: background-color 0.15s ease, color 0.15s ease;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
 }
 
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label {
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    margin-left: 8px;
-    vertical-align: middle;
+.viewport-options > .viewport-options-body > .slider-field > .slider-presets > .slider-preset:hover {
+    background-color: #e4e7ed;
+    color: #1f2330;
 }
 
-.viewport-options > .viewport-options-body > .font-size-container > .font-size-mode-label > .font-size-mode {
+.viewport-options > .viewport-options-body > .slider-field > .slider-presets > .slider-preset.active {
+    background-color: #1f2330;
+    color: #ffffff;
+}
+
+body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-presets > .slider-preset {
+    background-color: #f5f0fa;
+    color: #6b5a8a;
+}
+
+body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-presets > .slider-preset:hover {
+    background-color: #ece4f5;
+    color: #1f1430;
+}
+
+body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-presets > .slider-preset.active {
+    background-color: #9678d3;
+    color: #ffffff;
+}
+
+.viewport-options > .viewport-options-body > .slider-field > .slider-track {
+    padding: 14px 4px 4px 4px;
+    position: relative;
+}
+
+.viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-range {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #e6e8ee;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
     cursor: pointer;
-    vertical-align: middle;
+    height: 6px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
+}
+
+body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-range {
+    background-color: #ece4f5;
+}
+
+.viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #1f2330;
+    border: none;
+    border-radius: 999px 999px 999px 999px;
+    box-shadow: 0px 2px 6px rgba(31, 35, 48, 0.2);
+    -o-box-shadow: 0px 2px 6px rgba(31, 35, 48, 0.2);
+    -ms-box-shadow: 0px 2px 6px rgba(31, 35, 48, 0.2);
+    -moz-box-shadow: 0px 2px 6px rgba(31, 35, 48, 0.2);
+    -khtml-box-shadow: 0px 2px 6px rgba(31, 35, 48, 0.2);
+    -webkit-box-shadow: 0px 2px 6px rgba(31, 35, 48, 0.2);
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+}
+
+.viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-range::-moz-range-thumb {
+    background-color: #1f2330;
+    border: none;
+    border-radius: 999px 999px 999px 999px;
+    box-shadow: 0px 2px 6px rgba(31, 35, 48, 0.2);
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+}
+
+body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-range::-webkit-slider-thumb {
+    background-color: #9678d3;
+    box-shadow: 0px 2px 6px rgba(151, 120, 211, 0.3);
+    -o-box-shadow: 0px 2px 6px rgba(151, 120, 211, 0.3);
+    -ms-box-shadow: 0px 2px 6px rgba(151, 120, 211, 0.3);
+    -moz-box-shadow: 0px 2px 6px rgba(151, 120, 211, 0.3);
+    -khtml-box-shadow: 0px 2px 6px rgba(151, 120, 211, 0.3);
+    -webkit-box-shadow: 0px 2px 6px rgba(151, 120, 211, 0.3);
+}
+
+body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-range::-moz-range-thumb {
+    background-color: #9678d3;
+    box-shadow: 0px 2px 6px rgba(151, 120, 211, 0.3);
+}
+
+.viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-range:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-bubble {
+    background-color: #1f2330;
+    border-radius: 8px 8px 8px 8px;
+    -o-border-radius: 8px 8px 8px 8px;
+    -ms-border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    -khtml-border-radius: 8px 8px 8px 8px;
+    -webkit-border-radius: 8px 8px 8px 8px;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    left: 0%;
+    letter-spacing: 0.3px;
+    opacity: 0;
+    padding: 4px 8px 4px 8px;
+    pointer-events: none;
+    position: absolute;
+    top: -8px;
+    transform: translate(-50%, -100%);
+    -o-transform: translate(-50%, -100%);
+    -ms-transform: translate(-50%, -100%);
+    -moz-transform: translate(-50%, -100%);
+    -khtml-transform: translate(-50%, -100%);
+    -webkit-transform: translate(-50%, -100%);
+    transition: opacity 0.15s ease;
+    -o-transition: opacity 0.15s ease;
+    -ms-transition: opacity 0.15s ease;
+    -moz-transition: opacity 0.15s ease;
+    -khtml-transition: opacity 0.15s ease;
+    -webkit-transition: opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-track > .slider-bubble {
+    background-color: #9678d3;
+}
+
+.viewport-options > .viewport-options-body > .slider-field.slider-dragging > .slider-track > .slider-bubble {
+    opacity: 1;
 }
 
 .viewport-options > .viewport-options-body > .viewport-options-checkbox {
@@ -364,19 +522,6 @@
     display: block;
 }
 
-.viewport-options > .viewport-options-body > .zoom-container > .zoom-range {
-    cursor: pointer;
-    vertical-align: middle;
-    width: 120px;
-}
-
-.viewport-options > .viewport-options-body > .zoom-container > .zoom-value {
-    display: inline-block;
-    font-size: 12px;
-    min-width: 24px;
-    text-align: center;
-    vertical-align: middle;
-}
 
 .viewport-options > .viewport-options-body > .margin-container {
     display: none;
