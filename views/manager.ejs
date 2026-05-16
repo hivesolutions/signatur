@@ -54,7 +54,11 @@
                                 </div>
                             <% } %>
                             <div class="manager-validation" hidden></div>
-                            <div class="manager-field">
+                            <select class="manager-editor-select manager-select">
+                                <option value="profile">Profile JSON</option>
+                                <option value="inspirations">Inspirations JSON</option>
+                            </select>
+                            <div class="manager-field" data-editor="profile">
                                 <div class="manager-field-header">
                                     <label class="manager-field-label" for="manager-profile-json">Profile JSON</label>
                                     <label class="manager-field-loader">
@@ -65,7 +69,7 @@
                                 <div class="manager-field-hint">Required. Schema validated against the engraving profile definition.</div>
                                 <textarea class="manager-field-editor" id="manager-profile-json" name="profile_json" spellcheck="false" required><%= profileJson ? profileJson : '' %></textarea>
                             </div>
-                            <div class="manager-field">
+                            <div class="manager-field" data-editor="inspirations" hidden>
                                 <div class="manager-field-header">
                                     <label class="manager-field-label" for="manager-inspirations-json">Inspirations JSON</label>
                                     <label class="manager-field-loader">
@@ -87,7 +91,7 @@
                             <div class="manager-reference-tab-content" data-tab-content="template">
                                 <div class="manager-reference-title">Existing Profiles</div>
                                 <div class="manager-reference-hint">Pick a profile to preview, then use it as a starting point or edit it in place.</div>
-                                <select class="manager-reference-select">
+                                <select class="manager-reference-select manager-select">
                                     <option value="">Select a profile…</option>
                                 </select>
                                 <div class="manager-reference-empty">No profile selected.</div>

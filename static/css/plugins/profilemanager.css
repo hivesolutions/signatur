@@ -213,6 +213,7 @@
     justify-content: space-between;
     margin-bottom: 6px;
     gap: 12px;
+    padding: 0px 14px 0px 14px;
 }
 
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-header > .manager-field-label,
@@ -249,7 +250,8 @@
     font-size: 11px;
     font-weight: 400;
     line-height: 1.5;
-    margin: 0px 0px 8px 0px;
+    margin: 0px 0px 20px 0px;
+    padding: 0px 14px 0px 14px;
 }
 
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane > .manager-field > .manager-field-hint > code {
@@ -396,15 +398,24 @@
     text-align: center;
 }
 
-.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-select {
+.manager-select {
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
     background-color: #ffffff;
-    border: 1px solid #e6e8ee;
-    border-radius: 4px 4px 4px 4px;
-    -o-border-radius: 4px 4px 4px 4px;
-    -ms-border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -khtml-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%236b7280' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-position: right 14px center;
+    background-repeat: no-repeat;
+    border: 1.5px solid #e6e8ee;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
     box-sizing: border-box;
     -o-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -414,16 +425,52 @@
     color: #1f2330;
     cursor: pointer;
     font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
-    font-size: 12px;
-    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    height: 40px;
+    line-height: 40px;
     outline: none;
     -o-outline: none;
     -ms-outline: none;
     -moz-outline: none;
     -khtml-outline: none;
     -webkit-outline: none;
-    padding: 8px 12px 8px 12px;
+    padding: 0px 36px 0px 16px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    -o-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -ms-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -moz-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -khtml-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -webkit-transition: background-color 0.15s ease, border-color 0.15s ease;
     width: 100%;
+}
+
+.manager-select:hover {
+    border-color: #cfd4de;
+}
+
+.manager-select:focus {
+    border-color: rgba(24, 24, 24, 0.4);
+}
+
+body.ldj .manager-select {
+    border-color: #ece4f5;
+}
+
+body.ldj .manager-select:hover {
+    border-color: #c9b6e5;
+}
+
+body.ldj .manager-select:focus {
+    border-color: rgba(151, 120, 211, 0.55);
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-select {
+    margin-bottom: 20px;
+}
+
+.welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-form-pane .manager-editor-select {
+    margin-bottom: 20px;
 }
 
 .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-empty {
@@ -636,7 +683,6 @@ body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .m
     color: #1f1430;
 }
 
-body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-select,
 body.ldj .welcome > .form.form-manager > .welcome-catalog > .manager-layout > .manager-reference-pane .manager-reference-detail {
     border-color: #ece4f5;
 }

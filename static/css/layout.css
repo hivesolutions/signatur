@@ -83,22 +83,24 @@ body {
 }
 
 .header > .buttons-left {
+    align-items: center;
+    display: flex;
+    gap: 12px;
     left: 0px;
     margin-left: 22px;
     position: absolute;
 }
 
 .header > .buttons-right {
+    align-items: center;
+    display: flex;
+    gap: 14px;
     margin-right: 22px;
     position: absolute;
     right: 0px;
 }
 
 .header > .buttons-right > .button {
-    margin-right: 14px;
-}
-
-.header > .buttons-right > .button:last-child {
     margin-right: 0px;
 }
 
@@ -108,10 +110,6 @@ body {
 
 .header .button.button-clear {
     margin-left: 12px;
-}
-
-.header .button.button-report {
-    margin-right: 12px;
 }
 
 .line {
@@ -180,7 +178,10 @@ body {
 }
 
 .button.button-small {
+    align-items: center;
+    display: inline-flex;
     height: 38px;
+    justify-content: center;
     line-height: 38px;
     min-width: 38px;
     padding: 0px 0px 0px 0px;
@@ -189,15 +190,22 @@ body {
 
 .header .button.button-back,
 .header .button.button-clear,
-.header .button.button-report {
+.header .button.button-report,
+.header .button.button-preview {
     background-color: #f4f5f8;
     color: #4b5260;
 }
 
 .header .button.button-back:hover,
 .header .button.button-clear:hover,
-.header .button.button-report:hover {
+.header .button.button-report:hover,
+.header .button.button-preview:hover {
     background-color: #e7eaf0;
+}
+
+.header .button > ion-icon {
+    display: block;
+    font-size: 18px;
 }
 
 .input {
@@ -373,6 +381,21 @@ body.ldj .signature > div:last-child > input[type=button] {
 body.ldj .button:hover,
 body.ldj .signature > div:last-child > input[type=button]:hover {
     background-color: rgba(151, 120, 211, 0.85);
+}
+
+body.ldj .header .button.button-back,
+body.ldj .header .button.button-clear,
+body.ldj .header .button.button-report,
+body.ldj .header .button.button-preview {
+    background-color: #f5f0fa;
+    color: #6b5a8a;
+}
+
+body.ldj .header .button.button-back:hover,
+body.ldj .header .button.button-clear:hover,
+body.ldj .header .button.button-report:hover,
+body.ldj .header .button.button-preview:hover {
+    background-color: #ece4f5;
 }
 
 body.ldj .line {

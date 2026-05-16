@@ -369,17 +369,33 @@ const countLines = function(text) {
 
                 preview.append(viewer);
 
-                // scales the preview to fit inside the container
+                // scales the preview to fit inside the container,
+                // honoring a CSS-set fixed height when present so
+                // the consumer can pin a uniform card height and
+                // have the preview shrink to fit both axes instead
+                // of overflowing on tall profile aspect ratios
                 const containerWidth = container.width() || 72;
-                const scale = containerWidth / width;
+                const containerHeight = container.height();
+                const widthScale = containerWidth / width;
+                const heightScale = containerHeight > 0 ? containerHeight / height : Infinity;
+                const scale = Math.min(widthScale, heightScale);
+                const scaledWidth = width * scale;
+                const scaledHeight = height * scale;
                 preview.css({
                     transform: "scale(" + scale + ")",
-                    "transform-origin": "0 0"
+                    "transform-origin": "0 0",
+                    left: Math.max(0, (containerWidth - scaledWidth) / 2) + "px",
+                    position: "absolute",
+                    top: Math.max(0, (containerHeight - scaledHeight) / 2) + "px"
                 });
-                container.css({
-                    height: Math.ceil(height * scale) + "px",
-                    position: "relative"
-                });
+                if (containerHeight <= 0) {
+                    container.css({
+                        height: Math.ceil(scaledHeight) + "px",
+                        position: "relative"
+                    });
+                } else {
+                    container.css({ position: "relative" });
+                }
 
                 container.append(preview);
             };
@@ -1154,6 +1170,8 @@ const countLines = function(text) {
             const editBannerExit = jQuery(".manager-edit-banner-exit", editBanner);
             const validationContainer = jQuery(".manager-validation", context);
             const buttonValidate = jQuery(".button-validate", context);
+            const editorSelect = jQuery(".manager-editor-select", context);
+            const editorFields = jQuery(".manager-field[data-editor]", context);
             const referenceSelect = jQuery(".manager-reference-select", context);
             const referenceEmpty = jQuery(".manager-reference-empty", templateTab);
             const referenceDetail = jQuery(".manager-reference-detail", templateTab);
@@ -1365,6 +1383,28 @@ const countLines = function(text) {
                 jQuery("[data-tab-content=" + target + "]", context).prop("hidden", false);
                 if (target === "preview") refreshPreview();
             });
+
+            // shows the selected editor and hides the other so only one
+            // textarea occupies the vertical space at a time, also
+            // refreshing the JSON highlight overlay since the editor was
+            // hidden when the underlying value last changed
+            const selectEditor = function(target) {
+                if (!target) return;
+                editorFields.each(function() {
+                    const field = jQuery(this);
+                    const active = field.attr("data-editor") === target;
+                    field.prop("hidden", !active);
+                });
+                if (editorSelect.val() !== target) {
+                    editorSelect.val(target);
+                }
+                if (target === "profile") profileEditor.jsonhighlight("refresh");
+                if (target === "inspirations") inspirationsEditor.jsonhighlight("refresh");
+            };
+            editorSelect.on("change", function() {
+                selectEditor(editorSelect.val());
+            });
+            selectEditor(editorSelect.val() || "profile");
 
             // shows the preview for the picked profile and remembers
             // the selection so the apply, edit, and delete buttons can
@@ -1872,6 +1912,17 @@ const countLines = function(text) {
                             list.append(item);
                         }
                         validationContainer.append(list);
+
+                        // routes the user to the editor that owns the
+                        // first reported error so the failing payload is
+                        // immediately visible instead of being hidden by
+                        // the dropdown selection of the other editor
+                        const firstError = errors[0] || "";
+                        if (firstError.indexOf("inspirations:") === 0) {
+                            selectEditor("inspirations");
+                        } else if (firstError.indexOf("profile:") === 0) {
+                            selectEditor("profile");
+                        }
                     }
                     validationContainer.prop("hidden", false);
                 } catch (err) {
@@ -1910,6 +1961,17 @@ const countLines = function(text) {
                 }
                 banner.append(list);
                 editBanner.after(banner);
+
+                // routes the user to the editor that owns the first
+                // reported error so the failing payload is immediately
+                // visible after a save attempt rather than hidden behind
+                // the dropdown selection of the other editor
+                const firstError = errors[0] || "";
+                if (firstError.indexOf("inspirations:") === 0) {
+                    selectEditor("inspirations");
+                } else if (firstError.indexOf("profile:") === 0) {
+                    selectEditor("profile");
+                }
             };
 
             // intercepts the form submission so the save runs as an AJAX
@@ -3273,6 +3335,31 @@ jQuery(document).ready(function() {
     const keyboardContainer = jQuery(".keyboard-container");
     const emojisContainer = jQuery(".emojis-container");
     const emojispContainer = jQuery(".emojisp-container");
+
+    // shows a keyboard container with the soft fade-up animation
+    // already defined by the CSS, clearing any leftover leaving
+    // class so the enter keyframe always plays cleanly
+    const showKeyboardContainer = function(element) {
+        element.removeClass("keyboard-leaving").show();
+    };
+
+    // hides a keyboard container by playing the reverse keyframe
+    // first and only actually setting `display: none` after the
+    // animation finishes, so the keyboard fades out instead of
+    // snapping away; the optional callback runs once the fade is
+    // complete so callers can chain the appearance of a sibling
+    // keyboard onto the end of the leave animation
+    const hideKeyboardContainer = function(element, onComplete) {
+        if (element.css("display") === "none") {
+            if (onComplete) onComplete();
+            return;
+        }
+        element.addClass("keyboard-leaving");
+        setTimeout(function() {
+            element.hide().removeClass("keyboard-leaving");
+            if (onComplete) onComplete();
+        }, 250);
+    };
     const viewportContainer = jQuery(".viewer-container");
     const formConsole = jQuery(".form-console");
     const inputViewport = jQuery(".input-viewport");
@@ -3966,16 +4053,16 @@ jQuery(document).ready(function() {
         if (showKeyboard) {
             const font = body.data("font");
             if (font === "Cool Emojis") {
-                emojisContainer.show();
+                showKeyboardContainer(emojisContainer);
             } else if (font === "Cool Emojis Pantograph") {
-                emojispContainer.show();
+                showKeyboardContainer(emojispContainer);
             } else if (font) {
-                keyboardContainer.show();
+                showKeyboardContainer(keyboardContainer);
             }
         } else {
-            keyboardContainer.hide();
-            emojisContainer.hide();
-            emojispContainer.hide();
+            hideKeyboardContainer(keyboardContainer);
+            hideKeyboardContainer(emojisContainer);
+            hideKeyboardContainer(emojispContainer);
         }
         updateUrl();
     });
@@ -4005,6 +4092,93 @@ jQuery(document).ready(function() {
             viewportContainer.removeClass("caret-active");
         }
         updateUrl();
+    });
+
+    // tracks the previous visibility state of the visual toggles
+    // and the previous zoom level so exiting preview mode restores
+    // exactly the configuration the user had before entering
+    let previewModeSnapshot = null;
+    let previewModeZoom = null;
+    const previewToggles = [
+        rulersMode,
+        crosshairMode,
+        guidelinesMode,
+        caretMode
+    ];
+
+    // enters preview mode by flipping the body class, hiding the
+    // visual toggles through their own change handlers so the URL
+    // state stays consistent, bumping the zoom level by 1.2x so the
+    // preview grows visibly, and snapshotting the previous state
+    // so exit can put things back exactly as they were; the
+    // restoring flag is briefly raised while the toggles are flipped
+    // so the temporary off state does not get persisted to the URL
+    const enterPreviewMode = function() {
+        if (body.hasClass("preview-mode")) return;
+        previewModeSnapshot = previewToggles.map(function(toggle) {
+            return toggle.prop("checked");
+        });
+        const wasRestoring = restoring;
+        restoring = true;
+        try {
+            for (const toggle of previewToggles) {
+                if (toggle.prop("checked")) {
+                    toggle.prop("checked", false).trigger("change");
+                }
+            }
+        } finally {
+            restoring = wasRestoring;
+        }
+        previewModeZoom = parseFloat(zoomRange.val()) || 1;
+        viewportPreview.viewportpreview("zoom", { zoom: previewModeZoom * 1.5 });
+        body.addClass("preview-mode");
+    };
+
+    // exits preview mode by flipping the body class back, restoring
+    // each visual toggle to its prior state through the matching
+    // change handler so the visuals and URL state sync up again,
+    // resetting the zoom to the snapshotted value so the preview
+    // scales back down, and briefly holding an exiting class so
+    // the reverse transition still plays during the animation
+    const exitPreviewMode = function() {
+        if (!body.hasClass("preview-mode")) return;
+        body.removeClass("preview-mode").addClass("preview-mode-exiting");
+        if (previewModeZoom !== null) {
+            viewportPreview.viewportpreview("zoom", { zoom: previewModeZoom });
+            previewModeZoom = null;
+        }
+        setTimeout(function() {
+            body.removeClass("preview-mode-exiting");
+        }, 600);
+        if (previewModeSnapshot) {
+            const wasRestoring = restoring;
+            restoring = true;
+            try {
+                for (let i = 0; i < previewToggles.length; i++) {
+                    const toggle = previewToggles[i];
+                    const wasChecked = previewModeSnapshot[i];
+                    if (wasChecked && !toggle.prop("checked")) {
+                        toggle.prop("checked", true).trigger("change");
+                    }
+                }
+            } finally {
+                restoring = wasRestoring;
+            }
+            previewModeSnapshot = null;
+        }
+    };
+
+    // wires the header preview button and the floating exit hint
+    // so a click on the button toggles into preview mode while the
+    // hint or the Escape key reverses the action
+    jQuery(".button-preview").click(enterPreviewMode);
+    jQuery(".preview-mode-hint").click(exitPreviewMode);
+    body.bind("keydown", function(event) {
+        if (event.key !== "Escape") return;
+        if (!body.hasClass("preview-mode")) return;
+        event.stopPropagation();
+        event.preventDefault();
+        exitPreviewMode();
     });
 
     // registers for the mouse move event on the viewport preview
@@ -4080,31 +4254,42 @@ jQuery(document).ready(function() {
         keyboardContainer.removeClass("selected");
         emojisContainer.removeClass("selected");
         emojispContainer.removeClass("selected");
+
+        // resolves the target keyboard for the newly selected font
+        // and the previously visible keyboard so the show can be
+        // chained onto the end of the previous fade out and the
+        // two keyboards never appear at the same time
+        let target;
         if (font === "Cool Emojis") {
-            keyboardContainer.hide();
-            emojispContainer.hide();
-            if (showKeyboard) emojisContainer.show();
-            emojisContainer.addClass("selected");
+            target = emojisContainer;
         } else if (font === "Cool Emojis Pantograph") {
-            keyboardContainer.hide();
-            emojisContainer.hide();
-            if (showKeyboard) emojispContainer.show();
-            emojispContainer.addClass("selected");
+            target = emojispContainer;
         } else {
-            emojisContainer.hide();
-            emojispContainer.hide();
-            if (showKeyboard) keyboardContainer.show();
-            keyboardContainer.addClass("selected");
+            target = keyboardContainer;
         }
+        target.addClass("selected");
+        const allKeyboards = [keyboardContainer, emojisContainer, emojispContainer];
+        const leaving = allKeyboards.find(function(candidate) {
+            return candidate.get(0) !== target.get(0) && candidate.css("display") !== "none";
+        });
+        const reveal = function() {
+            if (showKeyboard) showKeyboardContainer(target);
+        };
+        if (leaving) {
+            hideKeyboardContainer(leaving, reveal);
+        } else {
+            reveal();
+        }
+
         keyboardContainer.css("font-family", '"' + font + '"');
         inputViewport.css("font-family", '"' + font + '"');
         body.data("font", font);
         updateUrl();
     });
     fontsContainer.bind("defont", function(event, font) {
-        keyboardContainer.hide();
-        emojisContainer.hide();
-        emojispContainer.hide();
+        hideKeyboardContainer(keyboardContainer);
+        hideKeyboardContainer(emojisContainer);
+        hideKeyboardContainer(emojispContainer);
         keyboardContainer.removeClass("selected");
         emojisContainer.removeClass("selected");
         emojispContainer.removeClass("selected");

@@ -1,7 +1,7 @@
 // requires the multiple libraries
 const fs = require("fs/promises");
 const express = require("express");
-const session = require("express-session");
+const cookieSession = require("cookie-session");
 const path = require("path");
 const process = require("process");
 const bodyParser = require("body-parser");
@@ -22,14 +22,17 @@ const masterb64 = Buffer.from(JSON.stringify(master)).toString("base64");
 // by the application for serving
 const app = express();
 
-// initializes the session middleware with the pre-defined
-// session password (for encryption)
+// initializes the session middleware using a cookie based store
+// so the whole session payload travels in the signed cookie and
+// no server side storage is required; the secret is hardcoded
+// since the session only carries non sensitive UI preferences
 app.use(
-    session({
-        secret: "keyboard cat",
-        cookie: { maxAge: 60000000 },
-        resave: true,
-        saveUninitialized: true
+    cookieSession({
+        name: "signatur.sid",
+        keys: ["signatur"],
+        httpOnly: true,
+        maxAge: 60000000,
+        sameSite: "lax"
     })
 );
 

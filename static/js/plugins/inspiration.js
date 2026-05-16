@@ -109,17 +109,33 @@
 
                 preview.append(viewer);
 
-                // scales the preview to fit inside the container
+                // scales the preview to fit inside the container,
+                // honoring a CSS-set fixed height when present so
+                // the consumer can pin a uniform card height and
+                // have the preview shrink to fit both axes instead
+                // of overflowing on tall profile aspect ratios
                 const containerWidth = container.width() || 72;
-                const scale = containerWidth / width;
+                const containerHeight = container.height();
+                const widthScale = containerWidth / width;
+                const heightScale = containerHeight > 0 ? containerHeight / height : Infinity;
+                const scale = Math.min(widthScale, heightScale);
+                const scaledWidth = width * scale;
+                const scaledHeight = height * scale;
                 preview.css({
                     transform: "scale(" + scale + ")",
-                    "transform-origin": "0 0"
+                    "transform-origin": "0 0",
+                    left: Math.max(0, (containerWidth - scaledWidth) / 2) + "px",
+                    position: "absolute",
+                    top: Math.max(0, (containerHeight - scaledHeight) / 2) + "px"
                 });
-                container.css({
-                    height: Math.ceil(height * scale) + "px",
-                    position: "relative"
-                });
+                if (containerHeight <= 0) {
+                    container.css({
+                        height: Math.ceil(scaledHeight) + "px",
+                        position: "relative"
+                    });
+                } else {
+                    container.css({ position: "relative" });
+                }
 
                 container.append(preview);
             };

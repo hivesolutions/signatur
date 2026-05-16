@@ -31,6 +31,8 @@
             const editBannerExit = jQuery(".manager-edit-banner-exit", editBanner);
             const validationContainer = jQuery(".manager-validation", context);
             const buttonValidate = jQuery(".button-validate", context);
+            const editorSelect = jQuery(".manager-editor-select", context);
+            const editorFields = jQuery(".manager-field[data-editor]", context);
             const referenceSelect = jQuery(".manager-reference-select", context);
             const referenceEmpty = jQuery(".manager-reference-empty", templateTab);
             const referenceDetail = jQuery(".manager-reference-detail", templateTab);
@@ -242,6 +244,28 @@
                 jQuery("[data-tab-content=" + target + "]", context).prop("hidden", false);
                 if (target === "preview") refreshPreview();
             });
+
+            // shows the selected editor and hides the other so only one
+            // textarea occupies the vertical space at a time, also
+            // refreshing the JSON highlight overlay since the editor was
+            // hidden when the underlying value last changed
+            const selectEditor = function(target) {
+                if (!target) return;
+                editorFields.each(function() {
+                    const field = jQuery(this);
+                    const active = field.attr("data-editor") === target;
+                    field.prop("hidden", !active);
+                });
+                if (editorSelect.val() !== target) {
+                    editorSelect.val(target);
+                }
+                if (target === "profile") profileEditor.jsonhighlight("refresh");
+                if (target === "inspirations") inspirationsEditor.jsonhighlight("refresh");
+            };
+            editorSelect.on("change", function() {
+                selectEditor(editorSelect.val());
+            });
+            selectEditor(editorSelect.val() || "profile");
 
             // shows the preview for the picked profile and remembers
             // the selection so the apply, edit, and delete buttons can
@@ -749,6 +773,17 @@
                             list.append(item);
                         }
                         validationContainer.append(list);
+
+                        // routes the user to the editor that owns the
+                        // first reported error so the failing payload is
+                        // immediately visible instead of being hidden by
+                        // the dropdown selection of the other editor
+                        const firstError = errors[0] || "";
+                        if (firstError.indexOf("inspirations:") === 0) {
+                            selectEditor("inspirations");
+                        } else if (firstError.indexOf("profile:") === 0) {
+                            selectEditor("profile");
+                        }
                     }
                     validationContainer.prop("hidden", false);
                 } catch (err) {
@@ -787,6 +822,17 @@
                 }
                 banner.append(list);
                 editBanner.after(banner);
+
+                // routes the user to the editor that owns the first
+                // reported error so the failing payload is immediately
+                // visible after a save attempt rather than hidden behind
+                // the dropdown selection of the other editor
+                const firstError = errors[0] || "";
+                if (firstError.indexOf("inspirations:") === 0) {
+                    selectEditor("inspirations");
+                } else if (firstError.indexOf("profile:") === 0) {
+                    selectEditor("profile");
+                }
             };
 
             // intercepts the form submission so the save runs as an AJAX

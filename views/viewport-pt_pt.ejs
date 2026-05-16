@@ -9,7 +9,12 @@
                 <span class="button button-clear">Limpar</span>
             </div>
             <div class="buttons-right">
-                <a class="button button-report" href="/report" data-href="/report">Relatório</a>
+                <span class="button button-small button-preview" title="Pré-visualização (Esc para sair)">
+                    <ion-icon name="expand-outline"></ion-icon>
+                </span>
+                <a class="button button-small button-report" href="/report" data-href="/report" title="Relatório">
+                    <ion-icon name="document-text-outline"></ion-icon>
+                </a>
                 <a class="button button-print" data-href="/report">Gravar</a>
             </div>
             <% if (theme === "ldj") { %>
@@ -18,6 +23,7 @@
                 <span class="logo"></span>
             <% } %>
         </div>
+        <div class="preview-mode-hint">Carregue Esc para sair</div>
         <div class="profile-info collapsible">
             <div class="profile-info-title collapsible-title" data-default-label="Perfil ">Perfil <span class="profile-info-toggle collapsible-toggle">▾</span></div>
             <div class="profile-info-body collapsible-body">
@@ -323,7 +329,6 @@
                     <span class="char" data-value="&amp;">&amp;</span>
                     <span class="char" data-value="(">(</span>
                     <span class="char" data-value=")">)</span>
-                    <span class="char" data-value="`">`</span>
                     <span class="char" data-value="[">[</span>
                     <span class="char" data-value="{">{</span>
                     <span class="char" data-value="|">|</span>
