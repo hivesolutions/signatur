@@ -97,16 +97,13 @@
                 catalog.append(card);
             }
 
-            // pre-selects the previously chosen profile if one
-            // is still present in the catalog, falling back to
-            // the first card so that the form is immediately
-            // submittable without an extra click
-            const previousKey = profileInput.val();
-            const initialKey = previousKey && profiles[previousKey] ? previousKey : keys[0];
-            catalog.children(".catalog-card[data-profile=" + initialKey + "]").addClass("selected");
-            context.data("_selected", initialKey);
-            profileInput.val(initialKey);
-            buttonStart.prop("disabled", false);
+            // renders the catalog with no pre-selected template so
+            // the user always lands on the welcome screen with a
+            // neutral state and must explicitly pick a profile
+            // before the form becomes submittable
+            context.data("_selected", null);
+            profileInput.val("");
+            buttonStart.prop("disabled", true);
         };
 
         // fetches the available profiles from the server and

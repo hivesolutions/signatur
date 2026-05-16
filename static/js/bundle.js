@@ -3115,16 +3115,13 @@ const countLines = function(text) {
                 catalog.append(card);
             }
 
-            // pre-selects the previously chosen profile if one
-            // is still present in the catalog, falling back to
-            // the first card so that the form is immediately
-            // submittable without an extra click
-            const previousKey = profileInput.val();
-            const initialKey = previousKey && profiles[previousKey] ? previousKey : keys[0];
-            catalog.children(".catalog-card[data-profile=" + initialKey + "]").addClass("selected");
-            context.data("_selected", initialKey);
-            profileInput.val(initialKey);
-            buttonStart.prop("disabled", false);
+            // renders the catalog with no pre-selected template so
+            // the user always lands on the welcome screen with a
+            // neutral state and must explicitly pick a profile
+            // before the form becomes submittable
+            context.data("_selected", null);
+            profileInput.val("");
+            buttonStart.prop("disabled", true);
         };
 
         // fetches the available profiles from the server and
@@ -4340,14 +4337,17 @@ jQuery(document).ready(function() {
 
     // updates the browser URL with the current session state
     // using history.replaceState so that the URL can be shared
-    // or bookmarked to resume an engraving session later
+    // or bookmarked to resume an engraving session later; the
+    // viewport-only visual toggles (rulers, crosshair, keyboard,
+    // guidelines, caret, zoom, margins, font_size, font_size_mode,
+    // font, theme) are intentionally not written to the URL because
+    // they are local viewport state with no semantic value when
+    // shared and would only pollute downstream pages
     const updateUrl = function() {
         if (restoring) return;
         const params = new URLSearchParams();
         const text = body.data("text") || [];
         if (text.length > 0) params.set("text", serializeText(text));
-        const font = body.data("font");
-        if (font) params.set("font", font);
         const selection = profileSelector.profileselector("value");
         if (selection && selection.key) {
             params.set("profile", selection.key);
@@ -4355,29 +4355,8 @@ jQuery(document).ready(function() {
                 params.set("variant", selection.variantIndex);
             }
         }
-        const fontSize = fontSizeInput.val();
-        if (fontSize) params.set("font_size", fontSize);
-        const isAutomatic = fontSizeMode.prop("checked");
-        if (isAutomatic) params.set("font_size_mode", "automatic");
-        const zoom = zoomRange.val();
-        if (zoom && zoom !== "1") params.set("zoom", zoom);
-        const margins = getMargins();
-        const marginStr =
-            margins.left + "," + margins.right + "," + margins.top + "," + margins.bottom;
-        if (marginStr !== "0,0,0,0") params.set("margins", marginStr);
-        const showRulers = rulersMode.prop("checked");
-        if (!showRulers) params.set("rulers", "0");
-        const showCrosshair = crosshairMode.prop("checked");
-        if (!showCrosshair) params.set("crosshair", "0");
-        const showKeyboard = keyboardMode.prop("checked");
-        if (!showKeyboard) params.set("keyboard", "0");
-        const showGuidelines = guidelinesMode.prop("checked");
-        if (!showGuidelines) params.set("guidelines", "0");
-        const showCaret = caretMode.prop("checked");
-        if (!showCaret) params.set("caret", "0");
         const fullscreen = urlParams.get("fullscreen");
         if (fullscreen === "1") params.set("fullscreen", "1");
-        if (theme !== "default") params.set("theme", theme);
         const query = params.toString();
         const url = window.location.pathname + (query ? "?" + query : "");
         history.replaceState(null, "", url);
