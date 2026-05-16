@@ -16,7 +16,11 @@
                     <div class="welcome-hero-divider"></div>
                 </div>
                 <div class="welcome-catalog">
-                    <div class="settings-container">
+                    <div class="settings-tabs">
+                        <span class="settings-tab active" data-tab="general">General</span>
+                        <span class="settings-tab" data-tab="printing">Printing</span>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="general">
                         <div class="settings-group">
                             <div class="settings-group-label">Theme</div>
                             <div class="option-chips" id="theme-options">
@@ -86,6 +90,88 @@
                         <div class="settings-group">
                             <div class="settings-group-label">Version</div>
                             <div class="settings-readout"><%= info.version %></div>
+                        </div>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="printing" style="display: none;">
+                        <div class="settings-printing">
+                            <div class="settings-printing-row" data-key="url">
+                                <div class="settings-printing-label">URL</div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Base</div>
+                                    <input class="settings-printing-base" type="text"
+                                           value="<%= conf.PRINT_URL || "-" %>" disabled />
+                                </div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Effective</div>
+                                    <input class="settings-printing-effective" type="text"
+                                           placeholder="<%= conf.PRINT_URL || "" %>" />
+                                </div>
+                            </div>
+                            <div class="settings-printing-row" data-key="engrave_node" data-legacy="node">
+                                <div class="settings-printing-label">Engrave Node</div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Base</div>
+                                    <input class="settings-printing-base" type="text"
+                                           value="<%= conf.ENGRAVE_NODE || "-" %>" disabled />
+                                </div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Effective</div>
+                                    <input class="settings-printing-effective" type="text"
+                                           placeholder="<%= conf.ENGRAVE_NODE || "" %>" />
+                                </div>
+                            </div>
+                            <div class="settings-printing-row" data-key="engrave_printer" data-legacy="printer">
+                                <div class="settings-printing-label">Engrave Printer</div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Base</div>
+                                    <input class="settings-printing-base" type="text"
+                                           value="<%= conf.ENGRAVE_PRINTER || "-" %>" disabled />
+                                </div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Effective</div>
+                                    <input class="settings-printing-effective" type="text"
+                                           placeholder="<%= conf.ENGRAVE_PRINTER || "" %>" />
+                                </div>
+                            </div>
+                            <div class="settings-printing-row" data-key="receipt_node" data-legacy="node">
+                                <div class="settings-printing-label">Receipt Node</div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Base</div>
+                                    <input class="settings-printing-base" type="text"
+                                           value="<%= conf.PRINT_NODE || "-" %>" disabled />
+                                </div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Effective</div>
+                                    <input class="settings-printing-effective" type="text"
+                                           placeholder="<%= conf.PRINT_NODE || "" %>" />
+                                </div>
+                            </div>
+                            <div class="settings-printing-row" data-key="receipt_printer" data-legacy="printer">
+                                <div class="settings-printing-label">Receipt Printer</div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Base</div>
+                                    <input class="settings-printing-base" type="text"
+                                           value="<%= conf.PRINT_PRINTER || "-" %>" disabled />
+                                </div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Effective</div>
+                                    <input class="settings-printing-effective" type="text"
+                                           placeholder="<%= conf.PRINT_PRINTER || "" %>" />
+                                </div>
+                            </div>
+                            <div class="settings-printing-row" data-key="key" data-secret="1">
+                                <div class="settings-printing-label">Key</div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Base</div>
+                                    <input class="settings-printing-base" type="text"
+                                           value="<%= conf.PRINT_KEY ? "(set)" : "-" %>" disabled />
+                                </div>
+                                <div class="settings-printing-sub">
+                                    <div class="settings-printing-sub-label">Effective</div>
+                                    <input class="settings-printing-effective" type="text"
+                                           placeholder="<%= conf.PRINT_KEY ? "(set)" : "" %>" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

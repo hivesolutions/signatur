@@ -8,7 +8,6 @@ jQuery(document).ready(function() {
     const buttonReport = jQuery(".button-report");
     const buttonReceipt = jQuery(".button-receipt");
     const buttonDownload = jQuery(".button-download");
-    const buttonConfigure = jQuery(".button-configure");
     const viewportOptions = jQuery(".viewport-options");
     const profileInfo = jQuery(".profile-info");
     const profileInfoDimensions = jQuery(".profile-info-dimensions");
@@ -77,6 +76,51 @@ jQuery(document).ready(function() {
     // manager screen form, which owns its editors and tabs
     formManager.profilemanager();
 
+    // wires the settings tab strip so clicking a tab swaps the
+    // visible tab content while keeping a single form submission
+    // for all tabs combined
+    const settingsTabs = jQuery(".settings-tabs > .settings-tab");
+    const settingsTabContents = jQuery(".settings-tab-content");
+    settingsTabs.click(function() {
+        const tab = jQuery(this).attr("data-tab");
+        settingsTabs.removeClass("active");
+        jQuery(this).addClass("active");
+        settingsTabContents.each(function() {
+            const content = jQuery(this);
+            const visible = content.attr("data-tab") === tab;
+            content.css("display", visible ? "" : "none");
+        });
+    });
+
+    // populates the printing inputs on the settings screen with
+    // the effective colony print configuration by resolving the
+    // localStorage overrides against the server side defaults so
+    // operators see the value the application is actually using
+    // for each scenario and can edit it in place
+    jQuery(".settings-printing-row").each(function() {
+        const row = jQuery(this);
+        const key = row.attr("data-key");
+        const legacy = row.attr("data-legacy");
+        const stored = localStorage.getItem(key);
+        const fallback = legacy ? localStorage.getItem(legacy) : null;
+        const override = stored || fallback || "";
+        row.find(".settings-printing-effective").val(override);
+    });
+
+    // persists the printing tab inputs to the matching localStorage
+    // keys when the settings form is submitted, removing the entry
+    // entirely when the input is blank so the server side base value
+    // takes over again instead of an empty string overriding it
+    jQuery(".form-settings").bind("submit", function() {
+        jQuery(".settings-printing-row").each(function() {
+            const row = jQuery(this);
+            const key = row.attr("data-key");
+            const value = (row.find(".settings-printing-effective").val() || "").trim();
+            if (value) localStorage.setItem(key, value);
+            else localStorage.removeItem(key);
+        });
+    });
+
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeInput = jQuery(".font-size-input");
@@ -141,7 +185,6 @@ jQuery(document).ready(function() {
     const signature = jQuery(".signature");
     const modalOverlayError = jQuery(".modal-overlay-error");
     const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
-    const modalOverlayConfig = jQuery(".modal-overlay-config");
     const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
     const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
@@ -209,15 +252,32 @@ jQuery(document).ready(function() {
         const font = element.attr("data-font");
         const textData = body.data("text") || [];
 
-        const printUrl = localStorage.getItem("url");
-        const node = localStorage.getItem("node");
+        // resolves the colony print configuration falling back from
+        // the engrave specific localStorage keys to the legacy
+        // unprefixed ones and finally to the data attribute rendered
+        // by the server side configuration so existing installs
+        // keep working without any reconfiguration
+        const printUrl = localStorage.getItem("url") || element.attr("data-url") || null;
+        const node =
+            localStorage.getItem("engrave_node") ||
+            localStorage.getItem("node") ||
+            element.attr("data-node") ||
+            null;
+        const printer =
+            localStorage.getItem("engrave_printer") ||
+            localStorage.getItem("printer") ||
+            element.attr("data-printer") ||
+            null;
+        const printKey = localStorage.getItem("key") || element.attr("data-key") || null;
 
-        // verifies that the printer is properly configured before
+        // verifies that the engrave configuration is fully set before
         // trying to run the print operation, showing a modal otherwise
-        if (!printUrl || !node) {
+        // so the operator is pointed to the settings screen to fix it
+        if (!printUrl || !node || !printer || !printKey) {
             modalOverlayError.modal(
                 "show",
-                "No printer configured, please set the printer in the console."
+                body.attr("data-message-no-printer") ||
+                    "No printer configured, please set the engrave printer in the settings."
             );
             return;
         }
@@ -227,7 +287,8 @@ jQuery(document).ready(function() {
         if (hasUnsupportedFont(textData)) {
             modalOverlayError.modal(
                 "show",
-                "Cool Emojis Pantograph is not supported for engraving."
+                body.attr("data-message-pantograph") ||
+                    "Cool Emojis Pantograph is not supported for engraving."
             );
             return;
         }
@@ -292,12 +353,6 @@ jQuery(document).ready(function() {
         const svgBase64 = signature.jSignature("getData", "svgbase64");
         formInput.attr("value", svgBase64[1]);
         form.submit();
-    });
-
-    // registers for the click operation on the configure button
-    // that opens the printer configuration modal from the gateway
-    buttonConfigure.click(function() {
-        modalOverlayConfig.modal("show");
     });
 
     // scale factor used to convert mm to pixels for the
@@ -1213,13 +1268,26 @@ jQuery(document).ready(function() {
         // pressing and then references some of its data
         // elements for operation configuration
         const element = jQuery(this);
+
+        // resolves the colony print configuration falling back from
+        // the receipt specific localStorage keys to the legacy
+        // unprefixed ones and finally to the data attribute rendered
+        // by the server side configuration so existing installs
+        // keep working without any reconfiguration
         const printUrl =
             localStorage.getItem("url") ||
             element.attr("data-url") ||
             "https://colony-print.stage.hive.pt";
-        const node = localStorage.getItem("node") || element.attr("data-node") || "default";
+        const node =
+            localStorage.getItem("receipt_node") ||
+            localStorage.getItem("node") ||
+            element.attr("data-node") ||
+            "default";
         const printer =
-            localStorage.getItem("printer") || element.attr("data-printer") || "printer";
+            localStorage.getItem("receipt_printer") ||
+            localStorage.getItem("printer") ||
+            element.attr("data-printer") ||
+            "printer";
         const key = localStorage.getItem("key") || element.attr("data-key") || null;
         const locale = localStorage.getItem("locale") || element.attr("data-locale") || null;
 
@@ -1275,7 +1343,6 @@ jQuery(document).ready(function() {
 
     modalOverlayError.modal();
     modalOverlayConfirm.modal();
-    modalOverlayConfig.modal();
     modalOverlayInspirations.modal();
     modalOverlayInstructions.modal();
     toast.toast();

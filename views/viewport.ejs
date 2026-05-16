@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <%- include("head"); -%>
-    <body class="<%= theme %> <%= viewportMode === 'store' ? 'store-mode' : '' %>" data-theme="<%= theme %>" data-viewport-mode="<%= viewportMode %>" data-master="<%= masterb64 %>">
+    <body class="<%= theme %> <%= viewportMode === 'store' ? 'store-mode' : '' %>" data-theme="<%= theme %>" data-viewport-mode="<%= viewportMode %>" data-master="<%= masterb64 %>" data-message-no-printer="No printer configured, please set the engrave printer in the settings." data-message-pantograph="Cool Emojis Pantograph is not supported for engraving.">
         <div class="header">
             <div class="buttons-left">
                 <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>
@@ -15,7 +15,12 @@
                 <a class="button button-small button-report" href="/report" data-href="/report" title="Report">
                     <ion-icon name="document-text-outline"></ion-icon>
                 </a>
-                <a class="button button-print" data-href="/report">Engrave</a>
+                <a class="button button-print"
+                   data-href="/report"
+                   data-url="<%= conf.PRINT_URL %>"
+                   data-node="<%= conf.ENGRAVE_NODE %>"
+                   data-printer="<%= conf.ENGRAVE_PRINTER %>"
+                   data-key="<%= conf.PRINT_KEY %>">Engrave</a>
             </div>
             <% if (theme === "ldj") { %>
                 <img class="logo" src="/static/images/logo.svg" />
@@ -420,20 +425,33 @@
             </div>
         </div>
         <div class="toast"></div>
-        <div class="modal-overlay modal-overlay-confirm">
-            <div class="modal">
+        <div class="modal-overlay modal-overlay-confirm"
+             data-label-text="Text"
+             data-label-font="Font"
+             data-label-profile="Profile"
+             data-label-viewport="Surface"
+             data-label-font-size="Size"
+             data-label-margins="Margins"
+             data-label-extra-padding="Ext. Pad."
+             data-label-final-viewport="Final"
+             data-label-node="Node"
+             data-label-jig="Jig"
+             data-label-newline="↵"
+             data-label-empty="No text yet — type something on the viewport first."
+             data-label-ready="Ready to engrave on">
+            <div class="modal modal-confirm">
                 <div class="modal-title">Confirm Engraving</div>
+                <div class="modal-subtitle"></div>
                 <div class="modal-preview"></div>
+                <div class="modal-empty-hint"></div>
                 <div class="modal-specs"></div>
                 <div class="modal-options">
-                    <label class="modal-option">
-                        <input class="modal-dry-run" type="checkbox" />
-                        Dry Run
-                    </label>
+                    <input class="modal-dry-run option-chip-input" type="checkbox" id="modal-dry-run" />
+                    <label class="option-chip option-chip-toggle" for="modal-dry-run">Dry run</label>
                 </div>
                 <div class="modal-buttons">
                     <span class="button button-modal-engrave">Engrave</span>
-                    <span class="button button-modal-close">Cancel</span>
+                    <span class="button button-ghost button-modal-close">Cancel</span>
                 </div>
             </div>
         </div>
@@ -441,44 +459,7 @@
             <div class="modal">
                 <div class="modal-message"></div>
                 <div class="modal-buttons">
-                    <span class="button button-modal-configure">Configure</span>
-                    <span class="button button-modal-close">Close</span>
-                </div>
-            </div>
-        </div>
-        <div class="modal-overlay modal-overlay-config">
-            <div class="modal modal-config">
-                <div class="modal-title">Printer Configuration</div>
-                <div class="field field-text">
-                    <label class="name">URL</label>
-                    <div class="value">
-                        <input class="input" type="text" name="url"
-                               placeholder="https://colony-print.stage.hive.pt" />
-                    </div>
-                </div>
-                <div class="field field-text">
-                    <label class="name">Node</label>
-                    <div class="value">
-                        <input class="input" type="text" name="node"
-                               placeholder="node-print" />
-                    </div>
-                </div>
-                <div class="field field-text">
-                    <label class="name">Printer</label>
-                    <div class="value">
-                        <input class="input" type="text" name="printer"
-                               placeholder="printer" />
-                    </div>
-                </div>
-                <div class="field field-text">
-                    <label class="name">Key</label>
-                    <div class="value">
-                        <input class="input" type="text" name="key"
-                               placeholder="secret-key" />
-                    </div>
-                </div>
-                <div class="modal-buttons">
-                    <span class="button button-modal-save">Save</span>
+                    <a class="button button-modal-configure" href="/settings">Configure</a>
                     <span class="button button-modal-close">Close</span>
                 </div>
             </div>

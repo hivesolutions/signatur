@@ -163,6 +163,7 @@ app.get("/settings", (req, res, next) => {
         fullscreen: fullscreen,
         theme: theme,
         locale: locale,
+        conf: lib.conf,
         home: req.session.home === "welcome" ? "welcome" : "gateway",
         showOptions: req.session.show_options !== "0",
         viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
@@ -249,6 +250,7 @@ app.get("/viewport", (req, res, next) => {
     res.render("viewport" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
+        conf: lib.conf,
         master: master,
         masterb64: masterb64,
         options: master[req.session.config.technology] || {},

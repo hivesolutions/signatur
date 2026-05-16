@@ -23,9 +23,7 @@
             const modalPreview = jQuery(".modal-preview", context);
             const modalSpecs = jQuery(".modal-specs", context);
             const buttonClose = jQuery(".button-modal-close", context);
-            const buttonConfigure = jQuery(".button-modal-configure", context);
             const buttonEngrave = jQuery(".button-modal-engrave", context);
-            const buttonSave = jQuery(".button-modal-save", context);
 
             if (action === "show") {
                 modalMessage.text(message);
@@ -44,95 +42,138 @@
             }
 
             // renders the printing specs in the confirmation modal
-            // and shows it for the user to review before engraving
+            // and shows it for the user to review before engraving;
+            // the field labels are read from data attributes on the
+            // overlay so each locale template owns its own copy
             if (action === "confirm") {
                 const specs = message;
+                const labels = {
+                    text: context.attr("data-label-text") || "Text",
+                    font: context.attr("data-label-font") || "Font",
+                    profile: context.attr("data-label-profile") || "Profile",
+                    viewport: context.attr("data-label-viewport") || "Surface",
+                    fontSize: context.attr("data-label-font-size") || "Font size",
+                    margins: context.attr("data-label-margins") || "Margins",
+                    extraPadding: context.attr("data-label-extra-padding") || "Extra padding",
+                    finalViewport: context.attr("data-label-final-viewport") || "Final surface",
+                    node: context.attr("data-label-node") || "Node",
+                    jig: context.attr("data-label-jig") || "Jig",
+                    newline: context.attr("data-label-newline") || "↵",
+                    empty: context.attr("data-label-empty") || "No text yet.",
+                    ready: context.attr("data-label-ready") || "Ready to engrave on"
+                };
+
+                // detects the empty text state so the modal can both
+                // disable the primary action and surface a friendly
+                // hint instead of the raw "(empty)" placeholder
+                const hasMultifont = specs.multifont && specs.multifont.length > 0;
+                const hasText = hasMultifont || (specs.text && specs.text !== "(empty)");
+
+                const buildRow = function(label, value) {
+                    return (
+                        '<div class="modal-spec">' +
+                        '<span class="modal-spec-label">' +
+                        jQuery("<span>").text(label).html() +
+                        "</span>" +
+                        '<span class="modal-spec-value">' +
+                        value +
+                        "</span>" +
+                        "</div>"
+                    );
+                };
+
                 let html = "";
-                if (specs.multifont && specs.multifont.length > 0) {
-                    html += '<div class="modal-spec"><strong>Text:</strong></div>';
+                if (hasMultifont) {
+                    let textHtml = "";
                     for (let index = 0; index < specs.multifont.length; index++) {
                         const entry = specs.multifont[index];
                         const font = entry[0];
                         const value = entry[1];
                         if (value === "\n") {
-                            html += '<div class="modal-spec modal-spec-segment">&crarr;</div>';
+                            textHtml +=
+                                '<span class="modal-spec-segment modal-spec-newline">' +
+                                jQuery("<span>").text(labels.newline).html() +
+                                "</span>";
                             continue;
                         }
-                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "⎵");
+                        const escaped = jQuery("<span>").text(value).html().replace(/ /g, "␣");
                         const fontEscaped = jQuery("<span>").text(font).html();
-                        html +=
-                            '<div class="modal-spec modal-spec-segment">' +
+                        textHtml +=
+                            '<span class="modal-spec-segment">' +
                             '<span class="modal-spec-text">' +
                             escaped +
                             "</span>" +
-                            ' <span class="modal-spec-font">(' +
+                            '<span class="modal-spec-font">' +
                             fontEscaped +
-                            ")</span>" +
-                            "</div>";
+                            "</span>" +
+                            "</span>";
                     }
-                } else {
-                    if (specs.text) {
-                        html +=
-                            '<div class="modal-spec"><strong>Text:</strong> ' +
-                            jQuery("<span>").text(specs.text).html() +
-                            "</div>";
-                    }
+                    html += buildRow(labels.text, textHtml);
+                } else if (specs.text) {
+                    html += buildRow(labels.text, jQuery("<span>").text(specs.text).html());
                 }
                 if (specs.font) {
-                    html +=
-                        '<div class="modal-spec"><strong>Font:</strong> ' +
-                        jQuery("<span>").text(specs.font).html() +
-                        "</div>";
+                    html += buildRow(labels.font, jQuery("<span>").text(specs.font).html());
                 }
                 if (specs.profile) {
-                    html +=
-                        '<div class="modal-spec"><strong>Profile:</strong> ' +
-                        jQuery("<span>").text(specs.profile).html() +
-                        "</div>";
+                    html += buildRow(labels.profile, jQuery("<span>").text(specs.profile).html());
                 }
                 if (specs.viewport) {
-                    html +=
-                        '<div class="modal-spec"><strong>Viewport:</strong> ' +
-                        jQuery("<span>").text(specs.viewport).html() +
-                        "</div>";
+                    html += buildRow(labels.viewport, jQuery("<span>").text(specs.viewport).html());
                 }
                 if (specs.font_size) {
-                    html +=
-                        '<div class="modal-spec"><strong>Font size:</strong> ' +
-                        jQuery("<span>").text(specs.font_size).html() +
-                        "</div>";
+                    html += buildRow(labels.fontSize, jQuery("<span>").text(specs.font_size).html());
                 }
                 if (specs.margins) {
-                    html +=
-                        '<div class="modal-spec"><strong>Margins:</strong> ' +
-                        jQuery("<span>").text(specs.margins).html() +
-                        "</div>";
+                    html += buildRow(labels.margins, jQuery("<span>").text(specs.margins).html());
                 }
                 if (specs.extra_padding) {
-                    html +=
-                        '<div class="modal-spec"><strong>Extra padding:</strong> ' +
-                        jQuery("<span>").text(specs.extra_padding).html() +
-                        "</div>";
+                    html += buildRow(
+                        labels.extraPadding,
+                        jQuery("<span>").text(specs.extra_padding).html()
+                    );
                 }
                 if (specs.final_viewport) {
-                    html +=
-                        '<div class="modal-spec"><strong>Final viewport:</strong> ' +
-                        jQuery("<span>").text(specs.final_viewport).html() +
-                        "</div>";
+                    html += buildRow(
+                        labels.finalViewport,
+                        jQuery("<span>").text(specs.final_viewport).html()
+                    );
                 }
                 if (specs.node) {
-                    html +=
-                        '<div class="modal-spec"><strong>Node:</strong> ' +
-                        jQuery("<span>").text(specs.node).html() +
-                        "</div>";
+                    html += buildRow(labels.node, jQuery("<span>").text(specs.node).html());
                 }
                 if (specs.instructions) {
-                    html +=
-                        '<div class="modal-spec"><strong>Jig:</strong> ' +
-                        jQuery("<span>").text(specs.instructions).html() +
-                        "</div>";
+                    html += buildRow(
+                        labels.jig,
+                        jQuery("<span>").text(specs.instructions).html()
+                    );
                 }
                 modalSpecs.html(html);
+
+                // fills the subtitle with a friendly status line that
+                // names the destination profile when the engraving is
+                // ready to go, falling back to a blank string otherwise
+                const subtitle = jQuery(".modal-subtitle", context);
+                if (hasText && specs.profile) {
+                    subtitle.text(labels.ready + " " + specs.profile);
+                    subtitle.addClass("visible");
+                } else {
+                    subtitle.text("");
+                    subtitle.removeClass("visible");
+                }
+
+                // toggles the empty hint and the disabled state on the
+                // primary action so the operator cannot send a blank
+                // engraving by mistake, restoring both when text exists
+                const emptyHint = jQuery(".modal-empty-hint", context);
+                const engraveButton = jQuery(".button-modal-engrave", context);
+                if (hasText) {
+                    emptyHint.text("").removeClass("visible");
+                    engraveButton.removeClass("disabled");
+                } else {
+                    emptyHint.text(labels.empty).addClass("visible");
+                    engraveButton.addClass("disabled");
+                }
 
                 // clones the viewport preview into the modal so that the
                 // user can visually confirm the engraving layout
@@ -192,27 +233,30 @@
                 dismissModal();
             });
 
-            // registers for the click operation on the configure button
-            // that opens the printer configuration modal
-            buttonConfigure.click(function() {
-                dismissModal(function() {
-                    const configOverlay = jQuery(".modal-overlay-config");
-                    configOverlay.modal("show");
-                });
-            });
-
             // registers for the click operation on the engrave button
             // that performs the actual print submission via colony print
             buttonEngrave.click(async function() {
+                if (jQuery(this).hasClass("disabled")) return;
                 context.removeClass("visible");
 
                 const buttonPrint = jQuery(".button-print");
                 const text = buttonPrint.attr("data-text");
                 const font = buttonPrint.attr("data-font");
                 const multifont = buttonPrint.data("multifont");
-                const printUrl = localStorage.getItem("url");
-                const node = localStorage.getItem("node");
-                const key = localStorage.getItem("key") || null;
+
+                // resolves the colony print configuration falling back from
+                // the engrave specific localStorage keys to the legacy
+                // unprefixed ones and finally to the data attribute rendered
+                // by the server side configuration so existing installs
+                // keep working without any reconfiguration
+                const printUrl =
+                    localStorage.getItem("url") || buttonPrint.attr("data-url") || null;
+                const node =
+                    localStorage.getItem("engrave_node") ||
+                    localStorage.getItem("node") ||
+                    buttonPrint.attr("data-node") ||
+                    null;
+                const key = localStorage.getItem("key") || buttonPrint.attr("data-key") || null;
                 const fontSizeRange = jQuery(".font-size-range");
                 const profileSelect = jQuery(".profile-select");
                 const profileKey = profileSelect.val();
@@ -287,27 +331,6 @@
                     errorOverlay.modal("show", String(err));
                 }
             });
-
-            // registers for the click operation on the save button
-            // that persists the printer configuration to localStorage
-            buttonSave.click(function() {
-                const url = jQuery(".input[name=url]", context).val();
-                const node = jQuery(".input[name=node]", context).val();
-                const printer = jQuery(".input[name=printer]", context).val();
-                const key = jQuery(".input[name=key]", context).val();
-                if (url) localStorage.setItem("url", url);
-                if (node) localStorage.setItem("node", node);
-                if (printer) localStorage.setItem("printer", printer);
-                if (key) localStorage.setItem("key", key);
-                context.removeClass("visible");
-            });
-
-            // populates the configuration fields with the current
-            // values stored in localStorage (if any)
-            jQuery(".input[name=url]", context).val(localStorage.getItem("url") || "");
-            jQuery(".input[name=node]", context).val(localStorage.getItem("node") || "");
-            jQuery(".input[name=printer]", context).val(localStorage.getItem("printer") || "");
-            jQuery(".input[name=key]", context).val(localStorage.getItem("key") || "");
         });
 
         return this;
