@@ -2102,6 +2102,50 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     -webkit-transition-delay: 0.36s;
 }
 
+@media (max-width: 430px) {
+    html, body {
+        overflow: hidden !important;
+    }
+
+    body::before {
+        align-items: center;
+        background-color: #f7f8fb;
+        bottom: 0px;
+        box-sizing: border-box;
+        -o-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -khtml-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        color: #1f2330;
+        content: "Signatur is not designed for mobile devices.\A Please open this page on a desktop or larger screen to continue.";
+        display: flex;
+        font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        justify-content: center;
+        left: 0px;
+        letter-spacing: 0.2px;
+        line-height: 1.5;
+        padding: 48px 32px 48px 32px;
+        position: fixed;
+        right: 0px;
+        text-align: center;
+        top: 0px;
+        white-space: pre-line;
+        z-index: 9999;
+    }
+
+    html:lang(pt) body::before {
+        content: "O Signatur não foi pensado para dispositivos móveis.\A Abra esta página num ecrã maior para continuar.";
+    }
+
+    body.ldj::before {
+        background-color: #faf8fc;
+        color: #1f1430;
+    }
+}
+
 .collapsible > .collapsible-title {
     align-items: center;
     cursor: pointer;
