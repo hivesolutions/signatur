@@ -144,6 +144,12 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     -webkit-outline: none;
     padding: 8px 14px 8px 14px;
     text-transform: uppercase;
+    touch-action: manipulation;
+    -o-touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    -moz-touch-action: manipulation;
+    -khtml-touch-action: manipulation;
+    -webkit-touch-action: manipulation;
     transition: color 0.15s ease, border-color 0.15s ease;
     -o-transition: color 0.15s ease, border-color 0.15s ease;
     -ms-transition: color 0.15s ease, border-color 0.15s ease;

@@ -419,6 +419,12 @@ body.ldj .modal-overlay > .modal > .modal-specs > .modal-spec > .modal-spec-valu
     letter-spacing: 0.6px;
     padding: 6px 14px 6px 14px;
     text-transform: uppercase;
+    touch-action: manipulation;
+    -o-touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    -moz-touch-action: manipulation;
+    -khtml-touch-action: manipulation;
+    -webkit-touch-action: manipulation;
     transition: background-color 0.15s ease, color 0.15s ease;
     -o-transition: background-color 0.15s ease, color 0.15s ease;
     -ms-transition: background-color 0.15s ease, color 0.15s ease;
