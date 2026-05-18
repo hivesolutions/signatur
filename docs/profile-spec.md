@@ -27,6 +27,7 @@ PNG background assets live alongside the JSON files under `static/profiles/` and
 | `orientation`   | string  |   yes    | One of `portrait`, `landscape`.                                                       |
 | `shape`         | string  |    no    | One of `rectangle`, `circle`, `heart`. Drives boundary rendering.                     |
 | `background`    | string  |    no    | PNG filename under `static/profiles/` used as the preview background.                 |
+| `sku`           | string  |    no    | Stock keeping unit code displayed alongside the product name on the welcome catalog.  |
 | `default_font`  | string  |    no    | Font name (e.g. `Helvetica 4L`) auto-selected on initial load when no font is active. |
 | `enabled`       | boolean |    no    | When `false`, the profile is hidden from the catalog.                                 |
 | `inspirations`  | string  |    no    | Filename of an inspirations JSON file (without the `.json` extension is not enough).  |

@@ -87,6 +87,13 @@
                 name.text(profile.name);
                 body.append(name);
 
+                if (profile.sku) {
+                    const sku = jQuery("<div></div>");
+                    sku.addClass("catalog-card-sku");
+                    sku.text(profile.sku);
+                    body.append(sku);
+                }
+
                 const meta = jQuery("<div></div>");
                 meta.addClass("catalog-card-meta");
                 const unit = profile.unit || "mm";

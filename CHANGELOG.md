@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Optional `sku` field on the profile schema that, when present, is rendered as quiet monospaced metadata between the product name and the dimension pill on every welcome catalog card so operators can identify the matching stock keeping unit at a glance; the field is validated as an optional string in `lib/util/profile.js` and documented in [docs/profile-spec.md](docs/profile-spec.md) ([#30](https://github.com/hivesolutions/signatur/issues/30))
 * `button-tiny` size variant on the `.button` component mirroring the existing `button-small` shape at a smaller 28×28 scale with a 9px label, so very small affordances like the `Instructions` link on the viewport options panel can use the established button language instead of a one off styled link
 
 ### Changed

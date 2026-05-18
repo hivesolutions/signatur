@@ -1886,6 +1886,18 @@ body.ldj .viewport > .main-container > .fonts-container > .font.selected:hover {
     word-break: break-word;
 }
 
+.welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-sku {
+    color: #9aa0ad;
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    margin: 0px 0px 0px 0px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
     align-self: flex-start;
     background-color: #f4f5f8;
@@ -2131,6 +2143,10 @@ body.ldj .welcome .catalog > .catalog-card > .catalog-card-image {
 
 body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
     color: #1f1430;
+}
+
+body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-sku {
+    color: #9b87c2;
 }
 
 body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
