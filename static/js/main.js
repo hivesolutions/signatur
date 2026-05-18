@@ -788,9 +788,13 @@ jQuery(document).ready(function() {
     // helper with no unit suffix since the line width value is a
     // raw stroke pixel count in the unzoomed coordinate space
     const refreshCalligraphyThicknessBubble = function() {
-        refreshSliderBubble(calligraphyThicknessRange, calligraphyThicknessBubble, function(value) {
-            return value;
-        });
+        refreshSliderBubble(
+            calligraphyThicknessRange,
+            calligraphyThicknessBubble,
+            function(value) {
+                return value;
+            }
+        );
     };
 
     // refreshes the active state of the calligraphy thickness preset
@@ -893,8 +897,12 @@ jQuery(document).ready(function() {
     };
 
     // refreshes the viewport and controls based on the
-    // currently selected profile and variant combination
-    const refreshProfile = function() {
+    // currently selected profile and variant combination,
+    // optionally preserving the calligraphy canvas when only
+    // the variant changed within the same profile so the user
+    // does not lose their drawing while flipping between
+    // padding, background, or font size overrides
+    const refreshProfile = function(variantOnly) {
         if (currentProfile) {
             populateMargins(currentProfile);
             const defaultZoom = currentProfile.preview ? currentProfile.preview.zoom || 1 : 1;
@@ -921,17 +929,27 @@ jQuery(document).ready(function() {
         }
         // seeds the calligraphy thickness slider with the profile
         // line width so the slider starts at the configured default
-        // for the current profile while keeping the value editable
-        const defaultThickness = currentProfile && currentProfile.calligraphy
-            ? currentProfile.calligraphy.line_width || 2
-            : 2;
-        calligraphyThicknessRange.val(defaultThickness);
-        refreshCalligraphyThicknessBubble();
-        refreshCalligraphyThicknessPresets();
+        // for the current profile while keeping the value editable,
+        // skipping the seed when only the variant changed so the
+        // user does not lose their chosen thickness
+        if (!variantOnly) {
+            const defaultThickness =
+                currentProfile && currentProfile.calligraphy
+                    ? currentProfile.calligraphy.line_width || 2
+                    : 2;
+            calligraphyThicknessRange.val(defaultThickness);
+            refreshCalligraphyThicknessBubble();
+            refreshCalligraphyThicknessPresets();
+        }
         // resets the calligraphy canvas when switching profiles
-        // since the canvas dimensions change with the profile
-        calligraphyContainer.calligraphy("reset");
-        body.data("calligraphy", null);
+        // since the canvas dimensions change with the profile,
+        // skipping the reset when only the variant changed so the
+        // strokes survive the variant switch and are scaled by the
+        // plugin to fit the new safe area dimensions
+        if (!variantOnly) {
+            calligraphyContainer.calligraphy("reset");
+            body.data("calligraphy", null);
+        }
 
         const textConfig = currentProfile ? currentProfile.text || {} : {};
         const maxLines = currentProfile ? textConfig.max_lines || 0 : 1;
@@ -966,10 +984,15 @@ jQuery(document).ready(function() {
 
     // registers for the change event from the profile selector
     // plugin to update the viewport and controls when the profile
-    // or variant selection changes
-    profileSelector.bind("profile", function(event, profile) {
+    // or variant selection changes, tracking the previous profile
+    // key so the calligraphy canvas can preserve its strokes when
+    // only the variant changes within the same profile
+    let previousProfileKey = null;
+    profileSelector.bind("profile", function(event, profile, baseProfile, key) {
+        const variantOnly = previousProfileKey !== null && previousProfileKey === key;
+        previousProfileKey = key;
         currentProfile = profile;
-        refreshProfile();
+        refreshProfile(variantOnly);
         updateUrl("profile");
     });
 
