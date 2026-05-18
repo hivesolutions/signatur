@@ -135,6 +135,203 @@ const countLines = function(text) {
 
 (function(jQuery) {
     /**
+     * Calligraphy plugin that manages a jSignature drawing
+     * canvas inside the viewport preview for freehand engraving.
+     *
+     * Operates on a .calligraphy-container element positioned
+     * inside the viewport preview, constrained to the safe
+     * drawable area defined by the profile padding.
+     *
+     * Actions:
+     *   "init"  - initializes or reinitializes the jSignature
+     *             canvas with the given width, height, line width,
+     *             and optional resolution multiplier that upscales
+     *             the canvas backing store for sharper strokes
+     *   "reset" - clears the current drawing and resets the canvas
+     *   "undo"  - removes the last stroke from the drawing
+     *   "data"  - returns the current drawing as SVG base64 data
+     *             or null if the canvas is empty
+     *
+     * Events:
+     *   "calligraphy" - triggered when the drawing content changes,
+     *                   passing a boolean indicating if data exists
+     */
+    jQuery.fn.calligraphy = function(action, options) {
+        const elements = jQuery(this);
+
+        if (action === "data") {
+            const context = elements.first();
+            const initialized = context.data("_calligraphy_initialized");
+            if (!initialized) return null;
+            const data = context.jSignature("getData", "svgbase64");
+            const hasData = Boolean(data && data[1]);
+            return hasData ? data : null;
+        }
+
+        elements.each(function() {
+            const context = jQuery(this);
+
+            if (action === "init") {
+                const width = options.width;
+                const height = options.height;
+                const lineWidth = options.lineWidth || 2;
+                const resolution = options.resolution || 1;
+
+                // captures the existing stroke data and the canvas
+                // dimensions that produced it so the previous drawing
+                // can be replayed after the canvas is recreated at the
+                // new width and height, scaling the stroke coordinates
+                // to keep the shape consistent across variant, zoom,
+                // and thickness changes; the stroke data lives on the
+                // canvas element via the `jSignature.data` jQuery data
+                // key set by the plugin during initialization
+                let previousData = null;
+                let previousWidth = 0;
+                let previousHeight = 0;
+                if (context.data("_calligraphy_initialized")) {
+                    const previousCanvas = context.find("canvas");
+                    previousData =
+                        previousCanvas.length > 0
+                            ? previousCanvas.data("jSignature.data") || null
+                            : null;
+                    previousWidth = context.data("_calligraphy_width") || 0;
+                    previousHeight = context.data("_calligraphy_height") || 0;
+                    context.empty();
+                    context.data("_calligraphy_initialized", false);
+                }
+                const restoredData = scaleStrokes(
+                    previousData,
+                    previousWidth,
+                    previousHeight,
+                    width,
+                    height
+                );
+
+                context.css({
+                    width: width + "px",
+                    height: height + "px"
+                });
+
+                context.jSignature({
+                    width: width,
+                    height: height,
+                    lineWidth: lineWidth,
+                    UndoButton: true,
+                    color: "#000000",
+                    "background-color": "transparent"
+                });
+
+                context.data("_calligraphy_initialized", true);
+                context.data("_calligraphy_width", width);
+                context.data("_calligraphy_height", height);
+
+                // upscales the canvas backing store while keeping the
+                // css width and height pinned to the original values
+                // so that strokes render at the higher pixel density
+                // without breaking the jQuery offset based coordinate
+                // math jSignature uses for pointer to canvas mapping;
+                // the 2d context is pre scaled so the existing draw
+                // calls hit the right bitmap coordinates and the line
+                // width compensates for the extra device pixels, and
+                // the stroke style settings jSignature configured on
+                // the context are reapplied since assigning to the
+                // canvas width resets every 2d context property
+                if (resolution > 1) {
+                    const canvas = context.find("canvas").get(0);
+                    if (canvas) {
+                        canvas.width = Math.round(width * resolution);
+                        canvas.height = Math.round(height * resolution);
+                        canvas.style.width = width + "px";
+                        canvas.style.height = height + "px";
+                        const ctx = canvas.getContext("2d");
+                        if (ctx) {
+                            ctx.scale(resolution, resolution);
+                            ctx.lineWidth = lineWidth;
+                            ctx.lineCap = "round";
+                            ctx.lineJoin = "round";
+                            ctx.strokeStyle = "#000000";
+                        }
+                    }
+                }
+
+                // restores the previously captured strokes onto the
+                // newly created canvas so the drawing survives the
+                // re-initialization triggered by variant, zoom, and
+                // thickness changes; setData runs after the canvas
+                // backing store has been resized for the high pixel
+                // density rendering so the strokes paint at the same
+                // resolution as new strokes drawn afterwards
+                if (restoredData) {
+                    context.jSignature("setData", restoredData, "native");
+                }
+
+                // hides the jSignature undo button since we
+                // provide our own undo control in the options panel
+                context.find("input[type=button]").hide();
+
+                // listens for changes in the drawing so that
+                // the calligraphy event can be forwarded to consumers,
+                // unbinding any previous handler first so the listener
+                // does not stack across successive re-initializations
+                context.off("change.calligraphy");
+                context.on("change.calligraphy", function() {
+                    const data = context.jSignature("getData", "base30");
+                    const hasData = Boolean(data && data[1]);
+                    context.triggerHandler("calligraphy", [hasData]);
+                });
+                return;
+            }
+
+            if (action === "reset") {
+                if (context.data("_calligraphy_initialized")) {
+                    context.jSignature("reset");
+                }
+                return;
+            }
+
+            if (action === "undo") {
+                if (context.data("_calligraphy_initialized")) {
+                    // triggers a click on the hidden jSignature
+                    // undo button to remove the last stroke
+                    context.find("input[type=button]").click();
+                }
+            }
+        });
+
+        return this;
+    };
+
+    /**
+     * Scales a jSignature stroke data array from a previous canvas
+     * size to a new canvas size so the drawing keeps the same shape
+     * across resize operations, returning a fresh array so the
+     * caller can pass it back through the constructor data option.
+     *
+     * @param {Array} data The previous stroke data array.
+     * @param {Number} prevWidth The width of the canvas that produced the data.
+     * @param {Number} prevHeight The height of the canvas that produced the data.
+     * @param {Number} nextWidth The width of the canvas being created.
+     * @param {Number} nextHeight The height of the canvas being created.
+     * @returns {Array} A scaled copy of the stroke data, or null when there is nothing to restore.
+     */
+    const scaleStrokes = function(data, prevWidth, prevHeight, nextWidth, nextHeight) {
+        if (!data || data.length === 0) return null;
+        if (!prevWidth || !prevHeight) return null;
+        const scaleX = nextWidth / prevWidth;
+        const scaleY = nextHeight / prevHeight;
+        const result = [];
+        for (const stroke of data) {
+            const scaled = { x: [], y: [] };
+            if (stroke.x) for (const value of stroke.x) scaled.x.push(value * scaleX);
+            if (stroke.y) for (const value of stroke.y) scaled.y.push(value * scaleY);
+            result.push(scaled);
+        }
+        return result;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    /**
      * Collapsible panel plugin that toggles a panel between
      * expanded and minimized states using a smooth max-height
      * transition on the body element.
@@ -2930,6 +3127,7 @@ const countLines = function(text) {
             const context = jQuery(this);
             const svg = jQuery(".viewport-svg", context);
             const container = jQuery(".viewer-container", context);
+            const calligraphyContainer = jQuery(".calligraphy-container", context);
             const rulerHorizontal = jQuery(".ruler-horizontal", context);
             const rulerVertical = jQuery(".ruler-vertical", context);
 
@@ -3031,6 +3229,13 @@ const countLines = function(text) {
                     padding: "0px",
                     border: "none",
                     "min-width": "0px"
+                });
+                calligraphyContainer.css({
+                    position: "absolute",
+                    left: safeX + "px",
+                    top: safeY + "px",
+                    width: safeW + "px",
+                    height: safeH + "px"
                 });
 
                 // applies the background image behind the viewport using
@@ -3503,6 +3708,7 @@ jQuery(document).ready(function() {
     const crosshairMode = jQuery(".crosshair-mode");
     const viewportOptionsCrosshair = jQuery(".viewport-options-crosshair");
     const keyboardMode = jQuery(".keyboard-mode");
+    const viewportOptionsKeyboard = jQuery(".viewport-options-keyboard");
     const guidelinesMode = jQuery(".guidelines-mode");
     const viewportOptionsGuidelines = jQuery(".viewport-options-guidelines");
     const caretMode = jQuery(".caret-mode");
@@ -3550,6 +3756,16 @@ jQuery(document).ready(function() {
         }, 250);
     };
     const viewportContainer = jQuery(".viewer-container");
+    const calligraphyContainer = jQuery(".calligraphy-container");
+    const calligraphyMode = jQuery(".calligraphy-mode");
+    const calligraphyModeContainer = jQuery(".calligraphy-mode-container");
+    const calligraphyControls = jQuery(".calligraphy-controls");
+    const calligraphyUndo = jQuery(".calligraphy-undo");
+    const calligraphyClear = jQuery(".calligraphy-clear");
+    const calligraphyThicknessContainer = jQuery(".calligraphy-thickness-container");
+    const calligraphyThicknessRange = jQuery(".calligraphy-thickness-range");
+    const calligraphyThicknessPresets = jQuery(".calligraphy-thickness-preset");
+    const calligraphyThicknessBubble = jQuery(".calligraphy-thickness-bubble");
     const formConsole = jQuery(".form-console");
     const inputViewport = jQuery(".input-viewport");
     const signature = jQuery(".signature");
@@ -3856,6 +4072,13 @@ jQuery(document).ready(function() {
                 crosshairMode.prop("checked", false).trigger("change");
                 guidelinesMode.prop("checked", false).trigger("change");
             }
+
+            // restores the calligraphy mode from the URL
+            // query parameters if it was previously saved
+            const urlCalligraphy = urlParams.get("calligraphy");
+            if (urlCalligraphy === "1" && currentProfile) {
+                calligraphyMode.prop("checked", true).trigger("change");
+            }
             restoring = false;
             updateUrl("restore");
         } catch (err) {
@@ -4133,6 +4356,30 @@ jQuery(document).ready(function() {
         });
     };
 
+    // refreshes the calligraphy thickness bubble using the slider
+    // helper with no unit suffix since the line width value is a
+    // raw stroke pixel count in the unzoomed coordinate space
+    const refreshCalligraphyThicknessBubble = function() {
+        refreshSliderBubble(
+            calligraphyThicknessRange,
+            calligraphyThicknessBubble,
+            function(value) {
+                return value;
+            }
+        );
+    };
+
+    // refreshes the active state of the calligraphy thickness preset
+    // chips so the chip that matches the current value is highlighted
+    const refreshCalligraphyThicknessPresets = function() {
+        calligraphyThicknessPresets.removeClass("active");
+        const value = parseFloat(calligraphyThicknessRange.val());
+        calligraphyThicknessPresets.each(function() {
+            const preset = parseFloat(jQuery(this).attr("data-preset"));
+            if (preset === value) jQuery(this).addClass("active");
+        });
+    };
+
     // updates the font size controls based on the selected
     // profile configuration for manual or automatic mode
     const updateFontSizeControls = function(profile) {
@@ -4222,8 +4469,12 @@ jQuery(document).ready(function() {
     };
 
     // refreshes the viewport and controls based on the
-    // currently selected profile and variant combination
-    const refreshProfile = function() {
+    // currently selected profile and variant combination,
+    // optionally preserving the calligraphy canvas when only
+    // the variant changed within the same profile so the user
+    // does not lose their drawing while flipping between
+    // padding, background, or font size overrides
+    const refreshProfile = function(variantOnly) {
         if (currentProfile) {
             populateMargins(currentProfile);
             const defaultZoom = currentProfile.preview ? currentProfile.preview.zoom || 1 : 1;
@@ -4235,6 +4486,7 @@ jQuery(document).ready(function() {
             viewportOptionsCaret.addClass("visible");
             zoomContainer.addClass("visible");
             positionContainer.addClass("visible");
+            calligraphyModeContainer.addClass("visible");
         } else {
             marginContainer.removeClass("visible");
             viewportOptionsRulers.removeClass("visible");
@@ -4243,7 +4495,34 @@ jQuery(document).ready(function() {
             viewportOptionsCaret.removeClass("visible");
             zoomContainer.removeClass("visible");
             positionContainer.removeClass("visible");
+            calligraphyModeContainer.removeClass("visible");
+            calligraphyControls.removeClass("visible");
+            calligraphyThicknessContainer.removeClass("visible");
         }
+        // seeds the calligraphy thickness slider with the profile
+        // line width so the slider starts at the configured default
+        // for the current profile while keeping the value editable,
+        // skipping the seed when only the variant changed so the
+        // user does not lose their chosen thickness
+        if (!variantOnly) {
+            const defaultThickness =
+                currentProfile && currentProfile.calligraphy
+                    ? currentProfile.calligraphy.line_width || 2
+                    : 2;
+            calligraphyThicknessRange.val(defaultThickness);
+            refreshCalligraphyThicknessBubble();
+            refreshCalligraphyThicknessPresets();
+        }
+        // resets the calligraphy canvas when switching profiles
+        // since the canvas dimensions change with the profile,
+        // skipping the reset when only the variant changed so the
+        // strokes survive the variant switch and are scaled by the
+        // plugin to fit the new safe area dimensions
+        if (!variantOnly) {
+            calligraphyContainer.calligraphy("reset");
+            body.data("calligraphy", null);
+        }
+
         const textConfig = currentProfile ? currentProfile.text || {} : {};
         const maxLines = currentProfile ? textConfig.max_lines || 0 : 1;
         viewportContainer.texteditor("option", { maxLines: maxLines });
@@ -4255,6 +4534,12 @@ jQuery(document).ready(function() {
         applyFontSize();
         inspirationPanel.inspirationpanel("update", currentProfile);
         applyDefaultFont(currentProfile);
+
+        // re-initializes the calligraphy canvas if the mode
+        // is still active after the profile switch completes
+        if (calligraphyMode.prop("checked") && currentProfile) {
+            initCalligraphy();
+        }
     };
 
     // applies the profile's default font on initial load by clicking
@@ -4271,10 +4556,15 @@ jQuery(document).ready(function() {
 
     // registers for the change event from the profile selector
     // plugin to update the viewport and controls when the profile
-    // or variant selection changes
-    profileSelector.bind("profile", function(event, profile) {
+    // or variant selection changes, tracking the previous profile
+    // key so the calligraphy canvas can preserve its strokes when
+    // only the variant changes within the same profile
+    let previousProfileKey = null;
+    profileSelector.bind("profile", function(event, profile, baseProfile, key) {
+        const variantOnly = previousProfileKey !== null && previousProfileKey === key;
+        previousProfileKey = key;
         currentProfile = profile;
-        refreshProfile();
+        refreshProfile(variantOnly);
         updateUrl("profile");
     });
 
@@ -4384,6 +4674,35 @@ jQuery(document).ready(function() {
     });
     zoomRange.bind("mouseup touchend touchcancel blur", function() {
         zoomContainer.removeClass("slider-dragging");
+    });
+
+    // registers for the change in the calligraphy thickness slider
+    // to reinitialize the canvas with the new line width so the
+    // next stroke uses the updated value; the previous strokes
+    // keep their original width since jSignature stores it inline
+    calligraphyThicknessRange.bind("input", function() {
+        refreshCalligraphyThicknessBubble();
+        refreshCalligraphyThicknessPresets();
+        if (calligraphyMode.prop("checked")) initCalligraphy();
+    });
+
+    // registers for the click on each calligraphy thickness preset
+    // chip so the slider jumps to the preset value and routes the
+    // change through the existing input handler
+    calligraphyThicknessPresets.click(function() {
+        const value = parseFloat(jQuery(this).attr("data-preset"));
+        if (isNaN(value)) return;
+        calligraphyThicknessRange.val(value).trigger("input");
+    });
+
+    // shows the bubble while the user is actively interacting with
+    // the calligraphy thickness slider so the live value is visible
+    // above the thumb, and hides it again when the interaction ends
+    calligraphyThicknessRange.bind("mousedown touchstart focus", function() {
+        calligraphyThicknessContainer.addClass("slider-dragging");
+    });
+    calligraphyThicknessRange.bind("mouseup touchend touchcancel blur", function() {
+        calligraphyThicknessContainer.removeClass("slider-dragging");
     });
 
     // registers for the change in the margin input fields
@@ -4525,6 +4844,116 @@ jQuery(document).ready(function() {
         event.stopPropagation();
         event.preventDefault();
         exitPreviewMode();
+    });
+
+    // upscale factor applied on top of the device pixel ratio so
+    // the calligraphy canvas backing store renders strokes crisply
+    // even when the captured svg payload is later rendered at a
+    // larger physical size by the engraver
+    const CALLIGRAPHY_RESOLUTION = 2;
+
+    // initializes the calligraphy canvas inside the viewport
+    // preview at the zoomed safe area size with a counter zoom
+    // on the container so the visual placement stays unchanged
+    // while jSignature operates in the unzoomed coordinate space;
+    // this sidesteps jQuery offset not accounting for the parent
+    // css zoom on iOS Safari which would otherwise misalign the
+    // strokes against the magnified touch coordinates
+    const initCalligraphy = function() {
+        if (!currentProfile) return;
+        const padding = getMargins();
+        const safeW = (currentProfile.width - padding.left - padding.right) * VIEWPORT_SCALE;
+        const safeH = (currentProfile.height - padding.top - padding.bottom) * VIEWPORT_SCALE;
+        const safeX = padding.left * VIEWPORT_SCALE;
+        const safeY = padding.top * VIEWPORT_SCALE;
+        const zoom = parseFloat(zoomRange.val()) || 1;
+        const dpr = window.devicePixelRatio || 1;
+        const lineWidth = parseFloat(calligraphyThicknessRange.val()) || 2;
+        calligraphyContainer.calligraphy("init", {
+            width: Math.round(safeW * zoom),
+            height: Math.round(safeH * zoom),
+            lineWidth: lineWidth * zoom,
+            resolution: dpr * CALLIGRAPHY_RESOLUTION
+        });
+        calligraphyContainer.css({
+            zoom: 1 / zoom,
+            left: safeX * zoom + "px",
+            top: safeY * zoom + "px"
+        });
+    };
+
+    // registers for the change in the calligraphy mode checkbox
+    // to toggle between text editing and calligraphy drawing
+    calligraphyMode.bind("change", function() {
+        const enabled = calligraphyMode.prop("checked");
+        if (enabled) {
+            viewportPreview.addClass("calligraphy-active");
+            fontsContainer.hide();
+            keyboardContainer.hide();
+            emojisContainer.hide();
+            emojispContainer.hide();
+            fontSizeContainer.removeClass("visible");
+            viewportOptionsKeyboard.hide();
+            viewportOptionsCaret.hide();
+            calligraphyControls.addClass("visible");
+            calligraphyThicknessContainer.addClass("visible");
+            zoomRange.prop("disabled", true);
+            initCalligraphy();
+            body.data("calligraphy", null);
+        } else {
+            viewportPreview.removeClass("calligraphy-active");
+            calligraphyControls.removeClass("visible");
+            calligraphyThicknessContainer.removeClass("visible");
+            viewportOptionsKeyboard.show();
+            viewportOptionsCaret.show();
+            zoomRange.prop("disabled", false);
+            calligraphyContainer.calligraphy("reset");
+            body.data("calligraphy", null);
+            const font = body.data("font");
+            if (font) {
+                fontsContainer.show();
+                const showKeyboard = keyboardMode.prop("checked");
+                if (showKeyboard) {
+                    if (font === "Cool Emojis") {
+                        emojisContainer.show();
+                    } else if (font === "Cool Emojis Pantograph") {
+                        emojispContainer.show();
+                    } else {
+                        keyboardContainer.show();
+                    }
+                }
+            } else {
+                fontsContainer.show();
+            }
+            if (currentProfile && currentProfile.font_size) {
+                fontSizeContainer.addClass("visible");
+            }
+        }
+        updateUrl("calligraphy");
+    });
+
+    // registers for the change event from the calligraphy
+    // canvas to store the SVG data in the body element
+    calligraphyContainer.bind("calligraphy", function(event, hasData) {
+        if (hasData) {
+            const data = calligraphyContainer.calligraphy("data");
+            body.data("calligraphy", data);
+        } else {
+            body.data("calligraphy", null);
+        }
+    });
+
+    // registers for the click on the calligraphy undo button
+    // to remove the last stroke from the drawing
+    calligraphyUndo.click(function() {
+        calligraphyContainer.calligraphy("undo");
+    });
+
+    // registers for the click on the calligraphy clear button
+    // to reset the entire drawing canvas
+    calligraphyClear.click(function() {
+        calligraphyContainer.calligraphy("reset");
+        body.data("calligraphy", null);
     });
 
     // registers for the mouse move event on the viewport preview
@@ -4749,6 +5178,10 @@ jQuery(document).ready(function() {
             if (!keyboardMode.prop("checked")) params.set("keyboard", "0");
             if (!guidelinesMode.prop("checked")) params.set("guidelines", "0");
             if (!caretMode.prop("checked")) params.set("caret", "0");
+        }
+        if (action === "calligraphy" || action === "restore") {
+            params.delete("calligraphy");
+            if (calligraphyMode.prop("checked")) params.set("calligraphy", "1");
         }
         params.delete("fullscreen");
         params.delete("theme");

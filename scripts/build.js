@@ -16,6 +16,7 @@ const CSS_FILES = [
     "css/store-mode.css",
     "css/preview-mode.css",
     "css/mobile-block.css",
+    "css/plugins/calligraphy.css",
     "css/plugins/collapsible.css",
     "css/plugins/console.css",
     "css/plugins/inspiration.css",
@@ -28,6 +29,7 @@ const CSS_FILES = [
 
 const JS_FILES = [
     "js/util.js",
+    "js/plugins/calligraphy.js",
     "js/plugins/collapsible.js",
     "js/plugins/console.js",
     "js/plugins/fonts.js",
