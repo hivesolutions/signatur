@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* `button-tiny` size variant on the `.button` component mirroring the existing `button-small` shape at a smaller 28×28 scale with a 9px label, so very small affordances like the `Instructions` link on the viewport options panel can use the established button language instead of a one off styled link
+
 ### Changed
 
 * Special character keys on the on screen keyboard (`Backspace`, `Shift`, `Space`, `Return`) now render the official Lucide `delete`, `arrow-big-up`, `space`, and `corner-down-left` SVG icons inline so they look identical across every platform regardless of the system font's rendering of the matching Unicode codepoints; the keyboard plugin reads the dispatched value from the `data-value` attribute first and falls back to the element text so the existing downstream `keyHandler` switch keeps working unchanged, and the inline SVGs share a consistent `viewBox`, stroke weight and round line caps so they read as a single visual family

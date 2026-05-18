@@ -201,6 +201,18 @@ body {
     width: 38px;
 }
 
+.button.button-tiny {
+    align-items: center;
+    display: inline-flex;
+    font-size: 9px;
+    height: 28px;
+    justify-content: center;
+    line-height: 28px;
+    min-width: 28px;
+    padding: 0px 0px 0px 0px;
+    width: 28px;
+}
+
 .header .button {
     min-width: 96px;
     padding: 0px 16px 0px 16px;
@@ -208,6 +220,11 @@ body {
 
 .header .button.button-small {
     min-width: 38px;
+    padding: 0px 0px 0px 0px;
+}
+
+.header .button.button-tiny {
+    min-width: 28px;
     padding: 0px 0px 0px 0px;
 }
 
@@ -1110,17 +1127,14 @@ body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-tr
 }
 
 .viewport-options > .viewport-options-body > .viewport-options-instructions {
-    color: #1f2330;
-    cursor: pointer;
     display: none;
-    font-size: 12px;
-    font-weight: 600;
-    margin-top: 10px;
-    text-decoration: none;
+    margin-top: 12px;
+    padding: 0px 12px 0px 12px;
+    width: auto;
 }
 
 .viewport-options > .viewport-options-body > .viewport-options-instructions.visible {
-    display: inline-block;
+    display: inline-flex;
 }
 
 .viewport > .main-container > .viewport-preview {

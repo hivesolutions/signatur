@@ -576,17 +576,14 @@ body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-tr
 }
 
 .viewport-options > .viewport-options-body > .viewport-options-instructions {
-    color: #1f2330;
-    cursor: pointer;
     display: none;
-    font-size: 12px;
-    font-weight: 600;
-    margin-top: 10px;
-    text-decoration: none;
+    margin-top: 12px;
+    padding: 0px 12px 0px 12px;
+    width: auto;
 }
 
 .viewport-options > .viewport-options-body > .viewport-options-instructions.visible {
-    display: inline-block;
+    display: inline-flex;
 }
 
 .viewport > .main-container > .viewport-preview {
