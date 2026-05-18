@@ -613,6 +613,10 @@ body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-tr
     position: relative;
 }
 
+body.rulers-off .viewport > .main-container > .viewport-preview.profile-active {
+    margin: 8px auto 4px auto;
+}
+
 .viewport > .main-container > .viewport-preview > .viewport-svg {
     display: none;
     margin: 0px auto 0px auto;

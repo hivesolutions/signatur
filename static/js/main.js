@@ -445,6 +445,7 @@ jQuery(document).ready(function() {
                 rulersMode.prop("checked", false);
                 rulerHorizontal.hide();
                 rulerVertical.hide();
+                body.addClass("rulers-off");
             }
 
             // restores the crosshair visibility from the URL
@@ -981,9 +982,11 @@ jQuery(document).ready(function() {
         if (showRulers) {
             rulerHorizontal.show();
             rulerVertical.show();
+            body.removeClass("rulers-off");
         } else {
             rulerHorizontal.hide();
             rulerVertical.hide();
+            body.addClass("rulers-off");
         }
         updateUrl("toggle");
     });

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* The viewport preview reclaims about 52px of vertical space when the rulers are toggled off: the body now carries a `rulers-off` class that collapses the preview's top reservation from 48px to 8px and the bottom gap from 16px to 4px, so the chrome-free vertical room recovered from the hidden ruler labels feeds straight back to the editing surface instead of sitting empty; the class is flipped through the existing rulers change handler and seeded on initial render from the URL restored value so there is no flash on first paint
+
 ### Added
 
 * Optional `sku` field on the profile schema that, when present, is rendered as quiet monospaced metadata between the product name and the dimension pill on every welcome catalog card so operators can identify the matching stock keeping unit at a glance; the field is validated as an optional string in `lib/util/profile.js` and documented in [docs/profile-spec.md](docs/profile-spec.md) ([#30](https://github.com/hivesolutions/signatur/issues/30))
