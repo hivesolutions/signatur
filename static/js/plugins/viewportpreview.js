@@ -145,10 +145,7 @@
                         backgroundImage = jQuery('<img class="viewport-background" />');
                         context.prepend(backgroundImage);
                     }
-                    backgroundImage.attr(
-                        "src",
-                        "/static/profiles/" + profile.background
-                    );
+                    backgroundImage.attr("src", "/static/profiles/" + profile.background);
                     backgroundImage.css({
                         height: height + "px",
                         left: "0px",

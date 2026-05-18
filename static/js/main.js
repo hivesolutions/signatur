@@ -897,9 +897,7 @@ jQuery(document).ready(function() {
         if (!profile || !profile.default_font) return;
         if (body.data("font")) return;
         if (urlParams.get("font")) return;
-        const fontElement = fontsContainer.find(
-            '.font[data-font="' + profile.default_font + '"]'
-        );
+        const fontElement = fontsContainer.find('.font[data-font="' + profile.default_font + '"]');
         if (fontElement.length > 0) fontElement.click();
     };
 
@@ -1084,17 +1082,11 @@ jQuery(document).ready(function() {
         updateUrl("toggle");
     });
 
-    // tracks the previous visibility state of the visual toggles
-    // and the previous zoom level so exiting preview mode restores
-    // exactly the configuration the user had before entering
+    // tracks the previous visibility state of the visual toggles so
+    // exiting preview mode restores exactly the configuration the
+    // user had before entering
     let previewModeSnapshot = null;
-    let previewModeZoom = null;
-    const previewToggles = [
-        rulersMode,
-        crosshairMode,
-        guidelinesMode,
-        caretMode
-    ];
+    const previewToggles = [rulersMode, crosshairMode, guidelinesMode, caretMode];
 
     // enters preview mode by flipping the body class, hiding the
     // visual toggles through their own change handlers so the URL
@@ -1119,7 +1111,6 @@ jQuery(document).ready(function() {
         } finally {
             restoring = wasRestoring;
         }
-        previewModeZoom = parseFloat(zoomRange.val()) || 1;
         body.addClass("preview-mode");
     };
 
@@ -1132,7 +1123,6 @@ jQuery(document).ready(function() {
     const exitPreviewMode = function() {
         if (!body.hasClass("preview-mode")) return;
         body.removeClass("preview-mode").addClass("preview-mode-exiting");
-        previewModeZoom = null;
         setTimeout(function() {
             body.removeClass("preview-mode-exiting");
         }, 600);

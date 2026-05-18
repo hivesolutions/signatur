@@ -122,7 +122,10 @@
                     html += buildRow(labels.viewport, jQuery("<span>").text(specs.viewport).html());
                 }
                 if (specs.font_size) {
-                    html += buildRow(labels.fontSize, jQuery("<span>").text(specs.font_size).html());
+                    html += buildRow(
+                        labels.fontSize,
+                        jQuery("<span>").text(specs.font_size).html()
+                    );
                 }
                 if (specs.margins) {
                     html += buildRow(labels.margins, jQuery("<span>").text(specs.margins).html());
@@ -143,10 +146,7 @@
                     html += buildRow(labels.node, jQuery("<span>").text(specs.node).html());
                 }
                 if (specs.instructions) {
-                    html += buildRow(
-                        labels.jig,
-                        jQuery("<span>").text(specs.instructions).html()
-                    );
+                    html += buildRow(labels.jig, jQuery("<span>").text(specs.instructions).html());
                 }
                 modalSpecs.html(html);
 
