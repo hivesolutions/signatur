@@ -51,6 +51,16 @@
     width: 100%;
 }
 
+.viewport > .main-container > .viewport-preview > .viewport-background {
+    pointer-events: none;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+}
+
 .viewport > .main-container > .viewer-container,
 .viewport > .main-container > .viewport-preview > .viewer-container {
     border: 2px dashed #2d2d2d;

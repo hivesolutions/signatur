@@ -50,6 +50,13 @@ body {
     flex-direction: column;
     height: 100%;
     margin: 0px 0px 0px 0px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    touch-action: manipulation;
+    -o-touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    -moz-touch-action: manipulation;
+    -khtml-touch-action: manipulation;
+    -webkit-touch-action: manipulation;
     width: 100%;
 }
 
@@ -192,6 +199,16 @@ body {
     min-width: 38px;
     padding: 0px 0px 0px 0px;
     width: 38px;
+}
+
+.header .button {
+    min-width: 96px;
+    padding: 0px 16px 0px 16px;
+}
+
+.header .button.button-small {
+    min-width: 38px;
+    padding: 0px 0px 0px 0px;
 }
 
 .header .button.button-back,

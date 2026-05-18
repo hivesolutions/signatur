@@ -594,15 +594,26 @@ body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-tr
     margin: 0px auto 16px auto;
 }
 
+@keyframes viewport-preview-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
 .viewport > .main-container > .viewport-preview.profile-active {
-    margin: 48px auto 16px 32px;
+    animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -o-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -ms-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -moz-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -khtml-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -webkit-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    margin: 48px auto 16px auto;
     position: relative;
-    transform-origin: 0px 0px;
-    -o-transform-origin: 0px 0px;
-    -ms-transform-origin: 0px 0px;
-    -moz-transform-origin: 0px 0px;
-    -khtml-transform-origin: 0px 0px;
-    -webkit-transform-origin: 0px 0px;
 }
 
 .viewport > .main-container > .viewport-preview > .viewport-svg {

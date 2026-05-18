@@ -46,6 +46,7 @@
                         "background-repeat": "",
                         "background-position": ""
                     });
+                    jQuery("> .viewport-background", context).remove();
                     container.css({
                         position: "",
                         left: "",
@@ -125,22 +126,38 @@
                     "min-width": "0px"
                 });
 
-                // applies the background image behind the viewport so that
-                // the user can preview the engraving on a realistic surface
+                // applies the background image behind the viewport using
+                // an inline img element so the user can preview the
+                // engraving on a realistic surface; the dedicated element
+                // is used in place of a CSS background-image because iOS
+                // Safari does not re-rasterize bitmap backgrounds when a
+                // parent css transform scales them up, producing a low
+                // resolution look at higher zoom levels
+                context.css({
+                    "background-image": "",
+                    "background-size": "",
+                    "background-repeat": "",
+                    "background-position": ""
+                });
+                let backgroundImage = jQuery("> .viewport-background", context);
                 if (profile.background) {
-                    context.css({
-                        "background-image": "url('/static/profiles/" + profile.background + "')",
-                        "background-size": width + "px " + height + "px",
-                        "background-repeat": "no-repeat",
-                        "background-position": "0px 0px"
+                    if (backgroundImage.length === 0) {
+                        backgroundImage = jQuery('<img class="viewport-background" />');
+                        context.prepend(backgroundImage);
+                    }
+                    backgroundImage.attr(
+                        "src",
+                        "/static/profiles/" + profile.background
+                    );
+                    backgroundImage.css({
+                        height: height + "px",
+                        left: "0px",
+                        position: "absolute",
+                        top: "0px",
+                        width: width + "px"
                     });
-                } else {
-                    context.css({
-                        "background-image": "",
-                        "background-size": "",
-                        "background-repeat": "",
-                        "background-position": ""
-                    });
+                } else if (backgroundImage.length > 0) {
+                    backgroundImage.remove();
                 }
 
                 context.css({ width: width + "px", height: height + "px" });
@@ -205,29 +222,26 @@
                 return;
             }
 
-            // applies the given zoom level using a CSS transform
-            // to scale the viewport preview and compensating the
-            // layout margins for the scaled size; the compensating
-            // margins are only required when a profile is active
-            // and the preview has an explicit size driven by it,
-            // so they are cleared otherwise to avoid the spurious
-            // bottom and right space at rest
+            // applies the given zoom level using the css zoom property
+            // instead of a css transform scale because iOS Safari does
+            // not re-rasterize transformed content at the higher device
+            // pixel ratio and ends up bitmap stretching the svg, the
+            // background image and the engraving text into a noticeably
+            // pixelated rendering at any zoom level above 1; the zoom
+            // property keeps the layout flow honest so the surrounding
+            // margins do not need to be compensated by hand
             if (action === "zoom") {
                 const zoom = options.zoom || 1;
-                const hasProfile = context.hasClass("profile-active");
-                const width = parseFloat(context.css("width")) || 0;
-                const height = parseFloat(context.css("height")) || 0;
-                const extraWidth = width * (zoom - 1);
-                const extraHeight = height * (zoom - 1);
                 context.css({
-                    transform: "scale(" + zoom + ")",
-                    "-o-transform": "scale(" + zoom + ")",
-                    "-ms-transform": "scale(" + zoom + ")",
-                    "-moz-transform": "scale(" + zoom + ")",
-                    "-khtml-transform": "scale(" + zoom + ")",
-                    "-webkit-transform": "scale(" + zoom + ")",
-                    "margin-bottom": hasProfile ? 16 * zoom + extraHeight + "px" : "",
-                    "margin-right": hasProfile ? extraWidth + "px" : ""
+                    transform: "",
+                    "-o-transform": "",
+                    "-ms-transform": "",
+                    "-moz-transform": "",
+                    "-khtml-transform": "",
+                    "-webkit-transform": "",
+                    "margin-bottom": "",
+                    "margin-right": "",
+                    zoom: zoom
                 });
             }
         });

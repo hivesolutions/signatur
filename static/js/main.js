@@ -1114,7 +1114,6 @@ jQuery(document).ready(function() {
             restoring = wasRestoring;
         }
         previewModeZoom = parseFloat(zoomRange.val()) || 1;
-        viewportPreview.viewportpreview("zoom", { zoom: previewModeZoom * 1.5 });
         body.addClass("preview-mode");
     };
 
@@ -1127,10 +1126,7 @@ jQuery(document).ready(function() {
     const exitPreviewMode = function() {
         if (!body.hasClass("preview-mode")) return;
         body.removeClass("preview-mode").addClass("preview-mode-exiting");
-        if (previewModeZoom !== null) {
-            viewportPreview.viewportpreview("zoom", { zoom: previewModeZoom });
-            previewModeZoom = null;
-        }
+        previewModeZoom = null;
         setTimeout(function() {
             body.removeClass("preview-mode-exiting");
         }, 600);

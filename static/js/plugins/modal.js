@@ -193,7 +193,8 @@
                         "-khtml-transform": "none",
                         "-webkit-transform": "none",
                         "margin-bottom": "",
-                        "margin-right": ""
+                        "margin-right": "",
+                        zoom: 1
                     });
                     modalPreview.append(clone);
                 }

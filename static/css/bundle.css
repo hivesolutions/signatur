@@ -50,6 +50,13 @@ body {
     flex-direction: column;
     height: 100%;
     margin: 0px 0px 0px 0px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    touch-action: manipulation;
+    -o-touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    -moz-touch-action: manipulation;
+    -khtml-touch-action: manipulation;
+    -webkit-touch-action: manipulation;
     width: 100%;
 }
 
@@ -192,6 +199,16 @@ body {
     min-width: 38px;
     padding: 0px 0px 0px 0px;
     width: 38px;
+}
+
+.header .button {
+    min-width: 96px;
+    padding: 0px 16px 0px 16px;
+}
+
+.header .button.button-small {
+    min-width: 38px;
+    padding: 0px 0px 0px 0px;
 }
 
 .header .button.button-back,
@@ -1111,15 +1128,26 @@ body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-tr
     margin: 0px auto 16px auto;
 }
 
+@keyframes viewport-preview-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
 .viewport > .main-container > .viewport-preview.profile-active {
-    margin: 48px auto 16px 32px;
+    animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -o-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -ms-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -moz-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -khtml-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    -webkit-animation: viewport-preview-enter 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    margin: 48px auto 16px auto;
     position: relative;
-    transform-origin: 0px 0px;
-    -o-transform-origin: 0px 0px;
-    -ms-transform-origin: 0px 0px;
-    -moz-transform-origin: 0px 0px;
-    -khtml-transform-origin: 0px 0px;
-    -webkit-transform-origin: 0px 0px;
 }
 
 .viewport > .main-container > .viewport-preview > .viewport-svg {
@@ -1342,6 +1370,16 @@ body.ldj .report > .form.form-report {
     padding: 12px 12px 12px 12px;
     text-align: center;
     width: 100%;
+}
+
+.viewport > .main-container > .viewport-preview > .viewport-background {
+    pointer-events: none;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
 }
 
 .viewport > .main-container > .viewer-container,
@@ -2490,8 +2528,13 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     max-height: 0px;
 }
 
-.preview-mode .viewport > .main-container > .viewport-preview,
-.preview-mode-exiting .viewport > .main-container > .viewport-preview {
+.viewport > .main-container > .viewport-preview {
+    transform-origin: center center;
+    -o-transform-origin: center center;
+    -ms-transform-origin: center center;
+    -moz-transform-origin: center center;
+    -khtml-transform-origin: center center;
+    -webkit-transform-origin: center center;
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     -o-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     -ms-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
@@ -2499,6 +2542,25 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     -khtml-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     -webkit-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
+}
+
+.preview-mode .viewport > .main-container > .viewport-preview {
+    transform: scale(1.5);
+    -o-transform: scale(1.5);
+    -ms-transform: scale(1.5);
+    -moz-transform: scale(1.5);
+    -khtml-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+}
+
+.preview-mode .viewport > .main-container > .viewport-preview.profile-active {
+    margin: 16px auto 16px auto;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), margin 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    -o-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), margin 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    -ms-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), margin 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    -moz-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), margin 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    -khtml-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), margin 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    -webkit-transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), margin 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 

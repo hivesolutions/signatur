@@ -516,6 +516,11 @@
             jQuery(".emojis-container").bind("key", keyHandler);
             jQuery(".emojisp-container").bind("key", keyHandler);
 
+            // binds the fallback caret click handler on the container
+            // itself so taps that miss any character span by a few
+            // pixels still resolve to the nearest character
+            bindContainerCaretClick(context, body);
+
             body.bind("keydown", keyboardHandler);
         });
 
@@ -527,7 +532,13 @@
      * the caret either before or after the clicked element based
      * on which horizontal half of the element received the click,
      * so that all caret positions including the start of a line
-     * are reachable by mouse.
+     * are reachable by mouse; the handler is also bound on the
+     * container itself with event delegation so that taps landing
+     * on the container padding around the first or last character
+     * still resolve to the nearest character span, working around
+     * iOS Safari's touch hit-test that occasionally promotes the
+     * click target to the closest interactive ancestor when the
+     * tap falls in the few pixel gap before or after a span.
      *
      * @param {Element} element The DOM element to bind the click handler on.
      * @param {Element} container The viewer container holding all elements.
@@ -535,36 +546,87 @@
      */
     const bindCaretClick = function(element, container, body) {
         element.click(function(event) {
-            const el = jQuery(this);
-            const caret = container.find("> .caret");
-            const index = container.children(":not(.caret)").index(el);
+            event.stopPropagation();
+            placeCaretFromClick(jQuery(this), event, container, body);
+        });
+    };
 
-            // newline elements are logical breaks; clicking one always
-            // places the caret right after the newline so the caret
-            // lands at column 0 of the line that follows the newline
-            let pos;
-            if (el.hasClass("newline")) {
+    /**
+     * Places the caret at the appropriate position based on the
+     * clicked element and the click event coordinates, splitting
+     * the clicked element horizontally so that the left half places
+     * the caret before it and the right half places it after.
+     *
+     * @param {Element} el The clicked element wrapped in jQuery.
+     * @param {Event} event The original click event for the x coord.
+     * @param {Element} container The viewer container holding all elements.
+     * @param {Element} body The body element used for state storage.
+     */
+    const placeCaretFromClick = function(el, event, container, body) {
+        const caret = container.find("> .caret");
+        const index = container.children(":not(.caret)").index(el);
+        if (index < 0) return;
+
+        let pos;
+        if (el.hasClass("newline")) {
+            el.after(caret);
+            pos = index;
+        } else {
+            const rect = el.get(0).getBoundingClientRect();
+            const midpoint = rect.left + rect.width / 2;
+            if (event.clientX < midpoint) {
+                el.before(caret);
+                pos = index - 1;
+            } else {
                 el.after(caret);
                 pos = index;
-            } else {
-                // splits the clicked element horizontally so that the
-                // left half places the caret before it and the right
-                // half places it after, matching standard text editor
-                // click-to-position semantics
-                const rect = this.getBoundingClientRect();
-                const midpoint = rect.left + rect.width / 2;
-                if (event.clientX < midpoint) {
-                    el.before(caret);
-                    pos = index - 1;
-                } else {
-                    el.after(caret);
-                    pos = index;
-                }
             }
+        }
 
-            body.data("caret_position", pos);
-            const text = body.data("text") || [];
-            container.triggerHandler("caretchange", [text, pos]);
+        body.data("caret_position", pos);
+        const text = body.data("text") || [];
+        container.triggerHandler("caretchange", [text, pos]);
+    };
+
+    /**
+     * Binds a fallback click handler on the viewer container that
+     * resolves taps landing outside any character span to the
+     * nearest character, so that iOS Safari touches that miss the
+     * span by a few pixels still position the caret correctly.
+     *
+     * @param {Element} container The viewer container element.
+     * @param {Element} body The body element used for state storage.
+     */
+    const bindContainerCaretClick = function(container, body) {
+        container.click(function(event) {
+            if (event.target !== container.get(0)) return;
+            const children = container.children(":not(.caret)");
+            if (children.length === 0) return;
+
+            // walks every character span looking for the one whose
+            // horizontal range covers the click x coordinate, with
+            // a small tolerance on both sides so taps in the gap
+            // between characters still resolve to a span
+            let nearest = null;
+            let nearestDistance = Infinity;
+            children.each(function() {
+                const rect = this.getBoundingClientRect();
+                if (event.clientX >= rect.left && event.clientX <= rect.right) {
+                    nearest = this;
+                    nearestDistance = 0;
+                    return false;
+                }
+                const distance = Math.min(
+                    Math.abs(event.clientX - rect.left),
+                    Math.abs(event.clientX - rect.right)
+                );
+                if (distance < nearestDistance) {
+                    nearest = this;
+                    nearestDistance = distance;
+                }
+            });
+
+            if (nearest) placeCaretFromClick(jQuery(nearest), event, container, body);
         });
     };
 })(jQuery);

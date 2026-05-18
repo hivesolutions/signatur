@@ -1051,7 +1051,8 @@ const countLines = function(text) {
                         "-khtml-transform": "none",
                         "-webkit-transform": "none",
                         "margin-bottom": "",
-                        "margin-right": ""
+                        "margin-right": "",
+                        zoom: 1
                     });
                     modalPreview.append(clone);
                 }
@@ -2759,6 +2760,11 @@ const countLines = function(text) {
             jQuery(".emojis-container").bind("key", keyHandler);
             jQuery(".emojisp-container").bind("key", keyHandler);
 
+            // binds the fallback caret click handler on the container
+            // itself so taps that miss any character span by a few
+            // pixels still resolve to the nearest character
+            bindContainerCaretClick(context, body);
+
             body.bind("keydown", keyboardHandler);
         });
 
@@ -2770,7 +2776,13 @@ const countLines = function(text) {
      * the caret either before or after the clicked element based
      * on which horizontal half of the element received the click,
      * so that all caret positions including the start of a line
-     * are reachable by mouse.
+     * are reachable by mouse; the handler is also bound on the
+     * container itself with event delegation so that taps landing
+     * on the container padding around the first or last character
+     * still resolve to the nearest character span, working around
+     * iOS Safari's touch hit-test that occasionally promotes the
+     * click target to the closest interactive ancestor when the
+     * tap falls in the few pixel gap before or after a span.
      *
      * @param {Element} element The DOM element to bind the click handler on.
      * @param {Element} container The viewer container holding all elements.
@@ -2778,36 +2790,87 @@ const countLines = function(text) {
      */
     const bindCaretClick = function(element, container, body) {
         element.click(function(event) {
-            const el = jQuery(this);
-            const caret = container.find("> .caret");
-            const index = container.children(":not(.caret)").index(el);
+            event.stopPropagation();
+            placeCaretFromClick(jQuery(this), event, container, body);
+        });
+    };
 
-            // newline elements are logical breaks; clicking one always
-            // places the caret right after the newline so the caret
-            // lands at column 0 of the line that follows the newline
-            let pos;
-            if (el.hasClass("newline")) {
+    /**
+     * Places the caret at the appropriate position based on the
+     * clicked element and the click event coordinates, splitting
+     * the clicked element horizontally so that the left half places
+     * the caret before it and the right half places it after.
+     *
+     * @param {Element} el The clicked element wrapped in jQuery.
+     * @param {Event} event The original click event for the x coord.
+     * @param {Element} container The viewer container holding all elements.
+     * @param {Element} body The body element used for state storage.
+     */
+    const placeCaretFromClick = function(el, event, container, body) {
+        const caret = container.find("> .caret");
+        const index = container.children(":not(.caret)").index(el);
+        if (index < 0) return;
+
+        let pos;
+        if (el.hasClass("newline")) {
+            el.after(caret);
+            pos = index;
+        } else {
+            const rect = el.get(0).getBoundingClientRect();
+            const midpoint = rect.left + rect.width / 2;
+            if (event.clientX < midpoint) {
+                el.before(caret);
+                pos = index - 1;
+            } else {
                 el.after(caret);
                 pos = index;
-            } else {
-                // splits the clicked element horizontally so that the
-                // left half places the caret before it and the right
-                // half places it after, matching standard text editor
-                // click-to-position semantics
-                const rect = this.getBoundingClientRect();
-                const midpoint = rect.left + rect.width / 2;
-                if (event.clientX < midpoint) {
-                    el.before(caret);
-                    pos = index - 1;
-                } else {
-                    el.after(caret);
-                    pos = index;
-                }
             }
+        }
 
-            body.data("caret_position", pos);
-            const text = body.data("text") || [];
-            container.triggerHandler("caretchange", [text, pos]);
+        body.data("caret_position", pos);
+        const text = body.data("text") || [];
+        container.triggerHandler("caretchange", [text, pos]);
+    };
+
+    /**
+     * Binds a fallback click handler on the viewer container that
+     * resolves taps landing outside any character span to the
+     * nearest character, so that iOS Safari touches that miss the
+     * span by a few pixels still position the caret correctly.
+     *
+     * @param {Element} container The viewer container element.
+     * @param {Element} body The body element used for state storage.
+     */
+    const bindContainerCaretClick = function(container, body) {
+        container.click(function(event) {
+            if (event.target !== container.get(0)) return;
+            const children = container.children(":not(.caret)");
+            if (children.length === 0) return;
+
+            // walks every character span looking for the one whose
+            // horizontal range covers the click x coordinate, with
+            // a small tolerance on both sides so taps in the gap
+            // between characters still resolve to a span
+            let nearest = null;
+            let nearestDistance = Infinity;
+            children.each(function() {
+                const rect = this.getBoundingClientRect();
+                if (event.clientX >= rect.left && event.clientX <= rect.right) {
+                    nearest = this;
+                    nearestDistance = 0;
+                    return false;
+                }
+                const distance = Math.min(
+                    Math.abs(event.clientX - rect.left),
+                    Math.abs(event.clientX - rect.right)
+                );
+                if (distance < nearestDistance) {
+                    nearest = this;
+                    nearestDistance = distance;
+                }
+            });
+
+            if (nearest) placeCaretFromClick(jQuery(nearest), event, container, body);
         });
     };
 })(jQuery);
@@ -2889,6 +2952,7 @@ const countLines = function(text) {
                         "background-repeat": "",
                         "background-position": ""
                     });
+                    jQuery("> .viewport-background", context).remove();
                     container.css({
                         position: "",
                         left: "",
@@ -2968,22 +3032,38 @@ const countLines = function(text) {
                     "min-width": "0px"
                 });
 
-                // applies the background image behind the viewport so that
-                // the user can preview the engraving on a realistic surface
+                // applies the background image behind the viewport using
+                // an inline img element so the user can preview the
+                // engraving on a realistic surface; the dedicated element
+                // is used in place of a CSS background-image because iOS
+                // Safari does not re-rasterize bitmap backgrounds when a
+                // parent css transform scales them up, producing a low
+                // resolution look at higher zoom levels
+                context.css({
+                    "background-image": "",
+                    "background-size": "",
+                    "background-repeat": "",
+                    "background-position": ""
+                });
+                let backgroundImage = jQuery("> .viewport-background", context);
                 if (profile.background) {
-                    context.css({
-                        "background-image": "url('/static/profiles/" + profile.background + "')",
-                        "background-size": width + "px " + height + "px",
-                        "background-repeat": "no-repeat",
-                        "background-position": "0px 0px"
+                    if (backgroundImage.length === 0) {
+                        backgroundImage = jQuery('<img class="viewport-background" />');
+                        context.prepend(backgroundImage);
+                    }
+                    backgroundImage.attr(
+                        "src",
+                        "/static/profiles/" + profile.background
+                    );
+                    backgroundImage.css({
+                        height: height + "px",
+                        left: "0px",
+                        position: "absolute",
+                        top: "0px",
+                        width: width + "px"
                     });
-                } else {
-                    context.css({
-                        "background-image": "",
-                        "background-size": "",
-                        "background-repeat": "",
-                        "background-position": ""
-                    });
+                } else if (backgroundImage.length > 0) {
+                    backgroundImage.remove();
                 }
 
                 context.css({ width: width + "px", height: height + "px" });
@@ -3048,29 +3128,26 @@ const countLines = function(text) {
                 return;
             }
 
-            // applies the given zoom level using a CSS transform
-            // to scale the viewport preview and compensating the
-            // layout margins for the scaled size; the compensating
-            // margins are only required when a profile is active
-            // and the preview has an explicit size driven by it,
-            // so they are cleared otherwise to avoid the spurious
-            // bottom and right space at rest
+            // applies the given zoom level using the css zoom property
+            // instead of a css transform scale because iOS Safari does
+            // not re-rasterize transformed content at the higher device
+            // pixel ratio and ends up bitmap stretching the svg, the
+            // background image and the engraving text into a noticeably
+            // pixelated rendering at any zoom level above 1; the zoom
+            // property keeps the layout flow honest so the surrounding
+            // margins do not need to be compensated by hand
             if (action === "zoom") {
                 const zoom = options.zoom || 1;
-                const hasProfile = context.hasClass("profile-active");
-                const width = parseFloat(context.css("width")) || 0;
-                const height = parseFloat(context.css("height")) || 0;
-                const extraWidth = width * (zoom - 1);
-                const extraHeight = height * (zoom - 1);
                 context.css({
-                    transform: "scale(" + zoom + ")",
-                    "-o-transform": "scale(" + zoom + ")",
-                    "-ms-transform": "scale(" + zoom + ")",
-                    "-moz-transform": "scale(" + zoom + ")",
-                    "-khtml-transform": "scale(" + zoom + ")",
-                    "-webkit-transform": "scale(" + zoom + ")",
-                    "margin-bottom": hasProfile ? 16 * zoom + extraHeight + "px" : "",
-                    "margin-right": hasProfile ? extraWidth + "px" : ""
+                    transform: "",
+                    "-o-transform": "",
+                    "-ms-transform": "",
+                    "-moz-transform": "",
+                    "-khtml-transform": "",
+                    "-webkit-transform": "",
+                    "margin-bottom": "",
+                    "margin-right": "",
+                    zoom: zoom
                 });
             }
         });
@@ -4399,7 +4476,6 @@ jQuery(document).ready(function() {
             restoring = wasRestoring;
         }
         previewModeZoom = parseFloat(zoomRange.val()) || 1;
-        viewportPreview.viewportpreview("zoom", { zoom: previewModeZoom * 1.5 });
         body.addClass("preview-mode");
     };
 
@@ -4412,10 +4488,7 @@ jQuery(document).ready(function() {
     const exitPreviewMode = function() {
         if (!body.hasClass("preview-mode")) return;
         body.removeClass("preview-mode").addClass("preview-mode-exiting");
-        if (previewModeZoom !== null) {
-            viewportPreview.viewportpreview("zoom", { zoom: previewModeZoom });
-            previewModeZoom = null;
-        }
+        previewModeZoom = null;
         setTimeout(function() {
             body.removeClass("preview-mode-exiting");
         }, 600);
