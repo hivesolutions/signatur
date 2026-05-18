@@ -2583,6 +2583,7 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
 }
 
 .preview-mode .viewport > .main-container > .viewport-preview {
+    pointer-events: none;
     transform: scale(1.5);
     -o-transform: scale(1.5);
     -ms-transform: scale(1.5);
