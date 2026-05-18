@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <%- include("head"); -%>
-    <body class="<%= theme %> <%= viewportMode === 'store' ? 'store-mode' : '' %>" data-theme="<%= theme %>" data-viewport-mode="<%= viewportMode %>" data-master="<%= masterb64 %>" data-message-no-printer="No printer configured, please set the engrave printer in the settings." data-message-pantograph="Cool Emojis Pantograph is not supported for engraving.">
+    <body class="<%= theme %> <%= viewportMode === 'store' ? 'store-mode' : '' %> profiles-loading" data-theme="<%= theme %>" data-viewport-mode="<%= viewportMode %>" data-master="<%= masterb64 %>" data-message-no-printer="No printer configured, please set the engrave printer in the settings." data-message-pantograph="Cool Emojis Pantograph is not supported for engraving.">
         <div class="header">
             <div class="buttons-left">
                 <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>

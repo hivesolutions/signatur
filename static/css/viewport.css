@@ -86,6 +86,10 @@
     text-align: center;
 }
 
+body.profiles-loading .viewport > .main-container > .viewport-preview:not(.profile-active) > .viewer-container {
+    display: none;
+}
+
 .viewport > .main-container > .viewport-preview.profile-active > .viewer-container {
     border: none;
     display: flex;

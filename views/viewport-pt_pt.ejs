@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="pt">
     <%- include("head"); -%>
-    <body class="<%= theme %> <%= viewportMode === 'store' ? 'store-mode' : '' %>" data-theme="<%= theme %>" data-viewport-mode="<%= viewportMode %>" data-master="<%= masterb64 %>" data-message-no-printer="Nenhuma impressora configurada, por favor configure a impressora de gravação nas definições." data-message-pantograph="A letra Cool Emojis Pantograph não é suportada para gravação.">
+    <body class="<%= theme %> <%= viewportMode === 'store' ? 'store-mode' : '' %> profiles-loading" data-theme="<%= theme %>" data-viewport-mode="<%= viewportMode %>" data-master="<%= masterb64 %>" data-message-no-printer="Nenhuma impressora configurada, por favor configure a impressora de gravação nas definições." data-message-pantograph="A letra Cool Emojis Pantograph não é suportada para gravação.">
         <div class="header">
             <div class="buttons-left">
                 <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>

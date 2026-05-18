@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+* Avoids a split second flash of the legacy dashed text box on the viewport while the profile selector is being restored: the body now carries a `profiles-loading` class at server render time that hides the no profile viewer container, and the class is cleared in a `finally` block once `loadProfiles` resolves so the legacy box only appears after the initial profile state has been settled
+
 ### Added
 
 * iOS Safari touch responsiveness pass: `touch-action: manipulation` is applied at the body level and reinforced on every interactive surface (`.button`, `.option-chip`, `.option-chip-toggle`, `.slider-preset`, `.settings-tab`, `.emojis-tab`, keyboard `.char`, `.catalog-card`, `.fonts-container > .font`) so the first tap registers immediately without the legacy hover stall; the viewport meta is locked at `maximum-scale=1, user-scalable=no` so neither double tap nor pinch can zoom the page; the body also sets `-webkit-tap-highlight-color` to transparent so taps no longer flash the iOS gray overlay

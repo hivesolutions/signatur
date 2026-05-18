@@ -3855,6 +3855,12 @@ jQuery(document).ready(function() {
         } catch (err) {
             restoring = false;
             // silently ignores profile loading errors
+        } finally {
+            // clears the loading guard so the legacy text box that
+            // is rendered by default can decide whether to reveal
+            // itself based on the resolved profile state instead of
+            // flashing for a split second during the initial restore
+            body.removeClass("profiles-loading");
         }
     };
 
