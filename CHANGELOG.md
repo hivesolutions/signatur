@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Special character keys on the on screen keyboard (`Backspace`, `Shift`, `Space`, `Return`) now render the official Lucide `delete`, `arrow-big-up`, `space`, and `corner-down-left` SVG icons inline so they look identical across every platform regardless of the system font's rendering of the matching Unicode codepoints; the keyboard plugin reads the dispatched value from the `data-value` attribute first and falls back to the element text so the existing downstream `keyHandler` switch keeps working unchanged, and the inline SVGs share a consistent `viewBox`, stroke weight and round line caps so they read as a single visual family
+
 ### Fixed
 
 * Avoids a split second flash of the legacy dashed text box on the viewport while the profile selector is being restored: the body now carries a `profiles-loading` class at server render time that hides the no profile viewer container, and the class is cleared in a `finally` block once `loadProfiles` resolves so the legacy box only appears after the initial profile state has been settled

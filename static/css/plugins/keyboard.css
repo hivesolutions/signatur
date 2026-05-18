@@ -211,9 +211,21 @@ body.ldj .viewport > .main-container > .emojisp-container > .emojis-tabs > .emoj
 .viewport > .main-container > .emojis-container > .char.utility,
 .viewport > .main-container > .emojisp-container > .char.utility,
 .viewport > .main-container > .keyboard-container > .char.utility {
+    align-items: center;
     background-color: #eef0f4;
     color: #4b5260;
+    display: inline-flex;
     font-size: 22px;
+    justify-content: center;
+}
+
+.viewport > .main-container > .emojis-container > .char.utility > .keyboard-icon,
+.viewport > .main-container > .emojisp-container > .char.utility > .keyboard-icon,
+.viewport > .main-container > .keyboard-container > .char.utility > .keyboard-icon {
+    display: block;
+    height: 22px;
+    pointer-events: none;
+    width: 22px;
 }
 
 .viewport > .main-container > .emojis-container > .char.utility:hover,

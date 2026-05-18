@@ -35,7 +35,8 @@
             keys.click(function() {
                 if (longPressTriggered) return;
                 const element = jQuery(this);
-                let value = element.text();
+                let value = element.attr("data-value");
+                if (value === undefined) value = element.text();
                 const casing = context.data("casing") || "uppercase";
                 value = casing === "lowercase" ? value.toLowerCase() : value;
                 if (value === "⇧") {
