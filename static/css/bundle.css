@@ -2642,6 +2642,10 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     -webkit-transition-delay: 0.36s;
 }
 
+body.ldj .preview-mode-hint {
+    background-color: rgba(150, 120, 211, 0.85);
+}
+
 @media (max-width: 430px) {
     html, body {
         overflow: hidden !important;
