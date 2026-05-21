@@ -197,6 +197,18 @@ app.post("/settings", (req, res, next) => {
     res.redirect(302, target);
 });
 
+app.post("/settings/diagnostics", (req, res, next) => {
+    async function clojure() {
+        const engine = lib.ENGINES.inkscape.singleton();
+        const probes = await engine.probe();
+        const fixturePath = path.join(__dirname, "res", "diagnostic.svg");
+        const svgBuffer = await fs.readFile(fixturePath);
+        const steps = await engine.diagnose(svgBuffer);
+        res.json({ probes: probes, steps: steps });
+    }
+    clojure().catch(next);
+});
+
 app.get("/welcome", (req, res, next) => {
     const fullscreen =
         req.query.fullscreen !== undefined

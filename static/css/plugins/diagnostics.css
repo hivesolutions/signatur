@@ -1,0 +1,200 @@
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-hint {
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0px 0px 12px 0px;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-hint {
+    color: #6f5ea0;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-hint > code {
+    background-color: #f1f3f6;
+    border-radius: 4px;
+    -o-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    padding: 1px 4px 1px 4px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-actions {
+    display: flex;
+    gap: 8px;
+    margin: 0px 0px 16px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-empty {
+    background-color: #f5f6f8;
+    border-radius: 12px;
+    -o-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -moz-border-radius: 12px;
+    -khtml-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 12px 14px 12px 14px;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-empty {
+    background-color: #f3eefa;
+    color: #6f5ea0;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section {
+    margin: 16px 0px 0px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section > .diagnostics-section-title {
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin: 0px 0px 8px 0px;
+    text-transform: uppercase;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section > .diagnostics-section-title {
+    color: #6f5ea0;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 12px;
+    -o-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -moz-border-radius: 12px;
+    -khtml-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    margin: 0px 0px 8px 0px;
+    padding: 10px 12px 10px 12px;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row {
+    background-color: #faf7ff;
+    border-color: #ece4f5;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row[data-status="ok"] {
+    border-left: 3px solid #34a853;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row[data-status="error"] {
+    border-left: 3px solid #d93025;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-head,
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row {
+    align-items: center;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section > .diagnostics-probe-list > .diagnostics-row {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 100px 1fr auto;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-head {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 0px 4px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-head > .diagnostics-row-tool,
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-tool {
+    color: #1f2330;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-version {
+    color: #4b5563;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-head > .diagnostics-row-status,
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-status {
+    border-radius: 999px;
+    -o-border-radius: 999px;
+    -ms-border-radius: 999px;
+    -moz-border-radius: 999px;
+    -khtml-border-radius: 999px;
+    -webkit-border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px 2px 8px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row[data-status="ok"] > .diagnostics-row-head > .diagnostics-row-status,
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row[data-status="ok"] > .diagnostics-row-status {
+    background-color: #e6f4ea;
+    color: #1e6b3b;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row[data-status="error"] > .diagnostics-row-head > .diagnostics-row-status,
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row[data-status="error"] > .diagnostics-row-status {
+    background-color: #fce8e6;
+    color: #a50e0e;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-meta {
+    color: #6b7280;
+    display: flex;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    gap: 12px;
+    margin: 0px 0px 6px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-command {
+    background-color: #f5f6f8;
+    border-radius: 6px;
+    -o-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    color: #4b5563;
+    display: block;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    overflow-x: auto;
+    padding: 6px 8px 6px 8px;
+    white-space: pre;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-command {
+    background-color: #f3eefa;
+    color: #5d4a8c;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .diagnostics-section .diagnostics-row > .diagnostics-row-stderr {
+    background-color: #fff8f8;
+    border: 1px solid #fad2cf;
+    border-radius: 6px;
+    -o-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    color: #a50e0e;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    margin: 6px 0px 0px 0px;
+    max-height: 160px;
+    overflow: auto;
+    padding: 6px 8px 6px 8px;
+    white-space: pre-wrap;
+}

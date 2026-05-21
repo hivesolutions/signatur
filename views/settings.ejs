@@ -19,6 +19,7 @@
                     <div class="settings-tabs">
                         <span class="settings-tab active" data-tab="general">General</span>
                         <span class="settings-tab" data-tab="printing">Printing</span>
+                        <span class="settings-tab" data-tab="diagnostics">Diagnostics</span>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="general">
                         <div class="settings-group">
@@ -171,6 +172,32 @@
                                     <input class="settings-printing-effective" type="text"
                                            placeholder="<%= conf.PRINT_KEY ? "(set)" : "" %>" />
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="diagnostics" style="display: none;"
+                         data-label-tools="Tools"
+                         data-label-pipeline="Pipeline"
+                         data-label-run="Run diagnostics"
+                         data-label-running="Running…"
+                         data-label-pass="OK"
+                         data-label-fail="Failed"
+                         data-label-empty="Press Run diagnostics to check Inkscape, Ghostscript, and pstoedit and exercise the engraving pipeline against a bundled fixture."
+                         data-label-network-error="The diagnostics request failed. The server may be unreachable.">
+                        <div class="settings-group">
+                            <div class="settings-group-label">Diagnostics</div>
+                            <div class="diagnostics-hint">Probes the engraving pipeline tools and runs the bundled <code>res/diagnostic.svg</code> through the full SVG → PDF → PS → HPGL chain.</div>
+                            <div class="diagnostics-actions">
+                                <button type="button" class="button button-start diagnostics-run">Run diagnostics</button>
+                            </div>
+                            <div class="diagnostics-empty">Press Run diagnostics to check Inkscape, Ghostscript, and pstoedit and exercise the engraving pipeline against a bundled fixture.</div>
+                            <div class="diagnostics-section diagnostics-probes" hidden>
+                                <div class="diagnostics-section-title">Tools</div>
+                                <div class="diagnostics-probe-list"></div>
+                            </div>
+                            <div class="diagnostics-section diagnostics-pipeline" hidden>
+                                <div class="diagnostics-section-title">Pipeline</div>
+                                <div class="diagnostics-step-list"></div>
                             </div>
                         </div>
                     </div>

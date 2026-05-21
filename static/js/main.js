@@ -24,6 +24,7 @@ jQuery(document).ready(function() {
     const modalInstructionsImages = jQuery(".modal-instructions-images");
     const welcomeContainer = jQuery(".form-welcome");
     const formManager = jQuery(".form-manager");
+    const diagnosticsContainer = jQuery(".settings-tab-content[data-tab='diagnostics']");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -79,6 +80,11 @@ jQuery(document).ready(function() {
     // initializes the profile manager plugin on the profile
     // manager screen form, which owns its editors and tabs
     formManager.profilemanager();
+
+    // initializes the diagnostics plugin on the diagnostics tab
+    // of the settings screen, which owns the run button and the
+    // probe and pipeline rendering
+    diagnosticsContainer.diagnostics();
 
     // wires the settings tab strip so clicking a tab swaps the
     // visible tab content while keeping a single form submission

@@ -19,6 +19,7 @@
                     <div class="settings-tabs">
                         <span class="settings-tab active" data-tab="general">Geral</span>
                         <span class="settings-tab" data-tab="printing">Impressão</span>
+                        <span class="settings-tab" data-tab="diagnostics">Diagnóstico</span>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="general">
                         <div class="settings-group">
@@ -171,6 +172,32 @@
                                     <input class="settings-printing-effective" type="text"
                                            placeholder="<%= conf.PRINT_KEY ? "(definido)" : "" %>" />
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="diagnostics" style="display: none;"
+                         data-label-tools="Ferramentas"
+                         data-label-pipeline="Pipeline"
+                         data-label-run="Executar diagnóstico"
+                         data-label-running="A executar…"
+                         data-label-pass="OK"
+                         data-label-fail="Falhou"
+                         data-label-empty="Carregue em Executar diagnóstico para verificar o Inkscape, Ghostscript e pstoedit, e executar o pipeline de gravação sobre um ficheiro de teste incluído."
+                         data-label-network-error="O pedido de diagnóstico falhou. O servidor pode estar inacessível.">
+                        <div class="settings-group">
+                            <div class="settings-group-label">Diagnóstico</div>
+                            <div class="diagnostics-hint">Sonda as ferramentas do pipeline de gravação e corre o ficheiro <code>res/diagnostic.svg</code> através de toda a cadeia SVG → PDF → PS → HPGL.</div>
+                            <div class="diagnostics-actions">
+                                <button type="button" class="button button-start diagnostics-run">Executar diagnóstico</button>
+                            </div>
+                            <div class="diagnostics-empty">Carregue em Executar diagnóstico para verificar o Inkscape, Ghostscript e pstoedit, e executar o pipeline de gravação sobre um ficheiro de teste incluído.</div>
+                            <div class="diagnostics-section diagnostics-probes" hidden>
+                                <div class="diagnostics-section-title">Ferramentas</div>
+                                <div class="diagnostics-probe-list"></div>
+                            </div>
+                            <div class="diagnostics-section diagnostics-pipeline" hidden>
+                                <div class="diagnostics-section-title">Pipeline</div>
+                                <div class="diagnostics-step-list"></div>
                             </div>
                         </div>
                     </div>
