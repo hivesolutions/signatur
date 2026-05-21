@@ -141,6 +141,12 @@
     -moz-transition: box-shadow 0.25s ease, transform 0.25s ease;
     -khtml-transition: box-shadow 0.25s ease, transform 0.25s ease;
     -webkit-transition: box-shadow 0.25s ease, transform 0.25s ease;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
 }
 
 .welcome .catalog > .catalog-card:hover {
