@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS builder
+FROM node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS builder
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates \
@@ -18,7 +18,7 @@ RUN wget -O pstoedit.tar.gz https://sourceforge.net/projects/pstoedit/files/psto
     make &&\
     make install
 
-FROM node:20-bookworm-slim
+FROM node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
 
 LABEL version="2.0"
 LABEL maintainer="Hive Solutions <development@hive.pt>"
