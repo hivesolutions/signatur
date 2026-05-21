@@ -182,11 +182,14 @@ app.post("/settings", (req, res, next) => {
 
     // resolves the redirect target from the submitted next field
     // restricting it to local paths so the form cannot be used as
-    // an open redirect
+    // an open redirect, falling back to the bare `/` so the user
+    // lands on the configured home (gateway or welcome) according
+    // to the freshly saved `home` preference instead of being
+    // hardcoded to the welcome screen
     const target =
         typeof req.body.next === "string" && req.body.next.startsWith("/")
             ? req.body.next
-            : "/welcome";
+            : "/";
 
     // persists the fullscreen flag onto the session so that it
     // survives the next request without polluting the redirect
