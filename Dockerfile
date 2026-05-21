@@ -3,6 +3,7 @@ FROM node:20-bookworm-slim AS builder
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates \
     g++ \
+    ghostscript \
     libgs-dev \
     make \
     pkg-config \
@@ -30,7 +31,7 @@ ENV HOST=0.0.0.0
 ENV PORT=8080
 ENV NODE_ENV=production
 ENV PATH=/opt/pstoedit/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/pstoedit/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/opt/pstoedit/lib
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ghostscript \

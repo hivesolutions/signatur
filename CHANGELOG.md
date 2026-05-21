@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* `Dockerfile` builder stage now also installs the `ghostscript` runtime binary alongside `libgs-dev` so the `pstoedit-4.01` `./configure` step can find the `gs` executable during its feature probe; previously the configure script aborted with `Cannot find ghostscript. If it is already installed, Check PATH.` because only the development headers were installed and `pstoedit` insists on locating the binary at compile time, not just at runtime
+* `Dockerfile` no longer references the undefined `$LD_LIBRARY_PATH` variable when seeding the runtime stage; the base image does not set this variable, so the expansion was emitting a trailing colon and triggering a BuildKit `UndefinedVar` warning on every build, replaced by a bare `ENV LD_LIBRARY_PATH=/opt/pstoedit/lib` since `/opt/pstoedit/lib` is the only path the runtime image needs (system libraries are still located through the default dynamic linker configuration)
 
 ## [1.0.0] - 2026-05-21
 
