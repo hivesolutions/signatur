@@ -81,11 +81,11 @@ Per-profile preview options for the viewport.
 
 Optional jig setup instructions surfaced through the editor.
 
-| Field         | Type   | Required | Notes                                           |
-| ------------- | ------ | :------: | ----------------------------------------------- |
-| `title`       | string |    no    | Modal title.                                    |
-| `description` | string |    no    | Body copy shown above the images.               |
-| `images`      | array  |    no    | Each entry is a string (image URL or filename). |
+| Field         | Type   | Required | Notes                                                                                                                                                          |
+| ------------- | ------ | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`       | string |    no    | Modal title.                                                                                                                                                   |
+| `description` | string |    no    | Body copy shown above the images.                                                                                                                              |
+| `images`      | array  |    no    | Each entry is a string. Absolute paths (`/…`) and fully qualified URLs (`scheme://…`) are used as is; bare filenames are resolved against `/static/profiles/`. |
 
 ## variants
 

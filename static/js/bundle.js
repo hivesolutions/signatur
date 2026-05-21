@@ -3418,7 +3418,11 @@ jQuery(document).ready(function() {
         const images = instructions.images || [];
         for (let i = 0; i < images.length; i++) {
             const img = jQuery("<img />");
-            img.attr("src", images[i]);
+            const source = images[i];
+            const resolved = /^(\/|[a-z][a-z0-9+.-]*:\/\/)/i.test(source)
+                ? source
+                : "/static/profiles/" + encodeURI(source);
+            img.attr("src", resolved);
             img.attr("alt", (instructions.title || "Instructions") + " " + (i + 1));
             modalInstructionsImages.append(img);
         }

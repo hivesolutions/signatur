@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Bare filename entries in `instructions.images` on a profile JSON are now resolved against `/static/profiles/` (the default upload location for profile assets) so authors can reference uploaded jig images by filename only; entries that already start with `/` or carry a `scheme://` prefix are still passed through verbatim so external URLs and other absolute paths keep working unchanged, with the same detection rule documented on `docs/profile-spec.md`
 
 ### Fixed
 
