@@ -166,6 +166,12 @@ app.get("/settings", (req, res, next) => {
         home: req.session.home === "welcome" ? "welcome" : "gateway",
         showOptions: req.session.show_options !== "0",
         viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
+        features: lib.resolveFeatures(req.session),
+        featuresBase: lib.conf.FEATURES || {},
+        featuresOverride: Object.keys(lib.FEATURES || {}).reduce((accumulator, name) => {
+            accumulator[name] = req.session["feature_" + name];
+            return accumulator;
+        }, {}),
         next: nextUrl,
         info: info || {}
     });
@@ -179,6 +185,17 @@ app.post("/settings", (req, res, next) => {
     req.session.home = req.body.home === "welcome" ? "welcome" : "gateway";
     req.session.show_options = req.body.show_options === "0" ? "0" : "1";
     req.session.viewport_mode = req.body.viewport_mode === "store" ? "store" : "technical";
+
+    // persists every declared feature flag override sent through the
+    // features tab onto the session, treating `1` / `0` as explicit
+    // overrides and anything else as a clear so the base value from
+    // the matching `FEATURE_<NAME>` env var takes over again
+    for (const name of Object.keys(lib.FEATURES || {})) {
+        const value = req.body["feature_" + name];
+        if (value === "1") req.session["feature_" + name] = "1";
+        else if (value === "0") req.session["feature_" + name] = "0";
+        else delete req.session["feature_" + name];
+    }
 
     // resolves the redirect target from the submitted next field
     // restricting it to local paths so the form cannot be used as
@@ -261,6 +278,7 @@ app.get("/viewport", (req, res, next) => {
     req.session.locale = locale;
     req.session.config = req.session.config || {};
     req.session.config.text = req.query.text || req.session.config.text || null;
+    const features = lib.resolveFeatures(req.session);
     res.render("viewport" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
@@ -271,6 +289,8 @@ app.get("/viewport", (req, res, next) => {
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null,
         viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
+        features: features,
+        featuresb64: Buffer.from(JSON.stringify(features)).toString("base64"),
         back: "/"
     });
 });

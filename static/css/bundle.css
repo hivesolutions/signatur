@@ -2491,6 +2491,101 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     border-color: #9678d3;
 }
 
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row {
+    background-color: #f4f5f8;
+    border-radius: 16px 16px 16px 16px;
+    -o-border-radius: 16px 16px 16px 16px;
+    -ms-border-radius: 16px 16px 16px 16px;
+    -moz-border-radius: 16px 16px 16px 16px;
+    -khtml-border-radius: 16px 16px 16px 16px;
+    -webkit-border-radius: 16px 16px 16px 16px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px 12px 14px;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row {
+    background-color: #f5f0fa;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row > .settings-features-label {
+    color: #1f2330;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row > .settings-features-label {
+    color: #1f1430;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row > .settings-features-sub {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row > .settings-features-sub > .settings-features-sub-label {
+    color: #9aa0ad;
+    flex: 0 0 64px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row > .settings-features-sub > .settings-features-base {
+    background-color: #eef0f4;
+    border: 1px solid #e6e8ee;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #6b7280;
+    cursor: not-allowed;
+    flex: 1 1 0;
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    font-size: 11px;
+    min-width: 0;
+    opacity: 1;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 5px 12px 5px 12px;
+    width: 100%;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-features > .settings-features-row > .settings-features-sub > .settings-features-base {
+    background-color: #ece4f5;
+    color: #6b5a8a;
+}
+
 .store-mode .profile-info {
     display: none;
 }

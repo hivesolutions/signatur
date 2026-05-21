@@ -19,6 +19,7 @@
                     <div class="settings-tabs">
                         <span class="settings-tab active" data-tab="general">Geral</span>
                         <span class="settings-tab" data-tab="printing">Impressão</span>
+                        <span class="settings-tab" data-tab="features">Funcionalidades</span>
                         <span class="settings-tab" data-tab="diagnostics">Diagnóstico</span>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="general">
@@ -173,6 +174,40 @@
                                            placeholder="<%= conf.PRINT_KEY ? "(definido)" : "" %>" />
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="features" style="display: none;">
+                        <div class="settings-features">
+                            <% Object.keys(features).forEach(function(name) { %>
+                                <div class="settings-features-row" data-key="<%= name %>">
+                                    <div class="settings-features-label"><%= name %></div>
+                                    <div class="settings-features-sub">
+                                        <div class="settings-features-sub-label">Base</div>
+                                        <input class="settings-features-base" type="text"
+                                               value="<%= featuresBase[name] ? "Ligado" : "Desligado" %>" disabled />
+                                    </div>
+                                    <div class="settings-features-sub">
+                                        <div class="settings-features-sub-label">Efectivo</div>
+                                        <div class="option-chips">
+                                            <input class="option-chip-input" type="radio"
+                                                   id="feature-<%= name %>-default"
+                                                   name="feature_<%= name %>" value=""
+                                                <%= featuresOverride[name] === undefined ? "checked" : '' %>>
+                                            <label class="option-chip" for="feature-<%= name %>-default">Predefinição</label>
+                                            <input class="option-chip-input" type="radio"
+                                                   id="feature-<%= name %>-off"
+                                                   name="feature_<%= name %>" value="0"
+                                                <%= featuresOverride[name] === "0" ? "checked" : '' %>>
+                                            <label class="option-chip" for="feature-<%= name %>-off">Desligado</label>
+                                            <input class="option-chip-input" type="radio"
+                                                   id="feature-<%= name %>-on"
+                                                   name="feature_<%= name %>" value="1"
+                                                <%= featuresOverride[name] === "1" ? "checked" : '' %>>
+                                            <label class="option-chip" for="feature-<%= name %>-on">Ligado</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
                         </div>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="diagnostics" style="display: none;"
