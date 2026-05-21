@@ -24,6 +24,9 @@
         "max_lines": 2,
         "align": "center"
     },
+    "calligraphy": {
+        "line_width": 1
+    },
     "background": "small-medal.png",
     "variants": [
         {

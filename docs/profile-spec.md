@@ -40,6 +40,7 @@ PNG background assets live alongside the JSON files under `static/profiles/` and
 | `machine`       | object  |    no    | See [machine](#machine).                                                              |
 | `text`          | object  |    no    | See [text](#text).                                                                    |
 | `metadata`      | object  |    no    | See [metadata](#metadata).                                                            |
+| `calligraphy`   | object  |    no    | See [calligraphy](#calligraphy). Active only when the feature flag is on.             |
 
 ## font_size
 
@@ -128,6 +129,14 @@ Free-form metadata bundled with the profile, surfaced in the UI where relevant.
 | --------- | ------- | :------: | ------------------------------------------------------ |
 | `version` | integer |    no    | Must be `>= 1`. Profile schema or content version.     |
 | `tags`    | array   |    no    | Strings only; entries must be unique within the array. |
+
+## calligraphy
+
+Optional configuration for the calligraphy mode on the viewport, which overlays a jSignature canvas on the engraving surface so the user can hand-draw strokes instead of typing text. The block is accepted by the validator regardless of runtime state, but the calligraphy chrome on `/viewport` only renders when the `calligraphy` feature flag resolves to `true` (driven by the `FEATURE_CALLIGRAPHY` environment variable or the per-session override on `/settings`).
+
+| Field        | Type   | Required | Notes                                                                       |
+| ------------ | ------ | :------: | --------------------------------------------------------------------------- |
+| `line_width` | number |    no    | Positive. Default stroke thickness, in profile units, for the canvas brush. |
 
 ## Example
 
