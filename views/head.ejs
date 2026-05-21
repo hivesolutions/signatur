@@ -2,6 +2,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <% if (typeof fullscreen !== "undefined" && fullscreen) { %>
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
     <% } %>
     <title>Signatur</title>
@@ -22,6 +23,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/store-mode.css">
         <link rel="stylesheet" type="text/css" href="/static/css/preview-mode.css">
         <link rel="stylesheet" type="text/css" href="/static/css/mobile-block.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/plugins/calligraphy.css">
         <link rel="stylesheet" type="text/css" href="/static/css/plugins/collapsible.css">
         <link rel="stylesheet" type="text/css" href="/static/css/plugins/console.css">
         <link rel="stylesheet" type="text/css" href="/static/css/plugins/diagnostics.css">
@@ -40,6 +42,7 @@
     <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
     <% if (dev) { %>
         <script src="/static/js/util.js"></script>
+        <script src="/static/js/plugins/calligraphy.js"></script>
         <script src="/static/js/plugins/collapsible.js"></script>
         <script src="/static/js/plugins/console.js"></script>
         <script src="/static/js/plugins/diagnostics.js"></script>

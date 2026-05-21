@@ -29,6 +29,9 @@
         "max_lines": 3,
         "align": "center"
     },
+    "calligraphy": {
+        "line_width": 2
+    },
     "background": "plate.png",
     "default_font": "Roman 4L",
     "instructions": {

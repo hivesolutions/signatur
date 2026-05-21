@@ -151,6 +151,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `docs/profile-spec.md` documenting the profile and inspirations JSON schema sourced from the `lib/util/profile.js` validator, with a pointer from `README.md`
 * Optional top-level `default_font` field on the profile schema that auto-selects the matching font (and its keyboard) on initial profile load when no font is already active and no URL `font` parameter is supplied
 * Session-persisted `viewport_mode` setting (`technical` default, `store`) on `/settings` that, when set to `store`, applies a `store-mode` body class on `/viewport` whose dedicated `static/css/store-mode.css` hides the profile info panel, the profile and variant selectors, the rulers/crosshair/keyboard/guidelines/caret toggles, the zoom slider, the margin override fields, and the position readout; rulers, crosshair and guidelines visuals are forced off through the existing checkbox change handlers while the keyboard and caret stay active
+* Calligraphy mode with jSignature canvas overlay on the viewport preview for freehand engraving
+* Calligraphy jQuery plugin (`plugins/calligraphy.js`, `css/plugins/calligraphy.css`) with init, reset, undo, and data actions
+* Calligraphy mode toggle, undo, and clear controls in viewport options panel
+* Per-profile calligraphy configuration with `calligraphy.line_width` field and validation
+* Zoom slider disabled during calligraphy mode to preserve drawing integrity
+* Calligraphy mode persisted via URL query parameter (`calligraphy=1`)
+* Calligraphy mode preserved across profile switches with canvas re-initialization
 
 ### Changed
 

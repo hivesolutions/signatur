@@ -72,6 +72,28 @@
                 <input class="font-size-input" type="hidden" value="12" />
                 <input class="font-size-mode" type="checkbox" hidden />
             </div>
+            <div class="viewport-options-field viewport-options-checkbox calligraphy-mode-container">
+                <label class="viewport-options-option">
+                    <input class="calligraphy-mode" type="checkbox" />
+                    Calligraphy Mode
+                </label>
+            </div>
+            <div class="viewport-options-field calligraphy-controls">
+                <span class="button button-small calligraphy-undo">Undo</span>
+                <span class="button button-small calligraphy-clear">Clear</span>
+            </div>
+            <div class="viewport-options-field slider-field calligraphy-thickness-container">
+                <label class="viewport-options-label">Thickness</label>
+                <div class="slider-presets calligraphy-thickness-presets">
+                    <span class="slider-preset calligraphy-thickness-preset" data-preset="1">S</span>
+                    <span class="slider-preset calligraphy-thickness-preset" data-preset="2">M</span>
+                    <span class="slider-preset calligraphy-thickness-preset" data-preset="4">L</span>
+                </div>
+                <div class="slider-track calligraphy-thickness-slider">
+                    <input class="slider-range calligraphy-thickness-range" type="range" min="0.5" max="6" value="2" step="0.25" />
+                    <span class="slider-bubble calligraphy-thickness-bubble">2</span>
+                </div>
+            </div>
             <div class="viewport-options-field viewport-options-checkbox viewport-options-rulers">
                 <label class="viewport-options-option">
                     <input class="rulers-mode" type="checkbox" checked />
@@ -157,6 +179,7 @@
                     <div class="crosshair crosshair-horizontal"></div>
                     <div class="crosshair crosshair-vertical"></div>
                     <svg class="viewport-svg"></svg>
+                    <div class="calligraphy-container"></div>
                     <div class="viewer-container caret-active" data-text="<%= config.text %>">
                     <% if (text) { %>
                         <% text.forEach(function(item){ %>
