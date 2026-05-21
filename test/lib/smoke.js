@@ -146,10 +146,8 @@ describe("Smoke", function() {
             );
         };
 
-        it("should expose node-fetch as a callable from require()", () => {
-            assertRequireable("node-fetch");
-            const fetchModule = require("node-fetch");
-            assert.strictEqual(typeof fetchModule, "function");
+        it("should expose fetch as a runtime global", () => {
+            assert.strictEqual(typeof fetch, "function");
         });
 
         it("should expose multer as a callable factory from require()", () => {

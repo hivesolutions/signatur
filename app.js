@@ -7,7 +7,6 @@ const process = require("process");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const JSZip = require("jszip");
-const fetch = require("node-fetch");
 const ejs = require("ejs");
 const util = require("hive-js-util");
 const info = require("./package");

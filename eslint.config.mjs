@@ -49,8 +49,7 @@ export default [
         files: ["app.js"],
         languageOptions: {
             globals: {
-                process: "off",
-                fetch: "off"
+                process: "off"
             }
         }
     },
