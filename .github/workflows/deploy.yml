@@ -9,9 +9,9 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        node-version: [14]
+        node-version: [24]
     runs-on: ubuntu-latest
-    container: node:${{ matrix.node-version }}-buster
+    container: node:${{ matrix.node-version }}-trixie-slim
     steps:
       - name: Checkout code from repository
         uses: actions/checkout@v6
