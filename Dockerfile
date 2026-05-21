@@ -1,27 +1,6 @@
-FROM node:20-bookworm-slim AS builder
+FROM node:20-trixie-slim
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    ca-certificates \
-    g++ \
-    ghostscript \
-    libgs-dev \
-    make \
-    pkg-config \
-    tar \
-    wget \
-    zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN wget -O pstoedit.tar.gz https://sourceforge.net/projects/pstoedit/files/pstoedit/4.01/pstoedit-4.01.tar.gz/download &&\
-    tar -zxf pstoedit.tar.gz &&\
-    cd pstoedit-4.01 &&\
-    ./configure --prefix=/opt/pstoedit &&\
-    make &&\
-    make install
-
-FROM node:20-bookworm-slim
-
-LABEL version="2.0"
+LABEL version="2.1"
 LABEL maintainer="Hive Solutions <development@hive.pt>"
 
 EXPOSE 8080
@@ -30,15 +9,12 @@ ENV LEVEL=INFO
 ENV HOST=0.0.0.0
 ENV PORT=8080
 ENV NODE_ENV=production
-ENV PATH=/opt/pstoedit/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/pstoedit/lib
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ghostscript \
     inkscape \
+    pstoedit \
     && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /opt/pstoedit /opt/pstoedit
 
 WORKDIR /app
 
