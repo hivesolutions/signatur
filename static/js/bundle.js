@@ -10,7 +10,7 @@ const jQuery = window.jQuery ? window.jQuery : null;
  * @returns {Object} An object with the setting for the current theme.
  */
 // eslint-disable-next-line no-unused-vars
-const getOptions = function (theme) {
+const getOptions = function(theme) {
     switch (theme) {
         case "ldj":
             return {
@@ -29,13 +29,13 @@ const getOptions = function (theme) {
 };
 
 // eslint-disable-next-line no-unused-vars
-const drawText = function (ctx) {
+const drawText = function(ctx) {
     ctx.font = "30px Arial";
     ctx.fillText("Hello World", 10, 500);
 };
 
 // eslint-disable-next-line no-unused-vars
-const deserializeText = function (text, separator = "|") {
+const deserializeText = function(text, separator = "|") {
     if (!text) return null;
     const textL = [];
     const pairs = text.split(new RegExp("\\" + separator));
@@ -60,7 +60,7 @@ const deserializeText = function (text, separator = "|") {
 };
 
 // eslint-disable-next-line no-unused-vars
-const serializeText = function (text, separator = "|") {
+const serializeText = function(text, separator = "|") {
     const buffer = [];
     for (let index = 0; index < text.length; index++) {
         const item = text[index];
@@ -74,7 +74,7 @@ const serializeText = function (text, separator = "|") {
 };
 
 // eslint-disable-next-line no-unused-vars
-const simplifyText = function (text, separator = "") {
+const simplifyText = function(text, separator = "") {
     const buffer = [];
     let font = null;
     for (let index = 0; index < text.length; index++) {
@@ -86,7 +86,7 @@ const simplifyText = function (text, separator = "") {
 };
 
 // eslint-disable-next-line no-unused-vars
-const multifontText = function (text, emojiMapping) {
+const multifontText = function(text, emojiMapping) {
     const result = [];
     for (let index = 0; index < text.length; index++) {
         const item = text[index];
@@ -117,7 +117,7 @@ const multifontText = function (text, emojiMapping) {
 };
 
 // eslint-disable-next-line no-unused-vars
-const hasUnsupportedFont = function (text) {
+const hasUnsupportedFont = function(text) {
     for (let index = 0; index < text.length; index++) {
         if (text[index][0] === "Cool Emojis Pantograph") return true;
     }
@@ -125,7 +125,7 @@ const hasUnsupportedFont = function (text) {
 };
 
 // eslint-disable-next-line no-unused-vars
-const countLines = function (text) {
+const countLines = function(text) {
     let lines = 1;
     for (let index = 0; index < text.length; index++) {
         if (text[index][1] === "\n") lines++;
@@ -133,7 +133,7 @@ const countLines = function (text) {
     return lines;
 };
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Collapsible panel plugin that toggles a panel between
      * expanded and minimized states using a smooth max-height
@@ -144,16 +144,16 @@ const countLines = function (text) {
      * by class name convention. Clicks on the title toggle the
      * panel state and update the toggle icon.
      */
-    jQuery.fn.collapsiblepanel = function () {
+    jQuery.fn.collapsiblepanel = function() {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const title = jQuery(".collapsible-title", context);
             const body = jQuery(".collapsible-body", context);
             const toggle = jQuery(".collapsible-toggle", context);
 
-            title.click(function () {
+            title.click(function() {
                 const bodyElement = body.get(0);
                 const minimized = context.hasClass("minimized");
                 if (minimized) {
@@ -165,7 +165,7 @@ const countLines = function (text) {
                     body.css("max-height", height + "px");
                     title.css("margin-bottom", "");
                     toggle.text("\u25be");
-                    body.one("transitionend", function () {
+                    body.one("transitionend", function() {
                         body.css("max-height", "");
                     });
                 } else {
@@ -174,7 +174,7 @@ const countLines = function (text) {
                     body.css("max-height", "0px");
                     title.css("margin-bottom", "0px");
                     toggle.text("\u25b8");
-                    body.one("transitionend", function () {
+                    body.one("transitionend", function() {
                         context.addClass("minimized");
                     });
                 }
@@ -185,7 +185,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Debug console plugin that evaluates arbitrary JavaScript
      * commands entered in a text input and displays the result.
@@ -194,15 +194,15 @@ const countLines = function (text) {
      * children (.button, .input[name=command]) by class name
      * convention.
      */
-    jQuery.fn.formconsole = function () {
+    jQuery.fn.formconsole = function() {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const button = jQuery(".button", context);
             const command = jQuery(".input[name=command]", context);
 
-            button.click(function () {
+            button.click(function() {
                 const commandValue = command.val();
                 try {
                     const result = eval(commandValue);
@@ -219,7 +219,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Diagnostics plugin that runs a self contained check of the
      * engraving pipeline tools and renders the result inside the
@@ -231,13 +231,13 @@ const countLines = function (text) {
      * .diagnostics-probe-list, .diagnostics-pipeline,
      * .diagnostics-step-list) by class name convention.
      */
-    jQuery.fn.diagnostics = function () {
+    jQuery.fn.diagnostics = function() {
         const elements = jQuery(this);
 
         // renders a single probe entry inside the tools section
         // as a one line row with the tool name, the captured
         // version string and a colored status pill
-        const renderProbe = function (context, probe) {
+        const renderProbe = function(context, probe) {
             const passLabel = context.attr("data-label-pass");
             const failLabel = context.attr("data-label-fail");
             const status = probe.found && !probe.error ? "ok" : "error";
@@ -267,7 +267,7 @@ const countLines = function (text) {
         // section, showing the resolved command, the output byte
         // count, the elapsed milliseconds and the captured stderr
         // tail so a failure can be diagnosed without ssh
-        const renderStep = function (context, step) {
+        const renderStep = function(context, step) {
             const passLabel = context.attr("data-label-pass");
             const failLabel = context.attr("data-label-fail");
             const status = step.status === "ok" ? "ok" : "error";
@@ -320,7 +320,7 @@ const countLines = function (text) {
         // probe and step entries produced by the server side
         // diagnostics endpoint, hiding the empty hint that is
         // shown before the first run
-        const renderResult = function (context, payload) {
+        const renderResult = function(context, payload) {
             const probeList = jQuery(".diagnostics-probe-list", context);
             const stepList = jQuery(".diagnostics-step-list", context);
             const probeSection = jQuery(".diagnostics-probes", context);
@@ -341,14 +341,14 @@ const countLines = function (text) {
             stepSection.prop("hidden", false);
         };
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const runButton = jQuery(".diagnostics-run", context);
             const runLabel = runButton.text();
             const runningLabel = context.attr("data-label-running");
             const networkErrorLabel = context.attr("data-label-network-error");
 
-            runButton.click(async function (event) {
+            runButton.click(async function(event) {
                 event.preventDefault();
                 runButton.prop("disabled", true);
                 runButton.text(runningLabel);
@@ -380,7 +380,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Font selection plugin that manages a clickable list of
      * font elements with toggle selection state.
@@ -394,14 +394,14 @@ const countLines = function (text) {
      *   "defont" - triggered when a font is deselected, passing
      *              the font name from the data-font attribute
      */
-    jQuery.fn.fontscontainer = function () {
+    jQuery.fn.fontscontainer = function() {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const fonts = jQuery(".font", context);
 
-            fonts.click(function () {
+            fonts.click(function() {
                 const _element = jQuery(this);
                 if (_element.hasClass("selected")) {
                     _element.removeClass("selected");
@@ -418,7 +418,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Inspiration panel plugin that displays pre-built engraving
      * presets as clickable thumbnails with a full-screen search
@@ -436,10 +436,10 @@ const countLines = function (text) {
      *   "apply"  - triggered when an inspiration is selected,
      *              passing the inspiration object as argument
      */
-    jQuery.fn.inspirationpanel = function (action, options) {
+    jQuery.fn.inspirationpanel = function(action, options) {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const panelTitle = jQuery(".inspiration-panel-title", context);
             const panelBody = jQuery(".inspiration-panel-body", context);
@@ -458,7 +458,7 @@ const countLines = function (text) {
 
             // renders a single inspiration thumbnail as a miniature
             // viewport preview with the text pre-rendered inside it
-            const renderPreview = function (profile, inspiration, container) {
+            const renderPreview = function(profile, inspiration, container) {
                 const width = profile.width * viewportScale;
                 const height = profile.height * viewportScale;
                 const padding = inspiration.padding ||
@@ -562,7 +562,7 @@ const countLines = function (text) {
 
             // renders the inspiration thumbnails in the side panel
             // showing the first 3 entries from the profile inspirations
-            const renderPanel = function (profile) {
+            const renderPanel = function(profile) {
                 thumbnails.empty();
 
                 if (!profile || !profile._inspirations || profile._inspirations.length === 0) {
@@ -592,20 +592,20 @@ const countLines = function (text) {
 
             // renders all inspirations in the full-screen modal grid
             // with viewport previews and metadata for each entry
-            const renderModal = function (profile, filter) {
+            const renderModal = function(profile, filter) {
                 modalGrid.empty();
 
                 if (!profile || !profile._inspirations) return;
 
                 const query = (filter || "").toLowerCase();
-                const entries = profile._inspirations.filter(function (insp) {
+                const entries = profile._inspirations.filter(function(insp) {
                     if (!query) return true;
                     const haystack = [
                         insp.title || "",
                         insp.description || "",
                         insp.author || "",
                         (insp.text || [])
-                            .map(function (t) {
+                            .map(function(t) {
                                 return t[1];
                             })
                             .join("")
@@ -651,7 +651,7 @@ const countLines = function (text) {
 
             // toggles the panel between expanded and minimized
             // states using a smooth max-height transition
-            panelTitle.click(function () {
+            panelTitle.click(function() {
                 const bodyElement = panelBody.get(0);
                 const minimized = context.hasClass("minimized");
                 if (minimized) {
@@ -663,7 +663,7 @@ const countLines = function (text) {
                     panelBody.css("max-height", height + "px");
                     panelTitle.css("margin-bottom", "");
                     panelToggle.text("▾");
-                    panelBody.one("transitionend", function () {
+                    panelBody.one("transitionend", function() {
                         panelBody.css("max-height", "");
                         panelBody.css("overflow", "visible");
                     });
@@ -674,7 +674,7 @@ const countLines = function (text) {
                     panelBody.css("max-height", "0px");
                     panelTitle.css("margin-bottom", "0px");
                     panelToggle.text("▸");
-                    panelBody.one("transitionend", function () {
+                    panelBody.one("transitionend", function() {
                         context.addClass("minimized");
                     });
                 }
@@ -682,7 +682,7 @@ const countLines = function (text) {
 
             // registers click handlers for the panel thumbnails
             // to emit an apply event with the selected inspiration
-            thumbnails.on("click", ".inspiration-thumb", function () {
+            thumbnails.on("click", ".inspiration-thumb", function() {
                 const inspiration = jQuery(this).data("inspiration");
                 if (inspiration) {
                     context.triggerHandler("apply", [inspiration]);
@@ -691,7 +691,7 @@ const countLines = function (text) {
 
             // registers for the view all button to open the
             // full-screen inspirations modal with all entries
-            buttonViewAll.click(function () {
+            buttonViewAll.click(function() {
                 const profile = context.data("_profile");
                 if (!profile || !profile._inspirations) return;
                 modalSearchInput.val("");
@@ -701,7 +701,7 @@ const countLines = function (text) {
 
             // registers click handlers for the modal inspiration
             // cards to emit an apply event and close the modal
-            modalGrid.on("click", ".inspiration-card", function () {
+            modalGrid.on("click", ".inspiration-card", function() {
                 const inspiration = jQuery(this).data("inspiration");
                 if (inspiration) {
                     context.triggerHandler("apply", [inspiration]);
@@ -711,7 +711,7 @@ const countLines = function (text) {
 
             // registers for the search input to filter the
             // inspirations grid in the full-screen modal
-            modalSearchInput.bind("input", function () {
+            modalSearchInput.bind("input", function() {
                 const profile = context.data("_profile");
                 const query = jQuery(this).val();
                 renderModal(profile, query);
@@ -722,7 +722,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * JSON highlight plugin that overlays a syntax colored preview
      * on top of a regular textarea so the user keeps native input
@@ -735,13 +735,13 @@ const countLines = function (text) {
      * so only the colored overlay is visible to the reader, while
      * the caret remains visible at the textarea native position.
      */
-    jQuery.fn.jsonhighlight = function (action, options) {
+    jQuery.fn.jsonhighlight = function(action, options) {
         const elements = jQuery(this);
 
         // escapes the given string so it can be safely embedded in
         // the highlight overlay without breaking the surrounding
         // markup or being interpreted as html by the browser
-        const escapeHtml = function (value) {
+        const escapeHtml = function(value) {
             return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         };
 
@@ -749,7 +749,7 @@ const countLines = function (text) {
         // spans, recognising strings (telling keys apart from values
         // by the trailing colon), numbers, booleans, null, and the
         // structural punctuation that holds the document together
-        const tokenize = function (text) {
+        const tokenize = function(text) {
             const pattern =
                 /"(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|\btrue\b|\bfalse\b|\bnull\b|[{}\[\],:]|\s+|[^\s]+/g;
             let output = "";
@@ -785,14 +785,14 @@ const countLines = function (text) {
             return output;
         };
 
-        elements.each(function () {
+        elements.each(function() {
             const textarea = jQuery(this);
 
             // refreshes the overlay markup from the current textarea
             // value, appending a trailing space so the highlighter
             // matches the textarea height when the value ends on a
             // newline character
-            const refresh = function () {
+            const refresh = function() {
                 const wrapper = textarea.data("_jsonhighlight_wrapper");
                 if (!wrapper) return;
                 const code = jQuery("code", wrapper);
@@ -803,7 +803,7 @@ const countLines = function (text) {
             // mirrors the textarea scroll position onto the overlay
             // so the colored content stays aligned with the caret
             // even after the user has scrolled past the viewport
-            const syncScroll = function () {
+            const syncScroll = function() {
                 const wrapper = textarea.data("_jsonhighlight_wrapper");
                 if (!wrapper) return;
                 const overlay = jQuery(".jsonhighlight-overlay", wrapper).get(0);
@@ -850,7 +850,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Virtual keyboard plugin that handles character input via
      * clickable key elements with support for long-press accent
@@ -865,10 +865,10 @@ const countLines = function (text) {
      *   "key" - triggered when a key is pressed, passing the
      *           current font name and character value
      */
-    jQuery.fn.keyboardcontainer = function () {
+    jQuery.fn.keyboardcontainer = function() {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const body = jQuery("body");
             const keys = jQuery("> .char", context);
@@ -876,7 +876,7 @@ const countLines = function (text) {
             let longPressTimer = null;
             let longPressTriggered = false;
 
-            tabs.click(function () {
+            tabs.click(function() {
                 const element = jQuery(this);
                 const category = element.attr("data-category");
                 tabs.removeClass("active");
@@ -884,7 +884,7 @@ const countLines = function (text) {
                 context.attr("data-active", category);
             });
 
-            keys.click(function () {
+            keys.click(function() {
                 if (longPressTriggered) return;
                 const element = jQuery(this);
                 let value = element.attr("data-value");
@@ -903,18 +903,18 @@ const countLines = function (text) {
 
             // registers a long press handler on keys that have
             // accented variants defined in the data-accents attribute
-            keys.on("mousedown touchstart", function (event) {
+            keys.on("mousedown touchstart", function(event) {
                 longPressTriggered = false;
                 const element = jQuery(this);
                 const accents = element.attr("data-accents");
                 if (!accents) return;
-                longPressTimer = setTimeout(function () {
+                longPressTimer = setTimeout(function() {
                     longPressTriggered = true;
                     showAccentPopup(context, element, accents);
                 }, 400);
             });
 
-            keys.on("mouseup touchend touchcancel mouseleave", function () {
+            keys.on("mouseup touchend touchcancel mouseleave", function() {
                 if (longPressTimer) {
                     clearTimeout(longPressTimer);
                     longPressTimer = null;
@@ -930,7 +930,7 @@ const countLines = function (text) {
          * @param {Element} element The key element that was long pressed.
          * @param {String} accents Comma-separated list of accented characters.
          */
-        const showAccentPopup = function (context, element, accents) {
+        const showAccentPopup = function(context, element, accents) {
             const body = jQuery("body");
             jQuery(".accent-popup").remove();
 
@@ -943,7 +943,7 @@ const countLines = function (text) {
                 let value = variants[index].trim();
                 if (casing === "lowercase") value = value.toLowerCase();
                 const option = jQuery('<span class="accent-option">' + value + "</span>");
-                option.on("mouseup touchend click", function (event) {
+                option.on("mouseup touchend click", function(event) {
                     event.preventDefault();
                     event.stopPropagation();
                     const font = body.data("font");
@@ -965,8 +965,8 @@ const countLines = function (text) {
 
             // dismisses the popup when clicking outside of it
             // by registering a one-time click handler on the document
-            setTimeout(function () {
-                jQuery(document).one("click", function (event) {
+            setTimeout(function() {
+                jQuery(document).one("click", function(event) {
                     if (jQuery(event.target).closest(".accent-popup").length > 0) return;
                     popup.remove();
                 });
@@ -979,7 +979,7 @@ const countLines = function (text) {
          * @param {Element} context The context that is going to be used
          * for the toggling.
          */
-        const toggleCasing = function (context) {
+        const toggleCasing = function(context) {
             const casing = context.data("casing") || "uppercase";
             if (casing === "uppercase") {
                 context.data("casing", "lowercase");
@@ -1000,7 +1000,7 @@ const countLines = function (text) {
          * @param {Element} element The mode toggle key element whose label
          * is going to be updated to reflect the new state.
          */
-        const toggleMode = function (context, element) {
+        const toggleMode = function(context, element) {
             const mode = context.data("mode") || "letters";
             if (mode === "letters") {
                 context.data("mode", "symbols");
@@ -1017,7 +1017,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Modal overlay plugin that manages multiple modal types
      * including error messages, print confirmation with specs
@@ -1033,10 +1033,10 @@ const countLines = function (text) {
      *   "confirm" - builds and shows the print confirmation modal
      *               with the given specs object and viewport preview
      */
-    jQuery.fn.modal = function (action, message) {
+    jQuery.fn.modal = function(action, message) {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const modalMessage = jQuery(".modal-message", context);
             const modalPreview = jQuery(".modal-preview", context);
@@ -1054,7 +1054,7 @@ const countLines = function (text) {
                 if (!context.hasClass("visible")) return;
                 context.find("input, textarea").blur();
                 context.addClass("dismissing");
-                context.one("transitionend", function () {
+                context.one("transitionend", function() {
                     context.removeClass("visible dismissing");
                 });
                 return;
@@ -1088,7 +1088,7 @@ const countLines = function (text) {
                 const hasMultifont = specs.multifont && specs.multifont.length > 0;
                 const hasText = hasMultifont || (specs.text && specs.text !== "(empty)");
 
-                const buildRow = function (label, value) {
+                const buildRow = function(label, value) {
                     return (
                         '<div class="modal-spec">' +
                         '<span class="modal-spec-label">' +
@@ -1224,30 +1224,30 @@ const countLines = function (text) {
 
             // dismisses the modal with a faster fade-out transition
             // removing the visible and dismissing classes after completion
-            const dismissModal = function (callback) {
+            const dismissModal = function(callback) {
                 if (!context.hasClass("visible")) return;
                 context.find("input, textarea").blur();
                 context.addClass("dismissing");
-                context.one("transitionend", function () {
+                context.one("transitionend", function() {
                     context.removeClass("visible dismissing");
                     if (callback) callback();
                 });
             };
 
-            buttonClose.click(function () {
+            buttonClose.click(function() {
                 dismissModal();
             });
 
             // registers for the click operation on the overlay
             // background to dismiss the modal when clicking outside
-            context.click(function (event) {
+            context.click(function(event) {
                 if (event.target !== context.get(0)) return;
                 dismissModal();
             });
 
             // registers for the escape key press to dismiss
             // the modal when it is currently visible
-            jQuery(document).bind("keydown", function (event) {
+            jQuery(document).bind("keydown", function(event) {
                 if (event.key !== "Escape") return;
                 if (!context.hasClass("visible")) return;
                 dismissModal();
@@ -1255,7 +1255,7 @@ const countLines = function (text) {
 
             // registers for the click operation on the engrave button
             // that performs the actual print submission via colony print
-            buttonEngrave.click(async function () {
+            buttonEngrave.click(async function() {
                 if (jQuery(this).hasClass("disabled")) return;
                 context.removeClass("visible");
 
@@ -1357,7 +1357,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Profile manager plugin that owns the behavior of the profile
      * manager screen at `/profiles/manager`, including the inline
@@ -1371,10 +1371,10 @@ const countLines = function (text) {
      * .manager-field-editor, .manager-reference-select, etc.)
      * by class name convention.
      */
-    jQuery.fn.profilemanager = function (action, options) {
+    jQuery.fn.profilemanager = function(action, options) {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const managerToast = jQuery(".toast");
             const templateTab = jQuery("[data-tab-content=template]", context);
@@ -1460,7 +1460,7 @@ const countLines = function (text) {
             // appends a single key / value row to the given meta
             // container so the metadata table stays consistent across
             // every preview rendered for the picked or edited profile
-            const appendMetaRow = function (container, label, value) {
+            const appendMetaRow = function(container, label, value) {
                 if (value === undefined || value === null || value === "") return;
                 const row = jQuery("<div></div>");
                 row.addClass("manager-reference-detail-meta-row");
@@ -1479,7 +1479,7 @@ const countLines = function (text) {
             // name, and a small metadata table that mirrors the most
             // relevant fields of the profile schema, used by both the
             // template tab and the live preview tab
-            const renderDetail = function (
+            const renderDetail = function(
                 profile,
                 imageElement,
                 nameElement,
@@ -1523,7 +1523,7 @@ const countLines = function (text) {
             // by parsing the profile JSON, falling back to a placeholder
             // when the payload is invalid so the panel never spams errors
             // while the user is typing
-            const refreshPreview = function () {
+            const refreshPreview = function() {
                 const text = profileEditor.val() || "";
                 let profile = null;
                 try {
@@ -1550,7 +1550,7 @@ const countLines = function (text) {
             // debounces the live preview update so that fast keystrokes
             // do not thrash the JSON parser on every input event while
             // still feeling responsive after a brief pause
-            const schedulePreview = function () {
+            const schedulePreview = function() {
                 if (previewTimer !== null) clearTimeout(previewTimer);
                 previewTimer = setTimeout(refreshPreview, 400);
             };
@@ -1558,7 +1558,7 @@ const countLines = function (text) {
             // populates the dropdown with one option per available
             // profile and caches the catalog so subsequent selections
             // do not need to hit the server again
-            const renderReferenceSelect = async function () {
+            const renderReferenceSelect = async function() {
                 try {
                     const response = await fetch("/profiles?include_disabled=1");
                     if (response.status !== 200) return;
@@ -1594,7 +1594,7 @@ const countLines = function (text) {
             // tab content and the highlighted tab button so the right
             // pane can flip between the existing profiles, the live
             // preview, and the background asset manager
-            jQuery(".manager-reference-tab", context).click(function () {
+            jQuery(".manager-reference-tab", context).click(function() {
                 const tab = jQuery(this);
                 const target = tab.attr("data-tab");
                 jQuery(".manager-reference-tab", context).removeClass("active");
@@ -1608,9 +1608,9 @@ const countLines = function (text) {
             // textarea occupies the vertical space at a time, also
             // refreshing the JSON highlight overlay since the editor was
             // hidden when the underlying value last changed
-            const selectEditor = function (target) {
+            const selectEditor = function(target) {
                 if (!target) return;
-                editorFields.each(function () {
+                editorFields.each(function() {
                     const field = jQuery(this);
                     const active = field.attr("data-editor") === target;
                     field.prop("hidden", !active);
@@ -1621,7 +1621,7 @@ const countLines = function (text) {
                 if (target === "profile") profileEditor.jsonhighlight("refresh");
                 if (target === "inspirations") inspirationsEditor.jsonhighlight("refresh");
             };
-            editorSelect.on("change", function () {
+            editorSelect.on("change", function() {
                 selectEditor(editorSelect.val());
             });
             selectEditor(editorSelect.val() || "profile");
@@ -1629,7 +1629,7 @@ const countLines = function (text) {
             // shows the preview for the picked profile and remembers
             // the selection so the apply, edit, and delete buttons can
             // later operate on the same template
-            referenceSelect.on("change", function () {
+            referenceSelect.on("change", function() {
                 const key = referenceSelect.val();
                 selectedKey = key || null;
                 if (!key || !cachedProfiles || !cachedProfiles[key]) {
@@ -1663,7 +1663,7 @@ const countLines = function (text) {
             // them so both editors stay in sync, and forces create mode
             // so a previous edit selection does not leak into the new
             // save submission
-            referenceDetailApply.click(function () {
+            referenceDetailApply.click(function() {
                 if (!selectedKey || !cachedProfiles) return;
                 const profile = cachedProfiles[selectedKey];
                 if (!profile) return;
@@ -1689,7 +1689,7 @@ const countLines = function (text) {
             // loads the picked profile into the editor textareas and
             // flips the form into edit mode so the next save overwrites
             // the existing profile instead of creating a duplicate
-            referenceDetailEdit.click(function () {
+            referenceDetailEdit.click(function() {
                 if (!selectedKey || !cachedProfiles) return;
                 const profile = cachedProfiles[selectedKey];
                 if (!profile) return;
@@ -1715,7 +1715,7 @@ const countLines = function (text) {
             // exits the edit mode without leaving the manager screen so
             // the user can pivot from editing an existing profile to
             // creating a new one without reloading or navigating away
-            editBannerExit.click(function () {
+            editBannerExit.click(function() {
                 editTargetInput.val("");
                 heroEyebrow.text(heroEyebrow.attr("data-create-label"));
                 buttonSave.text(buttonSave.attr("data-create-label"));
@@ -1726,7 +1726,7 @@ const countLines = function (text) {
             // dismisses an error or validation banner when its close
             // button is clicked so the panels do not stay sticky after
             // the user has acknowledged the message and moved on
-            context.on("click", ".manager-banner-close", function () {
+            context.on("click", ".manager-banner-close", function() {
                 const banner = jQuery(this).closest(".manager-errors, .manager-validation");
                 if (banner.hasClass("manager-validation")) {
                     banner.prop("hidden", true);
@@ -1739,7 +1739,7 @@ const countLines = function (text) {
             // dedicated toggle endpoint, refreshing the catalog so the
             // dropdown and detail panel reflect the new state and the
             // welcome and viewport selectors filter accordingly
-            referenceDetailToggle.click(async function () {
+            referenceDetailToggle.click(async function() {
                 if (!selectedKey || !cachedProfiles) return;
                 const profile = cachedProfiles[selectedKey];
                 const nextEnabled = profile.enabled === false;
@@ -1763,7 +1763,7 @@ const countLines = function (text) {
             // opens the delete confirmation modal pre-populated with
             // the picked profile identifier so the user can review
             // exactly which profile is about to be removed
-            referenceDetailDelete.click(function () {
+            referenceDetailDelete.click(function() {
                 if (!selectedKey) return;
                 pendingDeleteKey = selectedKey;
                 modalDeleteTarget.text(selectedKey);
@@ -1773,7 +1773,7 @@ const countLines = function (text) {
             // posts the delete request for the pending profile and
             // reloads the page on success so the dropdown is refreshed
             // without the removed entry
-            buttonModalDelete.click(async function () {
+            buttonModalDelete.click(async function() {
                 if (!pendingDeleteKey) return;
                 try {
                     const response = await fetch(
@@ -1791,14 +1791,14 @@ const countLines = function (text) {
             // reads the picked file as text and stuffs the result into
             // the textarea referenced by the picker's data-target so
             // the editor remains the source of truth for the submission
-            jQuery(".manager-field-loader-input", context).on("change", function () {
+            jQuery(".manager-field-loader-input", context).on("change", function() {
                 const input = this;
                 if (!input.files || input.files.length === 0) return;
                 const targetId = jQuery(input).attr("data-target");
                 const target = jQuery("#" + targetId);
                 if (target.length === 0) return;
                 const reader = new FileReader();
-                reader.onload = function () {
+                reader.onload = function() {
                     target.val(reader.result);
                     input.value = "";
                     target.jsonhighlight("refresh");
@@ -1826,7 +1826,7 @@ const countLines = function (text) {
             // renders the asset list as a thumbnail grid, falling back
             // to a neutral empty state when no PNG file lives in the
             // profiles directory so the panel never looks broken
-            const renderAssets = async function () {
+            const renderAssets = async function() {
                 try {
                     const response = await fetch("/profiles/assets");
                     if (response.status !== 200) return;
@@ -1877,7 +1877,7 @@ const countLines = function (text) {
             // renders the asset upload error banner from the structured
             // list returned by the server so the failure look matches
             // the existing inline error treatment of the profile editor
-            const renderAssetErrors = function (errors) {
+            const renderAssetErrors = function(errors) {
                 if (!errors || errors.length === 0) {
                     assetsErrors.empty().prop("hidden", true);
                     return;
@@ -1897,7 +1897,7 @@ const countLines = function (text) {
             // submission already has a payload attached, and pre-fills
             // the filename input with the picked file name unless the
             // user has already typed a custom value
-            assetsFile.on("change", function () {
+            assetsFile.on("change", function() {
                 if (this.files && this.files.length > 0) {
                     assetsPicker.addClass("has-file");
                     if (!(assetsFilename.val() || "").trim()) {
@@ -1911,7 +1911,7 @@ const countLines = function (text) {
             // uploads the queued PNG under the requested filename via
             // a multipart request to the asset endpoint, refreshing the
             // grid on success and surfacing server errors inline
-            assetsSubmit.click(async function () {
+            assetsSubmit.click(async function() {
                 const filename = (assetsFilename.val() || "").trim();
                 const file = assetsFile.get(0).files[0];
                 const localErrors = [];
@@ -1959,7 +1959,7 @@ const countLines = function (text) {
             // opens the asset delete confirmation modal pre-populated
             // with the filename so the user can review exactly which
             // PNG asset is about to be removed
-            assetsGrid.on("click", ".manager-assets-card-delete", function () {
+            assetsGrid.on("click", ".manager-assets-card-delete", function() {
                 const card = jQuery(this).closest(".manager-assets-card");
                 const filename = card.attr("data-filename");
                 if (!filename) return;
@@ -1971,7 +1971,7 @@ const countLines = function (text) {
             // posts the delete request for the pending asset and
             // refreshes the grid in place on success so the removed
             // entry disappears without a hard page reload
-            buttonModalDeleteAsset.click(async function () {
+            buttonModalDeleteAsset.click(async function() {
                 if (!pendingDeleteAsset) return;
                 try {
                     const response = await fetch(
@@ -2000,7 +2000,7 @@ const countLines = function (text) {
             // renders the bundle import error banner from the structured
             // payload returned by the server so the failure look matches
             // the existing inline error treatment of the asset panel
-            const renderBundleErrors = function (errors) {
+            const renderBundleErrors = function(errors) {
                 if (!errors || errors.length === 0) {
                     bundleErrors.empty().prop("hidden", true);
                     return;
@@ -2018,7 +2018,7 @@ const countLines = function (text) {
             // visually marks the bundle picker when a zip is queued so
             // the user can tell at a glance whether the next restore
             // submission already has a payload attached
-            bundleFile.on("change", function () {
+            bundleFile.on("change", function() {
                 if (this.files && this.files.length > 0) {
                     bundlePicker.addClass("has-file");
                 } else {
@@ -2029,7 +2029,7 @@ const countLines = function (text) {
             // opens the restore confirmation modal so the user can
             // review the destructive full replace semantics before
             // the on disk profiles directory is wiped and rebuilt
-            bundleSubmit.click(function () {
+            bundleSubmit.click(function() {
                 if (!bundleFile.get(0).files[0]) {
                     renderBundleErrors(["file is required"]);
                     return;
@@ -2042,7 +2042,7 @@ const countLines = function (text) {
             // profiles directory and unpacks the archive in place,
             // then reloads the page so every cached profile list and
             // dropdown reflects the freshly restored catalog
-            buttonModalRestoreBundle.click(async function () {
+            buttonModalRestoreBundle.click(async function() {
                 const file = bundleFile.get(0).files[0];
                 if (!file) {
                     modalRestoreBundle.modal("hide");
@@ -2089,7 +2089,7 @@ const countLines = function (text) {
             // server side validator without persisting anything and
             // surfaces the resulting messages inline so the user can
             // iterate on the editor before committing to a save
-            buttonValidate.click(async function () {
+            buttonValidate.click(async function() {
                 buttonValidate.prop("disabled", true);
                 try {
                     const formData = new FormData();
@@ -2156,7 +2156,7 @@ const countLines = function (text) {
             // renders the same red error banner the server side render
             // path produced before the form was switched to AJAX so the
             // failure look stays consistent across both interaction modes
-            const renderManagerErrors = function (errors) {
+            const renderManagerErrors = function(errors) {
                 const existing = jQuery(".manager-errors", context);
                 if (existing.length > 0) existing.remove();
                 if (!errors || errors.length === 0) return;
@@ -2199,7 +2199,7 @@ const countLines = function (text) {
             // the reference dropdown with the newly saved entry, and signals
             // success through the existing toast plugin without losing the
             // current editor context
-            context.submit(async function (event) {
+            context.submit(async function(event) {
                 event.preventDefault();
                 buttonSave.prop("disabled", true);
                 try {
@@ -2254,7 +2254,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Profile selector plugin that manages the profile and
      * variant dropdown selection with automatic variant merging.
@@ -2276,12 +2276,12 @@ const countLines = function (text) {
      *               changes, passing the merged profile, base profile,
      *               profile key, and variant index as arguments
      */
-    jQuery.fn.profileselector = function (action, options) {
+    jQuery.fn.profileselector = function(action, options) {
         const elements = jQuery(this);
 
         // applies a variant's overrides onto the base profile
         // returning a merged profile object for rendering
-        const applyVariant = function (profile, variant) {
+        const applyVariant = function(profile, variant) {
             if (!profile || !variant) return profile;
             const merged = Object.assign({}, profile);
             if (variant.padding) merged.padding = variant.padding;
@@ -2293,7 +2293,7 @@ const countLines = function (text) {
 
         // resolves the current profile from the given context
         // applying variant overrides if one is selected
-        const resolveProfile = function (context) {
+        const resolveProfile = function(context) {
             const profileSelect = jQuery(".profile-select", context);
             const variantSelect = jQuery(".variant-select", context);
             const profiles = context.data("_profiles") || {};
@@ -2318,7 +2318,7 @@ const countLines = function (text) {
             return resolveProfile(elements.first());
         }
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const profileSelect = jQuery(".profile-select", context);
             const variantSelect = jQuery(".variant-select", context);
@@ -2356,7 +2356,7 @@ const countLines = function (text) {
 
             // registers for the change in the profile dropdown
             // populating the variant dropdown if variants exist
-            profileSelect.bind("change", function () {
+            profileSelect.bind("change", function() {
                 const key = jQuery(this).val();
                 const profiles = context.data("_profiles") || {};
                 const baseProfile = key ? profiles[key] : null;
@@ -2388,7 +2388,7 @@ const countLines = function (text) {
 
             // registers for the change in the variant dropdown
             // applying the variant overrides and emitting change
-            variantSelect.bind("change", function () {
+            variantSelect.bind("change", function() {
                 const resolved = resolveProfile(context);
                 context.triggerHandler("profile", [
                     resolved.profile,
@@ -2403,7 +2403,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Text editor plugin that manages character-by-character
      * text input with caret positioning, newline handling, and
@@ -2428,10 +2428,10 @@ const countLines = function (text) {
      *                   the text array and new caret position as
      *                   arguments
      */
-    jQuery.fn.texteditor = function (action, options) {
+    jQuery.fn.texteditor = function(action, options) {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const body = jQuery("body");
 
@@ -2478,7 +2478,7 @@ const countLines = function (text) {
             // binds click handlers on pre-rendered DOM elements
             // that were server-rendered in the initial template
             if (action === "bindExisting") {
-                context.find("> :not(.caret)").each(function () {
+                context.find("> :not(.caret)").each(function() {
                     const element = jQuery(this);
                     bindCaretClick(element, context, body);
                 });
@@ -2511,7 +2511,7 @@ const countLines = function (text) {
             // creates the key handler function responsible for
             // the update of the current text value, both from
             // a visual and logic point of view
-            const keyHandler = function (event, font, value) {
+            const keyHandler = function(event, font, value) {
                 if (value === "⌫") {
                     backspace();
                 } else if (value === "⎵") {
@@ -2523,7 +2523,7 @@ const countLines = function (text) {
                 }
             };
 
-            const keyboardHandler = function (event) {
+            const keyboardHandler = function(event) {
                 // skips keyboard handling when a modal input is focused
                 // so that text editing controls work normally in modals
                 const target = jQuery(event.target);
@@ -2650,7 +2650,7 @@ const countLines = function (text) {
                 }
             };
 
-            const backspace = function () {
+            const backspace = function() {
                 let [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 if (caretPosition < 0) return false;
@@ -2662,7 +2662,7 @@ const countLines = function (text) {
                 return true;
             };
 
-            const deleteForward = function () {
+            const deleteForward = function() {
                 const [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 if (caretPosition + 1 >= text.length) return false;
@@ -2672,7 +2672,7 @@ const countLines = function (text) {
                 return true;
             };
 
-            const space = function (font) {
+            const space = function(font) {
                 let [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 const element = jQuery(
@@ -2686,7 +2686,7 @@ const countLines = function (text) {
                 return true;
             };
 
-            const newline = function () {
+            const newline = function() {
                 let [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 maxLines = context.data("_maxLines") || 0;
@@ -2700,7 +2700,7 @@ const countLines = function (text) {
                 return true;
             };
 
-            const moveCaret = function (direction) {
+            const moveCaret = function(direction) {
                 const [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 const newPosition = caretPosition + direction;
@@ -2718,7 +2718,7 @@ const countLines = function (text) {
 
             // splits the text array into lines and determines which
             // line the caret is currently on based on its position
-            const getCaretLine = function (text, caretPosition) {
+            const getCaretLine = function(text, caretPosition) {
                 const lines = [[]];
                 for (let i = 0; i < text.length; i++) {
                     if (text[i][1] === "\n") {
@@ -2742,7 +2742,7 @@ const countLines = function (text) {
                 return { lines: lines, currentLine: currentLine };
             };
 
-            const moveCaretHome = function () {
+            const moveCaretHome = function() {
                 const [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 const { lines, currentLine } = getCaretLine(text, caretPosition);
@@ -2772,7 +2772,7 @@ const countLines = function (text) {
                 return true;
             };
 
-            const moveCaretEnd = function () {
+            const moveCaretEnd = function() {
                 const [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 const { lines, currentLine } = getCaretLine(text, caretPosition);
@@ -2802,7 +2802,7 @@ const countLines = function (text) {
                 return true;
             };
 
-            const moveCaretLine = function (direction) {
+            const moveCaretLine = function(direction) {
                 const [text, caret, caretPosition] = getText();
                 if (caret.length === 0) return false;
                 const { lines, currentLine } = getCaretLine(text, caretPosition);
@@ -2865,7 +2865,7 @@ const countLines = function (text) {
                 return true;
             };
 
-            const type = function (font, value, validate) {
+            const type = function(font, value, validate) {
                 // determines if a key exists in the current selected keyboard that
                 // has the value of the provided key and if that's not the case returns
                 // the control flow immediately, key is not compatible
@@ -2889,7 +2889,7 @@ const countLines = function (text) {
                 setText(text, caretPosition);
             };
 
-            const getText = function () {
+            const getText = function() {
                 const text = body.data("text") || [];
                 const caret = jQuery("> .caret", context);
                 const caretPosition =
@@ -2897,7 +2897,7 @@ const countLines = function (text) {
                 return [text, caret, caretPosition];
             };
 
-            const setText = function (text, caretPosition) {
+            const setText = function(text, caretPosition) {
                 body.data("text", text);
                 body.data("caret_position", caretPosition);
                 context.triggerHandler("change", [text, caretPosition]);
@@ -2906,7 +2906,7 @@ const countLines = function (text) {
             // notifies listeners that the caret has moved without
             // changing the text content so that downstream consumers
             // (e.g. the font selector) can react to the new position
-            const notifyCaretChange = function (caretPosition) {
+            const notifyCaretChange = function(caretPosition) {
                 const text = body.data("text") || [];
                 context.triggerHandler("caretchange", [text, caretPosition]);
             };
@@ -2949,8 +2949,8 @@ const countLines = function (text) {
      * @param {Element} container The viewer container holding all elements.
      * @param {Element} body The body element used for state storage.
      */
-    const bindCaretClick = function (element, container, body) {
-        element.click(function (event) {
+    const bindCaretClick = function(element, container, body) {
+        element.click(function(event) {
             event.stopPropagation();
             placeCaretFromClick(jQuery(this), event, container, body);
         });
@@ -2967,7 +2967,7 @@ const countLines = function (text) {
      * @param {Element} container The viewer container holding all elements.
      * @param {Element} body The body element used for state storage.
      */
-    const placeCaretFromClick = function (el, event, container, body) {
+    const placeCaretFromClick = function(el, event, container, body) {
         const caret = container.find("> .caret");
         const index = container.children(":not(.caret)").index(el);
         if (index < 0) return;
@@ -3002,8 +3002,8 @@ const countLines = function (text) {
      * @param {Element} container The viewer container element.
      * @param {Element} body The body element used for state storage.
      */
-    const bindContainerCaretClick = function (container, body) {
-        container.click(function (event) {
+    const bindContainerCaretClick = function(container, body) {
+        container.click(function(event) {
             if (event.target !== container.get(0)) return;
             const children = container.children(":not(.caret)");
             if (children.length === 0) return;
@@ -3014,7 +3014,7 @@ const countLines = function (text) {
             // between characters still resolve to a span
             let nearest = null;
             let nearestDistance = Infinity;
-            children.each(function () {
+            children.each(function() {
                 const rect = this.getBoundingClientRect();
                 if (event.clientX >= rect.left && event.clientX <= rect.right) {
                     nearest = this;
@@ -3036,7 +3036,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Toast notification plugin that displays temporary
      * messages to the user for a fixed duration of 3 seconds.
@@ -3046,16 +3046,16 @@ const countLines = function (text) {
      * Actions:
      *   "show" - displays the given message for 3 seconds
      */
-    jQuery.fn.toast = function (action, message) {
+    jQuery.fn.toast = function(action, message) {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
 
             if (action === "show") {
                 context.text(message);
                 context.addClass("visible");
-                setTimeout(function () {
+                setTimeout(function() {
                     context.removeClass("visible");
                 }, 3000);
             }
@@ -3065,7 +3065,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Viewport preview plugin that manages the visual rendering
      * of the engraving preview area including SVG bounds, safe
@@ -3083,10 +3083,10 @@ const countLines = function (text) {
      *   "zoom"   - applies a CSS transform scale to the preview
      *              with layout margin compensation
      */
-    jQuery.fn.viewportpreview = function (action, options) {
+    jQuery.fn.viewportpreview = function(action, options) {
         const elements = jQuery(this);
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const svg = jQuery(".viewport-svg", context);
             const container = jQuery(".viewer-container", context);
@@ -3314,7 +3314,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-(function (jQuery) {
+(function(jQuery) {
     /**
      * Welcome plugin that renders an engraving template catalog
      * with image cards and manages the template selection state
@@ -3338,12 +3338,12 @@ const countLines = function (text) {
      *                passing the profile, profile key, and variant
      *                index as arguments
      */
-    jQuery.fn.welcome = function (action, options) {
+    jQuery.fn.welcome = function(action, options) {
         const elements = jQuery(this);
 
         // resolves the current selection from the given context
         // returning the profile, profile key, and variant index
-        const resolveSelection = function (context) {
+        const resolveSelection = function(context) {
             const profiles = context.data("_profiles") || {};
             const key = context.data("_selected") || null;
             const variant = context.data("_variant");
@@ -3359,7 +3359,7 @@ const countLines = function (text) {
         // provided profiles object and stores it for later lookup,
         // rendering one card per profile entry with image and
         // metadata and pre-selecting the previously chosen entry
-        const renderCatalog = function (context, profiles) {
+        const renderCatalog = function(context, profiles) {
             const catalog = jQuery(".catalog", context);
             const profileInput = jQuery(".profile-input", context);
             const buttonStart = jQuery(".button-start", context);
@@ -3433,7 +3433,7 @@ const countLines = function (text) {
         // populates the catalog of the given context, silently
         // ignoring fetch errors so the welcome screen still
         // renders without a populated catalog
-        const fetchProfiles = async function (context) {
+        const fetchProfiles = async function(context) {
             try {
                 const response = await fetch("/profiles");
                 if (response.status !== 200) return;
@@ -3451,7 +3451,7 @@ const countLines = function (text) {
             return resolveSelection(elements.first());
         }
 
-        elements.each(function () {
+        elements.each(function() {
             const context = jQuery(this);
             const catalog = jQuery(".catalog", context);
             const profileInput = jQuery(".profile-input", context);
@@ -3469,7 +3469,7 @@ const countLines = function (text) {
             // registers for the click operation on each catalog
             // card so that the selected template is reflected in
             // the hidden form fields and visual selection state
-            catalog.on("click", ".catalog-card:not(.empty)", function () {
+            catalog.on("click", ".catalog-card:not(.empty)", function() {
                 const card = jQuery(this);
                 const key = card.attr("data-profile");
                 const profiles = context.data("_profiles") || {};
@@ -3491,7 +3491,7 @@ const countLines = function (text) {
             // to skip the start button and submit the welcome form
             // immediately, routing the user straight to the viewport
             // editor with the chosen template pre-selected
-            catalog.on("dblclick", ".catalog-card:not(.empty)", function () {
+            catalog.on("dblclick", ".catalog-card:not(.empty)", function() {
                 context.closest("form").trigger("submit");
             });
 
@@ -3501,7 +3501,7 @@ const countLines = function (text) {
             // since mobile browsers do not fire a reliable dblclick
             let lastTapTime = 0;
             let lastTapTarget = null;
-            catalog.on("touchend", ".catalog-card:not(.empty)", function (event) {
+            catalog.on("touchend", ".catalog-card:not(.empty)", function(event) {
                 const now = Date.now();
                 const card = event.currentTarget;
                 if (now - lastTapTime < 300 && lastTapTarget === card) {
@@ -3525,7 +3525,7 @@ const countLines = function (text) {
     };
 })(jQuery);
 
-jQuery(document).ready(function () {
+jQuery(document).ready(function() {
     // runs a series of selections over the current viewport
     const body = jQuery("body");
     const form = jQuery(".form");
@@ -3555,7 +3555,7 @@ jQuery(document).ready(function () {
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
-    profileInfoRawToggle.click(function (event) {
+    profileInfoRawToggle.click(function(event) {
         event.preventDefault();
         const visible = profileInfoRaw.is(":visible");
         if (visible) {
@@ -3569,7 +3569,7 @@ jQuery(document).ready(function () {
 
     // registers for the click operation on the instructions
     // link to open the instructions modal for the current profile
-    viewportOptionsInstructions.click(function (event) {
+    viewportOptionsInstructions.click(function(event) {
         event.preventDefault();
         if (!currentProfile || !currentProfile.instructions) return;
         const instructions = currentProfile.instructions;
@@ -3618,11 +3618,11 @@ jQuery(document).ready(function () {
     // for all tabs combined
     const settingsTabs = jQuery(".settings-tabs > .settings-tab");
     const settingsTabContents = jQuery(".settings-tab-content");
-    settingsTabs.click(function () {
+    settingsTabs.click(function() {
         const tab = jQuery(this).attr("data-tab");
         settingsTabs.removeClass("active");
         jQuery(this).addClass("active");
-        settingsTabContents.each(function () {
+        settingsTabContents.each(function() {
             const content = jQuery(this);
             const visible = content.attr("data-tab") === tab;
             content.css("display", visible ? "" : "none");
@@ -3634,7 +3634,7 @@ jQuery(document).ready(function () {
     // localStorage overrides against the server side defaults so
     // operators see the value the application is actually using
     // for each scenario and can edit it in place
-    jQuery(".settings-printing-row").each(function () {
+    jQuery(".settings-printing-row").each(function() {
         const row = jQuery(this);
         const key = row.attr("data-key");
         const legacy = row.attr("data-legacy");
@@ -3648,8 +3648,8 @@ jQuery(document).ready(function () {
     // keys when the settings form is submitted, removing the entry
     // entirely when the input is blank so the server side base value
     // takes over again instead of an empty string overriding it
-    jQuery(".form-settings").bind("submit", function () {
-        jQuery(".settings-printing-row").each(function () {
+    jQuery(".form-settings").bind("submit", function() {
+        jQuery(".settings-printing-row").each(function() {
             const row = jQuery(this);
             const key = row.attr("data-key");
             const value = (row.find(".settings-printing-effective").val() || "").trim();
@@ -3698,7 +3698,7 @@ jQuery(document).ready(function () {
     // shows a keyboard container with the soft fade-up animation
     // already defined by the CSS, clearing any leftover leaving
     // class so the enter keyframe always plays cleanly
-    const showKeyboardContainer = function (element) {
+    const showKeyboardContainer = function(element) {
         element.removeClass("keyboard-leaving").show();
     };
 
@@ -3708,13 +3708,13 @@ jQuery(document).ready(function () {
     // snapping away; the optional callback runs once the fade is
     // complete so callers can chain the appearance of a sibling
     // keyboard onto the end of the leave animation
-    const hideKeyboardContainer = function (element, onComplete) {
+    const hideKeyboardContainer = function(element, onComplete) {
         if (element.css("display") === "none") {
             if (onComplete) onComplete();
             return;
         }
         element.addClass("keyboard-leaving");
-        setTimeout(function () {
+        setTimeout(function() {
             element.hide().removeClass("keyboard-leaving");
             if (onComplete) onComplete();
         }, 250);
@@ -3741,9 +3741,9 @@ jQuery(document).ready(function () {
     // loads the cool emojis mapping from the static fonts
     // directory to resolve emoji characters to font names
     let emojiMapping = {};
-    jQuery.getJSON("/static/fonts/coolemojis.mapping.json", function (data) {
+    jQuery.getJSON("/static/fonts/coolemojis.mapping.json", function(data) {
         emojiMapping = data;
-        emojisContainer.find(".char[data-value]").each(function () {
+        emojisContainer.find(".char[data-value]").each(function() {
             const element = jQuery(this);
             const value = element.attr("data-value");
             const font = emojiMapping[value];
@@ -3773,20 +3773,20 @@ jQuery(document).ready(function () {
 
     // registers for the change in selection in the technology
     // radio buttons so that the form may adapt
-    technologyRadios.bind("change", function () {
+    technologyRadios.bind("change", function() {
         const value = this.value;
         updateForm(value);
     });
 
     // registers for the click operation on the clear button
     // that sends the "reset" event to the jsignature
-    buttonClear.click(function () {
+    buttonClear.click(function() {
         signature.jSignature("reset");
     });
 
     // registers for the print/engrave button click operation
     // that opens the confirmation modal with the printing specs
-    buttonPrint.click(function () {
+    buttonPrint.click(function() {
         const element = jQuery(this);
         const text = element.attr("data-text");
         const font = element.attr("data-font");
@@ -3889,7 +3889,7 @@ jQuery(document).ready(function () {
     // registers for the download button click operation so that
     // we obtain the SVG version and submit the current form with it
     // effectively converting the data into HPGL
-    buttonDownload.click(function () {
+    buttonDownload.click(function() {
         const svgBase64 = signature.jSignature("getData", "svgbase64");
         formInput.attr("value", svgBase64[1]);
         form.submit();
@@ -3916,7 +3916,7 @@ jQuery(document).ready(function () {
 
     // fetches the available profiles from the server and
     // populates the profile dropdown with the results
-    const loadProfiles = async function () {
+    const loadProfiles = async function() {
         try {
             const response = await fetch("/profiles");
             if (response.status !== 200) return;
@@ -4042,7 +4042,7 @@ jQuery(document).ready(function () {
 
     // retrieves the current margin values from the margin
     // input fields returning a padding-like object in mm
-    const getMargins = function () {
+    const getMargins = function() {
         return {
             left: parseFloat(marginLeft.val()) || 0,
             right: parseFloat(marginRight.val()) || 0,
@@ -4053,7 +4053,7 @@ jQuery(document).ready(function () {
 
     // populates the margin input fields with the default
     // padding values from the given profile definition
-    const populateMargins = function (profile) {
+    const populateMargins = function(profile) {
         if (!profile) return;
         const padding = profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
         marginLeft.val(padding.left);
@@ -4064,7 +4064,7 @@ jQuery(document).ready(function () {
 
     // renders the viewport preview using the viewport preview
     // plugin with the current profile and margin configuration
-    const renderViewportPreview = function (profile) {
+    const renderViewportPreview = function(profile) {
         viewportPreview.viewportpreview("render", {
             profile: profile,
             scale: VIEWPORT_SCALE,
@@ -4074,7 +4074,7 @@ jQuery(document).ready(function () {
 
     // renders the rulers using the viewport preview plugin
     // with the current profile and rulers visibility state
-    const renderRulers = function (profile) {
+    const renderRulers = function(profile) {
         viewportPreview.viewportpreview("rulers", {
             profile: profile,
             scale: VIEWPORT_SCALE,
@@ -4084,7 +4084,7 @@ jQuery(document).ready(function () {
 
     // applies the current zoom level from the zoom slider
     // using the viewport preview plugin to scale the preview
-    const applyZoom = function () {
+    const applyZoom = function() {
         const zoom = parseFloat(zoomRange.val()) || 1;
         refreshZoomBubble();
         refreshZoomPresets();
@@ -4093,7 +4093,7 @@ jQuery(document).ready(function () {
 
     // applies an inspiration configuration to the viewport
     // setting the text, font size, margins, and font selection
-    const applyInspiration = function (profile, inspiration) {
+    const applyInspiration = function(profile, inspiration) {
         // expands the inspiration text entries into individual
         // character pairs so that each character gets its own
         // DOM element for per-character caret navigation
@@ -4175,7 +4175,7 @@ jQuery(document).ready(function () {
 
     // updates the floating profile info block with the
     // currently selected profile summary information
-    const updateProfileInfo = function (profile) {
+    const updateProfileInfo = function(profile) {
         const defaultTitle = profileInfoTitle.attr("data-default-label") || "Profile ";
         const showLabel = profileInfoRawToggle.attr("data-show-label") || "Show Raw";
         if (!profile) {
@@ -4222,8 +4222,8 @@ jQuery(document).ready(function () {
     // them at relative positions within the profile font size range
     // and rounding to the configured step so each preset always lands
     // on a value the slider can actually take
-    const computeFontSizePresets = function (min, max, step) {
-        const snap = function (value) {
+    const computeFontSizePresets = function(min, max, step) {
+        const snap = function(value) {
             const steps = Math.round((value - min) / step);
             return min + steps * step;
         };
@@ -4245,7 +4245,7 @@ jQuery(document).ready(function () {
     // is on) is highlighted; falls back to no active chip when the
     // value sits between two named presets so the user knows they
     // are in a custom range
-    const refreshFontSizePresets = function () {
+    const refreshFontSizePresets = function() {
         fontSizePresets.removeClass("active");
         if (fontSizeMode.prop("checked")) {
             fontSizePresets.filter('[data-preset="auto"]').addClass("active");
@@ -4264,7 +4264,7 @@ jQuery(document).ready(function () {
     // floats above the slider thumb showing the live value as the
     // user drags, delegating the value formatting to the caller so
     // each slider can pick its own unit suffix
-    const refreshSliderBubble = function (range, bubble, formatter) {
+    const refreshSliderBubble = function(range, bubble, formatter) {
         const value = parseFloat(range.val());
         const min = parseFloat(range.attr("min")) || 0;
         const max = parseFloat(range.attr("max")) || 1;
@@ -4275,8 +4275,8 @@ jQuery(document).ready(function () {
 
     // refreshes the font size bubble using the slider helper with
     // the current profile unit as the formatter suffix
-    const refreshFontSizeBubble = function () {
-        refreshSliderBubble(fontSizeRange, fontSizeBubble, function (value) {
+    const refreshFontSizeBubble = function() {
+        refreshSliderBubble(fontSizeRange, fontSizeBubble, function(value) {
             const unit = currentProfile && currentProfile.unit ? currentProfile.unit : "";
             return value + (unit ? " " + unit : "");
         });
@@ -4284,8 +4284,8 @@ jQuery(document).ready(function () {
 
     // refreshes the zoom bubble using the slider helper with the
     // `x` suffix that matches the chip preset labels
-    const refreshZoomBubble = function () {
-        refreshSliderBubble(zoomRange, zoomBubble, function (value) {
+    const refreshZoomBubble = function() {
+        refreshSliderBubble(zoomRange, zoomBubble, function(value) {
             return value + "x";
         });
     };
@@ -4294,10 +4294,10 @@ jQuery(document).ready(function () {
     // chip that matches the current value is highlighted, falling
     // back to no active chip when the value sits between two named
     // presets so the user knows they are in a custom zoom level
-    const refreshZoomPresets = function () {
+    const refreshZoomPresets = function() {
         zoomPresets.removeClass("active");
         const value = parseFloat(zoomRange.val());
-        zoomPresets.each(function () {
+        zoomPresets.each(function() {
             const preset = parseFloat(jQuery(this).attr("data-preset"));
             if (preset === value) jQuery(this).addClass("active");
         });
@@ -4305,7 +4305,7 @@ jQuery(document).ready(function () {
 
     // updates the font size controls based on the selected
     // profile configuration for manual or automatic mode
-    const updateFontSizeControls = function (profile) {
+    const updateFontSizeControls = function(profile) {
         if (!profile || !profile.font_size) {
             fontSizeContainer.removeClass("visible");
             return;
@@ -4341,7 +4341,7 @@ jQuery(document).ready(function () {
 
     // calculates the automatic font size to fit the current
     // text content within the safe drawable area of the profile
-    const calculateAutoFontSize = function (profile) {
+    const calculateAutoFontSize = function(profile) {
         if (!profile || !profile.font_size) return null;
 
         const fs = profile.font_size;
@@ -4367,7 +4367,7 @@ jQuery(document).ready(function () {
 
     // applies the current font size to the viewport text
     // display based on the selected profile configuration
-    const applyFontSize = function () {
+    const applyFontSize = function() {
         if (!currentProfile) return;
 
         const isAutomatic = fontSizeMode.prop("checked");
@@ -4393,7 +4393,7 @@ jQuery(document).ready(function () {
 
     // refreshes the viewport and controls based on the
     // currently selected profile and variant combination
-    const refreshProfile = function () {
+    const refreshProfile = function() {
         if (currentProfile) {
             populateMargins(currentProfile);
             const defaultZoom = currentProfile.preview ? currentProfile.preview.zoom || 1 : 1;
@@ -4431,7 +4431,7 @@ jQuery(document).ready(function () {
     // the matching font element so the keyboard plugin selects the
     // corresponding keyboard, skipping when a font is already active
     // or when the URL font parameter takes precedence
-    const applyDefaultFont = function (profile) {
+    const applyDefaultFont = function(profile) {
         if (!profile || !profile.default_font) return;
         if (body.data("font")) return;
         if (urlParams.get("font")) return;
@@ -4442,7 +4442,7 @@ jQuery(document).ready(function () {
     // registers for the change event from the profile selector
     // plugin to update the viewport and controls when the profile
     // or variant selection changes
-    profileSelector.bind("profile", function (event, profile) {
+    profileSelector.bind("profile", function(event, profile) {
         currentProfile = profile;
         refreshProfile();
         updateUrl("profile");
@@ -4450,7 +4450,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the font size range slider
     // to sync the number input and apply the new size
-    fontSizeRange.bind("input", function () {
+    fontSizeRange.bind("input", function() {
         fontSizeInput.val(jQuery(this).val());
         applyFontSize();
         refreshFontSizePresets();
@@ -4460,7 +4460,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the font size number input
     // to sync the range slider and apply the new size
-    fontSizeInput.bind("input", function () {
+    fontSizeInput.bind("input", function() {
         fontSizeRange.val(jQuery(this).val());
         applyFontSize();
         refreshFontSizePresets();
@@ -4470,7 +4470,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the font size mode checkbox
     // to toggle between manual and automatic sizing modes
-    fontSizeMode.bind("change", function () {
+    fontSizeMode.bind("change", function() {
         const isAutomatic = jQuery(this).prop("checked");
         fontSizeInput.prop("disabled", isAutomatic);
         fontSizeRange.prop("disabled", isAutomatic);
@@ -4485,7 +4485,7 @@ jQuery(document).ready(function () {
     // stay in sync with the named preset that was picked, routing
     // every change through the existing input handlers so the URL
     // update and the viewport render run through their normal paths
-    fontSizePresets.click(function () {
+    fontSizePresets.click(function() {
         const preset = jQuery(this).attr("data-preset");
         if (preset === "auto") {
             if (!fontSizeMode.prop("checked")) {
@@ -4505,16 +4505,16 @@ jQuery(document).ready(function () {
     // the slider so the live value is visible above the thumb, and
     // hides it again when the interaction ends so the bubble does
     // not linger over the panel
-    fontSizeRange.bind("mousedown touchstart focus", function () {
+    fontSizeRange.bind("mousedown touchstart focus", function() {
         fontSizeContainer.addClass("slider-dragging");
     });
-    fontSizeRange.bind("mouseup touchend touchcancel blur", function () {
+    fontSizeRange.bind("mouseup touchend touchcancel blur", function() {
         fontSizeContainer.removeClass("slider-dragging");
     });
 
     // registers for the change in the rulers mode checkbox
     // to toggle the visibility of the viewport rulers
-    rulersMode.bind("change", function () {
+    rulersMode.bind("change", function() {
         const showRulers = jQuery(this).prop("checked");
         if (showRulers) {
             rulerHorizontal.show();
@@ -4530,7 +4530,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the zoom range slider
     // to apply the zoom transform to the viewport preview
-    zoomRange.bind("input", function () {
+    zoomRange.bind("input", function() {
         applyZoom();
         updateUrl("zoom");
     });
@@ -4539,7 +4539,7 @@ jQuery(document).ready(function () {
     // slider jumps to the preset value and routes the change
     // through the existing zoom input handler so the URL update
     // and the preview transform run through their normal paths
-    zoomPresets.click(function () {
+    zoomPresets.click(function() {
         const value = parseFloat(jQuery(this).attr("data-preset"));
         if (isNaN(value)) return;
         zoomRange.val(value).trigger("input");
@@ -4549,16 +4549,16 @@ jQuery(document).ready(function () {
     // the zoom slider so the live value is visible above the thumb,
     // and hides it again when the interaction ends so the bubble
     // does not linger over the panel
-    zoomRange.bind("mousedown touchstart focus", function () {
+    zoomRange.bind("mousedown touchstart focus", function() {
         zoomContainer.addClass("slider-dragging");
     });
-    zoomRange.bind("mouseup touchend touchcancel blur", function () {
+    zoomRange.bind("mouseup touchend touchcancel blur", function() {
         zoomContainer.removeClass("slider-dragging");
     });
 
     // registers for the change in the margin input fields
     // to re-render the viewport preview in real time
-    jQuery(".margin-input").bind("input", function () {
+    jQuery(".margin-input").bind("input", function() {
         renderViewportPreview(currentProfile);
         applyFontSize();
         updateUrl("margins");
@@ -4566,7 +4566,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the crosshair mode checkbox
     // to toggle the visibility of the viewport crosshair lines
-    crosshairMode.bind("change", function () {
+    crosshairMode.bind("change", function() {
         if (!crosshairMode.prop("checked")) {
             viewportPreview.removeClass("crosshair-active");
             positionValue.text("-");
@@ -4576,7 +4576,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the keyboard mode checkbox
     // to toggle the visibility of the visual keyboard
-    keyboardMode.bind("change", function () {
+    keyboardMode.bind("change", function() {
         const showKeyboard = keyboardMode.prop("checked");
         if (showKeyboard) {
             const font = body.data("font");
@@ -4597,7 +4597,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the guidelines mode checkbox
     // to toggle the visibility of the viewport SVG guidelines
-    guidelinesMode.bind("change", function () {
+    guidelinesMode.bind("change", function() {
         const showGuidelines = guidelinesMode.prop("checked");
         if (showGuidelines) {
             viewportSvg.show();
@@ -4609,7 +4609,7 @@ jQuery(document).ready(function () {
 
     // registers for the change in the caret mode checkbox
     // to toggle the visibility of the blinking caret
-    caretMode.bind("change", function () {
+    caretMode.bind("change", function() {
         const showCaret = caretMode.prop("checked");
         const caret = viewportContainer.find("> .caret");
         if (showCaret) {
@@ -4635,9 +4635,9 @@ jQuery(document).ready(function () {
     // so exit can put things back exactly as they were; the
     // restoring flag is briefly raised while the toggles are flipped
     // so the temporary off state does not get persisted to the URL
-    const enterPreviewMode = function () {
+    const enterPreviewMode = function() {
         if (body.hasClass("preview-mode")) return;
-        previewModeSnapshot = previewToggles.map(function (toggle) {
+        previewModeSnapshot = previewToggles.map(function(toggle) {
             return toggle.prop("checked");
         });
         const wasRestoring = restoring;
@@ -4660,10 +4660,10 @@ jQuery(document).ready(function () {
     // resetting the zoom to the snapshotted value so the preview
     // scales back down, and briefly holding an exiting class so
     // the reverse transition still plays during the animation
-    const exitPreviewMode = function () {
+    const exitPreviewMode = function() {
         if (!body.hasClass("preview-mode")) return;
         body.removeClass("preview-mode").addClass("preview-mode-exiting");
-        setTimeout(function () {
+        setTimeout(function() {
             body.removeClass("preview-mode-exiting");
         }, 600);
         if (previewModeSnapshot) {
@@ -4689,7 +4689,7 @@ jQuery(document).ready(function () {
     // hint or the Escape key reverses the action
     jQuery(".button-preview").click(enterPreviewMode);
     jQuery(".preview-mode-hint").click(exitPreviewMode);
-    body.bind("keydown", function (event) {
+    body.bind("keydown", function(event) {
         if (event.key !== "Escape") return;
         if (!body.hasClass("preview-mode")) return;
         event.stopPropagation();
@@ -4699,7 +4699,7 @@ jQuery(document).ready(function () {
 
     // registers for the mouse move event on the viewport preview
     // to display crosshair lines and update the position readout
-    viewportPreview.bind("mousemove", function (event) {
+    viewportPreview.bind("mousemove", function(event) {
         if (!currentProfile) return;
         const offset = viewportPreview.offset();
         const zoom = parseFloat(zoomRange.val()) || 1;
@@ -4718,7 +4718,7 @@ jQuery(document).ready(function () {
 
     // registers for the mouse leave event on the viewport preview
     // to hide the crosshair lines and clear the position readout
-    viewportPreview.bind("mouseleave", function () {
+    viewportPreview.bind("mouseleave", function() {
         viewportPreview.removeClass("crosshair-active");
         positionValue.text("-");
     });
@@ -4729,7 +4729,7 @@ jQuery(document).ready(function () {
     // registers for the click event on the button receipt
     // to run the remove logic of receipt printing using
     // the colony (cloud) print service
-    buttonReceipt.click(async function () {
+    buttonReceipt.click(async function() {
         try {
             await printReceipt();
         } catch (err) {
@@ -4743,7 +4743,7 @@ jQuery(document).ready(function () {
 
     // registers for any change in the signature so that the
     // button clear visibility may be controlled
-    signature.bind("change", function () {
+    signature.bind("change", function() {
         const data = signature.jSignature("getData", "base30");
         const hasData = Boolean(data[1]);
         if (hasData) {
@@ -4765,7 +4765,7 @@ jQuery(document).ready(function () {
     // event to the operation of switching keyboard and updating global
     // body information on the selected font
     fontsContainer.fontscontainer();
-    fontsContainer.bind("font", function (event, font) {
+    fontsContainer.bind("font", function(event, font) {
         const showKeyboard = keyboardMode.prop("checked");
         keyboardContainer.removeClass("selected");
         emojisContainer.removeClass("selected");
@@ -4785,10 +4785,10 @@ jQuery(document).ready(function () {
         }
         target.addClass("selected");
         const allKeyboards = [keyboardContainer, emojisContainer, emojispContainer];
-        const leaving = allKeyboards.find(function (candidate) {
+        const leaving = allKeyboards.find(function(candidate) {
             return candidate.get(0) !== target.get(0) && candidate.css("display") !== "none";
         });
-        const reveal = function () {
+        const reveal = function() {
             if (showKeyboard) showKeyboardContainer(target);
         };
         if (leaving) {
@@ -4802,7 +4802,7 @@ jQuery(document).ready(function () {
         body.data("font", font);
         updateUrl("font");
     });
-    fontsContainer.bind("defont", function (event, font) {
+    fontsContainer.bind("defont", function(event, font) {
         hideKeyboardContainer(keyboardContainer);
         hideKeyboardContainer(emojisContainer);
         hideKeyboardContainer(emojispContainer);
@@ -4813,7 +4813,7 @@ jQuery(document).ready(function () {
         updateUrl("font");
     });
 
-    const updateForm = function (value) {
+    const updateForm = function(value) {
         const options = master[value] || {};
         const elements = options.elements || "*";
         const location = options.location || "*";
@@ -4845,7 +4845,7 @@ jQuery(document).ready(function () {
 
     // helper function to update the print button and report
     // URL with the current text state for engraving submission
-    const updateButtonState = function (text) {
+    const updateButtonState = function(text) {
         const [textSimple, font] = simplifyText(text);
         buttonPrint.attr("data-text", textSimple);
         buttonPrint.attr("data-font", font);
@@ -4867,7 +4867,7 @@ jQuery(document).ready(function () {
     // bails out entirely when the viewport editor is not mounted
     // on the current page so non viewport pages never end up
     // with viewport only query parameters in their address bar
-    const updateUrl = function (action) {
+    const updateUrl = function(action) {
         if (restoring) return;
         if (viewportContainer.length === 0) return;
         const params = new URLSearchParams(window.location.search);
@@ -4929,7 +4929,7 @@ jQuery(document).ready(function () {
 
     // restores the font selection from the URL query
     // parameters by clicking the matching font element
-    const restoreFont = function () {
+    const restoreFont = function() {
         const urlFont = urlParams.get("font");
         if (!urlFont) return;
         const fontElement = fontsContainer.find('.font[data-font="' + urlFont + '"]');
@@ -4938,7 +4938,7 @@ jQuery(document).ready(function () {
 
     // initializes the text data array from server-rendered
     // content so that the session state is fully restored
-    const restoreText = function () {
+    const restoreText = function() {
         const initialText = viewportContainer.attr("data-text");
         if (!initialText) return;
         const textData = deserializeText(initialText);
@@ -4949,7 +4949,7 @@ jQuery(document).ready(function () {
         updateButtonState(textData);
     };
 
-    const printReceipt = async function () {
+    const printReceipt = async function() {
         // gathers the reference to the current element in
         // pressing and then references some of its data
         // elements for operation configuration
@@ -5037,7 +5037,7 @@ jQuery(document).ready(function () {
     // and binds the change event to update button state and URL
     viewportContainer.texteditor();
     viewportContainer.texteditor("option", { maxLines: 1 });
-    viewportContainer.bind("change", function (event, text) {
+    viewportContainer.bind("change", function(event, text) {
         updateButtonState(text);
         if (currentProfile && fontSizeMode.prop("checked")) {
             applyFontSize();
@@ -5049,7 +5049,7 @@ jQuery(document).ready(function () {
     // to keep the selected font in sync with the character around
     // the caret, falling back to the right-side character when the
     // caret sits before the first character of the text
-    viewportContainer.bind("caretchange", function (event, text, caretPosition) {
+    viewportContainer.bind("caretchange", function(event, text, caretPosition) {
         // searches left from the caret for the nearest character
         // that has a font defined, skipping newline entries since
         // they have no visual font of their own
@@ -5086,7 +5086,7 @@ jQuery(document).ready(function () {
         viewport_scale: VIEWPORT_SCALE,
         font_size_scale: FONT_SIZE_SCALE
     });
-    inspirationPanel.bind("apply", function (event, inspiration) {
+    inspirationPanel.bind("apply", function(event, inspiration) {
         if (inspiration && currentProfile) {
             applyInspiration(currentProfile, inspiration);
         }

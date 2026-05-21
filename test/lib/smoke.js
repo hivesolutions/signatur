@@ -168,11 +168,9 @@ describe("Smoke", function() {
             assert.strictEqual(typeof zip.generateAsync, "function");
         });
 
-        it("should expose uuid.v4 as a callable from require()", () => {
-            assertRequireable("uuid");
-            const uuid = require("uuid");
-            assert.strictEqual(typeof uuid.v4, "function");
-            const value = uuid.v4();
+        it("should expose crypto.randomUUID as a runtime global", () => {
+            assert.strictEqual(typeof crypto.randomUUID, "function");
+            const value = crypto.randomUUID();
             assert.ok(/^[0-9a-f-]{36}$/i.test(value));
         });
     });
