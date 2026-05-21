@@ -58,7 +58,7 @@ jobs:
     steps:
       - uses: hivesolutions/deploy-action@v1
         with:
-          repository: hivesolutions/signatur
+          repository: hivesolutions/infra-bemisc
           service: signatur-latest
           group: apps
           tag: latest
