@@ -14,7 +14,7 @@ jobs:
     container: node:${{ matrix.node-version }}-buster
     steps:
       - name: Checkout code from repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Print Node.js information
         run: node --version
       - name: Install package
