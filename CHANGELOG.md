@@ -7,25 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+*
+
 ### Changed
 
-* The viewport preview reclaims about 52px of vertical space when the rulers are toggled off: the body now carries a `rulers-off` class that collapses the preview's top reservation from 48px to 8px and the bottom gap from 16px to 4px, so the chrome-free vertical room recovered from the hidden ruler labels feeds straight back to the editing surface instead of sitting empty; the class is flipped through the existing rulers change handler and seeded on initial render from the URL restored value so there is no flash on first paint
+*
+
+### Fixed
+
+*
+
+## [1.0.0] - 2026-05-21
 
 ### Added
 
 * Optional `sku` field on the profile schema that, when present, is rendered as quiet monospaced metadata between the product name and the dimension pill on every welcome catalog card so operators can identify the matching stock keeping unit at a glance; the field is validated as an optional string in `lib/util/profile.js` and documented in [docs/profile-spec.md](docs/profile-spec.md) ([#30](https://github.com/hivesolutions/signatur/issues/30))
 * `button-tiny` size variant on the `.button` component mirroring the existing `button-small` shape at a smaller 28×28 scale with a 9px label, so very small affordances like the `Instructions` link on the viewport options panel can use the established button language instead of a one off styled link
-
-### Changed
-
-* Special character keys on the on screen keyboard (`Backspace`, `Shift`, `Space`, `Return`) now render the official Lucide `delete`, `arrow-big-up`, `space`, and `corner-down-left` SVG icons inline so they look identical across every platform regardless of the system font's rendering of the matching Unicode codepoints; the keyboard plugin reads the dispatched value from the `data-value` attribute first and falls back to the element text so the existing downstream `keyHandler` switch keeps working unchanged, and the inline SVGs share a consistent `viewBox`, stroke weight and round line caps so they read as a single visual family
-
-### Fixed
-
-* Avoids a split second flash of the legacy dashed text box on the viewport while the profile selector is being restored: the body now carries a `profiles-loading` class at server render time that hides the no profile viewer container, and the class is cleared in a `finally` block once `loadProfiles` resolves so the legacy box only appears after the initial profile state has been settled
-
-### Added
-
 * iOS Safari touch responsiveness pass: `touch-action: manipulation` is applied at the body level and reinforced on every interactive surface (`.button`, `.option-chip`, `.option-chip-toggle`, `.slider-preset`, `.settings-tab`, `.emojis-tab`, keyboard `.char`, `.catalog-card`, `.fonts-container > .font`) so the first tap registers immediately without the legacy hover stall; the viewport meta is locked at `maximum-scale=1, user-scalable=no` so neither double tap nor pinch can zoom the page; the body also sets `-webkit-tap-highlight-color` to transparent so taps no longer flash the iOS gray overlay
 * Container level fallback caret click handler on the viewer container that resolves taps landing outside any character span to the nearest character, working around iOS Safari's touch hit-test that occasionally promotes the click target to the closest interactive ancestor when the tap falls in the few pixel gap before or after a span
 * Entrance animation for the viewport preview that fades the engraving surface in with a subtle three pixel translate up using a `cubic-bezier(0.22, 1.2, 0.36, 1)` ease so the moment a profile becomes active feels deliberate rather than abrupt; runs once per `.profile-active` activation
@@ -36,23 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Localized data attributes on the confirmation modal so each viewport locale template owns its own label set (`Texto`, `Letra`, `Perfil`, `Área`, `Tam. Letra`, `Margens`, `Espaç. Extra`, `Área Final`, `Nó`, `Suporte` for `pt_pt`); the modal also renders a friendly subtitle (`Ready to engrave on …` / `Pronto para gravar em …`), pill chips for each multifont text segment, an amber/lavender empty hint that blocks the primary action with the `Engrave` button greyed out when no text was entered, and a `Dry run` / `Simulação` chip toggle that replaces the legacy checkbox; the secondary `Cancel` / `Cancelar` button adopts the ghost variant so the engrave action stays visually dominant
 * `data-message-no-printer` / `data-message-pantograph` data attributes on the viewport body so the engrave guard error messages are owned by each locale template instead of being hardcoded; the missing printer message now points the user to `/settings` and is required whenever any of `url`, `node`, `printer` or `key` is unset
 * `Settings` / `Definições` link on both gateway action bars so the configuration screen is reachable from the gateway in either locale (the EN gateway previously exposed a `Configure` button that opened the legacy modal, while the PT gateway had no entry point at all)
-
-### Changed
-
-* The confirmation modal preview now sits on a soft tinted card with the spec list rendered as a clean rounded table (`label : value` rows, monospaced segment chips) instead of the previous inline `bold key: value` debug style, the spec rows are tightened (font size, padding, column width) so the contents fit comfortably inside the modal without overflowing
-* `/settings` printing tab now uses a stable scrollbar gutter on the surrounding catalog rail (`scrollbar-gutter: stable`) so the card position does not shift when a long tab causes a scrollbar to appear, the printing inputs use `flex: 1 1 0` plus `min-width: 0` so their intrinsic content width (long URLs in the disabled `Base` pill) cannot push the row past the card boundary, and the card itself no longer caps at `max-height: 560px` so the printing tab can grow vertically to fit all entries
-
-### Removed
-
-* `Printer Configuration` modal (`.modal-overlay-config`) from `/viewport` and `/gateway`, along with the matching `Configure` header button on `/gateway` and the `Configure` button inside the error modal that used to open it; the same configuration is now fully owned by the `Printing` tab on `/settings`, the gateway entry point becomes a plain `<a href="/settings">Settings</a>` link, the error modal `Configure` action becomes a plain `<a href="/settings">` link, and the now unused `buttonConfigure` / `buttonSave` plumbing on `main.js` and `plugins/modal.js` (~80 lines) is removed
-
-### Changed
-
-* `/viewport` `updateUrl` is now an action scoped serializer that takes the change source as an argument (`text`, `profile`, `font`, `font_size`, `zoom`, `margins`, `toggle`, `restore`) and only rewrites the matching URL fragment while preserving the rest of the query string verbatim, so callers no longer recompute the full URL from possibly stale DOM state; the function also bails out early when the viewport editor is not mounted on the current page (`viewer-container` absent) so non viewport pages never accumulate viewport only query parameters in their address bar, with `theme` dropped from the URL writes entirely since it lives in the cookie session
-* `fullscreen` flag is now persisted on the cookie session alongside the other UI preferences, so it survives the next request without having to be forwarded through redirect query strings; every page route reads `req.query.fullscreen` first as an override and falls back to `req.session.fullscreen`, the `/settings` POST stores it on the session and redirects without appending the flag to the target URL, and the front end `updateUrl` no longer writes it back into the address bar
-
-### Added
-
 * QWERTY layout on the on screen text keyboard with `<br>` row separators that respect the existing `.keyboard-container > .char` styling, an iOS style utility row at the bottom (`123` mode toggle, spacebar, return) and a dedicated `Shift`/`Backspace` placement at the edges of the Z row; a letters/symbols toggle mirrors the existing `.lowercase` casing toggle pattern by adding a `.symbols` class on the container that swaps a 3 row symbols layout (10/10/5) in place of the letters rows, with a separate backspace inside the symbols section so it remains reachable when the Z row is hidden
 * Themed tabs above each emoji keyboard that split the large flat key list into 5 categories (`Symbols`/`Símbolos`, `Nature`/`Natureza`, `People`/`Pessoas`, `Pop`, `Phrases`/`Frases`) for the Cool Emojis font and 4 categories (`Symbols`, `Nature`, `People`, `Pop`) for the Cool Emojis Pantograph font; tabs are wired through the existing keyboard plugin via a `data-active` attribute on the container plus `data-category` on each `.char`, the visibility rules live in plugin CSS so the active category is the only one rendered, and the container width is constrained to 10 emojis per row with the utility keys (`⌫`, `⎵`, `↵`) placed on a dedicated row via a `<br>` separator so they never mingle with the glyph grid
 * Mobile viewport block under 430px wide that overlays every page with a centered notice telling the user that Signatur is not designed for mobile devices, fully inert so the underlying UI cannot be interacted with; implemented as a CSS-only `body::before` pseudo-element driven by the existing `<html lang="…">` attribute so the English and Portuguese copies switch automatically with no per-page markup edits, with `ldj` theme tints picked up from the body class
@@ -147,26 +129,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Optional top-level `default_font` field on the profile schema that auto-selects the matching font (and its keyboard) on initial profile load when no font is already active and no URL `font` parameter is supplied
 * Session-persisted `viewport_mode` setting (`technical` default, `store`) on `/settings` that, when set to `store`, applies a `store-mode` body class on `/viewport` whose dedicated `static/css/store-mode.css` hides the profile info panel, the profile and variant selectors, the rulers/crosshair/keyboard/guidelines/caret toggles, the zoom slider, the margin override fields, and the position readout; rulers, crosshair and guidelines visuals are forced off through the existing checkbox change handlers while the keyboard and caret stay active
 
-### Fixed
-
-* Hide the floating viewport options panel on `/viewport` in store mode when no profile is selected since every visible field inside it requires an active profile, so the panel no longer renders as an empty chrome card; the rule lives in `static/css/store-mode.css` and relies on the existing `.profile-active` signal so the panel reappears immediately when a profile is picked
-* Stop applying the zoom compensating `margin-bottom` and `margin-right` on the viewport preview when no profile is active, so the extra bottom and right space no longer appears under the empty engraving surface or when entering preview mode without a selected template; detection uses the existing `.profile-active` class on the preview element so every caller of the `zoom` action benefits without per call site changes
-* `text.max_lines` profile constraint now also enforced on programmatic text loads (inspirations, deep-link `?text=…`, session restore) and when the active profile changes, trimming any overflow newlines and emitting a `change` event so the URL state and button state stay in sync
-* Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
-
-* `/profiles` endpoint now handles async errors through Express error middleware
-* Invalid CSS `background-position` value corrected to valid 2-value syntax
-* Restored text click handler now binds to all non-caret children including newline elements
-* Malformed HTML `style` attribute on space bar keyboard keys (extra double quote)
-* Small-medal profile description now matches actual 20x20mm dimensions
-* Font deselection handler now clears stored font state and updates URL
-* Backspace at caret start position no longer corrupts text state
-* Server-side validation for `preview.zoom` field in profile schema
-* `lang` attribute on Portuguese views (`welcome-pt_pt.ejs`, `gateway-pt_pt.ejs`, `report-pt_pt.ejs`) corrected from `en` to `pt`
-* Welcome catalog `background-image` URLs now pass profile filenames through `encodeURI` to guard against malformed CSS
-
 ### Changed
 
+* The viewport preview reclaims about 52px of vertical space when the rulers are toggled off: the body now carries a `rulers-off` class that collapses the preview's top reservation from 48px to 8px and the bottom gap from 16px to 4px, so the chrome-free vertical room recovered from the hidden ruler labels feeds straight back to the editing surface instead of sitting empty; the class is flipped through the existing rulers change handler and seeded on initial render from the URL restored value so there is no flash on first paint
+* Special character keys on the on screen keyboard (`Backspace`, `Shift`, `Space`, `Return`) now render the official Lucide `delete`, `arrow-big-up`, `space`, and `corner-down-left` SVG icons inline so they look identical across every platform regardless of the system font's rendering of the matching Unicode codepoints; the keyboard plugin reads the dispatched value from the `data-value` attribute first and falls back to the element text so the existing downstream `keyHandler` switch keeps working unchanged, and the inline SVGs share a consistent `viewBox`, stroke weight and round line caps so they read as a single visual family
+* The confirmation modal preview now sits on a soft tinted card with the spec list rendered as a clean rounded table (`label : value` rows, monospaced segment chips) instead of the previous inline `bold key: value` debug style, the spec rows are tightened (font size, padding, column width) so the contents fit comfortably inside the modal without overflowing
+* `/settings` printing tab now uses a stable scrollbar gutter on the surrounding catalog rail (`scrollbar-gutter: stable`) so the card position does not shift when a long tab causes a scrollbar to appear, the printing inputs use `flex: 1 1 0` plus `min-width: 0` so their intrinsic content width (long URLs in the disabled `Base` pill) cannot push the row past the card boundary, and the card itself no longer caps at `max-height: 560px` so the printing tab can grow vertically to fit all entries
+* `/viewport` `updateUrl` is now an action scoped serializer that takes the change source as an argument (`text`, `profile`, `font`, `font_size`, `zoom`, `margins`, `toggle`, `restore`) and only rewrites the matching URL fragment while preserving the rest of the query string verbatim, so callers no longer recompute the full URL from possibly stale DOM state; the function also bails out early when the viewport editor is not mounted on the current page (`viewer-container` absent) so non viewport pages never accumulate viewport only query parameters in their address bar, with `theme` dropped from the URL writes entirely since it lives in the cookie session
+* `fullscreen` flag is now persisted on the cookie session alongside the other UI preferences, so it survives the next request without having to be forwarded through redirect query strings; every page route reads `req.query.fullscreen` first as an override and falls back to `req.session.fullscreen`, the `/settings` POST stores it on the session and redirects without appending the flag to the target URL, and the front end `updateUrl` no longer writes it back into the address bar
 * Modernized the classic `/gateway` form so it now reuses the same page chrome as welcome / settings / profile manager: the page wrapper changed from `.gateway` to `.welcome`, the form is wrapped by the standard hero (logo, `Gateway` / `Entrada` eyebrow, hairline divider), the form fields moved into a white `.gateway-container` card on the new tinted body (lavender bordered and tinted-shadow in `ldj`), the text inputs and labels now follow the `settings-group` / `settings-group-label` pattern, the Order No. + Size pair lives in a flex `.gateway-row`, the Technology / Elements / Location radio buttons became `option-chips` matching the welcome screen chip language, and the Submit / Configure buttons now sit on a centered `welcome-action-bar` with Submit as the primary `button-start` and Configure as a `button-ghost` secondary
 * Stopped persisting the viewport-only visual toggles (`rulers`, `crosshair`, `keyboard`, `guidelines`, `caret`, `zoom`, `margins`, `font_size`, `font_size_mode`, `font`, `theme`) into the address bar from `updateUrl`, so the address bar on `/viewport` now only carries semantic state (`text`, `profile`, `variant`, `fullscreen`) and these UI level flags can no longer leak into shareable links or downstream pages
 * Removed the welcome screen default template pre-selection so the catalog renders with nothing highlighted and the Start button stays disabled until the user explicitly picks a card; the hidden `profile` input is cleared on each render so a previously chosen template never restores itself
@@ -186,9 +156,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Welcome action bar `button-ghost` variant now uses the same soft-surface fill instead of a 1px outlined pill so it matches the new system
 * Corrected Cool Emojis character-to-F3S font mapping using visual glyph recognition
 * Sorted `coolemojis.mapping.json` by font number for better structure
-
 * Line height in viewport preview now scales proportionally to font size (1.2x)
 * Moved profile and font size controls from inline layout to fixed options panel
+
+### Fixed
+
+* Avoids a split second flash of the legacy dashed text box on the viewport while the profile selector is being restored: the body now carries a `profiles-loading` class at server render time that hides the no profile viewer container, and the class is cleared in a `finally` block once `loadProfiles` resolves so the legacy box only appears after the initial profile state has been settled
+* Hide the floating viewport options panel on `/viewport` in store mode when no profile is selected since every visible field inside it requires an active profile, so the panel no longer renders as an empty chrome card; the rule lives in `static/css/store-mode.css` and relies on the existing `.profile-active` signal so the panel reappears immediately when a profile is picked
+* Stop applying the zoom compensating `margin-bottom` and `margin-right` on the viewport preview when no profile is active, so the extra bottom and right space no longer appears under the empty engraving surface or when entering preview mode without a selected template; detection uses the existing `.profile-active` class on the preview element so every caller of the `zoom` action benefits without per call site changes
+* `text.max_lines` profile constraint now also enforced on programmatic text loads (inspirations, deep-link `?text=…`, session restore) and when the active profile changes, trimming any overflow newlines and emitting a `change` event so the URL state and button state stay in sync
+* Script 4L font glyphs with positive LSB shifted to start at x=0 with adjusted advance widths
+* `/profiles` endpoint now handles async errors through Express error middleware
+* Invalid CSS `background-position` value corrected to valid 2-value syntax
+* Restored text click handler now binds to all non-caret children including newline elements
+* Malformed HTML `style` attribute on space bar keyboard keys (extra double quote)
+* Small-medal profile description now matches actual 20x20mm dimensions
+* Font deselection handler now clears stored font state and updates URL
+* Backspace at caret start position no longer corrupts text state
+* Server-side validation for `preview.zoom` field in profile schema
+* `lang` attribute on Portuguese views (`welcome-pt_pt.ejs`, `gateway-pt_pt.ejs`, `report-pt_pt.ejs`) corrected from `en` to `pt`
+* Welcome catalog `background-image` URLs now pass profile filenames through `encodeURI` to guard against malformed CSS
+
+### Removed
+
+* `Printer Configuration` modal (`.modal-overlay-config`) from `/viewport` and `/gateway`, along with the matching `Configure` header button on `/gateway` and the `Configure` button inside the error modal that used to open it; the same configuration is now fully owned by the `Printing` tab on `/settings`, the gateway entry point becomes a plain `<a href="/settings">Settings</a>` link, the error modal `Configure` action becomes a plain `<a href="/settings">` link, and the now unused `buttonConfigure` / `buttonSave` plumbing on `main.js` and `plugins/modal.js` (~80 lines) is removed
 
 ## [0.7.2] - 2024-05-18
 
