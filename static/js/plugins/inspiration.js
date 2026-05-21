@@ -85,8 +85,8 @@
                         inspiration.align === "left"
                             ? "flex-start"
                             : inspiration.align === "right"
-                            ? "flex-end"
-                            : "center",
+                              ? "flex-end"
+                              : "center",
                     overflow: "hidden"
                 });
 

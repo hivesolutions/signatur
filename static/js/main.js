@@ -632,8 +632,8 @@ jQuery(document).ready(function() {
                 inspiration.align === "center"
                     ? "center"
                     : inspiration.align === "right"
-                    ? "flex-end"
-                    : "flex-start";
+                      ? "flex-end"
+                      : "flex-start";
             viewportContainer.css("text-align", inspiration.align);
             viewportContainer.css("justify-content", justify);
         }

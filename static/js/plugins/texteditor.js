@@ -351,8 +351,8 @@
                         currentLine === 0
                             ? -1
                             : lines[currentLine - 1].length > 0
-                            ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
-                            : currentLine - 1;
+                              ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
+                              : currentLine - 1;
                 }
 
                 if (newPosition === caretPosition) return false;
@@ -381,8 +381,8 @@
                         currentLine === 0
                             ? -1
                             : lines[currentLine - 1].length > 0
-                            ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
-                            : currentLine - 1;
+                              ? lines[currentLine - 1][lines[currentLine - 1].length - 1] + 1
+                              : currentLine - 1;
                 }
 
                 if (newPosition === caretPosition) return false;
@@ -429,8 +429,8 @@
                             targetLine === 0
                                 ? -1
                                 : lines[targetLine - 1].length > 0
-                                ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1
-                                : targetLine - 1;
+                                  ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1
+                                  : targetLine - 1;
                     }
                 } else if (currentCol >= lines[targetLine].length) {
                     // column exceeds target line length, go to end
@@ -442,8 +442,8 @@
                             targetLine === 0
                                 ? -1
                                 : lines[targetLine - 1].length > 0
-                                ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1
-                                : targetLine - 1;
+                                  ? lines[targetLine - 1][lines[targetLine - 1].length - 1] + 1
+                                  : targetLine - 1;
                     }
                 } else {
                     newPosition = lines[targetLine][currentCol];

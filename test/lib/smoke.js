@@ -66,7 +66,9 @@ describe("Smoke", function() {
         try {
             await waitForReady(15000);
         } catch (err) {
-            throw new Error("server did not become ready: " + err.message + "; stderr=" + stderr.slice(-2000));
+            throw new Error(
+                "server did not become ready: " + err.message + "; stderr=" + stderr.slice(-2000)
+            );
         }
     });
 
