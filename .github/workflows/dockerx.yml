@@ -47,4 +47,6 @@ jobs:
           file: ${{ matrix.config.dockerfile }}
           platforms: linux/amd64,linux/arm64/v8
           push: true
+          provenance: mode=max
+          sbom: true
           tags: hivesolutions/signatur:${{ steps.set_tag.outputs.tag }}

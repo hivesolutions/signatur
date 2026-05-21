@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* `.dockerignore` at the repo root that trims the docker build context down to the directories actually copied into the image (`app.js`, `config`, `lib`, `res`, `static`, `views`, `package.json`), excluding `node_modules`, `.git`, `.github`, `docs`, `test`, `scripts`, the venv, lockfiles, dotfiles and markdown documentation so the build context is smaller and the resulting image cannot leak unrelated repository content through an accidental `ADD .`
 
 ### Changed
 
 * Bare filename entries in `instructions.images` on a profile JSON are now resolved against `/static/profiles/` (the default upload location for profile assets) so authors can reference uploaded jig images by filename only; entries that already start with `/` or carry a `scheme://` prefix are still passed through verbatim so external URLs and other absolute paths keep working unchanged, with the same detection rule documented on `docs/profile-spec.md`
+* `.github/workflows/dockerx.yml` now produces a max mode SLSA provenance attestation and an SPDX SBOM (`provenance: mode=max`, `sbom: true` on `docker/build-push-action@v5`) so Docker Scout and other supply chain scanners can verify the build origin and inspect the package inventory of the pushed image without a separate post-build step
 
 ### Fixed
 
