@@ -18,7 +18,6 @@
             button.click(function() {
                 const commandValue = command.val();
                 try {
-                    // eslint-disable-next-line no-eval
                     const result = eval(commandValue);
                     if (result) alert(result);
                     else alert("executed");

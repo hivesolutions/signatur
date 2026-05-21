@@ -26,7 +26,7 @@
                     const height = bodyElement.scrollHeight;
                     body.css("max-height", "0px");
                     title.css("margin-bottom", "0px");
-                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight;
                     body.css("max-height", height + "px");
                     title.css("margin-bottom", "");
                     toggle.text("\u25be");
@@ -35,7 +35,7 @@
                     });
                 } else {
                     body.css("max-height", bodyElement.scrollHeight + "px");
-                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight;
                     body.css("max-height", "0px");
                     title.css("margin-bottom", "0px");
                     toggle.text("\u25b8");

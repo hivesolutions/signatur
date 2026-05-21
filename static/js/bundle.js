@@ -161,7 +161,7 @@ const countLines = function(text) {
                     const height = bodyElement.scrollHeight;
                     body.css("max-height", "0px");
                     title.css("margin-bottom", "0px");
-                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight;
                     body.css("max-height", height + "px");
                     title.css("margin-bottom", "");
                     toggle.text("\u25be");
@@ -170,7 +170,7 @@ const countLines = function(text) {
                     });
                 } else {
                     body.css("max-height", bodyElement.scrollHeight + "px");
-                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight;
                     body.css("max-height", "0px");
                     title.css("margin-bottom", "0px");
                     toggle.text("\u25b8");
@@ -205,7 +205,6 @@ const countLines = function(text) {
             button.click(function() {
                 const commandValue = command.val();
                 try {
-                    // eslint-disable-next-line no-eval
                     const result = eval(commandValue);
                     if (result) alert(result);
                     else alert("executed");
@@ -660,7 +659,7 @@ const countLines = function(text) {
                     const height = bodyElement.scrollHeight;
                     panelBody.css("max-height", "0px");
                     panelTitle.css("margin-bottom", "0px");
-                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight;
                     panelBody.css("max-height", height + "px");
                     panelTitle.css("margin-bottom", "");
                     panelToggle.text("▾");
@@ -671,7 +670,7 @@ const countLines = function(text) {
                 } else {
                     panelBody.css("overflow", "");
                     panelBody.css("max-height", bodyElement.scrollHeight + "px");
-                    bodyElement.offsetHeight; // eslint-disable-line no-unused-expressions
+                    bodyElement.offsetHeight;
                     panelBody.css("max-height", "0px");
                     panelTitle.css("margin-bottom", "0px");
                     panelToggle.text("▸");
