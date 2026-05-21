@@ -4,7 +4,9 @@
     <body class="<%= theme %>" data-theme="<%= theme %>">
         <div class="header">
             <div class="buttons-left">
-                <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>">←</a>
+                <a class="button button-small button-back" href="<%= typeof back !== 'undefined' ? back : '/' %>" title="Back">
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                </a>
             </div>
             <div class="buttons-right">
                 <a class="button button-receipt"
