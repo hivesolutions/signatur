@@ -231,7 +231,7 @@ app.get("/signature", (req, res, next) => {
     res.render("signature" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
-        back: req.session.entry === "welcome" ? "/welcome" : "/"
+        back: "/"
     });
 });
 
@@ -257,7 +257,7 @@ app.get("/viewport", (req, res, next) => {
         config: req.session.config || {},
         text: lib.deserializeText(req.session.config.text) || null,
         viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
-        back: req.session.entry === "welcome" ? "/welcome" : "/"
+        back: "/"
     });
 });
 
@@ -282,7 +282,7 @@ app.get("/report", (req, res, next) => {
         text: lib.deserializeText(req.session.config.text) || null,
         font: lib.fontText(req.session.config.text) || null,
         localize: (v, f) => lib.localize(v, locale || undefined, f),
-        back: req.session.entry === "welcome" ? "/welcome" : "/"
+        back: "/"
     });
 });
 
