@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { dockerfile: "Dockerfile", context: "signatur-latest", tag_name: "latest" }
+          - { dockerfile: "Dockerfile", context: "signatur", tag_name: "latest" }
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -50,3 +50,16 @@ jobs:
           provenance: mode=max
           sbom: true
           tags: hivesolutions/signatur:${{ steps.set_tag.outputs.tag }}
+  trigger-deploy:
+    name: Trigger signatur-latest deployment
+    needs: build
+    if: github.event_name == 'push' && github.ref_name == 'master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hivesolutions/deploy-action@v1
+        with:
+          repository: hivesolutions/signatur
+          service: signatur-latest
+          group: apps
+          tag: latest
+          token: ${{ secrets.INFRA_DEPLOY_PAT }}
