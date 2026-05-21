@@ -113,12 +113,48 @@ describe("Smoke", function() {
     };
 
     describe("#moduleShapes()", function() {
+        // probes that the named package resolves to a real CJS
+        // entry point so it can be loaded under `require()` on
+        // every Node version in the CI matrix, not just the one
+        // the test runner happens to be using locally; rejects
+        // packages that are pure ESM (`type: module` with no
+        // matching `require` conditional export) because those
+        // would crash with ERR_REQUIRE_ESM on Node below 22
+        const assertRequireable = function(name) {
+            const manifestPath = require.resolve(name + "/package.json");
+            const manifest = require(manifestPath);
+            const exportsField = manifest.exports;
+            const isTypeModule = manifest.type === "module";
+            let hasRequireEntry = false;
+            if (typeof exportsField === "string") {
+                hasRequireEntry = true;
+            } else if (exportsField && typeof exportsField === "object") {
+                const root = exportsField["."] || exportsField;
+                const probe = entry => {
+                    if (!entry || typeof entry !== "object") return false;
+                    if (typeof entry.require === "string") return true;
+                    if (entry.node && typeof entry.node === "object") return probe(entry.node);
+                    if (typeof entry.default === "string" && !isTypeModule) return true;
+                    return false;
+                };
+                hasRequireEntry = probe(root);
+            } else {
+                hasRequireEntry = !isTypeModule;
+            }
+            assert.ok(
+                hasRequireEntry,
+                name + " has no CJS require entry; would break on Node <22 with ERR_REQUIRE_ESM"
+            );
+        };
+
         it("should expose node-fetch as a callable from require()", () => {
+            assertRequireable("node-fetch");
             const fetchModule = require("node-fetch");
             assert.strictEqual(typeof fetchModule, "function");
         });
 
         it("should expose multer as a callable factory from require()", () => {
+            assertRequireable("multer");
             const multer = require("multer");
             assert.strictEqual(typeof multer, "function");
             assert.strictEqual(typeof multer().none, "function");
@@ -126,6 +162,7 @@ describe("Smoke", function() {
         });
 
         it("should expose jszip as a constructor from require()", () => {
+            assertRequireable("jszip");
             const JSZip = require("jszip");
             const zip = new JSZip();
             assert.strictEqual(typeof zip.file, "function");
@@ -133,6 +170,7 @@ describe("Smoke", function() {
         });
 
         it("should expose uuid.v4 as a callable from require()", () => {
+            assertRequireable("uuid");
             const uuid = require("uuid");
             assert.strictEqual(typeof uuid.v4, "function");
             const value = uuid.v4();
