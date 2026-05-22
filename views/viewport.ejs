@@ -468,6 +468,11 @@
             </div>
         </div>
         <div class="toast"></div>
+        <% if (features.feedback) { %>
+            <span class="button-feedback-cta" title="Send feedback">
+                <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            </span>
+        <% } %>
         <div class="modal-overlay modal-overlay-confirm"
              data-label-text="Text"
              data-label-font="Font"

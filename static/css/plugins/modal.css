@@ -610,3 +610,75 @@ body.ldj .modal-overlay > .modal > .modal-feedback-group > .option-chips > .opti
 body.ldj .modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes:focus {
     border-color: rgba(151, 120, 211, 0.55);
 }
+
+.button-feedback-cta {
+    align-items: center;
+    background-color: #1f2330;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    bottom: 22px;
+    box-shadow: 0px 6px 18px rgba(31, 35, 48, 0.22);
+    -o-box-shadow: 0px 6px 18px rgba(31, 35, 48, 0.22);
+    -ms-box-shadow: 0px 6px 18px rgba(31, 35, 48, 0.22);
+    -moz-box-shadow: 0px 6px 18px rgba(31, 35, 48, 0.22);
+    -khtml-box-shadow: 0px 6px 18px rgba(31, 35, 48, 0.22);
+    -webkit-box-shadow: 0px 6px 18px rgba(31, 35, 48, 0.22);
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    height: 52px;
+    justify-content: center;
+    position: fixed;
+    right: 22px;
+    touch-action: manipulation;
+    -o-touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    -moz-touch-action: manipulation;
+    -khtml-touch-action: manipulation;
+    -webkit-touch-action: manipulation;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    -o-transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    -ms-transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    -moz-transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    -khtml-transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    -webkit-transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    width: 52px;
+    z-index: 150;
+}
+
+.button-feedback-cta:hover {
+    background-color: #2a2f3f;
+    transform: translateY(-1px);
+    -o-transform: translateY(-1px);
+    -ms-transform: translateY(-1px);
+    -moz-transform: translateY(-1px);
+    -khtml-transform: translateY(-1px);
+    -webkit-transform: translateY(-1px);
+}
+
+.button-feedback-cta > ion-icon {
+    font-size: 22px;
+}
+
+.preview-mode .button-feedback-cta {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    -o-transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    -ms-transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    -moz-transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    -khtml-transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.ldj .button-feedback-cta {
+    background-color: #9678d3;
+}
+
+body.ldj .button-feedback-cta:hover {
+    background-color: #a78ce0;
+}

@@ -214,6 +214,7 @@ jQuery(document).ready(function() {
     const feedbackSatisfaction = jQuery(".modal-feedback-satisfaction input[name=feedback_satisfaction]");
     const feedbackNotes = jQuery(".modal-feedback-notes");
     const feedbackSubmit = jQuery(".button-modal-feedback-submit");
+    const buttonFeedbackCta = jQuery(".button-feedback-cta");
     const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
 
@@ -1796,6 +1797,13 @@ jQuery(document).ready(function() {
         } catch (err) {
             modalOverlayError.modal("show", String(err));
         }
+    });
+
+    // registers for the click on the floating feedback CTA so the
+    // user can open the feedback modal on an ad hoc basis without
+    // having to wait for the next successful engrave submission
+    buttonFeedbackCta.click(function() {
+        modalOverlayFeedback.modal("show");
     });
 
     // initializes the text editor plugin on the viewer container
