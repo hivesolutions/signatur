@@ -4529,6 +4529,11 @@ body.ldj .modal-overlay > .modal > .modal-options > .option-chip-input:checked +
     color: #ffffff;
 }
 
+.modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip-input:focus-visible + .option-chip {
+    outline: 2px solid #1f2330;
+    outline-offset: 2px;
+}
+
 .modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes {
     background-color: #f4f5f8;
     border: 1px solid #e6e8ee;
@@ -4569,6 +4574,10 @@ body.ldj .modal-overlay > .modal > .modal-feedback-group > .option-chips > .opti
     color: #ffffff;
 }
 
+body.ldj .modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip-input:focus-visible + .option-chip {
+    outline-color: #9678d3;
+}
+
 body.ldj .modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes:focus {
     border-color: rgba(151, 120, 211, 0.55);
 }
@@ -4576,6 +4585,7 @@ body.ldj .modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes
 .button-feedback-cta {
     align-items: center;
     background-color: #1f2330;
+    border: none;
     border-radius: 999px 999px 999px 999px;
     -o-border-radius: 999px 999px 999px 999px;
     -ms-border-radius: 999px 999px 999px 999px;
@@ -4592,8 +4602,10 @@ body.ldj .modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes
     color: #ffffff;
     cursor: pointer;
     display: inline-flex;
+    font: inherit;
     height: 52px;
     justify-content: center;
+    padding: 0px;
     position: fixed;
     right: 22px;
     touch-action: manipulation;
@@ -4622,6 +4634,11 @@ body.ldj .modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes
     -webkit-transform: translateY(-1px);
 }
 
+.button-feedback-cta:focus-visible {
+    outline: 2px solid #1f2330;
+    outline-offset: 3px;
+}
+
 .button-feedback-cta > ion-icon {
     font-size: 22px;
 }
@@ -4643,6 +4660,10 @@ body.ldj .button-feedback-cta {
 
 body.ldj .button-feedback-cta:hover {
     background-color: #a78ce0;
+}
+
+body.ldj .button-feedback-cta:focus-visible {
+    outline-color: #9678d3;
 }
 
 .welcome > .form.form-manager {

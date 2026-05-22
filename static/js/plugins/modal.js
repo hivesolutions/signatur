@@ -13,6 +13,12 @@
      *   "hide"    - dismisses the modal with a fade-out animation
      *   "confirm" - builds and shows the print confirmation modal
      *               with the given specs object and viewport preview
+     *
+     * Events:
+     *   "show" - triggered after the modal becomes visible so
+     *            downstream plugins can reset transient state (for
+     *            example clearing a previous form submission) every
+     *            time the overlay is opened
      */
     jQuery.fn.modal = function(action, message) {
         const elements = jQuery(this);

@@ -70,8 +70,13 @@
             // optional notes, post them to the feedback endpoint and
             // close the modal with a toast confirmation when the
             // request succeeds, surfacing the existing error overlay
-            // otherwise
+            // otherwise; a local in flight flag guards the handler
+            // against duplicate submissions while the network request
+            // is pending so a double tap on a slow connection does
+            // not persist the same feedback multiple times
+            let submitting = false;
             submit.click(async function() {
+                if (submitting) return;
                 if (jQuery(this).hasClass("disabled")) return;
                 const selectedSatisfaction = jQuery(
                     ".modal-feedback-satisfaction input[name=feedback_satisfaction]:checked",
@@ -86,6 +91,8 @@
                     selection && selection.variantIndex !== null && selection.variantIndex !== undefined
                         ? String(selection.variantIndex)
                         : "";
+                submitting = true;
+                submit.addClass("disabled");
                 try {
                     const feedbackResponse = await fetch("/feedback", {
                         method: "POST",
@@ -109,6 +116,20 @@
                     toast.toast("show", "Thanks for your feedback.");
                 } catch (err) {
                     errorOverlay.modal("show", String(err));
+                } finally {
+                    // releases the in flight guard so a subsequent
+                    // submission attempt is honored, restoring the
+                    // submit enabled state when a satisfaction option
+                    // is still selected so an error path leaves the
+                    // button usable for an immediate retry while a
+                    // success path falls back to the modal show event
+                    // that resets the chip selection
+                    submitting = false;
+                    const selected = jQuery(
+                        ".modal-feedback-satisfaction input[name=feedback_satisfaction]:checked",
+                        context
+                    ).val();
+                    if (selected) submit.removeClass("disabled");
                 }
             });
 

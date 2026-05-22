@@ -649,8 +649,13 @@ const countLines = function(text) {
             // optional notes, post them to the feedback endpoint and
             // close the modal with a toast confirmation when the
             // request succeeds, surfacing the existing error overlay
-            // otherwise
+            // otherwise; a local in flight flag guards the handler
+            // against duplicate submissions while the network request
+            // is pending so a double tap on a slow connection does
+            // not persist the same feedback multiple times
+            let submitting = false;
             submit.click(async function() {
+                if (submitting) return;
                 if (jQuery(this).hasClass("disabled")) return;
                 const selectedSatisfaction = jQuery(
                     ".modal-feedback-satisfaction input[name=feedback_satisfaction]:checked",
@@ -665,6 +670,8 @@ const countLines = function(text) {
                     selection && selection.variantIndex !== null && selection.variantIndex !== undefined
                         ? String(selection.variantIndex)
                         : "";
+                submitting = true;
+                submit.addClass("disabled");
                 try {
                     const feedbackResponse = await fetch("/feedback", {
                         method: "POST",
@@ -688,6 +695,20 @@ const countLines = function(text) {
                     toast.toast("show", "Thanks for your feedback.");
                 } catch (err) {
                     errorOverlay.modal("show", String(err));
+                } finally {
+                    // releases the in flight guard so a subsequent
+                    // submission attempt is honored, restoring the
+                    // submit enabled state when a satisfaction option
+                    // is still selected so an error path leaves the
+                    // button usable for an immediate retry while a
+                    // success path falls back to the modal show event
+                    // that resets the chip selection
+                    submitting = false;
+                    const selected = jQuery(
+                        ".modal-feedback-satisfaction input[name=feedback_satisfaction]:checked",
+                        context
+                    ).val();
+                    if (selected) submit.removeClass("disabled");
                 }
             });
 
@@ -1356,6 +1377,12 @@ const countLines = function(text) {
      *   "hide"    - dismisses the modal with a fade-out animation
      *   "confirm" - builds and shows the print confirmation modal
      *               with the given specs object and viewport preview
+     *
+     * Events:
+     *   "show" - triggered after the modal becomes visible so
+     *            downstream plugins can reset transient state (for
+     *            example clearing a previous form submission) every
+     *            time the overlay is opened
      */
     jQuery.fn.modal = function(action, message) {
         const elements = jQuery(this);
