@@ -442,10 +442,13 @@ app.post("/feedback", (req, res, next) => {
             locale: req.session.locale || null
         };
 
-        // ensures the feedback directory exists and writes the entry as
-        // its own JSON file named after the generated identifier so the
-        // submissions stay independent and easy to inspect on disk
-        const directoryPath = path.join(__dirname, "data", "feedback");
+        // groups the feedback submissions by day under a per date
+        // subdirectory derived from the ISO timestamp so the on disk
+        // layout stays browsable as the number of entries grows, while
+        // each entry remains its own JSON file named after the
+        // generated identifier for easy inspection and aggregation
+        const day = entry.timestamp.slice(0, 10);
+        const directoryPath = path.join(__dirname, "data", "feedback", day);
         await fs.mkdir(directoryPath, { recursive: true });
         const entryPath = path.join(directoryPath, `${entry.id}.json`);
         await fs.writeFile(entryPath, JSON.stringify(entry, null, 4) + "\n", "utf8");
