@@ -31,6 +31,12 @@ Supported file format include:
 | `ENGRAVE_PRINTER`     | `str`  | value of `PRINT_PRINTER`             | Name of the printer (within the engrave node) to use when sending an engraving job; falls back to `PRINT_PRINTER` for the same backward compat reason.                                                                          |
 | `FEATURE_CALLIGRAPHY` | `bool` | `false`                              | Base value of the calligraphy feature flag; when set to a truthy value (`1`, `true`, `yes`, `on`) the calligraphy mode controls render on `/viewport`. May be overridden per session through the `Features` tab on `/settings`. |
 
+## Authentication
+
+Every interactive route is gated behind a session login. The list of valid users lives in `config/users.json` (gitignored, with a `config/users.json.example` checked into the repository) as an array of `{ "username": "...", "password_hash": "$2a$...", "role": "admin" | "user" }` entries; the `role` controls whether the user can reach the admin only surfaces (`/settings`, `/settings/diagnostics`, `/profiles/*`) or just the basic engraving flow.
+
+New users are added through the `npm run user:add <username> <role>` helper which prompts for the password twice (no echo), bcrypts it at cost 10 and rewrites `config/users.json` in place; the running application picks the change up automatically through `fs.watch` so no restart is required. The bare `/login` and `/logout` routes, the `/info` endpoint, the static assets and the engine `/convert` endpoint (key authenticated through `SIGNATUR_KEY`) stay public.
+
 ## Query Parameters
 
 The following query parameters are honored by the Signatur HTTP routes. Most of the session level toggles (`theme`, `locale`, `text`, `fullscreen`, etc.) are persisted to the cookie session on first sight and then read from the session on every subsequent request, so they never need to be carried around through the URL once they have been set. The viewport editor still round-trips its visual state through the URL so a `/viewport` link can be shared or bookmarked verbatim, but those keys are scoped to the viewport page and are not propagated to other sections.

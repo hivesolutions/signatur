@@ -78,9 +78,14 @@
                         <input type="hidden" name="location" value="<%= config.location ? config.location : 'interior' %>" />
                     <% } %>
                     <div class="welcome-actions">
-                        <a class="button button-ghost button-upload" href="/profiles/manager">Gestor de Perfis</a>
-                        <a class="button button-ghost button-settings" href="/settings">Definições</a>
+                        <% if (user && user.role === "admin") { %>
+                            <a class="button button-ghost button-upload" href="/profiles/manager">Gestor de Perfis</a>
+                            <a class="button button-ghost button-settings" href="/settings">Definições</a>
+                        <% } %>
                         <a class="button button-ghost button-classic" href="/gateway">Clássico</a>
+                        <% if (user) { %>
+                            <a class="button button-ghost button-logout" href="/logout">Sair</a>
+                        <% } %>
                         <button type="submit" class="button button-start" disabled>Iniciar</button>
                     </div>
                 </div>

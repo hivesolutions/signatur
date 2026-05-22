@@ -40,9 +40,11 @@
         "prestart": "node scripts/build.js",
         "start": "node app.js",
         "test": "mocha --recursive",
-        "upgrade": "npx sort-package-json && ncu -u"
+        "upgrade": "npx sort-package-json && ncu -u",
+        "user:add": "node scripts/user.js"
     },
     "dependencies": {
+        "bcryptjs": "^3.0.3",
         "consola": "^3.4.2",
         "cookie-session": "^2.1.1",
         "ejs": "^5.0.2",

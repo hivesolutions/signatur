@@ -59,6 +59,26 @@ app.locals.dev = process.env.NODE_ENV !== "production";
 app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// list of public route prefixes that bypass the global require
+// user middleware so the login flow, the favicon and the public
+// info endpoint can be reached without an authenticated session;
+// the engine convert endpoint stays public so colony print can
+// keep posting svgs validated through the existing key header
+const PUBLIC_PATHS = ["/login", "/logout", "/info", "/favicon.ico", "/convert"];
+
+// global authentication middleware that enforces a logged in
+// user on every interactive route, allowing only the small list
+// of public paths above through; admin only routes apply the
+// `lib.requireAdmin` middleware directly below
+app.use((req, res, next) => {
+    const isPublic = PUBLIC_PATHS.some(prefix => req.path === prefix || req.path.startsWith(prefix + "/"));
+    if (isPublic) {
+        next();
+        return;
+    }
+    lib.requireUser(req, res, next);
+});
+
 // configures the multer middleware that parses the multipart
 // payload of the profile form, accepting only text fields since
 // background images are now managed by the dedicated asset
@@ -89,6 +109,45 @@ app.get("/", (req, res, next) => {
     const home = req.session.home === "welcome" ? "/welcome" : "/gateway";
     res.redirect(302, home);
 });
+
+app.get("/login", (req, res, next) => {
+    const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
+    const nextUrl = typeof req.query.next === "string" ? req.query.next : "";
+    const error = typeof req.query.error === "string" ? req.query.error : "";
+    res.render("login" + (locale ? `-${locale}` : ""), {
+        theme: theme,
+        next: nextUrl,
+        error: error
+    });
+});
+
+app.post("/login", async (req, res, next) => {
+    async function clojure() {
+        const username = typeof req.body.username === "string" ? req.body.username.trim() : "";
+        const password = typeof req.body.password === "string" ? req.body.password : "";
+        const nextRaw = typeof req.body.next === "string" ? req.body.next : "";
+        const safeNext = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/";
+        const user = await lib.verifyCredentials(username, password);
+        if (!user) {
+            const params = new URLSearchParams();
+            params.set("error", "invalid");
+            if (nextRaw) params.set("next", nextRaw);
+            res.redirect(302, "/login?" + params.toString());
+            return;
+        }
+        req.session.user = user;
+        res.redirect(302, safeNext);
+    }
+    clojure().catch(next);
+});
+
+const handleLogout = (req, res) => {
+    if (req.session) req.session.user = null;
+    res.redirect(302, "/login");
+};
+app.get("/logout", handleLogout);
+app.post("/logout", handleLogout);
 
 app.get("/gateway", (req, res, next) => {
     const fullscreen =
@@ -143,7 +202,7 @@ app.post("/gateway", (req, res, next) => {
     }
 });
 
-app.get("/settings", (req, res, next) => {
+app.get("/settings", lib.requireAdmin, (req, res, next) => {
     const fullscreen =
         req.query.fullscreen !== undefined
             ? req.query.fullscreen === "1"
@@ -177,7 +236,7 @@ app.get("/settings", (req, res, next) => {
     });
 });
 
-app.post("/settings", (req, res, next) => {
+app.post("/settings", lib.requireAdmin, (req, res, next) => {
     const theme = req.body.theme || "";
     const locale = req.body.locale || "";
     req.session.theme = theme;
@@ -216,7 +275,7 @@ app.post("/settings", (req, res, next) => {
     res.redirect(302, target);
 });
 
-app.post("/settings/diagnostics", (req, res, next) => {
+app.post("/settings/diagnostics", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const engine = lib.ENGINES.inkscape.singleton();
         const probes = await engine.probe();
@@ -245,7 +304,8 @@ app.get("/welcome", (req, res, next) => {
         masterb64: masterb64,
         config: req.session.config || {},
         showOptions: req.session.show_options !== "0",
-        info: info || {}
+        info: info || {},
+        user: req.session.user || null
     });
 });
 
@@ -463,7 +523,7 @@ app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
 });
 
-app.get("/profiles/manager", (req, res, next) => {
+app.get("/profiles/manager", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const fullscreen =
             req.query.fullscreen !== undefined
@@ -523,7 +583,7 @@ app.get("/profiles/manager", (req, res, next) => {
     clojure().catch(next);
 });
 
-app.post("/profiles/validate", profileUpload, (req, res, next) => {
+app.post("/profiles/validate", lib.requireAdmin, profileUpload, (req, res, next) => {
     async function clojure() {
         const editTarget = typeof req.body.edit_target === "string" ? req.body.edit_target : "";
         const { profile, errors } = lib.validateProfileSubmission(
@@ -542,7 +602,7 @@ app.post("/profiles/validate", profileUpload, (req, res, next) => {
     clojure().catch(next);
 });
 
-app.post("/profiles", profileUpload, (req, res, next) => {
+app.post("/profiles", lib.requireAdmin, profileUpload, (req, res, next) => {
     async function clojure() {
         const profileText = req.body.profile_json || "";
         const inspirationsText = req.body.inspirations_json || "";
@@ -604,7 +664,7 @@ app.post("/profiles", profileUpload, (req, res, next) => {
     clojure().catch(next);
 });
 
-app.post("/profiles/:id/enabled", profileUpload, (req, res, next) => {
+app.post("/profiles/:id/enabled", lib.requireAdmin, profileUpload, (req, res, next) => {
     async function clojure() {
         const id = req.params.id;
         if (!lib.PROFILE_ID_PATTERN.test(id)) {
@@ -643,7 +703,7 @@ app.post("/profiles/:id/enabled", profileUpload, (req, res, next) => {
     clojure().catch(next);
 });
 
-app.post("/profiles/:id/delete", (req, res, next) => {
+app.post("/profiles/:id/delete", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const id = req.params.id;
         if (!lib.PROFILE_ID_PATTERN.test(id)) {
@@ -681,7 +741,7 @@ app.post("/profiles/:id/delete", (req, res, next) => {
     clojure().catch(next);
 });
 
-app.get("/profiles/assets", (req, res, next) => {
+app.get("/profiles/assets", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const directoryPath = path.join(__dirname, "static", "profiles");
         const files = await fs.readdir(directoryPath);
@@ -691,7 +751,7 @@ app.get("/profiles/assets", (req, res, next) => {
     clojure().catch(next);
 });
 
-app.post("/profiles/assets", assetUpload, (req, res, next) => {
+app.post("/profiles/assets", lib.requireAdmin, assetUpload, (req, res, next) => {
     async function clojure() {
         const errors = [];
 
@@ -748,7 +808,7 @@ app.post("/profiles/assets", assetUpload, (req, res, next) => {
     clojure().catch(next);
 });
 
-app.post("/profiles/assets/:filename/delete", (req, res, next) => {
+app.post("/profiles/assets/:filename/delete", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const filename = req.params.filename;
         if (!lib.ASSET_FILENAME_PATTERN.test(filename)) {
@@ -770,7 +830,7 @@ app.post("/profiles/assets/:filename/delete", (req, res, next) => {
     clojure().catch(next);
 });
 
-app.get("/profiles/bundle", (req, res, next) => {
+app.get("/profiles/bundle", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const directoryPath = path.join(__dirname, "static", "profiles");
         const files = await fs.readdir(directoryPath);
@@ -806,7 +866,7 @@ app.get("/profiles/bundle", (req, res, next) => {
     clojure().catch(next);
 });
 
-app.post("/profiles/bundle", bundleUpload, (req, res, next) => {
+app.post("/profiles/bundle", lib.requireAdmin, bundleUpload, (req, res, next) => {
     async function clojure() {
         if (!req.file) {
             res.status(400).json({ error: "file is required" });
