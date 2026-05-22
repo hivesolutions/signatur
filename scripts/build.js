@@ -34,6 +34,7 @@ const JS_FILES = [
     "js/plugins/collapsible.js",
     "js/plugins/console.js",
     "js/plugins/diagnostics.js",
+    "js/plugins/feedback.js",
     "js/plugins/fonts.js",
     "js/plugins/inspiration.js",
     "js/plugins/jsonhighlight.js",
