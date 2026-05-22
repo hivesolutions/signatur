@@ -1242,8 +1242,9 @@ const countLines = function(text) {
             const buttonEngrave = jQuery(".button-modal-engrave", context);
 
             if (action === "show") {
-                modalMessage.text(message);
+                if (message !== undefined) modalMessage.text(message);
                 context.addClass("visible");
+                context.triggerHandler("show");
                 return;
             }
 
@@ -1542,6 +1543,12 @@ const countLines = function(text) {
                         );
                     } else {
                         jQuery(".toast").toast("show", "Engraving job submitted successfully.");
+                        // surfaces the post engraving feedback modal so the
+                        // user can rate the experience, falling back silently
+                        // when the feedback feature is disabled and the
+                        // overlay has not been rendered into the page
+                        const feedbackOverlay = jQuery(".modal-overlay-feedback");
+                        if (feedbackOverlay.length > 0) feedbackOverlay.modal("show");
                     }
                 } catch (err) {
                     const errorOverlay = jQuery(".modal-overlay-error");
@@ -3942,6 +3949,10 @@ jQuery(document).ready(function() {
     const modalOverlayError = jQuery(".modal-overlay-error");
     const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
     const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
+    const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
+    const feedbackSatisfaction = jQuery(".modal-feedback-satisfaction input[name=feedback_satisfaction]");
+    const feedbackNotes = jQuery(".modal-feedback-notes");
+    const feedbackSubmit = jQuery(".button-modal-feedback-submit");
     const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
 
@@ -5464,7 +5475,67 @@ jQuery(document).ready(function() {
     modalOverlayConfirm.modal();
     modalOverlayInspirations.modal();
     modalOverlayInstructions.modal();
+    modalOverlayFeedback.modal();
     toast.toast();
+
+    // resets the feedback modal selections every time the modal
+    // becomes visible so a stale satisfaction chip or notes value
+    // is not carried over from a previous engraving submission
+    modalOverlayFeedback.bind("show", function() {
+        feedbackSatisfaction.prop("checked", false);
+        feedbackNotes.val("");
+        feedbackSubmit.addClass("disabled");
+    });
+
+    // toggles the submit button between disabled and enabled based
+    // on whether a satisfaction option is currently selected so the
+    // user cannot send an empty feedback payload to the server
+    feedbackSatisfaction.bind("change", function() {
+        const selected = jQuery(".modal-feedback-satisfaction input[name=feedback_satisfaction]:checked").val();
+        if (selected) feedbackSubmit.removeClass("disabled");
+        else feedbackSubmit.addClass("disabled");
+    });
+
+    // registers for the click on the feedback submit button to
+    // collect the selected satisfaction option and the optional
+    // notes, post them to the feedback endpoint, and close the
+    // modal with a toast confirmation when the request succeeds
+    feedbackSubmit.click(async function() {
+        if (jQuery(this).hasClass("disabled")) return;
+        const satisfaction = jQuery(".modal-feedback-satisfaction input[name=feedback_satisfaction]:checked").val();
+        if (!satisfaction) return;
+        const notes = feedbackNotes.val() || "";
+        const selection = profileSelector.profileselector("value");
+        const profileKey = selection && selection.key ? selection.key : "";
+        const variantIndex =
+            selection && selection.variantIndex !== null && selection.variantIndex !== undefined
+                ? String(selection.variantIndex)
+                : "";
+        try {
+            const feedbackResponse = await fetch("/feedback", {
+                method: "POST",
+                body: new URLSearchParams([
+                    ["satisfaction", satisfaction],
+                    ["notes", notes],
+                    ["profile", profileKey],
+                    ["variant", variantIndex]
+                ])
+            });
+            if (feedbackResponse.status !== 200) {
+                const error = await feedbackResponse.json();
+                const errorMessage = error.message || error.error || "unset";
+                modalOverlayError.modal(
+                    "show",
+                    "Error while submitting feedback: " + errorMessage
+                );
+                return;
+            }
+            modalOverlayFeedback.modal("hide");
+            toast.toast("show", "Thanks for your feedback.");
+        } catch (err) {
+            modalOverlayError.modal("show", String(err));
+        }
+    });
 
     // initializes the text editor plugin on the viewer container
     // and binds the change event to update button state and URL

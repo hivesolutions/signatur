@@ -481,3 +481,132 @@ body.ldj .modal-overlay > .modal > .modal-options > .option-chip-input:checked +
 .modal-overlay > .modal > .modal-instructions-images > img:last-child {
     margin-bottom: 0px;
 }
+
+.modal-overlay > .modal.modal-feedback {
+    max-width: 520px;
+}
+
+.modal-overlay > .modal > .modal-feedback-group {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.modal-overlay > .modal > .modal-feedback-group:last-of-type {
+    margin-bottom: 22px;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .modal-feedback-label {
+    color: #4b5260;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .option-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip-input {
+    height: 0px;
+    margin: 0px 0px 0px 0px;
+    opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 0px;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip {
+    background-color: #f4f5f8;
+    border: 1px solid #e6e8ee;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    color: #4b5260;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin: 0px 0px 0px 0px;
+    min-width: 0px;
+    padding: 6px 12px 6px 12px;
+    touch-action: manipulation;
+    -o-touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    -moz-touch-action: manipulation;
+    -khtml-touch-action: manipulation;
+    -webkit-touch-action: manipulation;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -o-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -ms-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -moz-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -khtml-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -webkit-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip:hover {
+    border-color: #cfd4de;
+    color: #1f2330;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip-input:checked + .option-chip {
+    background-color: #1f2330;
+    border-color: #1f2330;
+    color: #ffffff;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes {
+    background-color: #f4f5f8;
+    border: 1px solid #e6e8ee;
+    border-radius: 6px 6px 6px 6px;
+    -o-border-radius: 6px 6px 6px 6px;
+    -ms-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -khtml-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #1f2330;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 8px 10px 8px 10px;
+    resize: vertical;
+    width: 100%;
+}
+
+.modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes:focus {
+    border-color: #cfd4de;
+    outline: none;
+}
+
+body.ldj .modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip:hover {
+    border-color: #c8b8e6;
+    color: #4a3b6e;
+}
+
+body.ldj .modal-overlay > .modal > .modal-feedback-group > .option-chips > .option-chip-input:checked + .option-chip {
+    background-color: #9678d3;
+    border-color: #9678d3;
+    color: #ffffff;
+}
+
+body.ldj .modal-overlay > .modal > .modal-feedback-group > .modal-feedback-notes:focus {
+    border-color: rgba(151, 120, 211, 0.55);
+}

@@ -1,5 +1,6 @@
 // requires the multiple libraries
 const fs = require("fs/promises");
+const crypto = require("crypto");
 const express = require("express");
 const cookieSession = require("cookie-session");
 const path = require("path");
@@ -392,6 +393,63 @@ app.post("/convert", (req, res, next) => {
         const engineModule = lib.ENGINES[engine];
         const engineInstance = engineModule.singleton();
         await engineInstance.convert(req, res, next);
+    }
+    clojure().catch(next);
+});
+
+app.post("/feedback", (req, res, next) => {
+    async function clojure() {
+        // ensures the feedback feature is currently enabled for the
+        // requester so disabled deployments do not accept submissions
+        const features = lib.resolveFeatures(req.session);
+        if (!features.feedback) {
+            res.status(404).json({ error: "feedback feature is disabled" });
+            return;
+        }
+
+        // validates the satisfaction value against the small set of
+        // allowed multiple choice answers so the on disk payload stays
+        // consistent and easy to aggregate later
+        const allowedSatisfaction = new Set([
+            "very_satisfied",
+            "satisfied",
+            "neutral",
+            "unsatisfied",
+            "very_unsatisfied"
+        ]);
+        const satisfaction = typeof req.body.satisfaction === "string" ? req.body.satisfaction : "";
+        if (!allowedSatisfaction.has(satisfaction)) {
+            res.status(400).json({ error: "invalid satisfaction value" });
+            return;
+        }
+
+        // captures the optional free text notes, trimming any leading
+        // or trailing whitespace and applying a sensible upper bound
+        // so the persisted entries cannot grow unbounded
+        const notesRaw = typeof req.body.notes === "string" ? req.body.notes : "";
+        const notes = notesRaw.trim().slice(0, 2000);
+
+        // builds the entry payload, capturing the contextual fields the
+        // client sends so the feedback can be cross referenced with the
+        // engraving submission it relates to
+        const entry = {
+            id: crypto.randomUUID(),
+            timestamp: new Date().toISOString(),
+            satisfaction: satisfaction,
+            notes: notes,
+            profile: typeof req.body.profile === "string" ? req.body.profile : null,
+            variant: typeof req.body.variant === "string" ? req.body.variant : null,
+            locale: req.session.locale || null
+        };
+
+        // ensures the feedback directory exists and writes the entry as
+        // its own JSON file named after the generated identifier so the
+        // submissions stay independent and easy to inspect on disk
+        const directoryPath = path.join(__dirname, "data", "feedback");
+        await fs.mkdir(directoryPath, { recursive: true });
+        const entryPath = path.join(directoryPath, `${entry.id}.json`);
+        await fs.writeFile(entryPath, JSON.stringify(entry, null, 4) + "\n", "utf8");
+        res.json({ id: entry.id });
     }
     clojure().catch(next);
 });
