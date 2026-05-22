@@ -13,6 +13,12 @@
      *   "hide"    - dismisses the modal with a fade-out animation
      *   "confirm" - builds and shows the print confirmation modal
      *               with the given specs object and viewport preview
+     *
+     * Events:
+     *   "show" - triggered after the modal becomes visible so
+     *            downstream plugins can reset transient state (for
+     *            example clearing a previous form submission) every
+     *            time the overlay is opened
      */
     jQuery.fn.modal = function(action, message) {
         const elements = jQuery(this);
@@ -26,8 +32,9 @@
             const buttonEngrave = jQuery(".button-modal-engrave", context);
 
             if (action === "show") {
-                modalMessage.text(message);
+                if (message !== undefined) modalMessage.text(message);
                 context.addClass("visible");
+                context.triggerHandler("show");
                 return;
             }
 
@@ -326,6 +333,12 @@
                         );
                     } else {
                         jQuery(".toast").toast("show", "Engraving job submitted successfully.");
+                        // surfaces the post engraving feedback modal so the
+                        // user can rate the experience, falling back silently
+                        // when the feedback feature is disabled and the
+                        // overlay has not been rendered into the page
+                        const feedbackOverlay = jQuery(".modal-overlay-feedback");
+                        if (feedbackOverlay.length > 0) feedbackOverlay.modal("show");
                     }
                 } catch (err) {
                     const errorOverlay = jQuery(".modal-overlay-error");

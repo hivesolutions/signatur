@@ -468,6 +468,11 @@
             </div>
         </div>
         <div class="toast"></div>
+        <% if (features.feedback) { %>
+            <button class="button-feedback-cta" type="button" title="Enviar opinião" aria-label="Enviar opinião">
+                <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            </button>
+        <% } %>
         <div class="modal-overlay modal-overlay-confirm"
              data-label-text="Texto"
              data-label-font="Letra"
@@ -529,5 +534,36 @@
                 </div>
             </div>
         </div>
+        <% if (features.feedback) { %>
+            <div class="modal-overlay modal-overlay-feedback">
+                <div class="modal modal-feedback">
+                    <div class="modal-title">Como correu a gravação?</div>
+                    <div class="modal-message">A tua opinião ajuda-nos a melhorar a experiência de gravação.</div>
+                    <div class="modal-feedback-group">
+                        <div class="modal-feedback-label">Satisfação</div>
+                        <div class="option-chips modal-feedback-satisfaction">
+                            <input class="option-chip-input" type="radio" id="feedback-very-satisfied" name="feedback_satisfaction" value="very_satisfied" />
+                            <label class="option-chip" for="feedback-very-satisfied">Muito Satisfeito</label>
+                            <input class="option-chip-input" type="radio" id="feedback-satisfied" name="feedback_satisfaction" value="satisfied" />
+                            <label class="option-chip" for="feedback-satisfied">Satisfeito</label>
+                            <input class="option-chip-input" type="radio" id="feedback-neutral" name="feedback_satisfaction" value="neutral" />
+                            <label class="option-chip" for="feedback-neutral">Neutro</label>
+                            <input class="option-chip-input" type="radio" id="feedback-unsatisfied" name="feedback_satisfaction" value="unsatisfied" />
+                            <label class="option-chip" for="feedback-unsatisfied">Insatisfeito</label>
+                            <input class="option-chip-input" type="radio" id="feedback-very-unsatisfied" name="feedback_satisfaction" value="very_unsatisfied" />
+                            <label class="option-chip" for="feedback-very-unsatisfied">Muito Insatisfeito</label>
+                        </div>
+                    </div>
+                    <div class="modal-feedback-group">
+                        <div class="modal-feedback-label">Notas (opcional)</div>
+                        <textarea class="modal-feedback-notes" rows="3" maxlength="2000" placeholder="Diga-nos o que quiser..."></textarea>
+                    </div>
+                    <div class="modal-buttons">
+                        <span class="button button-modal-feedback-submit disabled">Submeter</span>
+                        <span class="button button-ghost button-modal-close">Saltar</span>
+                    </div>
+                </div>
+            </div>
+        <% } %>
     </body>
 </html>

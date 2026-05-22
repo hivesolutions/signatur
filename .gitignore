@@ -5,3 +5,5 @@ package-lock.json
 /.venv
 
 /node_modules
+
+/data

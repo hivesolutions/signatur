@@ -210,6 +210,7 @@ jQuery(document).ready(function() {
     const modalOverlayError = jQuery(".modal-overlay-error");
     const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
     const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
+    const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
     const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
 
@@ -1732,6 +1733,8 @@ jQuery(document).ready(function() {
     modalOverlayConfirm.modal();
     modalOverlayInspirations.modal();
     modalOverlayInstructions.modal();
+    modalOverlayFeedback.modal();
+    modalOverlayFeedback.feedback({ profileSelector: profileSelector });
     toast.toast();
 
     // initializes the text editor plugin on the viewer container

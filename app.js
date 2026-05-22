@@ -396,6 +396,69 @@ app.post("/convert", (req, res, next) => {
     clojure().catch(next);
 });
 
+app.post("/feedback", (req, res, next) => {
+    async function clojure() {
+        // ensures the feedback feature is currently enabled for the
+        // requester so disabled deployments do not accept submissions
+        const features = lib.resolveFeatures(req.session);
+        if (!features.feedback) {
+            res.status(404).json({ error: "feedback feature is disabled" });
+            return;
+        }
+
+        // validates the satisfaction value against the small set of
+        // allowed multiple choice answers so the on disk payload stays
+        // consistent and easy to aggregate later
+        const allowedSatisfaction = new Set([
+            "very_satisfied",
+            "satisfied",
+            "neutral",
+            "unsatisfied",
+            "very_unsatisfied"
+        ]);
+        const satisfaction = typeof req.body.satisfaction === "string" ? req.body.satisfaction : "";
+        if (!allowedSatisfaction.has(satisfaction)) {
+            res.status(400).json({ error: "invalid satisfaction value" });
+            return;
+        }
+
+        // captures the optional free text notes, trimming any leading
+        // or trailing whitespace and applying a sensible upper bound
+        // so the persisted entries cannot grow unbounded
+        const notesRaw = typeof req.body.notes === "string" ? req.body.notes : "";
+        const notes = notesRaw.trim().slice(0, 2000);
+
+        // builds the entry payload, capturing the contextual fields the
+        // client sends so the feedback can be cross referenced with the
+        // engraving submission it relates to
+        const entry = {
+            id: crypto.randomUUID(),
+            timestamp: new Date().toISOString(),
+            satisfaction: satisfaction,
+            notes: notes,
+            profile: typeof req.body.profile === "string" ? req.body.profile : null,
+            variant: typeof req.body.variant === "string" ? req.body.variant : null,
+            locale: req.session.locale || null
+        };
+
+        // groups the feedback submissions by year, month and day in
+        // separate subdirectories derived from the ISO timestamp so
+        // the on disk layout stays easy to navigate as the number of
+        // entries grows, while each entry remains its own JSON file
+        // named after the generated identifier for easy inspection
+        // and per file aggregation
+        const year = entry.timestamp.slice(0, 4);
+        const month = entry.timestamp.slice(5, 7);
+        const day = entry.timestamp.slice(8, 10);
+        const directoryPath = path.join(__dirname, "data", "feedback", year, month, day);
+        await fs.mkdir(directoryPath, { recursive: true });
+        const entryPath = path.join(directoryPath, `${entry.id}.json`);
+        await fs.writeFile(entryPath, JSON.stringify(entry, null, 4) + "\n", "utf8");
+        res.json({ id: entry.id });
+    }
+    clojure().catch(next);
+});
+
 app.get("/config", (req, res, next) => {
     res.json(req.session.config || {});
 });
