@@ -56,9 +56,9 @@ const writeUsers = function(users) {
 };
 
 const main = async function() {
-    const [username, role] = process.argv.slice(2);
+    const [username, role, providedPassword] = process.argv.slice(2);
     if (!username || !role) {
-        console.log("Usage: npm run user:add <username> <role>");
+        console.log("Usage: npm run user:add <username> <role> [password]");
         console.log("Allowed roles: " + Array.from(ALLOWED_ROLES).join(", "));
         process.exit(1);
     }
@@ -68,15 +68,29 @@ const main = async function() {
         process.exit(1);
     }
 
-    const password = await promptPassword("Password for " + username + ": ");
-    if (!password) {
-        console.log("Password cannot be empty");
-        process.exit(1);
-    }
-    const confirm = await promptPassword("Confirm password: ");
-    if (password !== confirm) {
-        console.log("Passwords do not match");
-        process.exit(1);
+    // accepts the password as an optional third positional argument
+    // so non interactive callers (CI scripts, container entrypoints,
+    // ansible playbooks) can seed a user without driving a TTY, with
+    // the interactive double prompt path kept as the default for an
+    // operator running the command by hand at the terminal
+    let password;
+    if (providedPassword !== undefined) {
+        password = providedPassword;
+        if (!password) {
+            console.log("Password cannot be empty");
+            process.exit(1);
+        }
+    } else {
+        password = await promptPassword("Password for " + username + ": ");
+        if (!password) {
+            console.log("Password cannot be empty");
+            process.exit(1);
+        }
+        const confirm = await promptPassword("Confirm password: ");
+        if (password !== confirm) {
+            console.log("Passwords do not match");
+            process.exit(1);
+        }
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
