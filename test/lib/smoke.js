@@ -1,15 +1,21 @@
 const assert = require("assert");
+const fs = require("fs");
 const http = require("http");
 const net = require("net");
 const path = require("path");
 const childProcess = require("child_process");
+const bcrypt = require("bcryptjs");
 
 describe("Smoke", function() {
     this.timeout(20000);
 
     const host = "127.0.0.1";
+    const usersPath = path.resolve(__dirname, "..", "..", "config", "users.json");
+    const usersBackupPath = usersPath + ".bak";
     let child = null;
     let port = null;
+    let sessionCookie = null;
+    let hadExistingUsers = false;
 
     const findFreePort = function() {
         return new Promise((resolve, reject) => {
@@ -48,6 +54,26 @@ describe("Smoke", function() {
     };
 
     before(async function() {
+        // seeds a single admin user into the on disk users file so
+        // the subprocess can run with authentication enabled while
+        // the smoke suite logs in once and reuses the session cookie
+        // for every protected route assertion below, backing up any
+        // pre existing users file so the developer's local
+        // credentials are not clobbered by the test run
+        if (fs.existsSync(usersPath)) {
+            fs.copyFileSync(usersPath, usersBackupPath);
+            hadExistingUsers = true;
+        }
+        const passwordHash = bcrypt.hashSync("smokepw", 10);
+        fs.writeFileSync(
+            usersPath,
+            JSON.stringify(
+                [{ username: "smoke", password_hash: passwordHash, role: "admin" }],
+                null,
+                4
+            ) + "\n",
+            "utf8"
+        );
         port = await findFreePort();
         const appPath = path.resolve(__dirname, "..", "..", "app.js");
         child = childProcess.spawn(process.execPath, [appPath], {
@@ -70,23 +96,56 @@ describe("Smoke", function() {
                 "server did not become ready: " + err.message + "; stderr=" + stderr.slice(-2000)
             );
         }
+        const loginResponse = await request("POST", "/login", {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "username=smoke&password=smokepw"
+        });
+        const setCookie = loginResponse.headers["set-cookie"];
+        if (!setCookie || setCookie.length === 0) {
+            throw new Error("login did not return a session cookie");
+        }
+        sessionCookie = setCookie.map(entry => entry.split(";")[0]).join("; ");
     });
 
     after(function(done) {
+        const cleanup = () => {
+            if (hadExistingUsers) {
+                try {
+                    fs.renameSync(usersBackupPath, usersPath);
+                } catch (err) {
+                    if (err.code !== "ENOENT") throw err;
+                }
+            } else {
+                try {
+                    fs.unlinkSync(usersPath);
+                } catch (err) {
+                    if (err.code !== "ENOENT") throw err;
+                }
+            }
+            done();
+        };
         if (child) {
-            child.once("exit", () => done());
+            child.once("exit", cleanup);
             child.kill("SIGTERM");
             setTimeout(() => {
                 if (!child.killed) child.kill("SIGKILL");
             }, 2000);
         } else {
-            done();
+            cleanup();
         }
     });
 
     const request = function(method, requestPath, options = {}) {
         return new Promise((resolve, reject) => {
-            const headers = options.headers || {};
+            // merges the seeded session cookie onto every request so
+            // the protected routes return their authenticated payload
+            // instead of the global redirect to `/login`, leaving the
+            // option to skip it for the handful of cases that need
+            // to exercise the unauthenticated path on purpose
+            const headers = Object.assign({}, options.headers || {});
+            if (sessionCookie && !options.skipAuth && !headers.Cookie && !headers.cookie) {
+                headers.Cookie = sessionCookie;
+            }
             const requestOptions = {
                 host: host,
                 port: port,

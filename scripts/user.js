@@ -46,7 +46,13 @@ const loadUsers = function() {
 };
 
 const writeUsers = function(users) {
-    fs.writeFileSync(USERS_PATH, JSON.stringify(users, null, 4) + "\n", "utf8");
+    // writes the users file through a sibling temp path and renames
+    // it into place so a partial write caused by a process kill or
+    // disk full event cannot leave the on disk file in a half
+    // serialized state that would lock every operator out
+    const tmpPath = USERS_PATH + ".tmp";
+    fs.writeFileSync(tmpPath, JSON.stringify(users, null, 4) + "\n", "utf8");
+    fs.renameSync(tmpPath, USERS_PATH);
 };
 
 const main = async function() {

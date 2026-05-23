@@ -33,7 +33,7 @@ Supported file format include:
 
 ## Authentication
 
-Every interactive route is gated behind a session login. The list of valid users lives in `config/users.json` (gitignored, with a `config/users.json.example` checked into the repository) as an array of `{ "username": "...", "password_hash": "$2a$...", "role": "admin" | "user" }` entries; the `role` controls whether the user can reach the admin only surfaces (`/settings`, `/settings/diagnostics`, `/profiles/*`) or just the basic engraving flow.
+Every interactive route is gated behind a session login. The list of valid users lives in `config/users.json` (gitignored, with a `config/users.json.example` checked into the repository) as an array of `{ "username": "...", "password_hash": "$2a$...", "role": "admin" | "user" }` entries; the `role` controls whether the user can reach the admin-only surfaces (`/settings`, `/settings/diagnostics`, `/profiles/*`) or just the basic engraving flow.
 
 New users are added through the `npm run user:add <username> <role>` helper which prompts for the password twice (no echo), bcrypts it at cost 10 and rewrites `config/users.json` in place; the running application picks the change up automatically through `fs.watch` so no restart is required. The bare `/login` and `/logout` routes, the `/info` endpoint, the static assets and the engine `/convert` endpoint (key authenticated through `SIGNATUR_KEY`) stay public.
 

@@ -63,8 +63,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // user middleware so the login flow, the favicon and the public
 // info endpoint can be reached without an authenticated session;
 // the engine convert endpoint stays public so colony print can
-// keep posting svgs validated through the existing key header
-const PUBLIC_PATHS = ["/login", "/logout", "/info", "/favicon.ico", "/convert"];
+// keep posting svgs validated through the existing key header,
+// the static mount falls past express.static for missing assets
+// so it must be public to keep returning a clean 404 instead of
+// redirecting to /login, and the text route is hit by Headless
+// from /receipt and /image without the user's cookie so it must
+// also stay reachable for those rendering flows to work
+const PUBLIC_PATHS = [
+    "/login",
+    "/logout",
+    "/info",
+    "/favicon.ico",
+    "/static",
+    "/convert",
+    "/text"
+];
 
 // global authentication middleware that enforces a logged in
 // user on every interactive route, allowing only the small list
