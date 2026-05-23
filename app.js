@@ -23,12 +23,15 @@ const app = express();
 
 // initializes the session middleware using a cookie based store
 // so the whole session payload travels in the signed cookie and
-// no server side storage is required; the secret is hardcoded
-// since the session only carries non sensitive UI preferences
+// no server side storage is required; the signing keys are read
+// from `lib.conf.SESSION_SECRET` (comma separated to support
+// rotation, first entry signs new cookies, the rest still
+// validate old ones) and fall back to a placeholder so the
+// local dev flow keeps working without any environment setup
 app.use(
     cookieSession({
         name: "signatur.sid",
-        keys: ["signatur"],
+        keys: lib.conf.SESSION_SECRET,
         httpOnly: true,
         maxAge: 60000000,
         sameSite: "lax"

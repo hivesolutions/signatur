@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* `SESSION_SECRET` environment variable to override the hardcoded `cookie-session` signing key, comma separated to support rotation (first entry signs new cookies, the rest still validate old ones); the Dockerfile ships the previous placeholder as a default so existing deployments keep working until the variable is set explicitly.
 
 ### Changed
 
