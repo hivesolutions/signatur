@@ -1,4 +1,4 @@
-FROM node:24-trixie-slim
+FROM node:26-trixie-slim
 
 LABEL version="2.1"
 LABEL maintainer="Hive Solutions <development@hive.pt>"
