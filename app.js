@@ -27,13 +27,15 @@ const app = express();
 // from `lib.conf.SESSION_SECRET` (comma separated to support
 // rotation, first entry signs new cookies, the rest still
 // validate old ones) and fall back to a placeholder so the
-// local dev flow keeps working without any environment setup
+// local dev flow keeps working without any environment setup;
+// the lifetime is `lib.conf.SESSION_MAX_AGE` (ms), defaulting
+// to ~6 months
 app.use(
     cookieSession({
         name: "signatur.sid",
         keys: lib.conf.SESSION_SECRET,
         httpOnly: true,
-        maxAge: 60000000,
+        maxAge: lib.conf.SESSION_MAX_AGE,
         sameSite: "lax"
     })
 );
