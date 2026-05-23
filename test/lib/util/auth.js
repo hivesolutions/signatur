@@ -33,6 +33,10 @@ describe("Auth", function() {
     });
 
     after(function() {
+        // closes the watcher installed by `loadUsers()` so the
+        // mocha process can exit cleanly instead of hanging on the
+        // open `fs.watch` handle long after the assertions are done
+        lib.closeUsersWatcher();
         if (hadExisting) {
             fs.renameSync(backupPath, usersPath);
         } else {
