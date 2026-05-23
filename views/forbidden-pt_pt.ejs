@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="welcome">
+            <div class="welcome-hero">
+                <div class="welcome-hero-mark">
+                    <% if (theme === "ldj") { %>
+                        <img class="logo" src="/static/images/logo.svg" />
+                    <% } else { %>
+                        <span class="logo">Signatur</span>
+                    <% } %>
+                </div>
+                <div class="welcome-hero-eyebrow">Acesso Negado</div>
+                <div class="welcome-hero-divider"></div>
+            </div>
+            <div class="welcome-catalog">
+                <div class="login-container">
+                    <div class="login-error">É necessário acesso de administrador para esta página.</div>
+                </div>
+            </div>
+            <div class="welcome-action-bar centered">
+                <div class="welcome-actions">
+                    <a class="button button-ghost" href="/">Voltar</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

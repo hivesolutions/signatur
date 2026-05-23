@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="welcome">
+            <form class="form form-login" method="post" action="/login">
+                <div class="welcome-hero">
+                    <div class="welcome-hero-mark">
+                        <% if (theme === "ldj") { %>
+                            <img class="logo" src="/static/images/logo.svg" />
+                        <% } else { %>
+                            <span class="logo">Signatur</span>
+                        <% } %>
+                    </div>
+                    <div class="welcome-hero-eyebrow">Sign In</div>
+                    <div class="welcome-hero-divider"></div>
+                </div>
+                <div class="welcome-catalog">
+                    <div class="login-container">
+                        <% if (error === "invalid") { %>
+                            <div class="login-error">Invalid username or password.</div>
+                        <% } %>
+                        <div class="login-field">
+                            <label class="login-label" for="login-username">Username</label>
+                            <input class="login-input" id="login-username" name="username" type="text" autocomplete="username" autofocus required />
+                        </div>
+                        <div class="login-field">
+                            <label class="login-label" for="login-password">Password</label>
+                            <input class="login-input" id="login-password" name="password" type="password" autocomplete="current-password" required />
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="next" value="<%= next %>" />
+                <div class="welcome-action-bar centered">
+                    <div class="welcome-actions">
+                        <button type="submit" class="button button-start">Sign In</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
