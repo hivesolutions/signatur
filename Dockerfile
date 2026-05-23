@@ -9,6 +9,7 @@ ENV LEVEL=INFO
 ENV HOST=0.0.0.0
 ENV PORT=8080
 ENV NODE_ENV=production
+ENV BASE_URL=http://localhost:8080
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ghostscript \
@@ -25,6 +26,7 @@ COPY app.js /app/
 COPY config /app/config
 COPY lib /app/lib
 COPY res /app/res
+COPY scripts /app/scripts
 COPY static /app/static
 COPY views /app/views
 
