@@ -2,6 +2,7 @@
     "id": "heart-medal",
     "name": "Heart Medal",
     "description": "A heart-shaped medal with a 16x11mm engravable area inscribed in a 22x20mm bounding box.",
+    "sku": "TEST-HRT-001",
     "width": 22,
     "height": 20,
     "unit": "mm",
