@@ -2,6 +2,7 @@
     "id": "large-plate",
     "name": "Large Plate",
     "description": "A large engraving plate.",
+    "sku": "TEST-PLT-002",
     "enabled": false,
     "width": 200,
     "height": 60,

@@ -2,6 +2,7 @@
     "id": "plate",
     "name": "Steel Plate",
     "description": "A 70x70 steel plate.",
+    "sku": "TEST-PLT-001",
     "width": 70,
     "height": 70,
     "unit": "mm",
