@@ -41,7 +41,8 @@
         "start": "node app.js",
         "test": "mocha --recursive",
         "upgrade": "npx sort-package-json && ncu -u",
-        "user:add": "node scripts/user.js"
+        "user:add": "node scripts/user.js",
+        "user:local": "npm run user:add -- user user user && npm run user:add -- admin admin admin"
     },
     "dependencies": {
         "bcryptjs": "^3.0.3",
