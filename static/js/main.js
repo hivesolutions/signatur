@@ -10,13 +10,14 @@ jQuery(document).ready(function() {
     const buttonDownload = jQuery(".button-download");
     const viewportOptions = jQuery(".viewport-options");
     const profileInfo = jQuery(".profile-info");
-    const profileInfoSku = jQuery(".profile-info-sku");
     const profileInfoDimensions = jQuery(".profile-info-dimensions");
     const profileInfoOrientation = jQuery(".profile-info-orientation");
     const profileInfoLines = jQuery(".profile-info-lines");
     const profileInfoRawToggle = jQuery(".profile-info-raw-toggle");
     const profileInfoRaw = jQuery(".profile-info-raw");
     const profileSelector = jQuery(".viewport-options-body");
+    const profileSkuContainer = jQuery(".profile-sku-container");
+    const profileSkuValue = jQuery(".profile-sku-value");
     const profileInfoTitle = jQuery(".profile-info-title");
     const viewportOptionsInstructions = jQuery(".viewport-options-instructions");
     const modalOverlayInstructions = jQuery(".modal-overlay-instructions");
@@ -676,8 +677,8 @@ jQuery(document).ready(function() {
             profileInfoRaw.hide();
             profileInfoRawToggle.text(showLabel);
             profileInfoTitle.contents().first().replaceWith(defaultTitle);
-            profileInfoSku.text("");
-            profileInfoSku.removeClass("visible");
+            profileSkuValue.text("-");
+            profileSkuContainer.removeClass("visible");
             viewportOptionsInstructions.removeClass("visible");
             return;
         }
@@ -688,11 +689,11 @@ jQuery(document).ready(function() {
             .first()
             .replaceWith(profile.name + " ");
         if (profile.sku) {
-            profileInfoSku.text(profile.sku);
-            profileInfoSku.addClass("visible");
+            profileSkuValue.text(profile.sku);
+            profileSkuContainer.addClass("visible");
         } else {
-            profileInfoSku.text("");
-            profileInfoSku.removeClass("visible");
+            profileSkuValue.text("-");
+            profileSkuContainer.removeClass("visible");
         }
         profileInfoDimensions.text(
             profile.width + " x " + profile.height + (unit ? " " + unit : "")

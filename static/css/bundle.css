@@ -605,23 +605,6 @@ body.ldj .welcome > .form.form-gateway > .welcome-catalog > .gateway-container {
     text-transform: uppercase;
 }
 
-.profile-info > .profile-info-body > .profile-info-sku {
-    color: #9aa0ad;
-    display: none;
-    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
-    font-size: 11px;
-    letter-spacing: 0.4px;
-    margin-bottom: 4px;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.profile-info > .profile-info-body > .profile-info-sku.visible {
-    display: block;
-}
-
 .profile-info > .profile-info-body > .profile-info-dimensions {
     color: #1f2330;
     font-size: 13px;
@@ -1138,6 +1121,22 @@ body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-tr
 
 .viewport-options > .viewport-options-body > .position-container > .position-value {
     color: #1f2330;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.viewport-options > .viewport-options-body > .profile-sku-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .profile-sku-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .profile-sku-container > .profile-sku-value {
+    color: #1f2330;
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.3px;
@@ -2672,13 +2671,12 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     color: #6b5a8a;
 }
 
-.store-mode .profile-info > .profile-info-body > .profile-info-dimensions,
-.store-mode .profile-info > .profile-info-body > .profile-info-orientation,
-.store-mode .profile-info > .profile-info-body > .profile-info-lines,
-.store-mode .profile-info > .profile-info-body > .profile-info-raw-toggle,
-.store-mode .profile-info.visible > .profile-info-body > .profile-info-raw-toggle,
-.store-mode .profile-info > .profile-info-body > .profile-info-raw {
+.store-mode .profile-info {
     display: none;
+}
+
+.store-mode .inspiration-panel {
+    top: 84px;
 }
 
 .store-mode:not(:has(.viewport-preview.profile-active)) .viewport-options {
