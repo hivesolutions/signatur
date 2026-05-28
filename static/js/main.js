@@ -10,6 +10,7 @@ jQuery(document).ready(function() {
     const buttonDownload = jQuery(".button-download");
     const viewportOptions = jQuery(".viewport-options");
     const profileInfo = jQuery(".profile-info");
+    const profileInfoSku = jQuery(".profile-info-sku");
     const profileInfoDimensions = jQuery(".profile-info-dimensions");
     const profileInfoOrientation = jQuery(".profile-info-orientation");
     const profileInfoLines = jQuery(".profile-info-lines");
@@ -675,6 +676,8 @@ jQuery(document).ready(function() {
             profileInfoRaw.hide();
             profileInfoRawToggle.text(showLabel);
             profileInfoTitle.contents().first().replaceWith(defaultTitle);
+            profileInfoSku.text("");
+            profileInfoSku.removeClass("visible");
             viewportOptionsInstructions.removeClass("visible");
             return;
         }
@@ -684,6 +687,13 @@ jQuery(document).ready(function() {
             .contents()
             .first()
             .replaceWith(profile.name + " ");
+        if (profile.sku) {
+            profileInfoSku.text(profile.sku);
+            profileInfoSku.addClass("visible");
+        } else {
+            profileInfoSku.text("");
+            profileInfoSku.removeClass("visible");
+        }
         profileInfoDimensions.text(
             profile.width + " x " + profile.height + (unit ? " " + unit : "")
         );

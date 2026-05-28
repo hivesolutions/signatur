@@ -1,9 +1,10 @@
-.store-mode .profile-info {
+.store-mode .profile-info > .profile-info-body > .profile-info-dimensions,
+.store-mode .profile-info > .profile-info-body > .profile-info-orientation,
+.store-mode .profile-info > .profile-info-body > .profile-info-lines,
+.store-mode .profile-info > .profile-info-body > .profile-info-raw-toggle,
+.store-mode .profile-info.visible > .profile-info-body > .profile-info-raw-toggle,
+.store-mode .profile-info > .profile-info-body > .profile-info-raw {
     display: none;
-}
-
-.store-mode .inspiration-panel {
-    top: 84px;
 }
 
 .store-mode:not(:has(.viewport-preview.profile-active)) .viewport-options {

@@ -54,6 +54,23 @@
     text-transform: uppercase;
 }
 
+.profile-info > .profile-info-body > .profile-info-sku {
+    color: #9aa0ad;
+    display: none;
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profile-info > .profile-info-body > .profile-info-sku.visible {
+    display: block;
+}
+
 .profile-info > .profile-info-body > .profile-info-dimensions {
     color: #1f2330;
     font-size: 13px;
