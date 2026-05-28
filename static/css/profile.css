@@ -575,6 +575,22 @@ body.ldj .viewport-options > .viewport-options-body > .slider-field > .slider-tr
     letter-spacing: 0.3px;
 }
 
+.viewport-options > .viewport-options-body > .profile-sku-container {
+    display: none;
+}
+
+.viewport-options > .viewport-options-body > .profile-sku-container.visible {
+    display: block;
+}
+
+.viewport-options > .viewport-options-body > .profile-sku-container > .profile-sku-value {
+    color: #1f2330;
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
 .viewport-options > .viewport-options-body > .viewport-options-instructions {
     display: none;
     margin-top: 12px;

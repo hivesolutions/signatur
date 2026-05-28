@@ -16,6 +16,8 @@ jQuery(document).ready(function() {
     const profileInfoRawToggle = jQuery(".profile-info-raw-toggle");
     const profileInfoRaw = jQuery(".profile-info-raw");
     const profileSelector = jQuery(".viewport-options-body");
+    const profileSkuContainer = jQuery(".profile-sku-container");
+    const profileSkuValue = jQuery(".profile-sku-value");
     const profileInfoTitle = jQuery(".profile-info-title");
     const viewportOptionsInstructions = jQuery(".viewport-options-instructions");
     const modalOverlayInstructions = jQuery(".modal-overlay-instructions");
@@ -675,6 +677,8 @@ jQuery(document).ready(function() {
             profileInfoRaw.hide();
             profileInfoRawToggle.text(showLabel);
             profileInfoTitle.contents().first().replaceWith(defaultTitle);
+            profileSkuValue.text("-");
+            profileSkuContainer.removeClass("visible");
             viewportOptionsInstructions.removeClass("visible");
             return;
         }
@@ -684,6 +688,13 @@ jQuery(document).ready(function() {
             .contents()
             .first()
             .replaceWith(profile.name + " ");
+        if (profile.sku) {
+            profileSkuValue.text(profile.sku);
+            profileSkuContainer.addClass("visible");
+        } else {
+            profileSkuValue.text("-");
+            profileSkuContainer.removeClass("visible");
+        }
         profileInfoDimensions.text(
             profile.width + " x " + profile.height + (unit ? " " + unit : "")
         );
