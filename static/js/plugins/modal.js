@@ -272,13 +272,15 @@
                 // builds the data payload for the print operation, including
                 // the viewport information from the selected profile if available
                 const dryRun = jQuery(".modal-dry-run", context).prop("checked");
+                const record = jQuery(".modal-record", context).prop("checked");
                 const textPayload = multifont && multifont.length > 0 ? multifont : text;
                 const fontPayload = font === "Cool Emojis" ? null : font;
                 const printData = {
                     text: textPayload,
                     font: fontPayload,
                     debug: true,
-                    dry_run: dryRun
+                    dry_run: dryRun,
+                    record: record
                 };
                 if (profileKey) {
                     const profiles = context.data("profiles") || {};
