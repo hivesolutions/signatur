@@ -322,6 +322,7 @@ app.get("/welcome", (req, res, next) => {
         masterb64: masterb64,
         config: req.session.config || {},
         showOptions: req.session.show_options !== "0",
+        viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
         info: info || {},
         user: req.session.user || null
     });
@@ -401,8 +402,19 @@ app.get("/report", (req, res, next) => {
 app.get("/console", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.theme = theme;
     req.session.locale = locale;
     res.render("console" + (locale ? `-${locale}` : ""), {
+        theme: theme
+    });
+});
+
+app.get("/components", (req, res, next) => {
+    const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
+    req.session.theme = theme;
+    req.session.locale = locale;
+    res.render("components", {
         theme: theme
     });
 });

@@ -13,6 +13,7 @@ const CSS_FILES = [
     "css/viewport.css",
     "css/welcome.css",
     "css/settings.css",
+    "css/components-page.css",
     "css/store-mode.css",
     "css/preview-mode.css",
     "css/mobile-block.css",

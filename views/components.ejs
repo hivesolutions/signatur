@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("head"); -%>
+    <body class="<%= theme %>" data-theme="<%= theme %>">
+        <div class="components-page">
+            <div class="components-hero">
+                <div class="components-hero-eyebrow">Components Showcase</div>
+                <div class="components-hero-divider"></div>
+                <p class="components-hero-lede">Canonical reference of the reusable building blocks shipped with Signatur, grouped by category and ready to copy paste into a new view. Every entry exposes a deterministic anchor, a structured metadata block and a self contained markup snippet so both human contributors and AI agents can pick up the component without scraping the rest of the codebase.</p>
+            </div>
+            <nav class="components-toc" aria-label="Components index">
+                <div class="components-toc-title">Index</div>
+                <ul class="components-toc-list">
+                    <li><a href="#section-modal-overlays">Modal overlays</a></li>
+                    <li><a href="#section-buttons-chips">Buttons &amp; chips</a></li>
+                    <li><a href="#section-form-inputs">Form inputs</a></li>
+                    <li><a href="#section-panels-cards">Panels &amp; cards</a></li>
+                    <li><a href="#section-tabs">Tabs</a></li>
+                    <li><a href="#section-toast">Toast notifications</a></li>
+                </ul>
+            </nav>
+            <section class="components-section" id="section-modal-overlays">
+                <h2 class="components-section-title">Modal overlays</h2>
+                <p class="components-section-lede">Full screen overlay modals backed by the <code>modal</code> jQuery plugin. Discovered by descendant class names so the same plugin handles confirmations, errors, configuration prompts and instructions.</p>
+                <article class="components-entry" id="modal-overlay-confirmation">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Confirmation modal</h3>
+                        <a class="components-entry-anchor" href="#modal-overlay-confirmation" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>modal-overlay-confirmation</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>modal-overlays</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>overlay, modal, confirm</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>js/plugins/modal.js, css/plugins/modal.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.2.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "modal-overlay-confirmation",
+                            "category": "modal-overlays",
+                            "tags": ["overlay", "modal", "confirm"],
+                            "dependencies": ["js/plugins/modal.js", "css/plugins/modal.css"],
+                            "since": "1.2.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <span class="button components-demo-modal-trigger">Open modal</span>
+                        <div class="modal-overlay components-demo-modal-overlay">
+                            <div class="modal">
+                                <div class="modal-title">Confirm action</div>
+                                <div class="modal-message">A short description of what is about to happen, written so the operator can review before committing.</div>
+                                <div class="modal-buttons">
+                                    <span class="button button-ghost button-modal-close">Cancel</span>
+                                    <span class="button components-demo-modal-confirm">Confirm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;div class=&quot;modal-overlay modal-overlay-example&quot;&gt;
+    &lt;div class=&quot;modal&quot;&gt;
+        &lt;div class=&quot;modal-title&quot;&gt;Confirm action&lt;/div&gt;
+        &lt;div class=&quot;modal-message&quot;&gt;A short description of what is about to happen.&lt;/div&gt;
+        &lt;div class=&quot;modal-buttons&quot;&gt;
+            &lt;span class=&quot;button button-ghost button-modal-close&quot;&gt;Cancel&lt;/span&gt;
+            &lt;span class=&quot;button button-modal-example-confirm&quot;&gt;Confirm&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">JS</div>
+                        <pre class="components-entry-code"><code>const overlay = jQuery(&quot;.modal-overlay-example&quot;);
+overlay.modal();
+overlay.modal(&quot;show&quot;);
+jQuery(&quot;.button-modal-example-confirm&quot;, overlay).click(function() {
+    overlay.modal(&quot;hide&quot;);
+});</code></pre>
+                    </div>
+                </article>
+            </section>
+            <section class="components-section" id="section-buttons-chips">
+                <h2 class="components-section-title">Buttons &amp; chips</h2>
+                <p class="components-section-lede">Pill shaped buttons used across the engraving studio together with the radio chip group used to pick exclusive options.</p>
+                <article class="components-entry" id="button-primary">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Primary button</h3>
+                        <a class="components-entry-anchor" href="#button-primary" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>button-primary</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>buttons-chips</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>button, action, pill</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>css/layout.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "button-primary",
+                            "category": "buttons-chips",
+                            "tags": ["button", "action", "pill"],
+                            "dependencies": ["css/layout.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <span class="button">Primary action</span>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;span class=&quot;button&quot;&gt;Primary action&lt;/span&gt;</code></pre>
+                    </div>
+                </article>
+                <article class="components-entry" id="button-ghost">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Ghost button</h3>
+                        <a class="components-entry-anchor" href="#button-ghost" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>button-ghost</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>buttons-chips</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>button, secondary, outline</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>css/layout.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "button-ghost",
+                            "category": "buttons-chips",
+                            "tags": ["button", "secondary", "outline"],
+                            "dependencies": ["css/layout.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <a class="button button-ghost" href="#">Secondary action</a>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;a class=&quot;button button-ghost&quot; href=&quot;#&quot;&gt;Secondary action&lt;/a&gt;</code></pre>
+                    </div>
+                </article>
+                <article class="components-entry" id="button-small">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Small icon button</h3>
+                        <a class="components-entry-anchor" href="#button-small" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>button-small</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>buttons-chips</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>button, small, icon</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>css/layout.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "button-small",
+                            "category": "buttons-chips",
+                            "tags": ["button", "small", "icon"],
+                            "dependencies": ["css/layout.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <span class="button button-small">+</span>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;span class=&quot;button button-small&quot;&gt;+&lt;/span&gt;</code></pre>
+                    </div>
+                </article>
+                <article class="components-entry" id="button-tiny">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Tiny button</h3>
+                        <a class="components-entry-anchor" href="#button-tiny" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>button-tiny</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>buttons-chips</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>button, tiny, compact</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>css/layout.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "button-tiny",
+                            "category": "buttons-chips",
+                            "tags": ["button", "tiny", "compact"],
+                            "dependencies": ["css/layout.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <a class="button button-tiny" href="#">i</a>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;a class=&quot;button button-tiny&quot; href=&quot;#&quot;&gt;i&lt;/a&gt;</code></pre>
+                    </div>
+                </article>
+                <article class="components-entry" id="option-chips">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Option chips</h3>
+                        <a class="components-entry-anchor" href="#option-chips" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>option-chips</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>buttons-chips</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>chip, radio, toggle, options</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>css/welcome.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "option-chips",
+                            "category": "buttons-chips",
+                            "tags": ["chip", "radio", "toggle", "options"],
+                            "dependencies": ["css/welcome.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <div class="option-chips">
+                            <input class="option-chip-input" type="radio" id="components-demo-chip-a" name="components-demo-chip" checked>
+                            <label class="option-chip" for="components-demo-chip-a">First</label>
+                            <input class="option-chip-input" type="radio" id="components-demo-chip-b" name="components-demo-chip">
+                            <label class="option-chip" for="components-demo-chip-b">Second</label>
+                            <input class="option-chip-input" type="radio" id="components-demo-chip-c" name="components-demo-chip">
+                            <label class="option-chip" for="components-demo-chip-c">Third</label>
+                        </div>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;div class=&quot;option-chips&quot;&gt;
+    &lt;input class=&quot;option-chip-input&quot; type=&quot;radio&quot; id=&quot;example-a&quot; name=&quot;example&quot; checked&gt;
+    &lt;label class=&quot;option-chip&quot; for=&quot;example-a&quot;&gt;First&lt;/label&gt;
+    &lt;input class=&quot;option-chip-input&quot; type=&quot;radio&quot; id=&quot;example-b&quot; name=&quot;example&quot;&gt;
+    &lt;label class=&quot;option-chip&quot; for=&quot;example-b&quot;&gt;Second&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </article>
+            </section>
+            <section class="components-section" id="section-form-inputs">
+                <h2 class="components-section-title">Form inputs</h2>
+                <p class="components-section-lede">Bare text input styled to match the rest of the form chrome.</p>
+                <article class="components-entry" id="input-text">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Text input</h3>
+                        <a class="components-entry-anchor" href="#input-text" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>input-text</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>form-inputs</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>input, text, form</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>css/layout.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "input-text",
+                            "category": "form-inputs",
+                            "tags": ["input", "text", "form"],
+                            "dependencies": ["css/layout.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <input class="input" type="text" placeholder="Type here" />
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;input class=&quot;input&quot; type=&quot;text&quot; name=&quot;example&quot; placeholder=&quot;Type here&quot; /&gt;</code></pre>
+                    </div>
+                </article>
+            </section>
+            <section class="components-section" id="section-panels-cards">
+                <h2 class="components-section-title">Panels &amp; cards</h2>
+                <p class="components-section-lede">Collapsible side panels and the welcome hero card used to frame standalone screens.</p>
+                <article class="components-entry" id="collapsible-panel">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Collapsible panel</h3>
+                        <a class="components-entry-anchor" href="#collapsible-panel" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>collapsible-panel</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>panels-cards</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>collapsible, panel, side, toggle</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>js/plugins/collapsible.js, css/plugins/collapsible.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "collapsible-panel",
+                            "category": "panels-cards",
+                            "tags": ["collapsible", "panel", "side", "toggle"],
+                            "dependencies": ["js/plugins/collapsible.js", "css/plugins/collapsible.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <div class="collapsible components-demo-collapsible">
+                            <div class="collapsible-title">Panel title <span class="collapsible-toggle">▾</span></div>
+                            <div class="collapsible-body">Click the title to collapse and expand the body.</div>
+                        </div>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;div class=&quot;example-panel collapsible&quot;&gt;
+    &lt;div class=&quot;collapsible-title&quot;&gt;Panel title &lt;span class=&quot;collapsible-toggle&quot;&gt;▾&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;collapsible-body&quot;&gt;Body content&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">JS</div>
+                        <pre class="components-entry-code"><code>jQuery(&quot;.example-panel&quot;).collapsiblepanel();</code></pre>
+                    </div>
+                </article>
+            </section>
+            <section class="components-section" id="section-tabs">
+                <h2 class="components-section-title">Tabs</h2>
+                <p class="components-section-lede">Lightweight tab navigation matching the pattern used by the settings screen, driven by a <code>data-tab</code> attribute that pairs each tab header with its content panel.</p>
+                <article class="components-entry" id="settings-tabs">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Settings tabs</h3>
+                        <a class="components-entry-anchor" href="#settings-tabs" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>settings-tabs</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>tabs</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>tabs, navigation, data-tab</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>css/settings.css, js/main.js</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "settings-tabs",
+                            "category": "tabs",
+                            "tags": ["tabs", "navigation", "data-tab"],
+                            "dependencies": ["css/settings.css", "js/main.js"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <div class="components-demo-tabs">
+                            <div class="settings-tabs">
+                                <span class="settings-tab active" data-tab="first">First</span>
+                                <span class="settings-tab" data-tab="second">Second</span>
+                                <span class="settings-tab" data-tab="third">Third</span>
+                            </div>
+                            <div class="settings-tab-content" data-tab="first">Contents of the first tab.</div>
+                            <div class="settings-tab-content" data-tab="second" style="display: none;">Contents of the second tab.</div>
+                            <div class="settings-tab-content" data-tab="third" style="display: none;">Contents of the third tab.</div>
+                        </div>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;div class=&quot;settings-tabs&quot;&gt;
+    &lt;span class=&quot;settings-tab active&quot; data-tab=&quot;first&quot;&gt;First&lt;/span&gt;
+    &lt;span class=&quot;settings-tab&quot; data-tab=&quot;second&quot;&gt;Second&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class=&quot;settings-tab-content&quot; data-tab=&quot;first&quot;&gt;Contents of the first tab.&lt;/div&gt;
+&lt;div class=&quot;settings-tab-content&quot; data-tab=&quot;second&quot; style=&quot;display: none;&quot;&gt;Contents of the second tab.&lt;/div&gt;</code></pre>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">JS</div>
+                        <pre class="components-entry-code"><code>const tabs = jQuery(&quot;.settings-tabs &gt; .settings-tab&quot;);
+const contents = jQuery(&quot;.settings-tab-content&quot;);
+tabs.click(function() {
+    const tab = jQuery(this).attr(&quot;data-tab&quot;);
+    tabs.removeClass(&quot;active&quot;);
+    jQuery(this).addClass(&quot;active&quot;);
+    contents.each(function() {
+        const content = jQuery(this);
+        content.css(&quot;display&quot;, content.attr(&quot;data-tab&quot;) === tab ? &quot;&quot; : &quot;none&quot;);
+    });
+});</code></pre>
+                    </div>
+                </article>
+            </section>
+            <section class="components-section" id="section-toast">
+                <h2 class="components-section-title">Toast notifications</h2>
+                <p class="components-section-lede">Transient confirmation messages anchored to the bottom of the viewport, backed by the <code>toast</code> jQuery plugin which auto dismisses after three seconds.</p>
+                <article class="components-entry" id="toast-notification">
+                    <header class="components-entry-header">
+                        <h3 class="components-entry-name">Toast message</h3>
+                        <a class="components-entry-anchor" href="#toast-notification" aria-label="Permalink">#</a>
+                    </header>
+                    <dl class="components-entry-meta">
+                        <div class="components-entry-meta-row"><dt>name</dt><dd>toast-notification</dd></div>
+                        <div class="components-entry-meta-row"><dt>category</dt><dd>toast</dd></div>
+                        <div class="components-entry-meta-row"><dt>tags</dt><dd>toast, notification, transient</dd></div>
+                        <div class="components-entry-meta-row"><dt>dependencies</dt><dd>js/plugins/toast.js, css/plugins/toast.css</dd></div>
+                        <div class="components-entry-meta-row"><dt>since</dt><dd>1.0.0</dd></div>
+                    </dl>
+                    <script type="application/json" class="components-entry-payload">
+                        {
+                            "name": "toast-notification",
+                            "category": "toast",
+                            "tags": ["toast", "notification", "transient"],
+                            "dependencies": ["js/plugins/toast.js", "css/plugins/toast.css"],
+                            "since": "1.0.0"
+                        }
+                    </script>
+                    <div class="components-entry-preview">
+                        <span class="button components-demo-toast-trigger">Show toast</span>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">HTML</div>
+                        <pre class="components-entry-code"><code>&lt;div class=&quot;toast&quot;&gt;&lt;/div&gt;</code></pre>
+                    </div>
+                    <div class="components-entry-snippet">
+                        <div class="components-entry-snippet-label">JS</div>
+                        <pre class="components-entry-code"><code>jQuery(&quot;.toast&quot;).toast(&quot;show&quot;, &quot;Action confirmed.&quot;);</code></pre>
+                    </div>
+                </article>
+            </section>
+        </div>
+        <div class="toast"></div>
+        <script>
+            jQuery(document).ready(function() {
+                const demoCollapsible = jQuery(".components-demo-collapsible");
+                demoCollapsible.collapsiblepanel();
+
+                const demoModal = jQuery(".components-demo-modal-overlay");
+                demoModal.modal();
+                jQuery(".components-demo-modal-trigger").click(function() {
+                    demoModal.modal("show");
+                });
+                jQuery(".components-demo-modal-confirm", demoModal).click(function() {
+                    demoModal.modal("hide");
+                });
+
+                jQuery(".components-demo-toast-trigger").click(function() {
+                    jQuery(".toast").toast("show", "Action confirmed.");
+                });
+            });
+        </script>
+    </body>
+</html>
