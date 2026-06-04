@@ -4962,7 +4962,7 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     background-color: #f5cdcd;
 }
 
-.modal-overlay > .modal.modal-print-files {
+.modal-overlay > .modal.modal-print-job {
     display: flex;
     flex-direction: column;
     max-height: 85vh;
@@ -4971,17 +4971,217 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     width: 92%;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-title {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-title {
     color: #6b7280;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.9px;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
     text-align: center;
     text-transform: uppercase;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-empty {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tabs {
+    border-bottom: 1px solid #e6e8ee;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    display: flex;
+    gap: 4px;
+    margin: 0px auto 16px auto;
+    max-width: 480px;
+    padding: 0px 4px 0px 4px;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tabs > .modal-print-job-tab {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #9aa0ad;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: -1px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
+    padding: 8px 14px 8px 14px;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    -o-touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    -moz-touch-action: manipulation;
+    -khtml-touch-action: manipulation;
+    -webkit-touch-action: manipulation;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    -o-transition: color 0.15s ease, border-color 0.15s ease;
+    -ms-transition: color 0.15s ease, border-color 0.15s ease;
+    -moz-transition: color 0.15s ease, border-color 0.15s ease;
+    -khtml-transition: color 0.15s ease, border-color 0.15s ease;
+    -webkit-transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tabs > .modal-print-job-tab:hover {
+    color: #1f2330;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tabs > .modal-print-job-tab.active {
+    border-bottom-color: #1f2330;
+    color: #1f2330;
+}
+
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tabs > .modal-print-job-tab.active {
+    border-bottom-color: #9678d3;
+    color: #1f1430;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs,
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-options,
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-result-summary {
+    background-color: #ffffff;
+    border: 1px solid #ececf1;
+    border-radius: 14px 14px 14px 14px;
+    -o-border-radius: 14px 14px 14px 14px;
+    -ms-border-radius: 14px 14px 14px 14px;
+    -moz-border-radius: 14px 14px 14px 14px;
+    -khtml-border-radius: 14px 14px 14px 14px;
+    -webkit-border-radius: 14px 14px 14px 14px;
+    flex: 0 0 auto;
+    font-size: 12px;
+    line-height: 16px;
+    margin: 0px auto 14px auto;
+    max-width: 560px;
+    overflow: hidden;
+    text-align: left;
+    width: 100%;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs {
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs,
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-options,
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-result-summary {
+    border-color: #ece4f5;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content .modal-specs > .modal-spec {
+    align-items: baseline;
+    border-bottom: 1px solid #f4f5f8;
+    display: flex;
+    gap: 10px;
+    padding: 7px 12px 7px 12px;
+}
+
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content .modal-specs > .modal-spec {
+    border-bottom-color: #f5f0fa;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content .modal-specs > .modal-spec:last-child {
+    border-bottom: none;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content .modal-specs > .modal-spec > .modal-spec-label {
+    color: #9aa0ad;
+    flex: 0 0 150px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content .modal-specs > .modal-spec > .modal-spec-value {
+    color: #1f2330;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs > .modal-spec > .modal-spec-value > .modal-print-job-status {
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    padding: 3px 10px 3px 10px;
+    text-transform: uppercase;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs > .modal-spec > .modal-spec-value > .modal-print-job-status-queued,
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs > .modal-spec > .modal-spec-value > .modal-print-job-status-cancelled {
+    background-color: #f4f5f8;
+    color: #6b7280;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs > .modal-spec > .modal-spec-value > .modal-print-job-status-printing {
+    background-color: #e7f0ff;
+    color: #1f4ea1;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs > .modal-spec > .modal-spec-value > .modal-print-job-status-finished {
+    background-color: #e4f5ec;
+    color: #1f6a47;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs > .modal-spec > .modal-spec-value > .modal-print-job-status-failed {
+    background-color: #fde7e7;
+    color: #a31f1f;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-payload {
+    background-color: #f4f5f8;
+    border: none;
+    border-radius: 10px 10px 10px 10px;
+    -o-border-radius: 10px 10px 10px 10px;
+    -ms-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -khtml-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    color: #1f2330;
+    flex: 1 1 auto;
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    font-size: 11px;
+    line-height: 16px;
+    margin: 0px 0px 16px 0px;
+    overflow: auto;
+    padding: 10px 12px 10px 12px;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-payload-empty {
+    color: #9aa0ad;
+    display: none;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    padding: 24px 0px 24px 0px;
+    text-align: center;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-empty {
     color: #9aa0ad;
     display: none;
     font-size: 14px;
@@ -4990,7 +5190,7 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     text-align: center;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid {
     display: grid;
     flex: 1;
     margin-bottom: 16px;
@@ -5002,7 +5202,7 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     align-content: start;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile {
     align-items: stretch;
     background-color: #ffffff;
     border: 1px solid #e6e8ee;
@@ -5025,7 +5225,7 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     text-align: left;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-preview {
     align-items: center;
     background-color: #f4f5f8;
     border-radius: 12px 12px 12px 12px;
@@ -5041,14 +5241,14 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     position: relative;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > img,
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > video {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-preview > img,
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-preview > video {
     height: 100%;
     object-fit: contain;
     width: 100%;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > .modal-print-files-tile-download {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-preview > .modal-print-job-files-tile-download {
     background-color: rgba(24, 24, 24, 1.0);
     border-radius: 999px 999px 999px 999px;
     -o-border-radius: 999px 999px 999px 999px;
@@ -5065,7 +5265,7 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     text-transform: uppercase;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-name {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-name {
     color: #1f2330;
     font-size: 12px;
     font-weight: 600;
@@ -5076,23 +5276,135 @@ body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
     white-space: nowrap;
 }
 
-.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-meta {
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-meta {
     color: #6b7280;
     font-size: 10px;
     letter-spacing: 0.4px;
     margin: 4px 4px 0px 4px;
 }
 
-body.ldj .modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile {
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile {
     border-color: #ece4f5;
 }
 
-body.ldj .modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview {
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-preview {
     background-color: #f5f0fa;
 }
 
-body.ldj .modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > .modal-print-files-tile-download {
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-files-grid > .modal-print-job-files-tile > .modal-print-job-files-tile-preview > .modal-print-job-files-tile-download {
     background-color: #9678d3;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section {
+    display: none;
+    flex: 0 0 auto;
+    margin: 0px auto 16px auto;
+    max-width: 560px;
+    width: 100%;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-section-title {
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    margin: 0px 0px 8px 0px;
+    text-transform: uppercase;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs-toggle {
+    color: #1f2330;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    margin: 0px 0px 8px 0px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs-toggle {
+    color: #1f1430;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs {
+    background-color: #f4f5f8;
+    border-radius: 10px 10px 10px 10px;
+    -o-border-radius: 10px 10px 10px 10px;
+    -ms-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -khtml-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    color: #1f2330;
+    display: none;
+    font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    font-size: 11px;
+    line-height: 16px;
+    max-height: 240px;
+    overflow: auto;
+    padding: 10px 12px 10px 12px;
+    text-align: left;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log {
+    align-items: baseline;
+    display: flex;
+    gap: 8px;
+    padding: 2px 0px 2px 0px;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-time {
+    color: #6b7280;
+    flex: 0 0 auto;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-level {
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    flex: 0 0 auto;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    padding: 1px 8px 1px 8px;
+    text-transform: uppercase;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-level-default {
+    background-color: #e7eaf0;
+    color: #6b7280;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-level-success {
+    background-color: #e4f5ec;
+    color: #1f6a47;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-level-warning {
+    background-color: #fdf3d8;
+    color: #8a6914;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-level-error {
+    background-color: #fde7e7;
+    color: #a31f1f;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-source {
+    color: #6b7280;
+    flex: 0 0 auto;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-section > .modal-print-job-logs > .modal-print-job-log > .modal-print-job-log-message {
+    color: #1f2330;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .welcome > .form.form-manager {

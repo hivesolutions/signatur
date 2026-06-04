@@ -20,6 +20,18 @@
                      data-label-printer="Impressora"
                      data-label-node="Nó"
                      data-label-elapsed="Decorrido"
+                     data-label-status="Estado"
+                     data-label-id="Trabalho"
+                     data-label-name="Nome"
+                     data-label-type="Tipo"
+                     data-label-format="Formato"
+                     data-label-data-length="Tamanho dos dados"
+                     data-label-duration="Duração"
+                     data-label-queued-at="Em fila desde"
+                     data-label-printing-at="A imprimir desde"
+                     data-label-finished-at="Concluído em"
+                     data-label-cancelled-at="Cancelado em"
+                     data-label-request-empty="Sem pedido registado para este trabalho."
                      data-label-failed-toast="O trabalho de gravação falhou."
                      data-label-files-empty="Sem ficheiros gerados para este trabalho."
                      data-label-download="Transferir">
@@ -546,11 +558,45 @@
                 </div>
             </div>
         </div>
-        <div class="modal-overlay modal-overlay-print-files">
-            <div class="modal modal-print-files">
-                <div class="modal-title modal-print-files-title"></div>
-                <div class="modal-print-files-empty"></div>
-                <div class="modal-print-files-grid"></div>
+        <div class="modal-overlay modal-overlay-print-job">
+            <div class="modal modal-print-job">
+                <div class="modal-title modal-print-job-title"></div>
+                <div class="modal-print-job-tabs">
+                    <span class="modal-print-job-tab active" data-tab="info">Informação</span>
+                    <span class="modal-print-job-tab" data-tab="files">Ficheiros</span>
+                    <span class="modal-print-job-tab" data-tab="request">Pedido</span>
+                    <span class="modal-print-job-tab" data-tab="result" style="display: none;">Resultado</span>
+                    <span class="modal-print-job-tab" data-tab="traceback" style="display: none;">Traceback</span>
+                </div>
+                <div class="modal-print-job-tab-content" data-tab="info">
+                    <div class="modal-specs modal-print-job-specs"></div>
+                    <div class="modal-print-job-section modal-print-job-section-options" style="display: none;">
+                        <div class="modal-print-job-section-title">Opções</div>
+                        <div class="modal-specs modal-print-job-options"></div>
+                    </div>
+                    <div class="modal-print-job-section modal-print-job-section-result" style="display: none;">
+                        <div class="modal-print-job-section-title">Resultado</div>
+                        <div class="modal-specs modal-print-job-result-summary"></div>
+                    </div>
+                    <div class="modal-print-job-section modal-print-job-section-logs" style="display: none;">
+                        <a class="modal-print-job-logs-toggle" href="#" data-show-label="Mostrar logs" data-hide-label="Ocultar logs">Mostrar logs</a>
+                        <div class="modal-print-job-logs"></div>
+                    </div>
+                </div>
+                <div class="modal-print-job-tab-content" data-tab="files" style="display: none;">
+                    <div class="modal-print-job-files-empty"></div>
+                    <div class="modal-print-job-files-grid"></div>
+                </div>
+                <div class="modal-print-job-tab-content" data-tab="request" style="display: none;">
+                    <pre class="modal-print-job-payload modal-print-job-request"></pre>
+                    <div class="modal-print-job-payload-empty modal-print-job-request-empty"></div>
+                </div>
+                <div class="modal-print-job-tab-content" data-tab="result" style="display: none;">
+                    <pre class="modal-print-job-payload modal-print-job-result"></pre>
+                </div>
+                <div class="modal-print-job-tab-content" data-tab="traceback" style="display: none;">
+                    <pre class="modal-print-job-payload modal-print-job-traceback"></pre>
+                </div>
                 <div class="modal-buttons">
                     <span class="button button-modal-close">Fechar</span>
                 </div>

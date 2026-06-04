@@ -218,7 +218,7 @@ jQuery(document).ready(function() {
     const modalOverlayError = jQuery(".modal-overlay-error");
     const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
     const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
-    const modalOverlayPrintFiles = jQuery(".modal-overlay-print-files");
+    const modalOverlayPrintJob = jQuery(".modal-overlay-print-job");
     const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
     const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
@@ -1750,7 +1750,7 @@ jQuery(document).ready(function() {
     modalOverlayError.modal();
     modalOverlayConfirm.modal();
     modalOverlayInspirations.modal();
-    modalOverlayPrintFiles.modal();
+    modalOverlayPrintJob.modal();
     modalOverlayInstructions.modal();
     modalOverlayFeedback.modal();
     modalOverlayFeedback.feedback({ profileSelector: profileSelector });
