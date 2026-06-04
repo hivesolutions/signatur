@@ -361,6 +361,16 @@ body.ldj .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content 
     word-break: break-word;
 }
 
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content .modal-specs > .modal-spec > .modal-spec-value > .modal-print-job-link {
+    color: #1f2330;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content .modal-specs > .modal-spec > .modal-spec-value > .modal-print-job-link:hover {
+    text-decoration: underline;
+}
+
 .modal-overlay > .modal.modal-print-job > .modal-print-job-tab-content > .modal-print-job-specs > .modal-spec > .modal-spec-value > .modal-print-job-status {
     border-radius: 999px 999px 999px 999px;
     -o-border-radius: 999px 999px 999px 999px;

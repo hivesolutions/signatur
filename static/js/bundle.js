@@ -2346,9 +2346,26 @@ const countLines = function(text) {
                     '">' +
                     escapeHtml(labels[status] || job.status) +
                     "</span>";
+                // composes the admin ui job url for the current
+                // entry so the id row becomes a deep link into the
+                // colony print admin where the operator can inspect
+                // the full job detail in a separate tab
+                let idHtml = escapeHtml(job.id);
+                if (job.printUrl) {
+                    const href =
+                        job.printUrl.replace(/\/+$/, "") +
+                        "/admin-ui/jobs/" +
+                        encodeURIComponent(job.id);
+                    idHtml =
+                        '<a class="modal-print-job-link" href="' +
+                        escapeHtml(href) +
+                        '" target="_blank" rel="noopener noreferrer">' +
+                        escapeHtml(job.id) +
+                        "</a>";
+                }
                 let html = "";
                 html += buildRow(labels.status, statusHtml);
-                html += buildRow(labels.id, escapeHtml(job.id));
+                html += buildRow(labels.id, idHtml);
                 if (job.name && job.name !== job.id) {
                     html += buildRow(labels.name, escapeHtml(job.name));
                 }
