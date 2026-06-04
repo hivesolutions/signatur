@@ -1880,15 +1880,16 @@ const countLines = function(text) {
                 download: context.attr("data-label-download") || "Download"
             };
 
-            // tracks the blob urls created for the files modal so
-            // they can be revoked when the overlay is closed and the
-            // browser releases the binary data instead of holding it
-            // for the rest of the session
-            let activeBlobUrls = [];
-
-            // shared timer id so we never run more than one ticker
-            // even when several enqueue calls land in quick succession
-            let pollTimer = null;
+            // resolves the per container state object that survives
+            // every plugin invocation through jQuery `data` so the
+            // blob url cache, the shared poll timer id and the
+            // handler binding flag are never duplicated across the
+            // init and the per job enqueue calls
+            let state = context.data("_state");
+            if (!state) {
+                state = { blobUrls: [], pollTimer: null, bound: false };
+                context.data("_state", state);
+            }
 
             // builds the multi line tooltip text rendered through the
             // chip title attribute, surfacing the status, printer,
@@ -2061,15 +2062,15 @@ const countLines = function(text) {
             // running and stopping itself on the first tick that
             // finds no remaining active job
             const startPolling = function() {
-                if (pollTimer !== null) return;
-                pollTimer = setInterval(function() {
+                if (state.pollTimer !== null) return;
+                state.pollTimer = setInterval(function() {
                     const jobs = readJobs();
                     const active = jobs.filter(function(job) {
                         return !isTerminal(job.status);
                     });
                     if (active.length === 0) {
-                        clearInterval(pollTimer);
-                        pollTimer = null;
+                        clearInterval(state.pollTimer);
+                        state.pollTimer = null;
                         return;
                     }
                     for (let i = 0; i < active.length; i++) {
@@ -2108,10 +2109,10 @@ const countLines = function(text) {
             // data once the user closes the overlay or opens a new
             // job, avoiding indefinite memory growth across sessions
             const revokeBlobs = function() {
-                for (let i = 0; i < activeBlobUrls.length; i++) {
-                    URL.revokeObjectURL(activeBlobUrls[i]);
+                for (let i = 0; i < state.blobUrls.length; i++) {
+                    URL.revokeObjectURL(state.blobUrls[i]);
                 }
-                activeBlobUrls = [];
+                state.blobUrls = [];
             };
 
             // fetches a single file from a job's directory as a blob
@@ -2131,7 +2132,7 @@ const countLines = function(text) {
                     if (response.status !== 200) return null;
                     const blob = await response.blob();
                     const url = URL.createObjectURL(blob);
-                    activeBlobUrls.push(url);
+                    state.blobUrls.push(url);
                     return url;
                 } catch (err) {
                     return null;
@@ -2250,43 +2251,6 @@ const countLines = function(text) {
                 return null;
             };
 
-            // registers for the click on the cancel affordance of a
-            // queued chip, stopping propagation so the parent chip
-            // click handler does not also open the files overlay
-            chipsContainer.on("click", ".print-jobs-chip-cancel", function(event) {
-                event.stopPropagation();
-                const id = jQuery(this).closest(".print-jobs-chip").attr("data-id");
-                const job = findJob(id);
-                if (job) cancelJob(job);
-            });
-
-            // registers for the click on the dismiss affordance of a
-            // terminal chip, removing the entry from the indicator
-            // and from the persisted store without touching the
-            // remote job that produced it
-            chipsContainer.on("click", ".print-jobs-chip-dismiss", function(event) {
-                event.stopPropagation();
-                const id = jQuery(this).closest(".print-jobs-chip").attr("data-id");
-                removeJob(id);
-            });
-
-            // registers for the click on the chip body, opening the
-            // files overlay only for entries that have reached a
-            // terminal state so the operator never lands on an empty
-            // listing for a job that is still printing
-            chipsContainer.on("click", ".print-jobs-chip", function() {
-                const id = jQuery(this).attr("data-id");
-                const job = findJob(id);
-                if (job && isTerminal(job.status)) openFiles(job);
-            });
-
-            // revokes the cached blob urls when the files overlay
-            // finishes its dismiss transition so the binary data is
-            // released from memory between consecutive openings
-            modalOverlay.on("transitionend", function() {
-                if (!modalOverlay.hasClass("visible")) revokeBlobs();
-            });
-
             // registers a new job from a colony-print response,
             // persisting the entry, drawing its chip and starting
             // the shared poll ticker so the operator sees status
@@ -2322,6 +2286,52 @@ const countLines = function(text) {
             if (action === "dismiss") {
                 removeJob(options.id);
                 return;
+            }
+
+            // registers the click and overlay handlers on the bare
+            // initialization path only, guarded by a flag on the
+            // shared state so that subsequent enqueue and dismiss
+            // calls never stack a second copy of the same listener
+            // on the chips container or on the files overlay
+            if (!state.bound) {
+                state.bound = true;
+
+                // registers for the click on the cancel affordance of a
+                // queued chip, stopping propagation so the parent chip
+                // click handler does not also open the files overlay
+                chipsContainer.on("click", ".print-jobs-chip-cancel", function(event) {
+                    event.stopPropagation();
+                    const id = jQuery(this).closest(".print-jobs-chip").attr("data-id");
+                    const job = findJob(id);
+                    if (job) cancelJob(job);
+                });
+
+                // registers for the click on the dismiss affordance of a
+                // terminal chip, removing the entry from the indicator
+                // and from the persisted store without touching the
+                // remote job that produced it
+                chipsContainer.on("click", ".print-jobs-chip-dismiss", function(event) {
+                    event.stopPropagation();
+                    const id = jQuery(this).closest(".print-jobs-chip").attr("data-id");
+                    removeJob(id);
+                });
+
+                // registers for the click on the chip body, opening the
+                // files overlay only for entries that have reached a
+                // terminal state so the operator never lands on an empty
+                // listing for a job that is still printing
+                chipsContainer.on("click", ".print-jobs-chip", function() {
+                    const id = jQuery(this).attr("data-id");
+                    const job = findJob(id);
+                    if (job && isTerminal(job.status)) openFiles(job);
+                });
+
+                // revokes the cached blob urls when the files overlay
+                // finishes its dismiss transition so the binary data is
+                // released from memory between consecutive openings
+                modalOverlay.on("transitionend", function() {
+                    if (!modalOverlay.hasClass("visible")) revokeBlobs();
+                });
             }
 
             // on plain initialization rehydrates the indicator from
