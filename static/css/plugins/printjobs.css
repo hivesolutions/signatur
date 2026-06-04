@@ -1,0 +1,343 @@
+.print-jobs {
+    align-items: center;
+    display: none;
+    gap: 8px;
+}
+
+.print-jobs.visible {
+    display: inline-flex;
+}
+
+.print-jobs > .print-jobs-chips {
+    align-items: center;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    max-width: 360px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 0px 2px 0px;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip {
+    align-items: center;
+    background-color: #f4f5f8;
+    border: 1px solid transparent;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    color: #1f2330;
+    cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 600;
+    gap: 6px;
+    height: 28px;
+    letter-spacing: 0.4px;
+    max-width: 180px;
+    padding: 0px 10px 0px 10px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    -o-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -ms-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -moz-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -khtml-transition: background-color 0.15s ease, border-color 0.15s ease;
+    -webkit-transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip:hover {
+    background-color: #e7eaf0;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-queued {
+    background-color: #f4f5f8;
+    color: #6b7280;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-queued:hover {
+    background-color: #e7eaf0;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-printing {
+    background-color: #e7f0ff;
+    color: #1f4ea1;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-printing:hover {
+    background-color: #d8e6ff;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-finished {
+    background-color: #e4f5ec;
+    color: #1f6a47;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-finished:hover {
+    background-color: #d4ecdf;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-cancelled {
+    background-color: #f4f5f8;
+    color: #6b7280;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-cancelled:hover {
+    background-color: #e7eaf0;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-failed {
+    background-color: #fde7e7;
+    color: #a31f1f;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
+    background-color: #f7d4d4;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-spinner {
+    animation: print-jobs-chip-spin 0.9s linear infinite;
+    -o-animation: print-jobs-chip-spin 0.9s linear infinite;
+    -ms-animation: print-jobs-chip-spin 0.9s linear infinite;
+    -moz-animation: print-jobs-chip-spin 0.9s linear infinite;
+    -khtml-animation: print-jobs-chip-spin 0.9s linear infinite;
+    -webkit-animation: print-jobs-chip-spin 0.9s linear infinite;
+    border: 1.5px solid currentColor;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    border-right-color: transparent;
+    display: inline-block;
+    flex: 0 0 auto;
+    height: 10px;
+    width: 10px;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-label {
+    flex: 0 0 auto;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-printer {
+    color: #6b7280;
+    flex: 1 1 auto;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip-failed > .print-jobs-chip-printer {
+    color: #c45252;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-cancel,
+.print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-dismiss {
+    color: inherit;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    opacity: 0.55;
+    padding: 0px 2px 0px 2px;
+    transition: opacity 0.15s ease;
+    -o-transition: opacity 0.15s ease;
+    -ms-transition: opacity 0.15s ease;
+    -moz-transition: opacity 0.15s ease;
+    -khtml-transition: opacity 0.15s ease;
+    -webkit-transition: opacity 0.15s ease;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-cancel:hover,
+.print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-dismiss:hover {
+    opacity: 1;
+}
+
+@keyframes print-jobs-chip-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-queued,
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-cancelled {
+    background-color: #f5f0fa;
+    color: #6b5a8a;
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-queued:hover,
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-cancelled:hover {
+    background-color: #ece4f5;
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-printing {
+    background-color: #ece4f5;
+    color: #5c47a3;
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-printing:hover {
+    background-color: #ddd1ef;
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-finished {
+    background-color: #e1f0e6;
+    color: #2f6a47;
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-finished:hover {
+    background-color: #d0e6d7;
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed {
+    background-color: #fbe2e2;
+    color: #8a2424;
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip-failed:hover {
+    background-color: #f5cdcd;
+}
+
+.modal-overlay > .modal.modal-print-files {
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+    max-width: 960px;
+    overflow: hidden;
+    width: 92%;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-title {
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.9px;
+    margin-bottom: 18px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-empty {
+    color: #9aa0ad;
+    display: none;
+    font-size: 14px;
+    letter-spacing: 0.2px;
+    padding: 48px 0px 48px 0px;
+    text-align: center;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid {
+    display: grid;
+    flex: 1;
+    margin-bottom: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 4px 4px 4px 4px;
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    align-content: start;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile {
+    align-items: stretch;
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 16px 16px 16px 16px;
+    -o-border-radius: 16px 16px 16px 16px;
+    -ms-border-radius: 16px 16px 16px 16px;
+    -moz-border-radius: 16px 16px 16px 16px;
+    -khtml-border-radius: 16px 16px 16px 16px;
+    -webkit-border-radius: 16px 16px 16px 16px;
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -khtml-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 10px 10px 14px 10px;
+    text-align: left;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview {
+    align-items: center;
+    background-color: #f4f5f8;
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
+    display: flex;
+    height: 170px;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > img,
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > video {
+    height: 100%;
+    object-fit: contain;
+    width: 100%;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > .modal-print-files-tile-download {
+    background-color: rgba(24, 24, 24, 1.0);
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    padding: 8px 18px 8px 18px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-name {
+    color: #1f2330;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    margin: 12px 4px 0px 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-meta {
+    color: #6b7280;
+    font-size: 10px;
+    letter-spacing: 0.4px;
+    margin: 4px 4px 0px 4px;
+}
+
+body.ldj .modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile {
+    border-color: #ece4f5;
+}
+
+body.ldj .modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview {
+    background-color: #f5f0fa;
+}
+
+body.ldj .modal-overlay > .modal.modal-print-files > .modal-print-files-grid > .modal-print-files-tile > .modal-print-files-tile-preview > .modal-print-files-tile-download {
+    background-color: #9678d3;
+}
