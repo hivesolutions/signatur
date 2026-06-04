@@ -402,6 +402,7 @@ app.get("/report", (req, res, next) => {
 app.get("/console", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
     const locale = req.query.locale || req.session.locale || "";
+    req.session.theme = theme;
     req.session.locale = locale;
     res.render("console" + (locale ? `-${locale}` : ""), {
         theme: theme
@@ -410,9 +411,11 @@ app.get("/console", (req, res, next) => {
 
 app.get("/components", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
+    const locale = req.query.locale || req.session.locale || "";
+    req.session.theme = theme;
+    req.session.locale = locale;
     res.render("components", {
-        theme: theme,
-        info: info || {}
+        theme: theme
     });
 });
 

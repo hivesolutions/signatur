@@ -258,34 +258,6 @@
     padding: 0px 0px 0px 0px;
 }
 
-.components-footer {
-    align-items: center;
-    border-top: 1px solid rgba(31, 35, 48, 0.08);
-    color: rgba(31, 35, 48, 0.55);
-    display: flex;
-    font-size: 12px;
-    gap: 12px;
-    justify-content: space-between;
-    margin-top: 24px;
-    padding-top: 24px;
-}
-
-.components-footer-version {
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-}
-
-.components-footer-back {
-    color: rgba(31, 35, 48, 0.7);
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.components-footer-back:hover {
-    color: #1f2330;
-}
-
 .components-entry-preview > .option-chips {
     display: inline-flex;
     flex-wrap: wrap;
