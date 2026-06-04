@@ -4774,6 +4774,12 @@ body.ldj .button-feedback-cta:focus-visible {
 
 .print-jobs > .print-jobs-chips > .print-jobs-chip {
     align-items: center;
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
     background-color: #f4f5f8;
     border: 1px solid transparent;
     border-radius: 999px 999px 999px 999px;
@@ -4786,12 +4792,19 @@ body.ldj .button-feedback-cta:focus-visible {
     cursor: pointer;
     display: inline-flex;
     flex: 0 0 auto;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
     font-size: 11px;
     font-weight: 600;
     gap: 6px;
     height: 28px;
     letter-spacing: 0.4px;
     max-width: 180px;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
     padding: 0px 10px 0px 10px;
     transition: background-color 0.15s ease, border-color 0.15s ease;
     -o-transition: background-color 0.15s ease, border-color 0.15s ease;
@@ -4799,6 +4812,14 @@ body.ldj .button-feedback-cta:focus-visible {
     -moz-transition: background-color 0.15s ease, border-color 0.15s ease;
     -khtml-transition: background-color 0.15s ease, border-color 0.15s ease;
     -webkit-transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.print-jobs > .print-jobs-chips > .print-jobs-chip:focus-visible {
+    border-color: rgba(24, 24, 24, 0.4);
+}
+
+body.ldj .print-jobs > .print-jobs-chips > .print-jobs-chip:focus-visible {
+    border-color: rgba(151, 120, 211, 0.55);
 }
 
 .print-jobs > .print-jobs-chips > .print-jobs-chip:hover {
@@ -4894,13 +4915,28 @@ body.ldj .button-feedback-cta:focus-visible {
 
 .print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-cancel,
 .print-jobs > .print-jobs-chips > .print-jobs-chip > .print-jobs-chip-dismiss {
+    appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    -moz-appearance: none;
+    -khtml-appearance: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    border: none;
     color: inherit;
     cursor: pointer;
     flex: 0 0 auto;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
     font-size: 14px;
     font-weight: 600;
     line-height: 1;
     opacity: 0.55;
+    outline: none;
+    -o-outline: none;
+    -ms-outline: none;
+    -moz-outline: none;
+    -khtml-outline: none;
+    -webkit-outline: none;
     padding: 0px 2px 0px 2px;
     transition: opacity 0.15s ease;
     -o-transition: opacity 0.15s ease;

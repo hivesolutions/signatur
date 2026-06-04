@@ -311,7 +311,9 @@
                     bound: false,
                     activeTab: "info",
                     openJobId: null,
-                    logsOpen: false
+                    logsOpen: false,
+                    inFlight: {},
+                    filesRequestId: 0
                 };
                 context.data("_state", state);
             }
@@ -336,10 +338,12 @@
             // renders a single chip in the container for the given
             // job entry replacing any existing chip with the same id
             // so a poll update reuses the dom node and a fresh status
-            // simply swaps the visual treatment
+            // simply swaps the visual treatment; the chip body and
+            // its affordances are rendered as real buttons so the
+            // entire indicator can be operated by keyboard users
             const renderChip = function(job) {
                 const existing = chipsContainer.children('[data-id="' + job.id + '"]');
-                const chip = jQuery("<div></div>");
+                const chip = jQuery('<button type="button"></button>');
                 chip.addClass("print-jobs-chip");
                 chip.addClass("print-jobs-chip-" + effectiveStatus(job));
                 chip.attr("data-id", job.id);
@@ -363,13 +367,15 @@
                 // since colony-print only allows cancellation while
                 // the job has not been picked up by the target node
                 if (job.status === "queued") {
-                    const cancel = jQuery('<span class="print-jobs-chip-cancel"></span>');
+                    const cancel = jQuery('<button type="button" class="print-jobs-chip-cancel"></button>');
                     cancel.attr("title", labels.cancel);
+                    cancel.attr("aria-label", labels.cancel);
                     cancel.text("×");
                     chip.append(cancel);
                 } else if (isTerminal(job.status)) {
-                    const dismiss = jQuery('<span class="print-jobs-chip-dismiss"></span>');
+                    const dismiss = jQuery('<button type="button" class="print-jobs-chip-dismiss"></button>');
                     dismiss.attr("title", labels.dismiss);
+                    dismiss.attr("aria-label", labels.dismiss);
                     dismiss.text("×");
                     chip.append(dismiss);
                 }
@@ -461,8 +467,13 @@
             // colony-print server reusing the secret key stored at
             // enqueue time, dropping the chip when the entry has
             // been evicted from the in memory store (500 response)
-            // and forwarding every interesting field onto updateJob
+            // and forwarding every interesting field onto updateJob,
+            // guarded by a per job in flight flag so a slow tick
+            // never races a newer one and overwrites a terminal
+            // state with stale data
             const fetchStatus = async function(job) {
+                if (state.inFlight[job.id]) return;
+                state.inFlight[job.id] = true;
                 try {
                     const response = await fetch(job.printUrl + "/jobs/" + job.id, {
                         headers: { "X-Secret-Key": job.key }
@@ -499,6 +510,8 @@
                     // silently ignores polling errors so a flaky
                     // network never freezes the indicator, the next
                     // tick will retry the same job from scratch
+                } finally {
+                    delete state.inFlight[job.id];
                 }
             };
 
@@ -817,8 +830,11 @@
 
             // renders a single file tile inside the files grid,
             // dispatching the inline preview between image, video
-            // and download link based on the file name extension
-            const renderFilesTile = function(job, file) {
+            // and download link based on the file name extension,
+            // gated by the request id captured when the files tab
+            // was opened so a late blob from a previous chip never
+            // mutates the dom of the currently visible one
+            const renderFilesTile = function(job, file, requestId) {
                 const tile = jQuery('<div class="modal-print-job-files-tile"></div>');
                 const preview = jQuery(
                     '<div class="modal-print-job-files-tile-preview"></div>'
@@ -835,6 +851,7 @@
                     preview.append(img);
                     fetchBlob(job, file.name)
                         .then(function(url) {
+                            if (requestId !== state.filesRequestId) return;
                             if (url) img.attr("src", url);
                         })
                         .catch(function() {
@@ -845,6 +862,7 @@
                     preview.append(video);
                     fetchBlob(job, file.name)
                         .then(function(url) {
+                            if (requestId !== state.filesRequestId) return;
                             if (url) video.attr("src", url);
                         })
                         .catch(function() {
@@ -857,6 +875,7 @@
                     preview.append(link);
                     fetchBlob(job, file.name)
                         .then(function(url) {
+                            if (requestId !== state.filesRequestId) return;
                             if (url) {
                                 link.attr("href", url);
                                 link.attr("download", file.name);
@@ -876,8 +895,12 @@
             // renders the files tab content for the given job entry,
             // populating the grid with one tile per file exposed by
             // colony-print and falling back to a friendly empty state
-            // when the job has not produced any files yet
+            // when the job has not produced any files yet; the
+            // request id captured up front guards every later mutation
+            // so a slower response for a previously open job can no
+            // longer paint into the modal of the newly opened one
             const renderFilesTab = async function(job) {
+                const requestId = ++state.filesRequestId;
                 revokeBlobs();
                 filesGrid.empty();
                 filesEmpty.hide();
@@ -894,11 +917,14 @@
                     // operator gets a friendly hint instead of an
                     // unhandled exception bubbling into the console
                 }
+                if (requestId !== state.filesRequestId) return;
                 if (!files || files.length === 0) {
                     filesEmpty.text(labels.filesEmpty).show();
                     return;
                 }
-                for (let i = 0; i < files.length; i++) renderFilesTile(job, files[i]);
+                for (let i = 0; i < files.length; i++) {
+                    renderFilesTile(job, files[i], requestId);
+                }
             };
 
             // renders the request tab with the original payload that
@@ -1056,8 +1082,21 @@
                     finish_time: jobInfo.finish_time || null,
                     cancel_time: jobInfo.cancel_time || null
                 };
+                // upserts the entry into the persisted list so a
+                // duplicate enqueue for the same job id replaces
+                // the previous record in place instead of leaving
+                // a stale copy behind that the polling loop would
+                // keep ticking against forever
                 const jobs = readJobs();
-                jobs.push(entry);
+                let replaced = false;
+                for (let i = 0; i < jobs.length; i++) {
+                    if (jobs[i].id === entry.id) {
+                        jobs[i] = Object.assign({}, jobs[i], entry);
+                        replaced = true;
+                        break;
+                    }
+                }
+                if (!replaced) jobs.push(entry);
                 writeJobs(jobs);
                 renderChip(entry);
                 startPolling();

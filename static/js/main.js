@@ -94,6 +94,15 @@ jQuery(document).ready(function() {
     // and resuming the polling loop on its own
     printJobs.printjobs();
 
+    // bridges the modal confirm overlay onto the print jobs
+    // indicator so a successful engrave submission enqueues a
+    // chip without the modal plugin having to reach into the
+    // indicator directly, honoring the plugin to host plugin
+    // communication convention through `triggerHandler`
+    jQuery(".modal-overlay-confirm").bind("printjob", function(event, options) {
+        printJobs.printjobs("enqueue", options);
+    });
+
     // wires the settings tab strip so clicking a tab swaps the
     // visible tab content while keeping a single form submission
     // for all tabs combined

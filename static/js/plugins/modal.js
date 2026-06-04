@@ -15,10 +15,15 @@
      *               with the given specs object and viewport preview
      *
      * Events:
-     *   "show" - triggered after the modal becomes visible so
-     *            downstream plugins can reset transient state (for
-     *            example clearing a previous form submission) every
-     *            time the overlay is opened
+     *   "show"     - triggered after the modal becomes visible so
+     *                downstream plugins can reset transient state
+     *                (for example clearing a previous form submission)
+     *                every time the overlay is opened
+     *   "printjob" - triggered on the confirm overlay after a print
+     *                submission succeeds, passing an options object
+     *                with the colony-print job info, the print url
+     *                and the secret key so the host can hand the
+     *                entry to the print jobs indicator
      */
     jQuery.fn.modal = function(action, message) {
         const elements = jQuery(this);
@@ -334,16 +339,15 @@
                             "Error while running the final print operation: " + errorMessage
                         );
                     } else {
-                        // hands the freshly minted job info to the print
-                        // jobs indicator so the operator gets a live chip
-                        // and the polling loop picks up status updates
-                        // without any further action on this page
+                        // emits a printjob enqueue event with the
+                        // freshly minted job info so main.js can
+                        // bridge it to the print jobs indicator,
+                        // following the plugin to host communication
+                        // convention through `triggerHandler`
                         const jobInfo = await printResponse.json();
-                        jQuery(".print-jobs").printjobs("enqueue", {
-                            jobInfo: jobInfo,
-                            printUrl: printUrl,
-                            key: key
-                        });
+                        context.triggerHandler("printjob", [
+                            { jobInfo: jobInfo, printUrl: printUrl, key: key }
+                        ]);
                         jQuery(".toast").toast("show", "Engraving job submitted successfully.");
                         // surfaces the post engraving feedback modal so the
                         // user can rate the experience, falling back silently
