@@ -2671,6 +2671,457 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     color: #6b5a8a;
 }
 
+.components-page {
+    box-sizing: border-box;
+    color: #1f2330;
+    display: flex;
+    flex-direction: column;
+    margin: 0px auto 0px auto;
+    max-width: 960px;
+    padding: 64px 32px 96px 32px;
+    width: 100%;
+}
+
+.components-hero {
+    margin-bottom: 48px;
+    text-align: center;
+}
+
+.components-hero-eyebrow {
+    color: rgba(31, 35, 48, 0.55);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.components-hero-divider {
+    background-color: rgba(31, 35, 48, 0.12);
+    height: 1px;
+    margin: 0px auto 24px auto;
+    width: 64px;
+}
+
+.components-hero-lede {
+    color: rgba(31, 35, 48, 0.72);
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0px auto 0px auto;
+    max-width: 640px;
+}
+
+.components-toc {
+    background-color: #ffffff;
+    border: 1px solid rgba(31, 35, 48, 0.08);
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
+    box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.03);
+    -o-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.03);
+    -ms-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.03);
+    -moz-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.03);
+    -khtml-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.03);
+    -webkit-box-shadow: 0px 1px 0px rgba(31, 35, 48, 0.03);
+    margin-bottom: 48px;
+    padding: 20px 24px 20px 24px;
+}
+
+.components-toc-title {
+    color: rgba(31, 35, 48, 0.55);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.components-toc-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    list-style: none;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+.components-toc-list > li > a {
+    color: #1f2330;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.18s ease;
+    -o-transition: color 0.18s ease;
+    -ms-transition: color 0.18s ease;
+    -moz-transition: color 0.18s ease;
+    -khtml-transition: color 0.18s ease;
+    -webkit-transition: color 0.18s ease;
+}
+
+.components-toc-list > li > a:hover {
+    color: rgba(31, 35, 48, 0.6);
+}
+
+.components-section {
+    margin-bottom: 56px;
+}
+
+.components-section-title {
+    border-bottom: 1px solid rgba(31, 35, 48, 0.08);
+    color: #1f2330;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0px 0px 12px 0px;
+    padding-bottom: 12px;
+}
+
+.components-section-lede {
+    color: rgba(31, 35, 48, 0.66);
+    font-size: 13px;
+    line-height: 20px;
+    margin: 0px 0px 24px 0px;
+}
+
+.components-section-lede > code {
+    background-color: rgba(31, 35, 48, 0.06);
+    border-radius: 4px 4px 4px 4px;
+    -o-border-radius: 4px 4px 4px 4px;
+    -ms-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -khtml-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+    font-size: 12px;
+    padding: 1px 6px 1px 6px;
+}
+
+.components-entry {
+    background-color: #ffffff;
+    border: 1px solid rgba(31, 35, 48, 0.08);
+    border-radius: 12px 12px 12px 12px;
+    -o-border-radius: 12px 12px 12px 12px;
+    -ms-border-radius: 12px 12px 12px 12px;
+    -moz-border-radius: 12px 12px 12px 12px;
+    -khtml-border-radius: 12px 12px 12px 12px;
+    -webkit-border-radius: 12px 12px 12px 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    scroll-margin-top: 24px;
+}
+
+.components-entry-header {
+    align-items: center;
+    border-bottom: 1px solid rgba(31, 35, 48, 0.06);
+    display: flex;
+    gap: 8px;
+    padding: 16px 20px 16px 20px;
+}
+
+.components-entry-name {
+    color: #1f2330;
+    flex: 1 1 auto;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0px 0px 0px 0px;
+}
+
+.components-entry-anchor {
+    color: rgba(31, 35, 48, 0.35);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.18s ease;
+    -o-transition: color 0.18s ease;
+    -ms-transition: color 0.18s ease;
+    -moz-transition: color 0.18s ease;
+    -khtml-transition: color 0.18s ease;
+    -webkit-transition: color 0.18s ease;
+}
+
+.components-entry-anchor:hover {
+    color: #1f2330;
+}
+
+.components-entry-meta {
+    background-color: rgba(31, 35, 48, 0.02);
+    border-bottom: 1px solid rgba(31, 35, 48, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0px 0px 0px 0px;
+    padding: 16px 20px 16px 20px;
+}
+
+.components-entry-meta-row {
+    display: flex;
+    font-size: 12px;
+    gap: 12px;
+}
+
+.components-entry-meta-row > dt {
+    color: rgba(31, 35, 48, 0.55);
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    width: 110px;
+}
+
+.components-entry-meta-row > dd {
+    color: #1f2330;
+    font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+    margin: 0px 0px 0px 0px;
+}
+
+.components-entry-payload {
+    display: none;
+}
+
+.components-entry-preview {
+    align-items: center;
+    background-color: #f7f8fb;
+    background-image: linear-gradient(rgba(31, 35, 48, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 35, 48, 0.04) 1px, transparent 1px);
+    background-size: 16px 16px, 16px 16px;
+    border-bottom: 1px solid rgba(31, 35, 48, 0.06);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    min-height: 96px;
+    padding: 32px 20px 32px 20px;
+}
+
+.components-entry-snippet {
+    border-top: 1px solid rgba(31, 35, 48, 0.06);
+}
+
+.components-entry-snippet:first-of-type {
+    border-top: none;
+}
+
+.components-entry-snippet-label {
+    color: rgba(31, 35, 48, 0.55);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 12px 20px 0px 20px;
+    text-transform: uppercase;
+}
+
+.components-entry-code {
+    background-color: rgba(31, 35, 48, 0.02);
+    color: #1f2330;
+    font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+    font-size: 12px;
+    line-height: 18px;
+    margin: 8px 0px 0px 0px;
+    overflow-x: auto;
+    padding: 16px 20px 16px 20px;
+    white-space: pre;
+}
+
+.components-entry-code > code {
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0px 0px 0px 0px;
+}
+
+.components-footer {
+    align-items: center;
+    border-top: 1px solid rgba(31, 35, 48, 0.08);
+    color: rgba(31, 35, 48, 0.55);
+    display: flex;
+    font-size: 12px;
+    gap: 12px;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 24px;
+}
+
+.components-footer-version {
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.components-footer-back {
+    color: rgba(31, 35, 48, 0.7);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.components-footer-back:hover {
+    color: #1f2330;
+}
+
+.components-entry-preview > .option-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.components-entry-preview > .option-chips > .option-chip-input {
+    height: 0px;
+    margin: 0px 0px 0px 0px;
+    opacity: 0;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    -webkit-opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 0px;
+}
+
+.components-entry-preview > .option-chips > .option-chip {
+    background-color: #f4f5f8;
+    border: 1px solid #e6e8ee;
+    border-radius: 999px 999px 999px 999px;
+    -o-border-radius: 999px 999px 999px 999px;
+    -ms-border-radius: 999px 999px 999px 999px;
+    -moz-border-radius: 999px 999px 999px 999px;
+    -khtml-border-radius: 999px 999px 999px 999px;
+    -webkit-border-radius: 999px 999px 999px 999px;
+    color: #4b5260;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin: 0px 0px 0px 0px;
+    min-width: 0px;
+    padding: 6px 12px 6px 12px;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -o-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -ms-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -moz-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -khtml-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    -webkit-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.components-entry-preview > .option-chips > .option-chip:hover {
+    border-color: #cfd4de;
+    color: #1f2330;
+}
+
+.components-entry-preview > .option-chips > .option-chip-input:checked + .option-chip {
+    background-color: #1f2330;
+    border-color: #1f2330;
+    color: #ffffff;
+}
+
+.components-entry-preview .components-demo-tabs {
+    width: 100%;
+}
+
+.components-entry-preview .components-demo-tabs > .settings-tabs {
+    border-bottom: 1px solid #e6e8ee;
+    display: flex;
+    gap: 4px;
+    margin: 0px auto 8px auto;
+    max-width: 480px;
+    padding: 0px 4px 0px 4px;
+}
+
+.components-entry-preview .components-demo-tabs > .settings-tabs > .settings-tab {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #9aa0ad;
+    cursor: pointer;
+    font-family: Lato, -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Open Sans", "Helvetica", "Arial", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: -1px;
+    padding: 8px 14px 8px 14px;
+    text-transform: uppercase;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    -o-transition: color 0.15s ease, border-color 0.15s ease;
+    -ms-transition: color 0.15s ease, border-color 0.15s ease;
+    -moz-transition: color 0.15s ease, border-color 0.15s ease;
+    -khtml-transition: color 0.15s ease, border-color 0.15s ease;
+    -webkit-transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.components-entry-preview .components-demo-tabs > .settings-tabs > .settings-tab:hover {
+    color: #1f2330;
+}
+
+.components-entry-preview .components-demo-tabs > .settings-tabs > .settings-tab.active {
+    border-bottom-color: #1f2330;
+    color: #1f2330;
+}
+
+.components-entry-preview .components-demo-tabs > .settings-tab-content {
+    color: rgba(31, 35, 48, 0.72);
+    font-size: 13px;
+    line-height: 20px;
+    padding: 8px 4px 0px 4px;
+    text-align: center;
+}
+
+.components-entry-preview > .collapsible {
+    background-color: #ffffff;
+    border: 1px solid #e6e8ee;
+    border-radius: 10px 10px 10px 10px;
+    -o-border-radius: 10px 10px 10px 10px;
+    -ms-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -khtml-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    box-sizing: border-box;
+    color: #1f2330;
+    font-size: 13px;
+    line-height: 20px;
+    padding: 14px 18px 14px 18px;
+    width: 100%;
+}
+
+.components-entry-preview > .collapsible > .collapsible-title {
+    color: rgba(31, 35, 48, 0.65);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+body.ldj .components-page,
+body.ldj .components-entry-name,
+body.ldj .components-section-title,
+body.ldj .components-entry-meta-row > dd,
+body.ldj .components-entry-code {
+    color: #2c2750;
+}
+
+body.ldj .components-entry-preview > .option-chips > .option-chip {
+    background-color: #f5f0fa;
+    border-color: #ece4f5;
+    color: #6b5a8a;
+}
+
+body.ldj .components-entry-preview > .option-chips > .option-chip:hover {
+    border-color: #c9b6e5;
+    color: #1f1430;
+}
+
+body.ldj .components-entry-preview > .option-chips > .option-chip-input:checked + .option-chip {
+    background-color: #9678d3;
+    border-color: #9678d3;
+    color: #ffffff;
+}
+
+body.ldj .components-entry-preview .components-demo-tabs > .settings-tabs > .settings-tab.active {
+    border-bottom-color: #9678d3;
+    color: #1f1430;
+}
+
 .store-mode .profile-info {
     display: none;
 }
