@@ -2033,6 +2033,10 @@ const countLines = function(text) {
                     const response = await fetch(job.printUrl + "/jobs/" + job.id, {
                         headers: { "X-Secret-Key": job.key }
                     });
+                    if (response.status === 500) {
+                        removeJob(job.id);
+                        return;
+                    }
                     if (response.status !== 200) return;
                     const fresh = await response.json();
                     updateJob(job.id, {
