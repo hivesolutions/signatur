@@ -28,6 +28,7 @@ PNG background assets live alongside the JSON files under `static/profiles/` and
 | `shape`         | string  |    no    | One of `rectangle`, `circle`, `heart`. Drives boundary rendering.                     |
 | `background`    | string  |    no    | PNG filename under `static/profiles/` used as the preview background.                 |
 | `sku`           | string  |    no    | Stock keeping unit code displayed alongside the product name on the welcome catalog.  |
+| `category`      | string  |    no    | Free form category slug that groups profiles on the welcome catalog into sections.    |
 | `default_font`  | string  |    no    | Font name (e.g. `Helvetica 4L`) auto-selected on initial load when no font is active. |
 | `enabled`       | boolean |    no    | When `false`, the profile is hidden from the catalog.                                 |
 | `inspirations`  | string  |    no    | Filename of an inspirations JSON file (without the `.json` extension is not enough).  |
@@ -150,6 +151,7 @@ Optional configuration for the calligraphy mode on the viewport, which overlays 
     "unit": "mm",
     "orientation": "landscape",
     "shape": "heart",
+    "category": "medals",
     "padding": { "top": 3, "right": 3, "bottom": 7.5, "left": 3 },
     "font_size": { "mode": "manual", "default": 3, "min": 1, "max": 8, "step": 1 },
     "text": { "max_lines": 2, "align": "center" },

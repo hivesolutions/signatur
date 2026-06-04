@@ -98,13 +98,43 @@
 }
 
 .welcome .welcome-catalog > .catalog-container > .catalog {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.welcome .catalog > .catalog-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.welcome .catalog > .catalog-section > .catalog-section-title {
+    align-items: center;
+    color: #6b7280;
+    display: flex;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.welcome .catalog > .catalog-section > .catalog-section-title::after {
+    background-color: #e6e8ee;
+    content: "";
+    flex: 1;
+    height: 1px;
+    margin-left: 14px;
+}
+
+.welcome .catalog .catalog-section-grid {
     display: grid;
     -ms-grid-columns: 1fr 20px 1fr 20px 1fr 20px 1fr;
     gap: 20px;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
-.welcome .catalog > .catalog-card {
+.welcome .catalog .catalog-card {
     background-color: #ffffff;
     border: none;
     border-radius: 16px 16px 16px 16px;
@@ -149,7 +179,7 @@
     -webkit-user-select: none;
 }
 
-.welcome .catalog > .catalog-card:hover {
+.welcome .catalog .catalog-card:hover {
     box-shadow: 0px 14px 30px rgba(31, 20, 74, 0.1);
     -o-box-shadow: 0px 14px 30px rgba(31, 20, 74, 0.1);
     -ms-box-shadow: 0px 14px 30px rgba(31, 20, 74, 0.1);
@@ -164,7 +194,7 @@
     -webkit-transform: translateY(-3px);
 }
 
-.welcome .catalog > .catalog-card.selected {
+.welcome .catalog .catalog-card.selected {
     box-shadow: 0px 0px 0px 2px #1f2330, 0px 14px 30px rgba(31, 20, 74, 0.12);
     -o-box-shadow: 0px 0px 0px 2px #1f2330, 0px 14px 30px rgba(31, 20, 74, 0.12);
     -ms-box-shadow: 0px 0px 0px 2px #1f2330, 0px 14px 30px rgba(31, 20, 74, 0.12);
@@ -173,7 +203,7 @@
     -webkit-box-shadow: 0px 0px 0px 2px #1f2330, 0px 14px 30px rgba(31, 20, 74, 0.12);
 }
 
-.welcome .catalog > .catalog-card > .catalog-card-image {
+.welcome .catalog .catalog-card > .catalog-card-image {
     background-color: #f4f5f8;
     background-position: center center;
     background-size: contain;
@@ -194,7 +224,7 @@
     width: 100%;
 }
 
-.welcome .catalog > .catalog-card > .catalog-card-body {
+.welcome .catalog .catalog-card > .catalog-card-body {
     align-items: flex-start;
     display: flex;
     flex-direction: column;
@@ -203,7 +233,7 @@
     text-align: left;
 }
 
-.welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
+.welcome .catalog .catalog-card > .catalog-card-body > .catalog-card-name {
     color: #1f2330;
     display: -webkit-box;
     font-size: 13px;
@@ -219,7 +249,7 @@
     word-break: break-word;
 }
 
-.welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-sku {
+.welcome .catalog .catalog-card > .catalog-card-body > .catalog-card-sku {
     color: #9aa0ad;
     font-family: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
     font-size: 11px;
@@ -231,7 +261,7 @@
     white-space: nowrap;
 }
 
-.welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
+.welcome .catalog .catalog-card > .catalog-card-body > .catalog-card-meta {
     align-self: flex-start;
     background-color: #f4f5f8;
     border-radius: 999px 999px 999px 999px;
@@ -248,7 +278,7 @@
     text-transform: uppercase;
 }
 
-.welcome .catalog > .catalog-card.empty {
+.welcome .catalog .catalog-card.empty {
     color: #9aa0ad;
     cursor: default;
     font-size: 12px;
@@ -258,7 +288,7 @@
     grid-column: 1 / -1;
 }
 
-.welcome .catalog > .catalog-card.empty:hover {
+.welcome .catalog .catalog-card.empty:hover {
     border-color: #e6e8ee;
     box-shadow: none;
     -o-box-shadow: none;
@@ -443,7 +473,15 @@ body.ldj .welcome .welcome-hero > .welcome-hero-divider {
     background-color: #c9b6e5;
 }
 
-body.ldj .welcome .catalog > .catalog-card {
+body.ldj .welcome .catalog > .catalog-section > .catalog-section-title {
+    color: #9b87c2;
+}
+
+body.ldj .welcome .catalog > .catalog-section > .catalog-section-title::after {
+    background-color: #ece4f5;
+}
+
+body.ldj .welcome .catalog .catalog-card {
     box-shadow: 0px 2px 8px rgba(151, 120, 211, 0.08);
     -o-box-shadow: 0px 2px 8px rgba(151, 120, 211, 0.08);
     -ms-box-shadow: 0px 2px 8px rgba(151, 120, 211, 0.08);
@@ -452,7 +490,7 @@ body.ldj .welcome .catalog > .catalog-card {
     -webkit-box-shadow: 0px 2px 8px rgba(151, 120, 211, 0.08);
 }
 
-body.ldj .welcome .catalog > .catalog-card:hover {
+body.ldj .welcome .catalog .catalog-card:hover {
     box-shadow: 0px 14px 30px rgba(151, 120, 211, 0.18);
     -o-box-shadow: 0px 14px 30px rgba(151, 120, 211, 0.18);
     -ms-box-shadow: 0px 14px 30px rgba(151, 120, 211, 0.18);
@@ -461,7 +499,7 @@ body.ldj .welcome .catalog > .catalog-card:hover {
     -webkit-box-shadow: 0px 14px 30px rgba(151, 120, 211, 0.18);
 }
 
-body.ldj .welcome .catalog > .catalog-card.selected {
+body.ldj .welcome .catalog .catalog-card.selected {
     box-shadow: 0px 0px 0px 2px #9678d3, 0px 14px 30px rgba(151, 120, 211, 0.22);
     -o-box-shadow: 0px 0px 0px 2px #9678d3, 0px 14px 30px rgba(151, 120, 211, 0.22);
     -ms-box-shadow: 0px 0px 0px 2px #9678d3, 0px 14px 30px rgba(151, 120, 211, 0.22);
@@ -470,19 +508,19 @@ body.ldj .welcome .catalog > .catalog-card.selected {
     -webkit-box-shadow: 0px 0px 0px 2px #9678d3, 0px 14px 30px rgba(151, 120, 211, 0.22);
 }
 
-body.ldj .welcome .catalog > .catalog-card > .catalog-card-image {
+body.ldj .welcome .catalog .catalog-card > .catalog-card-image {
     background-color: #f5f0fa;
 }
 
-body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-name {
+body.ldj .welcome .catalog .catalog-card > .catalog-card-body > .catalog-card-name {
     color: #1f1430;
 }
 
-body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-sku {
+body.ldj .welcome .catalog .catalog-card > .catalog-card-body > .catalog-card-sku {
     color: #9b87c2;
 }
 
-body.ldj .welcome .catalog > .catalog-card > .catalog-card-body > .catalog-card-meta {
+body.ldj .welcome .catalog .catalog-card > .catalog-card-body > .catalog-card-meta {
     background-color: #f5f0fa;
     color: #9b87c2;
 }

@@ -4933,6 +4933,70 @@ const countLines = function(text) {
             };
         };
 
+        // resolves the display label for a category slug, mapping
+        // a missing or blank value to the canonical "other" bucket
+        // and title casing every word in the slug so categories
+        // like `necklaces` and `wedding-rings` show up as `Necklaces`
+        // and `Wedding Rings` without any per profile metadata; the
+        // catch-all label is read from the catalog element data
+        // attribute so the en and pt_pt locales can each own their
+        // own copy
+        const categoryLabel = function(slug, otherLabel) {
+            const value = (slug || "other").toString();
+            if (value === "other") return otherLabel || "Other";
+            return value
+                .split(/[-_\s]+/)
+                .map(part => (part.length === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
+                .join(" ");
+        };
+
+        // builds a card element for the given profile key/profile
+        // pair, mirroring the card layout shared across the catalog
+        // sections so each entry renders the same way regardless of
+        // the category it belongs to
+        const buildCard = function(key, profile) {
+            const card = jQuery("<div></div>");
+            card.addClass("catalog-card");
+            card.attr("data-profile", key);
+
+            // resolves the background image from the profile
+            // definition, falling back to a neutral surface
+            // when no image is available for the template
+            const image = jQuery("<div></div>");
+            image.addClass("catalog-card-image");
+            if (profile.background) {
+                image.css(
+                    "background-image",
+                    "url(/static/profiles/" + encodeURI(profile.background) + ")"
+                );
+            }
+            card.append(image);
+
+            const body = jQuery("<div></div>");
+            body.addClass("catalog-card-body");
+
+            const name = jQuery("<div></div>");
+            name.addClass("catalog-card-name");
+            name.text(profile.name);
+            body.append(name);
+
+            if (profile.sku) {
+                const sku = jQuery("<div></div>");
+                sku.addClass("catalog-card-sku");
+                sku.text(profile.sku);
+                body.append(sku);
+            }
+
+            const meta = jQuery("<div></div>");
+            meta.addClass("catalog-card-meta");
+            const unit = profile.unit || "mm";
+            meta.text(profile.width + "x" + profile.height + " " + unit);
+            body.append(meta);
+
+            card.append(body);
+            return card;
+        };
+
         // populates the catalog of the given context with the
         // provided profiles object and stores it for later lookup,
         // rendering one card per profile entry with image and
@@ -4947,55 +5011,68 @@ const countLines = function(text) {
 
             const keys = Object.keys(profiles);
             if (keys.length === 0) {
+                const grid = jQuery("<div></div>");
+                grid.addClass("catalog-section-grid");
                 const empty = jQuery("<div></div>");
                 empty.addClass("catalog-card empty");
                 empty.text("No templates available.");
-                catalog.append(empty);
+                grid.append(empty);
+                catalog.append(grid);
                 return;
             }
 
+            // groups the profiles by their `category` slug, falling
+            // back to the canonical "other" bucket when the field is
+            // missing so the resulting layout always has a home for
+            // every entry in the catalog
+            const buckets = {};
             for (const key of keys) {
                 const profile = profiles[key];
-                const card = jQuery("<div></div>");
-                card.addClass("catalog-card");
-                card.attr("data-profile", key);
+                const slug = profile.category ? String(profile.category) : "other";
+                if (!buckets[slug]) buckets[slug] = [];
+                buckets[slug].push(key);
+            }
 
-                // resolves the background image from the profile
-                // definition, falling back to a neutral surface
-                // when no image is available for the template
-                const image = jQuery("<div></div>");
-                image.addClass("catalog-card-image");
-                if (profile.background) {
-                    image.css(
-                        "background-image",
-                        "url(/static/profiles/" + encodeURI(profile.background) + ")"
-                    );
+            // collapses to the flat layout when every profile lands
+            // in the same bucket so that a catalog without explicit
+            // categories keeps the historical look without an empty
+            // section heading hovering above the cards
+            const otherLabel = catalog.attr("data-label-other") || "Other";
+            const slugs = Object.keys(buckets);
+            if (slugs.length === 1) {
+                const grid = jQuery("<div></div>");
+                grid.addClass("catalog-section-grid");
+                for (const key of buckets[slugs[0]]) {
+                    grid.append(buildCard(key, profiles[key]));
                 }
-                card.append(image);
+                catalog.append(grid);
+            } else {
+                // sorts the category slugs alphabetically by their
+                // display label, pushing the "other" catch all to
+                // the end so categorized entries lead the catalog
+                slugs.sort((a, b) => {
+                    if (a === "other") return 1;
+                    if (b === "other") return -1;
+                    return categoryLabel(a, otherLabel).localeCompare(categoryLabel(b, otherLabel));
+                });
+                for (const slug of slugs) {
+                    const section = jQuery("<div></div>");
+                    section.addClass("catalog-section");
+                    section.attr("data-category", slug);
 
-                const body = jQuery("<div></div>");
-                body.addClass("catalog-card-body");
+                    const title = jQuery("<div></div>");
+                    title.addClass("catalog-section-title");
+                    title.text(categoryLabel(slug, otherLabel));
+                    section.append(title);
 
-                const name = jQuery("<div></div>");
-                name.addClass("catalog-card-name");
-                name.text(profile.name);
-                body.append(name);
-
-                if (profile.sku) {
-                    const sku = jQuery("<div></div>");
-                    sku.addClass("catalog-card-sku");
-                    sku.text(profile.sku);
-                    body.append(sku);
+                    const grid = jQuery("<div></div>");
+                    grid.addClass("catalog-section-grid");
+                    for (const key of buckets[slug]) {
+                        grid.append(buildCard(key, profiles[key]));
+                    }
+                    section.append(grid);
+                    catalog.append(section);
                 }
-
-                const meta = jQuery("<div></div>");
-                meta.addClass("catalog-card-meta");
-                const unit = profile.unit || "mm";
-                meta.text(profile.width + "x" + profile.height + " " + unit);
-                body.append(meta);
-
-                card.append(body);
-                catalog.append(card);
             }
 
             // renders the catalog with no pre-selected template so
@@ -5053,7 +5130,7 @@ const countLines = function(text) {
                 const profiles = context.data("_profiles") || {};
                 const profile = profiles[key] || null;
 
-                catalog.children(".catalog-card").removeClass("selected");
+                catalog.find(".catalog-card").removeClass("selected");
                 card.addClass("selected");
 
                 context.data("_selected", key);

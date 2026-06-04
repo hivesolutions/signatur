@@ -3,6 +3,7 @@
     "name": "Medal",
     "description": "A standard medal.",
     "sku": "TEST-MDL-001",
+    "category": "medals",
     "enabled": false,
     "width": 80,
     "height": 100,

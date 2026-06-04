@@ -3,6 +3,7 @@
     "name": "Ring",
     "description": "A ring for interior engraving.",
     "sku": "TEST-RNG-001",
+    "category": "rings",
     "enabled": false,
     "width": 120,
     "height": 10,

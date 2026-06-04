@@ -3,6 +3,7 @@
     "name": "Small Medal",
     "description": "A small circular medal inscribed in a 20x20mm area.",
     "sku": "TEST-SMD-001",
+    "category": "medals",
     "width": 20,
     "height": 20,
     "unit": "mm",
