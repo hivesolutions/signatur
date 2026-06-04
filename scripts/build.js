@@ -24,6 +24,7 @@ const CSS_FILES = [
     "css/plugins/jsonhighlight.css",
     "css/plugins/keyboard.css",
     "css/plugins/modal.css",
+    "css/plugins/printjobs.css",
     "css/plugins/profilemanager.css",
     "css/plugins/toast.css"
 ];
@@ -40,6 +41,7 @@ const JS_FILES = [
     "js/plugins/jsonhighlight.js",
     "js/plugins/keyboard.js",
     "js/plugins/modal.js",
+    "js/plugins/printjobs.js",
     "js/plugins/profilemanager.js",
     "js/plugins/profileselector.js",
     "js/plugins/texteditor.js",

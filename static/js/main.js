@@ -27,6 +27,7 @@ jQuery(document).ready(function() {
     const welcomeContainer = jQuery(".form-welcome");
     const formManager = jQuery(".form-manager");
     const diagnosticsContainer = jQuery(".settings-tab-content[data-tab='diagnostics']");
+    const printJobs = jQuery(".print-jobs");
 
     // registers for the click operation on the raw profile
     // toggle link to show or hide the formatted JSON contents
@@ -87,6 +88,20 @@ jQuery(document).ready(function() {
     // of the settings screen, which owns the run button and the
     // probe and pipeline rendering
     diagnosticsContainer.diagnostics();
+
+    // initializes the print jobs indicator plugin on the header
+    // container, rehydrating any tracked jobs from localStorage
+    // and resuming the polling loop on its own
+    printJobs.printjobs();
+
+    // bridges the modal confirm overlay onto the print jobs
+    // indicator so a successful engrave submission enqueues a
+    // chip without the modal plugin having to reach into the
+    // indicator directly, honoring the plugin to host plugin
+    // communication convention through `triggerHandler`
+    jQuery(".modal-overlay-confirm").bind("printjob", function(event, options) {
+        printJobs.printjobs("enqueue", options);
+    });
 
     // wires the settings tab strip so clicking a tab swaps the
     // visible tab content while keeping a single form submission
@@ -212,6 +227,7 @@ jQuery(document).ready(function() {
     const modalOverlayError = jQuery(".modal-overlay-error");
     const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
     const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
+    const modalOverlayPrintJob = jQuery(".modal-overlay-print-job");
     const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
     const inspirationPanel = jQuery(".inspiration-panel");
     const toast = jQuery(".toast");
@@ -1743,6 +1759,7 @@ jQuery(document).ready(function() {
     modalOverlayError.modal();
     modalOverlayConfirm.modal();
     modalOverlayInspirations.modal();
+    modalOverlayPrintJob.modal();
     modalOverlayInstructions.modal();
     modalOverlayFeedback.modal();
     modalOverlayFeedback.feedback({ profileSelector: profileSelector });
