@@ -334,6 +334,16 @@
                             "Error while running the final print operation: " + errorMessage
                         );
                     } else {
+                        // hands the freshly minted job info to the print
+                        // jobs indicator so the operator gets a live chip
+                        // and the polling loop picks up status updates
+                        // without any further action on this page
+                        const jobInfo = await printResponse.json();
+                        jQuery(".print-jobs").printjobs("enqueue", {
+                            jobInfo: jobInfo,
+                            printUrl: printUrl,
+                            key: key
+                        });
                         jQuery(".toast").toast("show", "Engraving job submitted successfully.");
                         // surfaces the post engraving feedback modal so the
                         // user can rate the experience, falling back silently

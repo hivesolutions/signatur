@@ -9,6 +9,22 @@
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </a>
                 <span class="button button-clear">Clear</span>
+                <div class="print-jobs"
+                     data-label-queued="Queued"
+                     data-label-printing="Printing"
+                     data-label-finished="Finished"
+                     data-label-cancelled="Cancelled"
+                     data-label-failed="Failed"
+                     data-label-cancel="Cancel"
+                     data-label-dismiss="Dismiss"
+                     data-label-printer="Printer"
+                     data-label-node="Node"
+                     data-label-elapsed="Elapsed"
+                     data-label-failed-toast="Engraving job failed."
+                     data-label-files-empty="No files generated for this job."
+                     data-label-download="Download">
+                    <div class="print-jobs-chips"></div>
+                </div>
             </div>
             <div class="buttons-right">
                 <span class="button button-small button-preview" title="Preview (Esc to exit)">
@@ -525,6 +541,16 @@
                     <input class="modal-search-input" type="text" placeholder="Search inspirations..." />
                 </div>
                 <div class="modal-inspirations-grid"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Close</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-print-files">
+            <div class="modal modal-print-files">
+                <div class="modal-title modal-print-files-title"></div>
+                <div class="modal-print-files-empty"></div>
+                <div class="modal-print-files-grid"></div>
                 <div class="modal-buttons">
                     <span class="button button-modal-close">Close</span>
                 </div>

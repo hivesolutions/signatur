@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `SESSION_SECRET` environment variable to override the hardcoded `cookie-session` signing key, comma separated to support rotation (first entry signs new cookies, the rest still validate old ones); the Dockerfile ships the previous placeholder as a default so existing deployments keep working until the variable is set explicitly.
 * `SESSION_MAX_AGE` environment variable to control the `signatur.sid` cookie lifetime in milliseconds. The default is bumped from the previous ~16.7 hours to ~6 months (15552000000 ms), so users stay logged in across the working week without re-authenticating.
 * Optional `Record video` toggle on the confirm engraving modal, paired with the existing `Dry run` chip, that forwards a `record` boolean to the colony print payload so the engraving operation can be captured on video by the printing backend.
+* Live print job indicator pinned to the top-left of the engraving page that surfaces each submitted job, polls colony print every 5 seconds for status updates, lets the operator cancel a still queued job, surfaces a red treatment plus a toast when a job fails, persists across reloads, and opens a files overlay with inline thumbnails for screenshots and an inline player for the recorded video once a job is done.
 
 ### Changed
 

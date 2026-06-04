@@ -9,6 +9,22 @@
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </a>
                 <span class="button button-clear">Limpar</span>
+                <div class="print-jobs"
+                     data-label-queued="Em fila"
+                     data-label-printing="A imprimir"
+                     data-label-finished="Concluído"
+                     data-label-cancelled="Cancelado"
+                     data-label-failed="Falhou"
+                     data-label-cancel="Cancelar"
+                     data-label-dismiss="Dispensar"
+                     data-label-printer="Impressora"
+                     data-label-node="Nó"
+                     data-label-elapsed="Decorrido"
+                     data-label-failed-toast="O trabalho de gravação falhou."
+                     data-label-files-empty="Sem ficheiros gerados para este trabalho."
+                     data-label-download="Transferir">
+                    <div class="print-jobs-chips"></div>
+                </div>
             </div>
             <div class="buttons-right">
                 <span class="button button-small button-preview" title="Pré-visualização (Esc para sair)">
@@ -525,6 +541,16 @@
                     <input class="modal-search-input" type="text" placeholder="Procurar inspirações..." />
                 </div>
                 <div class="modal-inspirations-grid"></div>
+                <div class="modal-buttons">
+                    <span class="button button-modal-close">Fechar</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay modal-overlay-print-files">
+            <div class="modal modal-print-files">
+                <div class="modal-title modal-print-files-title"></div>
+                <div class="modal-print-files-empty"></div>
+                <div class="modal-print-files-grid"></div>
                 <div class="modal-buttons">
                     <span class="button button-modal-close">Fechar</span>
                 </div>
