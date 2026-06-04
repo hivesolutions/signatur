@@ -1786,7 +1786,7 @@ body.ldj .viewport > .main-container > .fonts-container > .font.selected:hover {
 }
 
 .welcome .welcome-catalog > .catalog-container {
-    margin: 0px auto 0px auto;
+    margin: 16px auto 16px auto;
     max-width: 1080px;
 }
 
