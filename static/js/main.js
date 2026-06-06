@@ -27,7 +27,7 @@ jQuery(document).ready(function() {
     const welcomeContainer = jQuery(".form-welcome");
     const formManager = jQuery(".form-manager");
     const diagnosticsContainer = jQuery(".settings-tab-content[data-tab='diagnostics']");
-    const emojisContainer = jQuery(".settings-tab-content[data-tab='emojis']");
+    const emojisSettings = jQuery(".settings-tab-content[data-tab='emojis']");
     const printJobs = jQuery(".print-jobs");
 
     // registers for the click operation on the raw profile
@@ -93,7 +93,7 @@ jQuery(document).ready(function() {
     // initializes the emojis plugin on the emojis tab of the
     // settings screen, which owns the upload button and the
     // success and error feedback rendering
-    emojisContainer.emojis();
+    emojisSettings.emojis();
 
     // initializes the print jobs indicator plugin on the header
     // container, rehydrating any tracked jobs from localStorage
