@@ -120,6 +120,19 @@ const bundleUpload = multer({
     limits: { fileSize: 50 * 1024 * 1024, files: 1 }
 }).single("file");
 
+// configures the multer middleware that handles the cool emojis
+// font upload, accepting a required TTF/OTF font payload and an
+// optional mapping JSON payload kept in memory so both bodies can
+// be validated upfront before the on disk fonts directory is
+// touched
+const emojisUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024, files: 2 }
+}).fields([
+    { name: "font", maxCount: 1 },
+    { name: "mapping", maxCount: 1 }
+]);
+
 app.get("/", (req, res, next) => {
     // forwards the bare root URL to the user's preferred home
     // landing page, defaulting to the classic gateway when no
@@ -301,6 +314,58 @@ app.post("/settings/diagnostics", lib.requireAdmin, (req, res, next) => {
         const svgBuffer = await fs.readFile(fixturePath);
         const steps = await engine.diagnose(svgBuffer);
         res.json({ probes: probes, steps: steps });
+    }
+    clojure().catch(next);
+});
+
+app.post("/settings/emojis", lib.requireAdmin, emojisUpload, (req, res, next) => {
+    async function clojure() {
+        const errors = [];
+
+        // resolves the uploaded payloads from the multer fields output
+        // so the validation and the disk writes can treat the optional
+        // mapping body the same way regardless of whether the client
+        // included it on the submission
+        const fontFile = req.files && req.files.font ? req.files.font[0] : null;
+        const mappingFile = req.files && req.files.mapping ? req.files.mapping[0] : null;
+
+        if (!fontFile) {
+            errors.push("font is required");
+        } else {
+            for (const message of lib.validateEmojisFont(fontFile.buffer)) {
+                errors.push(message);
+            }
+        }
+
+        // walks the optional mapping payload through the validator so
+        // a malformed JSON body cannot land on disk and break the
+        // viewport consumer that expects character to name pairs for
+        // every glyph in the emoji catalog
+        if (mappingFile) {
+            const mappingText = mappingFile.buffer.toString("utf8");
+            for (const message of lib.validateEmojisMapping(mappingText)) {
+                errors.push(message);
+            }
+        }
+
+        if (errors.length > 0) {
+            res.status(400).json({ errors: errors });
+            return;
+        }
+
+        // writes the validated font payload over the existing display
+        // font and, when provided, the validated mapping body so the
+        // next viewport load picks up the freshly uploaded set without
+        // any further server side intervention
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const fontPath = path.join(fontsDirectory, "coolemojis.ttf");
+        await fs.writeFile(fontPath, fontFile.buffer);
+        if (mappingFile) {
+            const mappingPath = path.join(fontsDirectory, "coolemojis.mapping.json");
+            await fs.writeFile(mappingPath, mappingFile.buffer);
+        }
+
+        res.json({ status: "ok", mapping: mappingFile !== null });
     }
     clojure().catch(next);
 });

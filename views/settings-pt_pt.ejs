@@ -20,6 +20,7 @@
                         <span class="settings-tab active" data-tab="general">Geral</span>
                         <span class="settings-tab" data-tab="printing">Impressão</span>
                         <span class="settings-tab" data-tab="features">Funcionalidades</span>
+                        <span class="settings-tab" data-tab="emojis">Emojis</span>
                         <span class="settings-tab" data-tab="diagnostics">Diagnóstico</span>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="general">
@@ -208,6 +209,29 @@
                                     </div>
                                 </div>
                             <% }); %>
+                        </div>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="emojis" style="display: none;"
+                         data-label-upload="Carregar"
+                         data-label-uploading="A carregar…"
+                         data-label-font-required="Escolha um ficheiro TTF antes de carregar."
+                         data-label-success="Letra Cool Emojis carregada com sucesso."
+                         data-label-network-error="O pedido de carregamento falhou. O servidor pode estar inacessível.">
+                        <div class="settings-group">
+                            <div class="settings-group-label">Cool Emojis</div>
+                            <div class="emojis-hint">Substitui a letra <code>coolemojis.ttf</code> incluída e, opcionalmente, o ficheiro <code>coolemojis.mapping.json</code> companheiro pelos ficheiros carregados. A próxima abertura do editor já mostra os novos glifos.</div>
+                            <div class="emojis-field">
+                                <label class="emojis-field-label" for="emojis-font">Letra (.ttf)</label>
+                                <input class="emojis-field-input" id="emojis-font" type="file" accept=".ttf,.otf" />
+                            </div>
+                            <div class="emojis-field">
+                                <label class="emojis-field-label" for="emojis-mapping">Mapeamento (.json, opcional)</label>
+                                <input class="emojis-field-input" id="emojis-mapping" type="file" accept="application/json,.json" />
+                            </div>
+                            <div class="emojis-actions">
+                                <button type="button" class="button button-start emojis-upload">Carregar</button>
+                            </div>
+                            <div class="emojis-feedback" hidden></div>
                         </div>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="diagnostics" style="display: none;"
