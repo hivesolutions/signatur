@@ -135,6 +135,8 @@ The configuration is resolved through a three step fallback chain so existing si
 
 The settings page exposes a `Printing` readout that shows the server side base value next to the effective resolved value for each entry, so an operator can verify at a glance which side is active.
 
+When the engraving job is submitted, the confirm modal walks the multifont array of the print payload, rewrites every `Cool Emojis` entry into the underlying engraving glyph name through the active `coolemojis.mapping.json` and then resolves the engraving `.f3s` payload of every referenced font through a `GET /settings/fonts/resolve?names=...` call. The resulting `{ name: base64 }` map is attached to the gravo print payload as the `extra_fonts` field that colony print plumbs through to gravo pilot on a per print job basis (see [hivesolutions/colony-print#20](https://github.com/hivesolutions/colony-print/issues/20) and [hivesolutions/gravo-pilot#22](https://github.com/hivesolutions/gravo-pilot/issues/22) for the receiving end).
+
 ### Configuration keys
 
 | `localStorage` key | Scenario | Server side fallback                            | Description                                                                         |
@@ -232,6 +234,7 @@ The following admin gated HTTP endpoints back the UI:
 | `GET`  | `/settings/fonts`                          | List installed text fonts as `{ fonts: [{ name, ttf, f3s }, ...] }` rows.                     |
 | `POST` | `/settings/fonts`                          | Upload one paired text font; form fields are `name` plus the `ttf` and `f3s` file payloads.   |
 | `POST` | `/settings/fonts/:name/delete`             | Delete both halves of a text font by canonical name.                                          |
+| `GET`  | `/settings/fonts/resolve?names=a,b,c`      | Resolve font names into a `{ name: base64 }` engraving payload map.                           |
 
 ## License
 

@@ -634,6 +634,47 @@ app.post("/settings/fonts/:name/delete", lib.requireAdmin, (req, res, next) => {
     clojure().catch(next);
 });
 
+app.get("/settings/fonts/resolve", (req, res, next) => {
+    async function clojure() {
+        const names = typeof req.query.names === "string" ? req.query.names : "";
+        const requested = names
+            .split(",")
+            .map(value => value.trim())
+            .filter(Boolean);
+
+        // resolves each requested name from either the emoji or the
+        // text font subdirectory, base64 encoding the payload that
+        // is found first so the caller can attach it to the gravo
+        // print payload as part of the `extra_fonts` envelope;
+        // names that do not match the filename pattern or that have
+        // no corresponding payload are silently dropped so the
+        // caller still receives a partial response without leaking
+        // the missing entries through an error
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const candidates = [
+            path.join(fontsDirectory, "f3s", "emoji"),
+            path.join(fontsDirectory, "f3s", "fonts")
+        ];
+        const fonts = {};
+        for (const name of requested) {
+            const filename = `${name}.f3s`;
+            if (!lib.EMOJI_F3S_FILENAME_PATTERN.test(filename)) continue;
+            for (const directory of candidates) {
+                const candidatePath = path.join(directory, filename);
+                try {
+                    const buffer = await fs.readFile(candidatePath);
+                    fonts[name] = buffer.toString("base64");
+                    break;
+                } catch (err) {
+                    // not found at this candidate, keep walking
+                }
+            }
+        }
+        res.json({ fonts: fonts });
+    }
+    clojure().catch(next);
+});
+
 app.get("/welcome", (req, res, next) => {
     const fullscreen =
         req.query.fullscreen !== undefined

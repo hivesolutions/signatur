@@ -1856,6 +1856,94 @@ const countLines = function(text) {
 })(jQuery);
 
 (function(jQuery) {
+    // caches the Cool Emojis mapping JSON across confirm modal
+    // submissions so the per print resolver only pays the fetch
+    // cost once per page lifetime, while still picking the latest
+    // payload on the next full reload after an admin upload
+    let coolemojisMappingPromise = null;
+
+    // fetches the Cool Emojis display to engraving mapping JSON
+    // from the public static directory, returning an empty object
+    // when the payload cannot be read so the caller can keep
+    // walking the multifont entries without a rewrite
+    const loadCoolemojisMapping = function() {
+        if (coolemojisMappingPromise == null) {
+            coolemojisMappingPromise = (async function() {
+                try {
+                    const response = await fetch("/static/fonts/coolemojis.mapping.json");
+                    if (response.status !== 200) return {};
+                    return await response.json();
+                } catch (error) {
+                    return {};
+                }
+            })();
+        }
+        return coolemojisMappingPromise;
+    };
+
+    // rewrites the multifont entries that target the `Cool Emojis`
+    // display font into the underlying per glyph engraving font
+    // referenced by the Cool Emojis mapping, dropping entries that
+    // have no mapping so the print payload only includes glyphs
+    // that the engraving side can actually render
+    const rewriteCoolemojisMultifont = function(multifont, mapping) {
+        const result = [];
+        for (const entry of multifont) {
+            if (!Array.isArray(entry)) {
+                result.push(entry);
+                continue;
+            }
+            const fontSpec = entry[0];
+            const char = entry[1];
+            if (fontSpec === "Cool Emojis" && mapping[char]) {
+                result.push([mapping[char], char]);
+                continue;
+            }
+            if (fontSpec === "Cool Emojis") {
+                // silently ignores unmapped characters so the rest
+                // of the multifont keeps engraving, matching the
+                // behaviour the operator already sees today
+                continue;
+            }
+            result.push(entry);
+        }
+        return result;
+    };
+
+    // collects the unique font names referenced by the print
+    // payload so the resolver can be called with a single
+    // comma separated query parameter, mirroring the wire format
+    // expected by `GET /settings/fonts/resolve`
+    const collectFontNames = function(textPayload, defaultFont) {
+        const names = new Set();
+        if (defaultFont) names.add(defaultFont);
+        if (Array.isArray(textPayload)) {
+            for (const entry of textPayload) {
+                if (Array.isArray(entry) && entry[0]) names.add(entry[0]);
+            }
+        }
+        return Array.from(names);
+    };
+
+    // fetches the engraving payload for each requested font name
+    // from the server side resolver, returning the map of font
+    // name to base64 payload ready to be attached to the gravo
+    // print payload as the `extra_fonts` envelope; an empty map
+    // is returned when no payload is available so the caller can
+    // skip the field entirely
+    const resolveExtraFonts = async function(names) {
+        if (names.length === 0) return {};
+        try {
+            const query = names.map(encodeURIComponent).join(",");
+            const response = await fetch("/settings/fonts/resolve?names=" + query);
+            if (response.status !== 200) return {};
+            const payload = await response.json();
+            return (payload && payload.fonts) || {};
+        } catch (error) {
+            return {};
+        }
+    };
+
     /**
      * Modal overlay plugin that manages multiple modal types
      * including error messages, print confirmation with specs
@@ -2135,8 +2223,48 @@ const countLines = function(text) {
                 // the viewport information from the selected profile if available
                 const dryRun = jQuery(".modal-dry-run", context).prop("checked");
                 const record = jQuery(".modal-record", context).prop("checked");
-                const textPayload = multifont && multifont.length > 0 ? multifont : text;
+                let textPayload = multifont && multifont.length > 0 ? multifont : text;
                 const fontPayload = font === "Cool Emojis" ? null : font;
+
+                // expands a plain text payload into a multifont
+                // array when the default font is Cool Emojis so
+                // the per character rewriting below has the same
+                // shape to walk regardless of the entry point
+                if (
+                    typeof textPayload === "string" &&
+                    font === "Cool Emojis"
+                ) {
+                    const expanded = [];
+                    for (const char of textPayload) {
+                        expanded.push(["Cool Emojis", char]);
+                    }
+                    textPayload = expanded;
+                }
+
+                // rewrites the Cool Emojis entries in the
+                // multifont array using the mapping JSON owned
+                // by the Emojis tab so the engraving side sees
+                // the per glyph engraving font names directly,
+                // matching the wire format colony print and
+                // gravo pilot expect on the print payload
+                if (Array.isArray(textPayload)) {
+                    const hasCoolemojis = textPayload.some(
+                        entry => Array.isArray(entry) && entry[0] === "Cool Emojis"
+                    );
+                    if (hasCoolemojis) {
+                        const mapping = await loadCoolemojisMapping();
+                        textPayload = rewriteCoolemojisMultifont(textPayload, mapping);
+                    }
+                }
+
+                // resolves the engraving payload for each font
+                // name referenced by the print payload through the
+                // server side resolver so the bytes travel inline
+                // on the gravo print envelope, on a per print job
+                // basis with no caching between submissions
+                const fontNames = collectFontNames(textPayload, fontPayload);
+                const extraFonts = await resolveExtraFonts(fontNames);
+
                 const printData = {
                     text: textPayload,
                     font: fontPayload,
@@ -2144,6 +2272,9 @@ const countLines = function(text) {
                     dry_run: dryRun,
                     record: record
                 };
+                if (Object.keys(extraFonts).length > 0) {
+                    printData.extra_fonts = extraFonts;
+                }
                 if (profileKey) {
                     const profiles = context.data("profiles") || {};
                     const profile = profiles[profileKey];

@@ -30,7 +30,7 @@ Filenames are validated server side so that arbitrary paths cannot be crafted th
 
 | Surface         | Pattern                                  | Notes                                                                                                |
 | --------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| emoji `.f3s`    | `^[a-z0-9]+(?:[-.][a-z0-9]+)*\.f3s$`     | Lowercase alphanumeric segments separated by hyphens or dots so the `1101.coracao` form keeps working.|
+| emoji `.f3s`    | `^[a-z0-9]+(?:[-.][a-z0-9]+)*\.f3s$`     | Lowercase alphanumeric segments separated by hyphens or dots so `1101.coracao` keeps working.        |
 | text font name  | `^[a-z0-9]+(?:-[a-z0-9]+)*$`             | Lowercase alphanumeric segments separated by hyphens, no leading or trailing hyphen.                 |
 
 ## Mapping JSON
@@ -54,7 +54,7 @@ The optional `coolemojis.mapping.json` payload is a flat object mapping each dis
 
 ## Admin endpoints
 
-Every endpoint below is gated by `lib.requireAdmin`.
+Every admin endpoint below is gated by `lib.requireAdmin`. The resolver at the bottom of the table is callable by any signed in user so the print confirm modal can attach the engraving payloads to the print envelope without elevating privileges.
 
 | Method | Path                                       | Notes                                                                                       |
 | ------ | ------------------------------------------ | ------------------------------------------------------------------------------------------- |
@@ -65,6 +65,7 @@ Every endpoint below is gated by `lib.requireAdmin`.
 | `GET`  | `/settings/fonts`                          | List installed text fonts as `{ fonts: [{ name, ttf, f3s }, ...] }` rows.                   |
 | `POST` | `/settings/fonts`                          | Upload one paired text font; form fields are `name` plus the `ttf` and `f3s` file payloads. |
 | `POST` | `/settings/fonts/:name/delete`             | Delete both halves of a text font by canonical name.                                        |
+| `GET`  | `/settings/fonts/resolve?names=a,b,c`      | Resolve font names into a `{ name: base64 }` engraving payload map.                         |
 
 ## Wire format with colony print
 
