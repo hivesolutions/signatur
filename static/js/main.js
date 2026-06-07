@@ -28,6 +28,7 @@ jQuery(document).ready(function() {
     const formManager = jQuery(".form-manager");
     const diagnosticsContainer = jQuery(".settings-tab-content[data-tab='diagnostics']");
     const emojisSettings = jQuery(".settings-tab-content[data-tab='emojis']");
+    const fontsSettings = jQuery(".settings-tab-content[data-tab='fonts']");
     const printJobs = jQuery(".print-jobs");
 
     // registers for the click operation on the raw profile
@@ -94,6 +95,12 @@ jQuery(document).ready(function() {
     // settings screen, which owns the upload button and the
     // success and error feedback rendering
     emojisSettings.emojis();
+
+    // initializes the fonts manager plugin on the fonts tab of
+    // the settings screen, which owns the paired ttf and f3s
+    // upload, the installed catalog refresh and the per row
+    // delete button
+    fontsSettings.fontsmanager();
 
     // initializes the print jobs indicator plugin on the header
     // container, rehydrating any tracked jobs from localStorage

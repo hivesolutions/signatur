@@ -133,6 +133,27 @@ const emojisUpload = multer({
     { name: "mapping", maxCount: 1 }
 ]);
 
+// configures the multer middleware that handles the multipart
+// upload of a single emoji `.f3s` payload, keeping it in
+// memory so the filename and the body can be validated before
+// the engraving fonts directory is touched
+const emojisF3sUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024, files: 1 }
+}).single("file");
+
+// configures the multer middleware that handles the paired
+// upload of a text font, accepting both the browser `.ttf`
+// payload and the engraving `.f3s` payload together so the
+// two halves stay consistent on disk
+const fontsUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024, files: 2 }
+}).fields([
+    { name: "ttf", maxCount: 1 },
+    { name: "f3s", maxCount: 1 }
+]);
+
 app.get("/", (req, res, next) => {
     // forwards the bare root URL to the user's preferred home
     // landing page, defaulting to the classic gateway when no
@@ -366,6 +387,232 @@ app.post("/settings/emojis", lib.requireAdmin, emojisUpload, (req, res, next) =>
         }
 
         res.json({ status: "ok", mapping: Boolean(mappingFile) });
+    }
+    clojure().catch(next);
+});
+
+app.get("/settings/emojis/f3s", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        const directoryPath = path.join(__dirname, "static", "fonts", "f3s", "emoji");
+        let files = [];
+        try {
+            files = await fs.readdir(directoryPath);
+        } catch (err) {
+            // missing directory is treated as an empty catalog so the
+            // first ever upload can lazily create the tree without an
+            // out of band initialization step
+        }
+        const fonts = [];
+        for (const file of files) {
+            if (!lib.EMOJI_F3S_FILENAME_PATTERN.test(file)) continue;
+            const stat = await fs.stat(path.join(directoryPath, file));
+            fonts.push({ name: file, size: stat.size, mtime: stat.mtimeMs });
+        }
+        fonts.sort((a, b) => a.name.localeCompare(b.name));
+        res.json({ fonts: fonts });
+    }
+    clojure().catch(next);
+});
+
+app.post("/settings/emojis/f3s", lib.requireAdmin, emojisF3sUpload, (req, res, next) => {
+    async function clojure() {
+        const errors = [];
+
+        // requires both the filename and the file payload so the
+        // resulting entry has a deterministic on disk name that
+        // can be referenced from the bundled `coolemojis.mapping.json`
+        const filename = typeof req.body.filename === "string" ? req.body.filename.trim() : "";
+        if (!filename) {
+            errors.push("filename is required");
+        } else if (!lib.EMOJI_F3S_FILENAME_PATTERN.test(filename)) {
+            errors.push(
+                "filename must match pattern: lowercase alphanumeric with hyphens or dots and a .f3s extension"
+            );
+        }
+
+        if (!req.file) {
+            errors.push("file is required");
+        }
+
+        if (errors.length > 0) {
+            res.status(400).json({ errors: errors });
+            return;
+        }
+
+        // lazily creates the destination tree on the first ever
+        // upload so the operator does not need to seed any folder
+        // before the admin upload becomes available
+        const directoryPath = path.join(__dirname, "static", "fonts", "f3s", "emoji");
+        await fs.mkdir(directoryPath, { recursive: true });
+        const targetPath = path.join(directoryPath, filename);
+        await fs.writeFile(targetPath, req.file.buffer);
+        res.json({ status: "ok", filename: filename });
+    }
+    clojure().catch(next);
+});
+
+app.post("/settings/emojis/f3s/:filename/delete", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        const filename = req.params.filename;
+        if (!lib.EMOJI_F3S_FILENAME_PATTERN.test(filename)) {
+            res.status(400).json({ error: "invalid f3s filename" });
+            return;
+        }
+
+        const directoryPath = path.join(__dirname, "static", "fonts", "f3s", "emoji");
+        const targetPath = path.join(directoryPath, filename);
+        try {
+            await fs.unlink(targetPath);
+        } catch (err) {
+            res.status(404).json({ error: "f3s entry not found" });
+            return;
+        }
+
+        res.json({ status: "ok" });
+    }
+    clojure().catch(next);
+});
+
+app.get("/settings/fonts", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const f3sDirectory = path.join(fontsDirectory, "f3s", "fonts");
+        let ttfFiles = [];
+        let f3sFiles = [];
+        try {
+            ttfFiles = await fs.readdir(fontsDirectory);
+        } catch (err) {
+            // missing root fonts directory is unexpected at runtime,
+            // but treating it as an empty catalog keeps the endpoint
+            // resilient during the very first deployment
+        }
+        try {
+            f3sFiles = await fs.readdir(f3sDirectory);
+        } catch (err) {
+            // missing f3s subdirectory is treated as no installed
+            // engraving payloads so the first ever upload can lazily
+            // create the tree without an out of band step
+        }
+
+        // collects the lower cased base names of every accepted
+        // `.ttf` and `.f3s` entry so the response can surface only
+        // the names that satisfy the paired upload requirement of
+        // the Fonts tab while still listing partial state for ops
+        const ttfNames = new Set();
+        const f3sNames = new Set();
+        for (const file of ttfFiles) {
+            if (!file.toLowerCase().endsWith(".ttf")) continue;
+            const name = file.slice(0, -4);
+            if (!lib.FONT_NAME_PATTERN.test(name)) continue;
+            ttfNames.add(name);
+        }
+        for (const file of f3sFiles) {
+            if (!file.toLowerCase().endsWith(".f3s")) continue;
+            const name = file.slice(0, -4);
+            if (!lib.FONT_NAME_PATTERN.test(name)) continue;
+            f3sNames.add(name);
+        }
+
+        const names = Array.from(new Set([...ttfNames, ...f3sNames]));
+        names.sort();
+        const fonts = [];
+        for (const name of names) {
+            const entry = { name: name, ttf: null, f3s: null };
+            if (ttfNames.has(name)) {
+                const stat = await fs.stat(path.join(fontsDirectory, `${name}.ttf`));
+                entry.ttf = { size: stat.size, mtime: stat.mtimeMs };
+            }
+            if (f3sNames.has(name)) {
+                const stat = await fs.stat(path.join(f3sDirectory, `${name}.f3s`));
+                entry.f3s = { size: stat.size, mtime: stat.mtimeMs };
+            }
+            fonts.push(entry);
+        }
+        res.json({ fonts: fonts });
+    }
+    clojure().catch(next);
+});
+
+app.post("/settings/fonts", lib.requireAdmin, fontsUpload, (req, res, next) => {
+    async function clojure() {
+        const errors = [];
+
+        // requires the font name plus both the browser and the
+        // engraving payloads so the resulting on disk pair stays
+        // consistent and can be uniquely identified through the
+        // canonical `<name>.ttf` and `<name>.f3s` filenames
+        const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
+        if (!name) {
+            errors.push("name is required");
+        } else if (!lib.FONT_NAME_PATTERN.test(name)) {
+            errors.push(
+                "name must match pattern: lowercase alphanumeric with hyphens"
+            );
+        }
+
+        const ttfFile = req.files && req.files.ttf ? req.files.ttf[0] : null;
+        const f3sFile = req.files && req.files.f3s ? req.files.f3s[0] : null;
+        if (!ttfFile) errors.push("ttf is required");
+        if (!f3sFile) errors.push("f3s is required");
+
+        if (ttfFile) {
+            for (const message of lib.validateEmojisFont(ttfFile.buffer)) {
+                errors.push(message);
+            }
+        }
+
+        if (errors.length > 0) {
+            res.status(400).json({ errors: errors });
+            return;
+        }
+
+        // writes both payloads side by side, lazily creating the
+        // engraving subdirectory so a brand new deployment does
+        // not require any out of band initialization before the
+        // first font upload can land
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const f3sDirectory = path.join(fontsDirectory, "f3s", "fonts");
+        await fs.mkdir(f3sDirectory, { recursive: true });
+        await fs.writeFile(path.join(fontsDirectory, `${name}.ttf`), ttfFile.buffer);
+        await fs.writeFile(path.join(f3sDirectory, `${name}.f3s`), f3sFile.buffer);
+
+        res.json({ status: "ok", name: name });
+    }
+    clojure().catch(next);
+});
+
+app.post("/settings/fonts/:name/delete", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        const name = req.params.name;
+        if (!lib.FONT_NAME_PATTERN.test(name)) {
+            res.status(400).json({ error: "invalid font name" });
+            return;
+        }
+
+        // removes both halves of the font pair, treating missing
+        // files as already deleted so a re-run cleans up any
+        // partial state left behind by a previous failure
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const targets = [
+            path.join(fontsDirectory, `${name}.ttf`),
+            path.join(fontsDirectory, "f3s", "fonts", `${name}.f3s`)
+        ];
+        let removed = false;
+        for (const target of targets) {
+            try {
+                await fs.unlink(target);
+                removed = true;
+            } catch (err) {
+                // ignores files that do not exist on disk
+            }
+        }
+
+        if (!removed) {
+            res.status(404).json({ error: "font not found" });
+            return;
+        }
+
+        res.json({ status: "ok" });
     }
     clojure().catch(next);
 });
