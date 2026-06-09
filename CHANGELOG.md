@@ -37,10 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * The engraving layout page now shows the selected jewelry piece's name and SKU in both technical and store modes, so users can verify which item they are personalizing.
 
-### Fixed
-
-*
-
 ## [1.1.0] - 2026-05-23
 
 ### Added
