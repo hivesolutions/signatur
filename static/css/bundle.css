@@ -3646,6 +3646,85 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     white-space: pre-wrap;
 }
 
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-hint {
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0px 0px 12px 0px;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-hint {
+    color: #6f5ea0;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-hint > code {
+    background-color: #f1f3f6;
+    border-radius: 4px;
+    -o-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    padding: 1px 4px 1px 4px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-field {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    margin: 0px 0px 12px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-field > .emojis-field-label {
+    color: #4b5260;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    min-width: 200px;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-field > .emojis-field-label {
+    color: #6f5ea0;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-field > .emojis-field-input {
+    color: #1f2330;
+    flex: 1;
+    font-size: 12px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-actions {
+    display: flex;
+    gap: 8px;
+    margin: 0px 0px 16px 0px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-feedback {
+    background-color: #f5f6f8;
+    border-radius: 12px;
+    -o-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -moz-border-radius: 12px;
+    -khtml-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 12px 14px 12px 14px;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-feedback[data-status="success"] {
+    background-color: #ecfdf3;
+    color: #166534;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-feedback[data-status="error"] {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
 .inspiration-panel {
     background-color: #ffffff;
     border: none;
