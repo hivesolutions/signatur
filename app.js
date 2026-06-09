@@ -365,7 +365,7 @@ app.post("/settings/emojis", lib.requireAdmin, emojisUpload, (req, res, next) =>
             await fs.writeFile(mappingPath, mappingFile.buffer);
         }
 
-        res.json({ status: "ok", mapping: mappingFile !== null });
+        res.json({ status: "ok", mapping: Boolean(mappingFile) });
     }
     clojure().catch(next);
 });

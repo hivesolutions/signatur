@@ -29,7 +29,7 @@ describe("Emojis", function() {
         it("should reject a payload shorter than the magic header", () => {
             const buffer = Buffer.from([0x00, 0x01, 0x00]);
             const errors = lib.validateEmojisFont(buffer);
-            assert.deepStrictEqual(errors, ["font payload is too short to be a TTF file"]);
+            assert.deepStrictEqual(errors, ["font payload is too short to be a TTF or OTF file"]);
         });
 
         it("should reject a payload with an unknown signature", () => {

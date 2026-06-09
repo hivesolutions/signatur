@@ -637,15 +637,20 @@ const countLines = function(text) {
                         method: "POST",
                         body: formData
                     });
-                    const payload = await response.json();
-                    if (response.status !== 200) {
-                        const messages = (payload && payload.errors) || [];
-                        showFeedback(context, "error", messages.join(", "));
+                    if (response.status === 200) {
+                        showFeedback(context, "success", successLabel);
+                        fontInput.val("");
+                        mappingInput.val("");
                         return;
                     }
-                    showFeedback(context, "success", successLabel);
-                    fontInput.val("");
-                    mappingInput.val("");
+                    let messages = [];
+                    try {
+                        const payload = await response.json();
+                        messages = payload.errors || [payload.error || networkErrorLabel];
+                    } catch (err) {
+                        messages = [networkErrorLabel];
+                    }
+                    showFeedback(context, "error", messages.join(", "));
                 } catch (error) {
                     showFeedback(context, "error", networkErrorLabel);
                 } finally {
