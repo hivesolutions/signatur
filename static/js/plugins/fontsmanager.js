@@ -152,11 +152,16 @@
                         method: "POST",
                         body: formData
                     });
-                    const payload = await response.json();
                     if (response.status !== 200) {
-                        const messages = (payload && payload.errors) || [
-                            payload && payload.error
-                        ];
+                        let messages = [];
+                        try {
+                            const payload = await response.json();
+                            messages = (payload && payload.errors) || [
+                                payload && payload.error
+                            ];
+                        } catch (error) {
+                            // silently ignores non JSON error responses
+                        }
                         showFeedback(feedback, "error", messages.filter(Boolean).join(", "));
                         return;
                     }

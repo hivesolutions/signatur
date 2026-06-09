@@ -185,7 +185,7 @@ To add a new emoji to the system, sign in as an admin and use the `Emojis` tab o
 
 1. Upload the replacement `coolemojis.ttf` (display) and, when the catalog of recognised characters changes, the companion `coolemojis.mapping.json`.
 2. Upload the matching engraving glyph as a `.f3s` file in the `Engraving glyphs` section. The filename must match a value declared on the mapping (e.g. `1101.coracao.f3s`).
-3. The next time the engraving viewport is opened the new glyphs are picked up automatically; the `.f3s` payload is shipped to colony print on every print job through the `extra_fonts` field of the gravo print payload.
+3. The next time the engraving viewport is opened the new glyphs are picked up automatically; shipping the `.f3s` payload to colony print on every print job through the `extra_fonts` field of the gravo print payload is tracked in #56.
 
 The admin UI replaces the previous manual file drop. The on disk layout it owns is documented in [Font Management](#font-management).
 

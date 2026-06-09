@@ -68,4 +68,4 @@ Every endpoint below is gated by `lib.requireAdmin`.
 
 ## Wire format with colony print
 
-When signatur sends a print job to colony print, the engraving side of every uploaded font travels inline. See the [Gravo Print Payload](https://github.com/hivesolutions/colony-print/blob/master/README.md#gravo-print-payload) section in colony print's README for the field shape, and the gravo pilot [Extra Fonts](https://github.com/hivesolutions/gravo-pilot/blob/master/README.md#extra-fonts) section for the per print job install behaviour.
+The engraving payloads uploaded through the admin UI are hosted under `/static/fonts/...` and consumed in the viewport. Shipping them inline to colony print on every print job, so the engraving machine can install them per job through gravo pilot's [Extra Fonts](https://github.com/hivesolutions/gravo-pilot/blob/master/README.md#extra-fonts) kwarg, is tracked as a follow up in #56 against the [Gravo Print Payload](https://github.com/hivesolutions/colony-print/blob/master/README.md#gravo-print-payload) section of colony print's README.

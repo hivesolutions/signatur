@@ -473,6 +473,12 @@ app.post("/settings/emojis/f3s/:filename/delete", lib.requireAdmin, (req, res, n
     clojure().catch(next);
 });
 
+// names owned by the Emojis tab that must stay out of the Fonts
+// catalog so deleting an entry from the Fonts tab can never unlink
+// the display halves of the bundled Cool Emojis font face declared
+// in `static/css/layout.css`
+const EMOJIS_OWNED_FONTS = new Set(["coolemojis", "coolemojisp"]);
+
 app.get("/settings/fonts", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const fontsDirectory = path.join(__dirname, "static", "fonts");
@@ -494,22 +500,27 @@ app.get("/settings/fonts", lib.requireAdmin, (req, res, next) => {
             // create the tree without an out of band step
         }
 
-        // collects the lower cased base names of every accepted
-        // `.ttf` and `.f3s` entry so the response can surface only
-        // the names that satisfy the paired upload requirement of
-        // the Fonts tab while still listing partial state for ops
+        // collects the base names of every accepted `.ttf` and `.f3s`
+        // entry so the response can surface only the names that
+        // satisfy the paired upload requirement of the Fonts tab
+        // while still listing partial state for ops; the suffix
+        // checks are case sensitive so an uppercase `Font.TTF` entry
+        // is skipped instead of being later stat'd as a lowercase
+        // path that does not exist on case sensitive filesystems
         const ttfNames = new Set();
         const f3sNames = new Set();
         for (const file of ttfFiles) {
-            if (!file.toLowerCase().endsWith(".ttf")) continue;
+            if (!file.endsWith(".ttf")) continue;
             const name = file.slice(0, -4);
             if (!lib.FONT_NAME_PATTERN.test(name)) continue;
+            if (EMOJIS_OWNED_FONTS.has(name)) continue;
             ttfNames.add(name);
         }
         for (const file of f3sFiles) {
-            if (!file.toLowerCase().endsWith(".f3s")) continue;
+            if (!file.endsWith(".f3s")) continue;
             const name = file.slice(0, -4);
             if (!lib.FONT_NAME_PATTERN.test(name)) continue;
+            if (EMOJIS_OWNED_FONTS.has(name)) continue;
             f3sNames.add(name);
         }
 
@@ -548,6 +559,8 @@ app.post("/settings/fonts", lib.requireAdmin, fontsUpload, (req, res, next) => {
             errors.push(
                 "name must match pattern: lowercase alphanumeric with hyphens"
             );
+        } else if (EMOJIS_OWNED_FONTS.has(name)) {
+            errors.push("name is reserved by the Emojis tab");
         }
 
         const ttfFile = req.files && req.files.ttf ? req.files.ttf[0] : null;
@@ -586,6 +599,10 @@ app.post("/settings/fonts/:name/delete", lib.requireAdmin, (req, res, next) => {
         const name = req.params.name;
         if (!lib.FONT_NAME_PATTERN.test(name)) {
             res.status(400).json({ error: "invalid font name" });
+            return;
+        }
+        if (EMOJIS_OWNED_FONTS.has(name)) {
+            res.status(400).json({ error: "name is reserved by the Emojis tab" });
             return;
         }
 
