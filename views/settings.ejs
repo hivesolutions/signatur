@@ -21,6 +21,7 @@
                         <span class="settings-tab" data-tab="printing">Printing</span>
                         <span class="settings-tab" data-tab="features">Features</span>
                         <span class="settings-tab" data-tab="emojis">Emojis</span>
+                        <span class="settings-tab" data-tab="fonts">Fonts</span>
                         <span class="settings-tab" data-tab="diagnostics">Diagnostics</span>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="general">
@@ -216,9 +217,18 @@
                          data-label-uploading="Uploading…"
                          data-label-font-required="Pick a TTF or OTF file before uploading."
                          data-label-success="Cool emojis font uploaded successfully."
-                         data-label-network-error="The upload request failed. The server may be unreachable.">
+                         data-label-network-error="The upload request failed. The server may be unreachable."
+                         data-label-f3s-upload="Upload"
+                         data-label-f3s-uploading="Uploading…"
+                         data-label-f3s-required="Pick a F3S file before uploading."
+                         data-label-f3s-filename-required="Set a filename before uploading."
+                         data-label-f3s-success="Engraving glyph uploaded successfully."
+                         data-label-f3s-empty="No engraving glyphs installed yet."
+                         data-label-f3s-delete="Delete"
+                         data-label-f3s-deleted="Engraving glyph deleted."
+                         data-label-f3s-network-error="The request failed. The server may be unreachable.">
                         <div class="settings-group">
-                            <div class="settings-group-label">Cool Emojis</div>
+                            <div class="settings-group-label">Cool Emojis (display)</div>
                             <div class="emojis-hint">Replaces the bundled <code>coolemojis.ttf</code> display font and, optionally, the companion <code>coolemojis.mapping.json</code> with freshly uploaded payloads. The next viewport load picks the new glyphs up.</div>
                             <div class="emojis-field">
                                 <label class="emojis-field-label" for="emojis-font">Font (.ttf, .otf)</label>
@@ -232,6 +242,56 @@
                                 <button type="button" class="button button-start emojis-upload">Upload</button>
                             </div>
                             <div class="emojis-feedback" hidden></div>
+                        </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Engraving glyphs</div>
+                            <div class="emojis-hint">Uploads one <code>.f3s</code> file at a time into <code>static/fonts/f3s/emoji/</code>. The filename must match a value declared on the active <code>coolemojis.mapping.json</code> so the engraving payload can be referenced by character on the print payload.</div>
+                            <div class="emojis-field">
+                                <label class="emojis-field-label" for="emojis-f3s-name">Filename (e.g. <code>1101.coracao.f3s</code>)</label>
+                                <input class="emojis-field-input" id="emojis-f3s-name" type="text" placeholder="1101.coracao.f3s" />
+                            </div>
+                            <div class="emojis-field">
+                                <label class="emojis-field-label" for="emojis-f3s-file">Payload (.f3s)</label>
+                                <input class="emojis-field-input" id="emojis-f3s-file" type="file" accept=".f3s" />
+                            </div>
+                            <div class="emojis-actions">
+                                <button type="button" class="button button-start emojis-f3s-upload">Upload</button>
+                            </div>
+                            <div class="emojis-f3s-feedback" hidden></div>
+                            <div class="emojis-f3s-list"></div>
+                        </div>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="fonts" style="display: none;"
+                         data-label-upload="Upload"
+                         data-label-uploading="Uploading…"
+                         data-label-name-required="Set the font name before uploading."
+                         data-label-ttf-required="Pick a TTF or OTF file before uploading."
+                         data-label-f3s-required="Pick a F3S file before uploading."
+                         data-label-success="Font uploaded successfully."
+                         data-label-empty="No fonts installed yet."
+                         data-label-delete="Delete"
+                         data-label-deleted="Font deleted."
+                         data-label-network-error="The request failed. The server may be unreachable.">
+                        <div class="settings-group">
+                            <div class="settings-group-label">Fonts</div>
+                            <div class="fonts-hint">Uploads a text font as a paired <code>.ttf</code> (browser display) plus <code>.f3s</code> (engraving) payload. Both halves are required so the two surfaces stay in sync; the files land at <code>static/fonts/&lt;name&gt;.ttf</code> and <code>static/fonts/f3s/fonts/&lt;name&gt;.f3s</code>.</div>
+                            <div class="fonts-field">
+                                <label class="fonts-field-label" for="fonts-name">Name (e.g. <code>helvetica4l</code>)</label>
+                                <input class="fonts-field-input" id="fonts-name" type="text" placeholder="helvetica4l" />
+                            </div>
+                            <div class="fonts-field">
+                                <label class="fonts-field-label" for="fonts-ttf">Display (.ttf, .otf)</label>
+                                <input class="fonts-field-input" id="fonts-ttf" type="file" accept=".ttf,.otf" />
+                            </div>
+                            <div class="fonts-field">
+                                <label class="fonts-field-label" for="fonts-f3s">Engraving (.f3s)</label>
+                                <input class="fonts-field-input" id="fonts-f3s" type="file" accept=".f3s" />
+                            </div>
+                            <div class="fonts-actions">
+                                <button type="button" class="button button-start fonts-upload">Upload</button>
+                            </div>
+                            <div class="fonts-feedback" hidden></div>
+                            <div class="fonts-list"></div>
                         </div>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="diagnostics" style="display: none;"

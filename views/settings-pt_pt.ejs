@@ -21,6 +21,7 @@
                         <span class="settings-tab" data-tab="printing">Impressão</span>
                         <span class="settings-tab" data-tab="features">Funcionalidades</span>
                         <span class="settings-tab" data-tab="emojis">Emojis</span>
+                        <span class="settings-tab" data-tab="fonts">Letras</span>
                         <span class="settings-tab" data-tab="diagnostics">Diagnóstico</span>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="general">
@@ -216,9 +217,18 @@
                          data-label-uploading="A carregar…"
                          data-label-font-required="Escolha um ficheiro TTF ou OTF antes de carregar."
                          data-label-success="Letra Cool Emojis carregada com sucesso."
-                         data-label-network-error="O pedido de carregamento falhou. O servidor pode estar inacessível.">
+                         data-label-network-error="O pedido de carregamento falhou. O servidor pode estar inacessível."
+                         data-label-f3s-upload="Carregar"
+                         data-label-f3s-uploading="A carregar…"
+                         data-label-f3s-required="Escolha um ficheiro F3S antes de carregar."
+                         data-label-f3s-filename-required="Indique o nome do ficheiro antes de carregar."
+                         data-label-f3s-success="Glifo de gravação carregado com sucesso."
+                         data-label-f3s-empty="Sem glifos de gravação instalados."
+                         data-label-f3s-delete="Eliminar"
+                         data-label-f3s-deleted="Glifo de gravação eliminado."
+                         data-label-f3s-network-error="O pedido falhou. O servidor pode estar inacessível.">
                         <div class="settings-group">
-                            <div class="settings-group-label">Cool Emojis</div>
+                            <div class="settings-group-label">Cool Emojis (visualização)</div>
                             <div class="emojis-hint">Substitui a letra <code>coolemojis.ttf</code> incluída e, opcionalmente, o ficheiro <code>coolemojis.mapping.json</code> companheiro pelos ficheiros carregados. A próxima abertura do editor já mostra os novos glifos.</div>
                             <div class="emojis-field">
                                 <label class="emojis-field-label" for="emojis-font">Letra (.ttf, .otf)</label>
@@ -232,6 +242,56 @@
                                 <button type="button" class="button button-start emojis-upload">Carregar</button>
                             </div>
                             <div class="emojis-feedback" hidden></div>
+                        </div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Glifos de gravação</div>
+                            <div class="emojis-hint">Carrega um ficheiro <code>.f3s</code> de cada vez para <code>static/fonts/f3s/emoji/</code>. O nome do ficheiro deve corresponder a um valor declarado no <code>coolemojis.mapping.json</code> activo para que o payload de gravação possa ser referenciado por carácter no envio de impressão.</div>
+                            <div class="emojis-field">
+                                <label class="emojis-field-label" for="emojis-f3s-name">Nome do ficheiro (ex. <code>1101.coracao.f3s</code>)</label>
+                                <input class="emojis-field-input" id="emojis-f3s-name" type="text" placeholder="1101.coracao.f3s" />
+                            </div>
+                            <div class="emojis-field">
+                                <label class="emojis-field-label" for="emojis-f3s-file">Payload (.f3s)</label>
+                                <input class="emojis-field-input" id="emojis-f3s-file" type="file" accept=".f3s" />
+                            </div>
+                            <div class="emojis-actions">
+                                <button type="button" class="button button-start emojis-f3s-upload">Carregar</button>
+                            </div>
+                            <div class="emojis-f3s-feedback" hidden></div>
+                            <div class="emojis-f3s-list"></div>
+                        </div>
+                    </div>
+                    <div class="settings-container settings-tab-content" data-tab="fonts" style="display: none;"
+                         data-label-upload="Carregar"
+                         data-label-uploading="A carregar…"
+                         data-label-name-required="Indique o nome da letra antes de carregar."
+                         data-label-ttf-required="Escolha um ficheiro TTF ou OTF antes de carregar."
+                         data-label-f3s-required="Escolha um ficheiro F3S antes de carregar."
+                         data-label-success="Letra carregada com sucesso."
+                         data-label-empty="Sem letras instaladas."
+                         data-label-delete="Eliminar"
+                         data-label-deleted="Letra eliminada."
+                         data-label-network-error="O pedido falhou. O servidor pode estar inacessível.">
+                        <div class="settings-group">
+                            <div class="settings-group-label">Letras</div>
+                            <div class="fonts-hint">Carrega uma letra como um par <code>.ttf</code> (visualização no editor) mais <code>.f3s</code> (gravação). As duas metades são obrigatórias para manter as duas superfícies em sincronia; os ficheiros são guardados em <code>static/fonts/&lt;nome&gt;.ttf</code> e <code>static/fonts/f3s/fonts/&lt;nome&gt;.f3s</code>.</div>
+                            <div class="fonts-field">
+                                <label class="fonts-field-label" for="fonts-name">Nome (ex. <code>helvetica4l</code>)</label>
+                                <input class="fonts-field-input" id="fonts-name" type="text" placeholder="helvetica4l" />
+                            </div>
+                            <div class="fonts-field">
+                                <label class="fonts-field-label" for="fonts-ttf">Visualização (.ttf, .otf)</label>
+                                <input class="fonts-field-input" id="fonts-ttf" type="file" accept=".ttf,.otf" />
+                            </div>
+                            <div class="fonts-field">
+                                <label class="fonts-field-label" for="fonts-f3s">Gravação (.f3s)</label>
+                                <input class="fonts-field-input" id="fonts-f3s" type="file" accept=".f3s" />
+                            </div>
+                            <div class="fonts-actions">
+                                <button type="button" class="button button-start fonts-upload">Carregar</button>
+                            </div>
+                            <div class="fonts-feedback" hidden></div>
+                            <div class="fonts-list"></div>
                         </div>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="diagnostics" style="display: none;"

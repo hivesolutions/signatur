@@ -181,13 +181,57 @@ The same configuration can also be edited through the `Configure` modal accessib
 
 ### Adding New Emoji
 
-To add a new emoji to the system the following steps should be followed:
+To add a new emoji to the system, sign in as an admin and use the `Emojis` tab on `/settings`:
 
-1. Determine the right file name for the new emoji font file (e.g. `coolemojis.ttf` for laser and `coolemojisp.ttf` for pantogrpah)
-2. Place the new font file in the `static/fonts` directory
-3. Add the new emoji "characters" to the `emoji` array in the `viewport.ejs` file
-4. Test the using the local machine `yarn && yarn dev`
-5. Release a new version of the system (Docker Image)
+1. Upload the replacement `coolemojis.ttf` (display) and, when the catalog of recognised characters changes, the companion `coolemojis.mapping.json`.
+2. Upload the matching engraving glyph as a `.f3s` file in the `Engraving glyphs` section. The filename must match a value declared on the mapping (e.g. `1101.coracao.f3s`).
+3. The next time the engraving viewport is opened the new glyphs are picked up automatically; shipping the `.f3s` payload to colony print on every print job through the `extra_fonts` field of the gravo print payload is tracked in #56.
+
+The admin UI replaces the previous manual file drop. The on disk layout it owns is documented in [Font Management](#font-management).
+
+### Adding New Fonts
+
+To add a new text font (Helvetica, Roman, Script, etc.) to the system, sign in as an admin and use the `Fonts` tab on `/settings`:
+
+1. Pick a lowercase hyphenated font name (e.g. `helvetica4l`).
+2. Upload both halves together: the display `.ttf` (browser font) and the engraving `.f3s` (engraving machine font). Both halves are required so the two surfaces stay in sync.
+3. The `Fonts` tab lists every installed font with both halves status; use the per row delete button to remove stale entries.
+
+## Font Management
+
+The on disk font catalog owned by the admin UI lives under `static/fonts/`:
+
+```text
+static/fonts/
+  coolemojis.ttf                  display, browser (Emojis tab)
+  coolemojis.mapping.json         display to engraving bridge (Emojis tab)
+  helvetica4l.ttf                 display, browser (Fonts tab)
+  ...
+  f3s/
+    emoji/                        engraving glyphs (Emojis tab)
+      1101.coracao.f3s
+      ...
+    fonts/                        engraving text fonts (Fonts tab)
+      helvetica4l.f3s
+      ...
+```
+
+Filename invariants are validated server side:
+
+* emoji `.f3s` files match `^[a-z0-9]+(?:[-.][a-z0-9]+)*\.f3s$` so the existing `1101.coracao` dotted form keeps working alongside a hyphenated form
+* text font names match `^[a-z0-9]+(?:-[a-z0-9]+)*$` so both halves land at the canonical `<name>.ttf` and `<name>.f3s` paths
+
+The following admin gated HTTP endpoints back the UI:
+
+| Method | Path                                       | Notes                                                                                         |
+| ------ | ------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `POST` | `/settings/emojis`                         | Replace the Cool Emojis `.ttf` and, optionally, the companion mapping JSON.                   |
+| `GET`  | `/settings/emojis/f3s`                     | List installed emoji engraving glyphs as `{ fonts: [{ name, size, mtime }, ...] }`.           |
+| `POST` | `/settings/emojis/f3s`                     | Upload one emoji engraving glyph; form fields are `filename` plus the `file` payload.         |
+| `POST` | `/settings/emojis/f3s/:filename/delete`    | Delete one emoji engraving glyph by filename.                                                 |
+| `GET`  | `/settings/fonts`                          | List installed text fonts as `{ fonts: [{ name, ttf, f3s }, ...] }` rows.                     |
+| `POST` | `/settings/fonts`                          | Upload one paired text font; form fields are `name` plus the `ttf` and `f3s` file payloads.   |
+| `POST` | `/settings/fonts/:name/delete`             | Delete both halves of a text font by canonical name.                                          |
 
 ## License
 
