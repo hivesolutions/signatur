@@ -30,7 +30,7 @@ Filenames are validated server side so that arbitrary paths cannot be crafted th
 
 | Surface         | Pattern                                  | Notes                                                                                                |
 | --------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| emoji `.f3s`    | `^[a-z0-9]+(?:[-.][a-z0-9]+)*\.f3s$`     | Lowercase alphanumeric segments separated by hyphens or dots so the `1101.coracao` form keeps working.|
+| emoji `.f3s`    | `^[a-z0-9]+(?:[-.][a-z0-9]+)*\.f3s$`     | Lowercase alphanumeric segments separated by hyphens or dots so `1101.coracao` keeps working.        |
 | text font name  | `^[a-z0-9]+(?:-[a-z0-9]+)*$`             | Lowercase alphanumeric segments separated by hyphens, no leading or trailing hyphen.                 |
 
 ## Mapping JSON
@@ -54,7 +54,7 @@ The optional `coolemojis.mapping.json` payload is a flat object mapping each dis
 
 ## Admin endpoints
 
-Every endpoint below is gated by `lib.requireAdmin`.
+Every admin endpoint below is gated by `lib.requireAdmin`. The resolver at the bottom of the table is callable by any signed in user so the print confirm modal can attach the engraving payloads to the print envelope without elevating privileges.
 
 | Method | Path                                       | Notes                                                                                       |
 | ------ | ------------------------------------------ | ------------------------------------------------------------------------------------------- |
@@ -65,7 +65,8 @@ Every endpoint below is gated by `lib.requireAdmin`.
 | `GET`  | `/settings/fonts`                          | List installed text fonts as `{ fonts: [{ name, ttf, f3s }, ...] }` rows.                   |
 | `POST` | `/settings/fonts`                          | Upload one paired text font; form fields are `name` plus the `ttf` and `f3s` file payloads. |
 | `POST` | `/settings/fonts/:name/delete`             | Delete both halves of a text font by canonical name.                                        |
+| `GET`  | `/settings/fonts/resolve?names=a,b,c`      | Resolve font names into a `{ fonts: { name: base64 } }` engraving payload map.              |
 
 ## Wire format with colony print
 
-The engraving payloads uploaded through the admin UI are hosted under `/static/fonts/...` and consumed in the viewport. Shipping them inline to colony print on every print job, so the engraving machine can install them per job through gravo pilot's [Extra Fonts](https://github.com/hivesolutions/gravo-pilot/blob/master/README.md#extra-fonts) kwarg, is tracked as a follow up in #56 against the [Gravo Print Payload](https://github.com/hivesolutions/colony-print/blob/master/README.md#gravo-print-payload) section of colony print's README.
+The engraving payloads uploaded through the admin UI are hosted under `/static/fonts/...` and consumed in the viewport. On every print job the confirm modal walks the multifont array, rewrites the `Cool Emojis` entries into their underlying engraving glyph names through `coolemojis.mapping.json` and then calls `GET /settings/fonts/resolve` to fetch the matching `.f3s` bytes. The resulting `{ name: base64 }` map travels inline on the gravo print payload as the `extra_fonts` envelope. See the [Gravo Print Payload](https://github.com/hivesolutions/colony-print/blob/master/README.md#gravo-print-payload) section in colony print's README for the field shape, and the gravo pilot [Extra Fonts](https://github.com/hivesolutions/gravo-pilot/blob/master/README.md#extra-fonts) section for the per print job install behaviour.

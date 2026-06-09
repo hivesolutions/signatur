@@ -268,6 +268,35 @@ describe("Smoke", function() {
         });
     });
 
+    describe("#settingsFontsResolve()", function() {
+        it("should return an empty fonts map when no names are requested", async () => {
+            const response = await request("GET", "/settings/fonts/resolve");
+            assert.strictEqual(response.status, 200);
+            const payload = JSON.parse(response.body);
+            assert.deepStrictEqual(payload, { fonts: {} });
+        });
+
+        it("should silently drop names that do not resolve to a payload", async () => {
+            const response = await request(
+                "GET",
+                "/settings/fonts/resolve?names=does-not-exist,nope"
+            );
+            assert.strictEqual(response.status, 200);
+            const payload = JSON.parse(response.body);
+            assert.deepStrictEqual(payload, { fonts: {} });
+        });
+
+        it("should silently drop names that fail the filename pattern", async () => {
+            const response = await request(
+                "GET",
+                "/settings/fonts/resolve?names=Invalid%20Name,..%2Fevil"
+            );
+            assert.strictEqual(response.status, 200);
+            const payload = JSON.parse(response.body);
+            assert.deepStrictEqual(payload, { fonts: {} });
+        });
+    });
+
     describe("#profiles()", function() {
         it("should return the profiles catalog as JSON", async () => {
             const response = await request("GET", "/profiles");
