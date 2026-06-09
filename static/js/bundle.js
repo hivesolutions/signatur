@@ -1865,15 +1865,22 @@ const countLines = function(text) {
     // fetches the Cool Emojis display to engraving mapping JSON
     // from the public static directory, returning an empty object
     // when the payload cannot be read so the caller can keep
-    // walking the multifont entries without a rewrite
+    // walking the multifont entries without a rewrite; the cached
+    // promise is reset on any failure so a transient error does
+    // not permanently disable Cool Emojis rewriting for the rest
+    // of the page lifetime, leaving a later confirm free to retry
     const loadCoolemojisMapping = function() {
         if (coolemojisMappingPromise == null) {
             coolemojisMappingPromise = (async function() {
                 try {
                     const response = await fetch("/static/fonts/coolemojis.mapping.json");
-                    if (response.status !== 200) return {};
+                    if (response.status !== 200) {
+                        coolemojisMappingPromise = null;
+                        return {};
+                    }
                     return await response.json();
                 } catch (error) {
+                    coolemojisMappingPromise = null;
                     return {};
                 }
             })();
@@ -1883,9 +1890,12 @@ const countLines = function(text) {
 
     // rewrites the multifont entries that target the `Cool Emojis`
     // display font into the underlying per glyph engraving font
-    // referenced by the Cool Emojis mapping, dropping entries that
-    // have no mapping so the print payload only includes glyphs
-    // that the engraving side can actually render
+    // referenced by the Cool Emojis mapping, mirroring the wire
+    // format produced by `multifontText` in `static/js/util.js` so
+    // every code path lands on the same payload shape: mapped
+    // glyphs are addressed at the `a` character on the engraving
+    // side, unmapped spaces fall back to the default text font and
+    // any other unmapped character is silently dropped
     const rewriteCoolemojisMultifont = function(multifont, mapping) {
         const result = [];
         for (const entry of multifont) {
@@ -1895,14 +1905,12 @@ const countLines = function(text) {
             }
             const fontSpec = entry[0];
             const char = entry[1];
-            if (fontSpec === "Cool Emojis" && mapping[char]) {
-                result.push([mapping[char], char]);
-                continue;
-            }
             if (fontSpec === "Cool Emojis") {
-                // silently ignores unmapped characters so the rest
-                // of the multifont keeps engraving, matching the
-                // behaviour the operator already sees today
+                if (mapping[char]) {
+                    result.push([mapping[char], "a"]);
+                } else if (char === " ") {
+                    result.push(["HELVETICA 4L", " "]);
+                }
                 continue;
             }
             result.push(entry);

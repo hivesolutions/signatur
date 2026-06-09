@@ -640,7 +640,8 @@ app.get("/settings/fonts/resolve", (req, res, next) => {
         const requested = names
             .split(",")
             .map(value => value.trim())
-            .filter(Boolean);
+            .filter(Boolean)
+            .slice(0, 128);
 
         // resolves each requested name from either the emoji or the
         // text font subdirectory, base64 encoding the payload that

@@ -223,7 +223,7 @@ Filename invariants are validated server side:
 * emoji `.f3s` files match `^[a-z0-9]+(?:[-.][a-z0-9]+)*\.f3s$` so the existing `1101.coracao` dotted form keeps working alongside a hyphenated form
 * text font names match `^[a-z0-9]+(?:-[a-z0-9]+)*$` so both halves land at the canonical `<name>.ttf` and `<name>.f3s` paths
 
-The following admin gated HTTP endpoints back the UI:
+The following HTTP endpoints back the UI. Every entry is gated by `lib.requireAdmin` except the resolver at the bottom, which is callable by any signed in user so the print confirm modal can attach the engraving payloads to the print envelope without elevating privileges:
 
 | Method | Path                                       | Notes                                                                                         |
 | ------ | ------------------------------------------ | --------------------------------------------------------------------------------------------- |
@@ -234,7 +234,7 @@ The following admin gated HTTP endpoints back the UI:
 | `GET`  | `/settings/fonts`                          | List installed text fonts as `{ fonts: [{ name, ttf, f3s }, ...] }` rows.                     |
 | `POST` | `/settings/fonts`                          | Upload one paired text font; form fields are `name` plus the `ttf` and `f3s` file payloads.   |
 | `POST` | `/settings/fonts/:name/delete`             | Delete both halves of a text font by canonical name.                                          |
-| `GET`  | `/settings/fonts/resolve?names=a,b,c`      | Resolve font names into a `{ name: base64 }` engraving payload map.                           |
+| `GET`  | `/settings/fonts/resolve?names=a,b,c`      | Resolve font names into a `{ fonts: { name: base64 } }` engraving payload map.                |
 
 ## License
 
