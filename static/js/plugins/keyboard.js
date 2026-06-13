@@ -74,6 +74,11 @@
          * Shows the accent popup above the pressed key with
          * the available accented character variants.
          *
+         * The popup is appended to the document body (instead of the
+         * keyboard container) and positioned with fixed coordinates so
+         * it is never clipped by the container's overflow handling, which
+         * would otherwise hide it for keys on the top keyboard row.
+         *
          * @param {Element} context The keyboard container context.
          * @param {Element} element The key element that was long pressed.
          * @param {String} accents Comma-separated list of accented characters.
@@ -103,13 +108,14 @@
 
             popup.append(arrow);
 
-            const offset = element.offset();
-            const containerOffset = context.offset();
-            const left = offset.left - containerOffset.left + element.outerWidth() / 2;
-            const top = offset.top - containerOffset.top;
+            // positions the popup using viewport coordinates and anchors it
+            // to the body so it escapes the keyboard container's clipping
+            const rect = element[0].getBoundingClientRect();
+            const left = rect.left + rect.width / 2;
+            const top = rect.top;
             popup.css({ left: left + "px", top: top + "px" });
 
-            context.append(popup);
+            body.append(popup);
 
             // dismisses the popup when clicking outside of it
             // by registering a one-time click handler on the document
