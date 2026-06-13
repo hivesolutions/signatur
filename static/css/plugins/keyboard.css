@@ -244,7 +244,7 @@ body.ldj .viewport > .main-container > .keyboard-container:not(.lowercase) > .ch
     color: #4b3a7a;
 }
 
-.viewport > .main-container > .keyboard-container > .accent-popup {
+.accent-popup {
     background-color: #ffffff;
     border: none;
     border-radius: 14px 14px 14px 14px;
@@ -263,17 +263,17 @@ body.ldj .viewport > .main-container > .keyboard-container:not(.lowercase) > .ch
     gap: 4px;
     margin-top: -8px;
     padding: 6px 6px 6px 6px;
-    position: absolute;
+    position: fixed;
     transform: translate(-50%, -100%);
     -o-transform: translate(-50%, -100%);
     -ms-transform: translate(-50%, -100%);
     -moz-transform: translate(-50%, -100%);
     -khtml-transform: translate(-50%, -100%);
     -webkit-transform: translate(-50%, -100%);
-    z-index: 100;
+    z-index: 1000;
 }
 
-.viewport > .main-container > .keyboard-container > .accent-popup > .accent-option {
+.accent-popup > .accent-option {
     background-color: #fafbfd;
     border-radius: 10px 10px 10px 10px;
     -o-border-radius: 10px 10px 10px 10px;
@@ -297,17 +297,17 @@ body.ldj .viewport > .main-container > .keyboard-container:not(.lowercase) > .ch
     -webkit-transition: background-color 0.12s ease, color 0.12s ease;
 }
 
-.viewport > .main-container > .keyboard-container > .accent-popup > .accent-option:hover {
+.accent-popup > .accent-option:hover {
     background-color: rgba(24, 24, 24, 1.0);
     color: #ffffff;
 }
 
-body.ldj .viewport > .main-container > .keyboard-container > .accent-popup > .accent-option:hover {
+body.ldj .accent-popup > .accent-option:hover {
     background-color: #9678d3;
     color: #ffffff;
 }
 
-.viewport > .main-container > .keyboard-container > .accent-popup > .accent-popup-arrow {
+.accent-popup > .accent-popup-arrow {
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
     border-top: 7px solid #ffffff;
