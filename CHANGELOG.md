@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [1.2.1] - 2026-06-14
+
+### Fixed
+
 * Accent picker for top row keyboard keys no longer appears hidden behind other elements when long pressing
 
 ## [1.2.0] - 2026-06-09
