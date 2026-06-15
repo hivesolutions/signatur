@@ -58,13 +58,21 @@
 
                 const halves = jQuery("<div></div>");
                 halves.addClass("fonts-row-halves");
-                const ttf = jQuery("<span></span>");
+                const ttf = font.ttf
+                    ? jQuery("<a></a>")
+                        .attr("href", "/settings/fonts/" + encodeURIComponent(font.name) + "/ttf")
+                        .attr("download", font.name + ".ttf")
+                    : jQuery("<span></span>");
                 ttf.addClass("fonts-row-half");
                 ttf.attr("data-kind", "ttf");
                 ttf.attr("data-present", font.ttf ? "1" : "0");
                 ttf.text(font.ttf ? "TTF " + formatSize(font.ttf.size) : "TTF —");
                 halves.append(ttf);
-                const f3s = jQuery("<span></span>");
+                const f3s = font.f3s
+                    ? jQuery("<a></a>")
+                        .attr("href", "/settings/fonts/" + encodeURIComponent(font.name) + "/f3s")
+                        .attr("download", font.name + ".f3s")
+                    : jQuery("<span></span>");
                 f3s.addClass("fonts-row-half");
                 f3s.attr("data-kind", "f3s");
                 f3s.attr("data-present", font.f3s ? "1" : "0");

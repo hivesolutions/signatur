@@ -308,6 +308,51 @@ describe("Smoke", function() {
         });
     });
 
+    describe("#settingsEmojisFont()", function() {
+        it("should stream the font with the download filename", async () => {
+            const response = await request("GET", "/settings/emojis/font");
+            assert.strictEqual(response.status, 200);
+            assert.strictEqual(response.headers["content-type"], "font/ttf");
+            assert.ok(
+                (response.headers["content-disposition"] || "").includes("coolemojis.ttf")
+            );
+        });
+    });
+
+    describe("#settingsFontsTtf()", function() {
+        it("should stream the ttf with the download filename", async () => {
+            const response = await request("GET", "/settings/fonts/helvetica4l/ttf");
+            assert.strictEqual(response.status, 200);
+            assert.strictEqual(response.headers["content-type"], "font/ttf");
+            assert.ok(
+                (response.headers["content-disposition"] || "").includes("helvetica4l.ttf")
+            );
+        });
+
+        it("should reject an invalid font name", async () => {
+            const response = await request("GET", "/settings/fonts/Invalid%20Name/ttf");
+            assert.strictEqual(response.status, 400);
+            const payload = JSON.parse(response.body);
+            assert.strictEqual(payload.error, "invalid font name");
+        });
+    });
+
+    describe("#settingsFontsF3s()", function() {
+        it("should return a not found for a font without an engraving half", async () => {
+            const response = await request("GET", "/settings/fonts/helvetica4l/f3s");
+            assert.strictEqual(response.status, 404);
+            const payload = JSON.parse(response.body);
+            assert.strictEqual(payload.error, "f3s not found");
+        });
+
+        it("should reject an invalid font name", async () => {
+            const response = await request("GET", "/settings/fonts/Invalid%20Name/f3s");
+            assert.strictEqual(response.status, 400);
+            const payload = JSON.parse(response.body);
+            assert.strictEqual(payload.error, "invalid font name");
+        });
+    });
+
     describe("#profiles()", function() {
         it("should return the profiles catalog as JSON", async () => {
             const response = await request("GET", "/profiles");

@@ -417,6 +417,32 @@ app.get("/settings/emojis/mapping", lib.requireAdmin, (req, res, next) => {
     clojure().catch(next);
 });
 
+app.get("/settings/emojis/font", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        // serves the current display font as an attachment so the
+        // operator can pull the active TTF or OTF down, inspect or
+        // tweak it and upload it back through the same tab
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const fontPath = path.join(fontsDirectory, "coolemojis.ttf");
+        let buffer;
+        try {
+            buffer = await fs.readFile(fontPath);
+        } catch (err) {
+            // treats only the missing file as a 404 and rethrows every
+            // other error (permissions, transient IO) so the existing
+            // error middleware can surface and log it as a 500 instead
+            // of masking a real operational problem behind not found
+            if (err.code !== "ENOENT") throw err;
+            res.status(404).json({ error: "font not found" });
+            return;
+        }
+        res.setHeader("Content-Type", "font/ttf");
+        res.setHeader("Content-Disposition", "attachment; filename=\"coolemojis.ttf\"");
+        res.send(buffer);
+    }
+    clojure().catch(next);
+});
+
 app.get("/settings/emojis/f3s", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const directoryPath = path.join(__dirname, "static", "fonts", "f3s", "emoji");
@@ -656,6 +682,70 @@ app.post("/settings/fonts/:name/delete", lib.requireAdmin, (req, res, next) => {
         }
 
         res.json({ status: "ok" });
+    }
+    clojure().catch(next);
+});
+
+app.get("/settings/fonts/:name/ttf", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        const name = req.params.name;
+        if (!lib.FONT_NAME_PATTERN.test(name)) {
+            res.status(400).json({ error: "invalid font name" });
+            return;
+        }
+
+        // serves the display half as an attachment so the operator
+        // can pull the active TTF down for a font, naming the file
+        // after the canonical `<name>.ttf` pair on disk
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const fontPath = path.join(fontsDirectory, `${name}.ttf`);
+        let buffer;
+        try {
+            buffer = await fs.readFile(fontPath);
+        } catch (err) {
+            // treats only the missing file as a 404 and rethrows every
+            // other error (permissions, transient IO) so the existing
+            // error middleware can surface and log it as a 500 instead
+            // of masking a real operational problem behind not found
+            if (err.code !== "ENOENT") throw err;
+            res.status(404).json({ error: "ttf not found" });
+            return;
+        }
+        res.setHeader("Content-Type", "font/ttf");
+        res.setHeader("Content-Disposition", `attachment; filename="${name}.ttf"`);
+        res.send(buffer);
+    }
+    clojure().catch(next);
+});
+
+app.get("/settings/fonts/:name/f3s", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        const name = req.params.name;
+        if (!lib.FONT_NAME_PATTERN.test(name)) {
+            res.status(400).json({ error: "invalid font name" });
+            return;
+        }
+
+        // serves the engraving half as an attachment so the operator
+        // can pull the active F3S down for a font, naming the file
+        // after the canonical `<name>.f3s` pair on disk
+        const f3sDirectory = path.join(__dirname, "static", "fonts", "f3s", "fonts");
+        const f3sPath = path.join(f3sDirectory, `${name}.f3s`);
+        let buffer;
+        try {
+            buffer = await fs.readFile(f3sPath);
+        } catch (err) {
+            // treats only the missing file as a 404 and rethrows every
+            // other error (permissions, transient IO) so the existing
+            // error middleware can surface and log it as a 500 instead
+            // of masking a real operational problem behind not found
+            if (err.code !== "ENOENT") throw err;
+            res.status(404).json({ error: "f3s not found" });
+            return;
+        }
+        res.setHeader("Content-Type", "application/octet-stream");
+        res.setHeader("Content-Disposition", `attachment; filename="${name}.f3s"`);
+        res.send(buffer);
     }
     clojure().catch(next);
 });

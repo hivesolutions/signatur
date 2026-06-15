@@ -117,6 +117,16 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     color: #c0c4cd;
 }
 
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .fonts-list > .fonts-row > .fonts-row-halves > a.fonts-row-half {
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .fonts-list > .fonts-row > .fonts-row-halves > a.fonts-row-half:hover {
+    text-decoration: underline;
+}
+
 .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .fonts-list > .fonts-row > .fonts-delete {
     min-width: 80px;
 }
