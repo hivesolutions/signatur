@@ -3701,6 +3701,26 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     margin: 0px 0px 16px 0px;
 }
 
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-actions > .button.button-ghost {
+    background-color: #f4f5f8;
+    border: none;
+    color: #4b5260;
+    text-align: center;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-actions > .button.button-ghost:hover {
+    background-color: #e7eaf0;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-actions > .button.button-ghost {
+    border-color: #ece4f5;
+    color: #6b5a8a;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-actions > .button.button-ghost:hover {
+    background-color: #f5f0fa;
+}
+
 .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .emojis-feedback {
     background-color: #f5f6f8;
     border-radius: 12px;
@@ -4577,10 +4597,12 @@ body.ldj .viewport > .main-container > .emojisp-container > .emojis-tabs > .emoj
 .viewport > .main-container > .emojis-container[data-active="people"] > .char[data-category]:not([data-category="people"]),
 .viewport > .main-container > .emojis-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]),
 .viewport > .main-container > .emojis-container[data-active="phrases"] > .char[data-category]:not([data-category="phrases"]),
+.viewport > .main-container > .emojis-container[data-active="other"] > .char[data-category]:not([data-category="other"]),
 .viewport > .main-container > .emojisp-container[data-active="symbols"] > .char[data-category]:not([data-category="symbols"]),
 .viewport > .main-container > .emojisp-container[data-active="nature"] > .char[data-category]:not([data-category="nature"]),
 .viewport > .main-container > .emojisp-container[data-active="people"] > .char[data-category]:not([data-category="people"]),
-.viewport > .main-container > .emojisp-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]) {
+.viewport > .main-container > .emojisp-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]),
+.viewport > .main-container > .emojisp-container[data-active="other"] > .char[data-category]:not([data-category="other"]) {
     display: none;
 }
 

@@ -129,12 +129,55 @@ describe("Emojis", function() {
             assert.deepStrictEqual(errors, ["mapping must be a plain object"]);
         });
 
-        it("should reject entries with non-string values", () => {
+        it("should validate the extended object form", () => {
+            const errors = lib.validateEmojisMapping(JSON.stringify({
+                A: { name: "1101.coracao", category: "nature", order: 10 },
+                B: "1102.estrela"
+            }));
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate the object form without category or order", () => {
+            const errors = lib.validateEmojisMapping(JSON.stringify({
+                A: { name: "1101.coracao" }
+            }));
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject entries that are neither string nor object", () => {
             const errors = lib.validateEmojisMapping(JSON.stringify({
                 A: "1101.coracao",
                 B: 42
             }));
-            assert.deepStrictEqual(errors, ["mapping entry \"B\" must be a string"]);
+            assert.deepStrictEqual(errors, ["mapping entry \"B\" must be a string or an object"]);
+        });
+
+        it("should reject an array entry", () => {
+            const errors = lib.validateEmojisMapping(JSON.stringify({
+                A: ["1101.coracao"]
+            }));
+            assert.deepStrictEqual(errors, ["mapping entry \"A\" must be a string or an object"]);
+        });
+
+        it("should reject an object entry without a string name", () => {
+            const errors = lib.validateEmojisMapping(JSON.stringify({
+                A: { category: "nature" }
+            }));
+            assert.deepStrictEqual(errors, ["mapping entry \"A\" must have a string \"name\""]);
+        });
+
+        it("should reject an object entry with a non-string category", () => {
+            const errors = lib.validateEmojisMapping(JSON.stringify({
+                A: { name: "1101.coracao", category: 7 }
+            }));
+            assert.deepStrictEqual(errors, ["mapping entry \"A\" must have a string \"category\""]);
+        });
+
+        it("should reject an object entry with a non-numeric order", () => {
+            const errors = lib.validateEmojisMapping(JSON.stringify({
+                A: { name: "1101.coracao", order: "10" }
+            }));
+            assert.deepStrictEqual(errors, ["mapping entry \"A\" must have a numeric \"order\""]);
         });
     });
 });

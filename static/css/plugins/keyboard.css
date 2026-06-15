@@ -143,10 +143,12 @@ body.ldj .viewport > .main-container > .emojisp-container > .emojis-tabs > .emoj
 .viewport > .main-container > .emojis-container[data-active="people"] > .char[data-category]:not([data-category="people"]),
 .viewport > .main-container > .emojis-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]),
 .viewport > .main-container > .emojis-container[data-active="phrases"] > .char[data-category]:not([data-category="phrases"]),
+.viewport > .main-container > .emojis-container[data-active="other"] > .char[data-category]:not([data-category="other"]),
 .viewport > .main-container > .emojisp-container[data-active="symbols"] > .char[data-category]:not([data-category="symbols"]),
 .viewport > .main-container > .emojisp-container[data-active="nature"] > .char[data-category]:not([data-category="nature"]),
 .viewport > .main-container > .emojisp-container[data-active="people"] > .char[data-category]:not([data-category="people"]),
-.viewport > .main-container > .emojisp-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]) {
+.viewport > .main-container > .emojisp-container[data-active="pop"] > .char[data-category]:not([data-category="pop"]),
+.viewport > .main-container > .emojisp-container[data-active="other"] > .char[data-category]:not([data-category="other"]) {
     display: none;
 }
 

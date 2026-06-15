@@ -391,6 +391,27 @@ app.post("/settings/emojis", lib.requireAdmin, emojisUpload, (req, res, next) =>
     clojure().catch(next);
 });
 
+app.get("/settings/emojis/mapping", lib.requireAdmin, (req, res, next) => {
+    async function clojure() {
+        // serves the current mapping body as an attachment so the
+        // operator can pull the active layout down, edit the category
+        // and order metadata and upload it back through the same tab
+        const fontsDirectory = path.join(__dirname, "static", "fonts");
+        const mappingPath = path.join(fontsDirectory, "coolemojis.mapping.json");
+        let buffer;
+        try {
+            buffer = await fs.readFile(mappingPath);
+        } catch (err) {
+            res.status(404).json({ error: "mapping not found" });
+            return;
+        }
+        res.setHeader("Content-Type", "application/json");
+        res.setHeader("Content-Disposition", "attachment; filename=\"coolemojis.mapping.json\"");
+        res.send(buffer);
+    }
+    clojure().catch(next);
+});
+
 app.get("/settings/emojis/f3s", lib.requireAdmin, (req, res, next) => {
     async function clojure() {
         const directoryPath = path.join(__dirname, "static", "fonts", "f3s", "emoji");

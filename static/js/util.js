@@ -97,7 +97,8 @@ const multifontText = function(text, emojiMapping) {
             continue;
         }
         if (font === "Cool Emojis") {
-            const mapped = emojiMapping[value];
+            const entry = emojiMapping[value];
+            const mapped = typeof entry === "object" && entry !== null ? entry.name : entry;
             if (mapped) {
                 result.push([mapped, "a"]);
             } else if (value === " ") {

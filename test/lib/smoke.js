@@ -297,6 +297,17 @@ describe("Smoke", function() {
         });
     });
 
+    describe("#settingsEmojisMapping()", function() {
+        it("should stream the mapping with the download filename", async () => {
+            const response = await request("GET", "/settings/emojis/mapping");
+            assert.strictEqual(response.status, 200);
+            assert.strictEqual(response.headers["content-type"], "application/json");
+            assert.ok(
+                (response.headers["content-disposition"] || "").includes("coolemojis.mapping.json")
+            );
+        });
+    });
+
     describe("#profiles()", function() {
         it("should return the profiles catalog as JSON", async () => {
             const response = await request("GET", "/profiles");
