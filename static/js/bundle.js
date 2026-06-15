@@ -6044,36 +6044,6 @@ jQuery(document).ready(function() {
             if (onComplete) onComplete();
         }, 250);
     };
-    const viewportContainer = jQuery(".viewer-container");
-    const calligraphyContainer = jQuery(".calligraphy-container");
-    const calligraphyMode = jQuery(".calligraphy-mode");
-    const calligraphyModeContainer = jQuery(".calligraphy-mode-container");
-    const calligraphyControls = jQuery(".calligraphy-controls");
-    const calligraphyUndo = jQuery(".calligraphy-undo");
-    const calligraphyClear = jQuery(".calligraphy-clear");
-    const calligraphyThicknessContainer = jQuery(".calligraphy-thickness-container");
-    const calligraphyThicknessRange = jQuery(".calligraphy-thickness-range");
-    const calligraphyThicknessPresets = jQuery(".calligraphy-thickness-preset");
-    const calligraphyThicknessBubble = jQuery(".calligraphy-thickness-bubble");
-    const formConsole = jQuery(".form-console");
-    const inputViewport = jQuery(".input-viewport");
-    const signature = jQuery(".signature");
-    const modalOverlayError = jQuery(".modal-overlay-error");
-    const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
-    const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
-    const modalOverlayPrintJob = jQuery(".modal-overlay-print-job");
-    const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
-    const inspirationPanel = jQuery(".inspiration-panel");
-    const toast = jQuery(".toast");
-
-    // gathers the values for the form related fields so that the
-    // typical form validations and changes may be performed
-    const technologyRadios = jQuery("input[name=technology]");
-    const technologySelected = jQuery("input[name=technology]:checked");
-    const elementsE = jQuery("[id=elements]");
-    const locationE = jQuery("[id=location]");
-    const elementsChild = jQuery("> *", elementsE);
-    const locationChild = jQuery("> *", locationE);
 
     // the reserved category that gathers every mapping entry left
     // without an explicit one so uncategorized glyphs surface in
@@ -6171,6 +6141,37 @@ jQuery(document).ready(function() {
             key.insertBefore(anchor);
         }
     };
+
+    const viewportContainer = jQuery(".viewer-container");
+    const calligraphyContainer = jQuery(".calligraphy-container");
+    const calligraphyMode = jQuery(".calligraphy-mode");
+    const calligraphyModeContainer = jQuery(".calligraphy-mode-container");
+    const calligraphyControls = jQuery(".calligraphy-controls");
+    const calligraphyUndo = jQuery(".calligraphy-undo");
+    const calligraphyClear = jQuery(".calligraphy-clear");
+    const calligraphyThicknessContainer = jQuery(".calligraphy-thickness-container");
+    const calligraphyThicknessRange = jQuery(".calligraphy-thickness-range");
+    const calligraphyThicknessPresets = jQuery(".calligraphy-thickness-preset");
+    const calligraphyThicknessBubble = jQuery(".calligraphy-thickness-bubble");
+    const formConsole = jQuery(".form-console");
+    const inputViewport = jQuery(".input-viewport");
+    const signature = jQuery(".signature");
+    const modalOverlayError = jQuery(".modal-overlay-error");
+    const modalOverlayConfirm = jQuery(".modal-overlay-confirm");
+    const modalOverlayInspirations = jQuery(".modal-overlay-inspirations");
+    const modalOverlayPrintJob = jQuery(".modal-overlay-print-job");
+    const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
+    const inspirationPanel = jQuery(".inspiration-panel");
+    const toast = jQuery(".toast");
+
+    // gathers the values for the form related fields so that the
+    // typical form validations and changes may be performed
+    const technologyRadios = jQuery("input[name=technology]");
+    const technologySelected = jQuery("input[name=technology]:checked");
+    const elementsE = jQuery("[id=elements]");
+    const locationE = jQuery("[id=location]");
+    const elementsChild = jQuery("> *", elementsE);
+    const locationChild = jQuery("> *", locationE);
 
     // loads the cool emojis mapping from the static fonts directory
     // to resolve emoji characters to font names and lay out the
