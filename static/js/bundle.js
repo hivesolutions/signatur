@@ -97,7 +97,8 @@ const multifontText = function(text, emojiMapping) {
             continue;
         }
         if (font === "Cool Emojis") {
-            const mapped = emojiMapping[value];
+            const entry = emojiMapping[value];
+            const mapped = typeof entry === "object" && entry !== null ? entry.name : entry;
             if (mapped) {
                 result.push([mapped, "a"]);
             } else if (value === " ") {
@@ -1912,8 +1913,10 @@ const countLines = function(text) {
             const fontSpec = entry[0];
             const char = entry[1];
             if (fontSpec === "Cool Emojis") {
-                if (mapping[char]) {
-                    result.push([mapping[char], "a"]);
+                const entry = mapping[char];
+                const mapped = typeof entry === "object" && entry !== null ? entry.name : entry;
+                if (mapped) {
+                    result.push([mapped, "a"]);
                 } else if (char === " ") {
                     result.push(["HELVETICA 4L", " "]);
                 }
@@ -6043,6 +6046,115 @@ jQuery(document).ready(function() {
             if (onComplete) onComplete();
         }, 250);
     };
+
+    // the reserved category that gathers every mapping entry left
+    // without an explicit one so uncategorized glyphs surface in
+    // their own tab instead of disappearing into a real category
+    const EMOJI_OTHER_CATEGORY = "other";
+
+    // the categories the keyboard CSS knows how to filter through the
+    // `data-active` selector list, kept in sync with the rules in
+    // `static/css/plugins/keyboard.css` so a tab is only ever created
+    // for a category whose non matching keys can actually be hidden
+    const EMOJI_CATEGORIES = ["symbols", "nature", "people", "pop", "phrases"];
+
+    // normalizes a single mapping value into the object form so the
+    // grid generation can treat the plain string shape and the
+    // extended object shape uniformly, folding both the missing and
+    // the unknown categories into the reserved one so every tab the
+    // grid renders has a matching filter rule on the CSS side
+    const normalizeEmojiEntry = function(value, entry) {
+        const object = typeof entry === "string" ? { name: entry } : entry || {};
+        const category =
+            EMOJI_CATEGORIES.indexOf(object.category) === -1
+                ? EMOJI_OTHER_CATEGORY
+                : object.category;
+        return {
+            value: value,
+            name: object.name,
+            category: category,
+            order: object.order
+        };
+    };
+
+    // turns the cool emojis mapping into the ordered list of entries
+    // backing the keyboard, sorting the ones that declare an order
+    // ahead of the rest while keeping the mapping key order otherwise
+    const emojiEntries = function(mapping) {
+        const entries = Object.keys(mapping).map(function(value, index) {
+            const entry = normalizeEmojiEntry(value, mapping[value]);
+            entry.index = index;
+            return entry;
+        });
+        entries.sort(function(first, second) {
+            const firstOrder = first.order === undefined ? Infinity : first.order;
+            const secondOrder = second.order === undefined ? Infinity : second.order;
+            if (firstOrder !== secondOrder) return firstOrder - secondOrder;
+            return first.index - second.index;
+        });
+        return entries;
+    };
+
+    // collects the distinct categories from the entries in first seen
+    // order, appending the reserved catch all category last and only
+    // when at least one entry actually falls back to it
+    const emojiCategories = function(entries) {
+        const categories = [];
+        let hasOther = false;
+        for (const entry of entries) {
+            if (entry.category === EMOJI_OTHER_CATEGORY) {
+                hasOther = true;
+                continue;
+            }
+            if (categories.indexOf(entry.category) === -1) categories.push(entry.category);
+        }
+        if (hasOther) categories.push(EMOJI_OTHER_CATEGORY);
+        return categories;
+    };
+
+    // resolves the display label for a category from the localized
+    // `data-label-<category>` attributes the template carries, falling
+    // back to a title cased form so admin defined categories and the
+    // reserved catch all one still render a sensible tab label
+    const emojiCategoryLabel = function(container, category) {
+        const label = container.attr("data-label-" + category);
+        if (label) return label;
+        return category.charAt(0).toUpperCase() + category.slice(1);
+    };
+
+    // builds the tab strip and the per glyph keys for the emojis
+    // container from the mapping, mirroring the markup the viewport
+    // template used to ship so the existing keyboard plugin can keep
+    // discovering its children by the same class convention; the
+    // generated nodes are inserted ahead of the trailing utility keys
+    // (backspace, space and enter) that the template still ships
+    const buildEmojisContainer = function(container, mapping) {
+        const entries = emojiEntries(mapping);
+        const categories = emojiCategories(entries);
+        const anchor = jQuery("> br", container).first();
+
+        const tabs = jQuery('<div class="emojis-tabs"></div>');
+        for (let index = 0; index < categories.length; index++) {
+            const category = categories[index];
+            const tab = jQuery('<span class="emojis-tab"></span>');
+            if (index === 0) tab.addClass("active");
+            tab.attr("data-category", category);
+            tab.text(emojiCategoryLabel(container, category));
+            tabs.append(tab);
+        }
+        tabs.insertBefore(anchor);
+        container.attr("data-active", categories[0] || EMOJI_OTHER_CATEGORY);
+
+        for (const entry of entries) {
+            const key = jQuery('<span class="char"></span>');
+            key.attr("data-category", entry.category);
+            key.attr("data-value", entry.value);
+            key.text(entry.value);
+            if (entry.name) key.attr("title", entry.name);
+            key.insertBefore(anchor);
+        }
+    };
+
     const viewportContainer = jQuery(".viewer-container");
     const calligraphyContainer = jQuery(".calligraphy-container");
     const calligraphyMode = jQuery(".calligraphy-mode");
@@ -6074,17 +6186,20 @@ jQuery(document).ready(function() {
     const elementsChild = jQuery("> *", elementsE);
     const locationChild = jQuery("> *", locationE);
 
-    // loads the cool emojis mapping from the static fonts
-    // directory to resolve emoji characters to font names
+    // loads the cool emojis mapping from the static fonts directory
+    // to resolve emoji characters to font names and lay out the
+    // emojis keyboard from the same mapping the upload replaces
     let emojiMapping = {};
     jQuery.getJSON("/static/fonts/coolemojis.mapping.json", function(data) {
         emojiMapping = data;
-        emojisContainer.find(".char[data-value]").each(function() {
-            const element = jQuery(this);
-            const value = element.attr("data-value");
-            const font = emojiMapping[value];
-            if (font) element.attr("title", font);
-        });
+        buildEmojisContainer(emojisContainer, emojiMapping);
+        emojisContainer.keyboardcontainer();
+        restoreText();
+    }).fail(function() {
+        // degrades to an empty emoji grid when the mapping cannot be
+        // fetched, still wiring the container so its utility keys keep
+        // working and never blocking the rest of the viewport restore
+        emojisContainer.keyboardcontainer();
         restoreText();
     });
 
@@ -7585,8 +7700,10 @@ jQuery(document).ready(function() {
         }
     };
 
+    // the emojis container is initialized from the getJSON callback
+    // once its mapping driven grid has been built, so only the static
+    // keyboards are wired up here on plain initialization
     keyboardContainer.keyboardcontainer();
-    emojisContainer.keyboardcontainer();
     emojispContainer.keyboardcontainer();
 
     modalOverlayError.modal();

@@ -229,7 +229,7 @@
                          data-label-f3s-network-error="O pedido falhou. O servidor pode estar inacessível.">
                         <div class="settings-group">
                             <div class="settings-group-label">Cool Emojis (visualização)</div>
-                            <div class="emojis-hint">Substitui a letra <code>coolemojis.ttf</code> incluída e, opcionalmente, o ficheiro <code>coolemojis.mapping.json</code> companheiro pelos ficheiros carregados. A próxima abertura do editor já mostra os novos glifos.</div>
+                            <div class="emojis-hint">Substitui a letra <code>coolemojis.ttf</code> incluída e, opcionalmente, o ficheiro <code>coolemojis.mapping.json</code> companheiro pelos ficheiros carregados. O mapeamento também define a disposição do teclado de emojis: cada entrada pode ser o nome do glifo ou um objecto com <code>category</code> e <code>order</code>, e as entradas sem categoria ficam num separador "Outros" dedicado. A próxima abertura do editor já mostra os novos glifos e a nova disposição.</div>
                             <div class="emojis-field">
                                 <label class="emojis-field-label" for="emojis-font">Letra (.ttf, .otf)</label>
                                 <input class="emojis-field-input" id="emojis-font" type="file" accept=".ttf,.otf" />
@@ -240,6 +240,7 @@
                             </div>
                             <div class="emojis-actions">
                                 <button type="button" class="button button-start emojis-upload">Carregar</button>
+                                <a class="button button-ghost emojis-mapping-download" href="/settings/emojis/mapping" download="coolemojis.mapping.json">Transferir actual</a>
                             </div>
                             <div class="emojis-feedback" hidden></div>
                         </div>

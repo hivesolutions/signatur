@@ -1,93 +1,453 @@
 {
-    "A": "1101.coracao",
-    "B": "1102.estrela",
-    "C": "1103.infinito",
-    "D": "1104.paz",
-    "E": "1105.aliancas",
-    "F": "1106.trevo",
-    "G": "1107.cruz",
-    "H": "1201.unicornio",
-    "I": "1202.cao",
-    "J": "1203.gato",
-    "K": "1204.borboleta",
-    "L": "1205.urso",
-    "M": "1301.smile",
-    "N": "1302.oculos",
-    "O": "1303.happy",
-    "P": "1304.menina",
-    "Q": "1305.menino",
-    "R": "1401.anjo",
-    "S": "1402.bola",
-    "T": "1403.arcoiris",
-    "U": "1404.onda",
-    "V": "1405.musica",
-    "W": "1406.camara",
-    "X": "1407.caveira",
-    "Y": "1408.raio",
-    "Z": "1409.chama",
-    "a": "1410.palmeira",
-    "b": "1411.trofeu",
-    "c": "1412.princesa",
-    "d": "1413.rei",
-    "e": "1414.flor",
-    "f": "1415.sabrinas",
-    "g": "1416.portugal",
-    "h": "1417.santiago",
-    "i": "1418.aprendizagem",
-    "j": "1419.sardinha",
-    "k": "1420.livro",
-    "l": "1501.gosto",
-    "m": "1502.vitoria",
-    "n": "1503.punho",
-    "o": "1504.metal",
-    "p": "1601.invaders",
-    "q": "1602.mario",
-    "r": "1603.fantasma",
-    "s": "1604.pacman",
-    "$": "1605.mickey",
-    "@": "1606.minnie",
-    "t": "1701.univ",
-    "u": "1702.medicina",
-    "v": "1703.direito",
-    "w": "1704.arquite",
-    "x": "1705.engenh",
-    "y": "1706.culina",
-    "z": "1707.informat",
-    ",": "1801.familia1",
-    "0": "1802.familia2",
-    "1": "1803.familia3",
-    "2": "1804.familiam1",
-    "3": "1805.familiam2",
-    "4": "1901.carneiro",
-    "5": "1902.touro",
-    "6": "1903.gemeos",
-    "7": "1904.carangueijo",
-    "8": "1905.leao",
-    "9": "1906.virgem",
-    "-": "1907.balanca",
-    "+": "1908.escorpiao",
-    "*": "1909.sagitario",
-    "^": "1910.capricornio",
-    "˜": "1911.aquario",
-    "/": "1912.peixes",
+    "0": {
+        "name": "1802.familia2",
+        "category": "people",
+        "order": 560
+    },
+    "1": {
+        "name": "1803.familia3",
+        "category": "people",
+        "order": 570
+    },
+    "2": {
+        "name": "1804.familiam1",
+        "category": "people",
+        "order": 580
+    },
+    "3": {
+        "name": "1805.familiam2",
+        "category": "people",
+        "order": 590
+    },
+    "4": {
+        "name": "1901.carneiro",
+        "category": "symbols",
+        "order": 710
+    },
+    "5": {
+        "name": "1902.touro",
+        "category": "symbols",
+        "order": 720
+    },
+    "6": {
+        "name": "1903.gemeos",
+        "category": "symbols",
+        "order": 730
+    },
+    "7": {
+        "name": "1904.carangueijo",
+        "category": "symbols",
+        "order": 740
+    },
+    "8": {
+        "name": "1905.leao",
+        "category": "symbols",
+        "order": 750
+    },
+    "9": {
+        "name": "1906.virgem",
+        "category": "symbols",
+        "order": 760
+    },
+    "A": {
+        "name": "1101.coracao",
+        "category": "symbols",
+        "order": 10
+    },
+    "B": {
+        "name": "1102.estrela",
+        "category": "symbols",
+        "order": 20
+    },
+    "C": {
+        "name": "1103.infinito",
+        "category": "symbols",
+        "order": 30
+    },
+    "D": {
+        "name": "1104.paz",
+        "category": "symbols",
+        "order": 40
+    },
+    "E": {
+        "name": "1105.aliancas",
+        "category": "symbols",
+        "order": 50
+    },
+    "F": {
+        "name": "1106.trevo",
+        "category": "symbols",
+        "order": 60
+    },
+    "G": {
+        "name": "1107.cruz",
+        "category": "symbols",
+        "order": 70
+    },
+    "H": {
+        "name": "1201.unicornio",
+        "category": "nature",
+        "order": 80
+    },
+    "I": {
+        "name": "1202.cao",
+        "category": "nature",
+        "order": 90
+    },
+    "J": {
+        "name": "1203.gato",
+        "category": "nature",
+        "order": 100
+    },
+    "K": {
+        "name": "1204.borboleta",
+        "category": "nature",
+        "order": 110
+    },
+    "L": {
+        "name": "1205.urso",
+        "category": "nature",
+        "order": 120
+    },
+    "M": {
+        "name": "1301.smile",
+        "category": "people",
+        "order": 130
+    },
+    "N": {
+        "name": "1302.oculos",
+        "category": "people",
+        "order": 140
+    },
+    "O": {
+        "name": "1303.happy",
+        "category": "people",
+        "order": 150
+    },
+    "P": {
+        "name": "1304.menina",
+        "category": "people",
+        "order": 160
+    },
+    "Q": {
+        "name": "1305.menino",
+        "category": "people",
+        "order": 170
+    },
+    "R": {
+        "name": "1401.anjo",
+        "category": "people",
+        "order": 180
+    },
+    "S": {
+        "name": "1402.bola",
+        "category": "symbols",
+        "order": 190
+    },
+    "T": {
+        "name": "1403.arcoiris",
+        "category": "symbols",
+        "order": 200
+    },
+    "U": {
+        "name": "1404.onda",
+        "category": "symbols",
+        "order": 210
+    },
+    "V": {
+        "name": "1405.musica",
+        "category": "symbols",
+        "order": 220
+    },
+    "W": {
+        "name": "1406.camara",
+        "category": "symbols",
+        "order": 230
+    },
+    "X": {
+        "name": "1407.caveira",
+        "category": "symbols",
+        "order": 240
+    },
+    "Y": {
+        "name": "1408.raio",
+        "category": "symbols",
+        "order": 250
+    },
+    "Z": {
+        "name": "1409.chama",
+        "category": "symbols",
+        "order": 260
+    },
+    "a": {
+        "name": "1410.palmeira",
+        "category": "nature",
+        "order": 270
+    },
+    "b": {
+        "name": "1411.trofeu",
+        "category": "symbols",
+        "order": 280
+    },
+    "c": {
+        "name": "1412.princesa",
+        "category": "people",
+        "order": 290
+    },
+    "d": {
+        "name": "1413.rei",
+        "category": "people",
+        "order": 300
+    },
+    "e": {
+        "name": "1414.flor",
+        "category": "symbols",
+        "order": 310
+    },
+    "f": {
+        "name": "1415.sabrinas",
+        "category": "pop",
+        "order": 320
+    },
+    "g": {
+        "name": "1416.portugal",
+        "category": "pop",
+        "order": 330
+    },
+    "h": {
+        "name": "1417.santiago",
+        "category": "pop",
+        "order": 340
+    },
+    "i": {
+        "name": "1418.aprendizagem",
+        "category": "pop",
+        "order": 350
+    },
+    "j": {
+        "name": "1419.sardinha",
+        "category": "nature",
+        "order": 360
+    },
+    "k": {
+        "name": "1420.livro",
+        "category": "pop",
+        "order": 370
+    },
+    "l": {
+        "name": "1501.gosto",
+        "category": "people",
+        "order": 380
+    },
+    "m": {
+        "name": "1502.vitoria",
+        "category": "people",
+        "order": 390
+    },
+    "n": {
+        "name": "1503.punho",
+        "category": "people",
+        "order": 400
+    },
+    "o": {
+        "name": "1504.metal",
+        "category": "people",
+        "order": 410
+    },
+    "p": {
+        "name": "1601.invaders",
+        "category": "pop",
+        "order": 420
+    },
+    "q": {
+        "name": "1602.mario",
+        "category": "pop",
+        "order": 430
+    },
+    "r": {
+        "name": "1603.fantasma",
+        "category": "pop",
+        "order": 440
+    },
+    "s": {
+        "name": "1604.pacman",
+        "category": "pop",
+        "order": 450
+    },
+    "$": {
+        "name": "1605.mickey",
+        "category": "pop",
+        "order": 460
+    },
+    "@": {
+        "name": "1606.minnie",
+        "category": "pop",
+        "order": 470
+    },
+    "t": {
+        "name": "1701.univ",
+        "category": "pop",
+        "order": 480
+    },
+    "u": {
+        "name": "1702.medicina",
+        "category": "pop",
+        "order": 490
+    },
+    "v": {
+        "name": "1703.direito",
+        "category": "pop",
+        "order": 500
+    },
+    "w": {
+        "name": "1704.arquite",
+        "category": "pop",
+        "order": 510
+    },
+    "x": {
+        "name": "1705.engenh",
+        "category": "pop",
+        "order": 520
+    },
+    "y": {
+        "name": "1706.culina",
+        "category": "pop",
+        "order": 530
+    },
+    "z": {
+        "name": "1707.informat",
+        "category": "pop",
+        "order": 540
+    },
+    ",": {
+        "name": "1801.familia1",
+        "category": "people",
+        "order": 550
+    },
+    "-": {
+        "name": "1907.balanca",
+        "category": "symbols",
+        "order": 770
+    },
+    "+": {
+        "name": "1908.escorpiao",
+        "category": "symbols",
+        "order": 780
+    },
+    "*": {
+        "name": "1909.sagitario",
+        "category": "symbols",
+        "order": 790
+    },
+    "^": {
+        "name": "1910.capricornio",
+        "category": "symbols",
+        "order": 800
+    },
+    "˜": {
+        "name": "1911.aquario",
+        "category": "symbols",
+        "order": 810
+    },
+    "/": {
+        "name": "1912.peixes",
+        "category": "symbols",
+        "order": 820
+    },
     "€": "2101.myqueen",
-    "%": "2102.myking",
-    "&": "2103.amote",
-    "(": "2104.strong",
-    "|": "2105.special",
-    ")": "2106.forever",
-    "{": "2107.you&me",
-    "}": "2108.bornfree",
-    "[": "2109.byourself",
-    "\\": "3001.pai1-familia",
-    ":": "3002.pai2-familia",
-    ";": "3003.mae1-familia",
-    "<": "3004.mae2-familia",
-    "=": "3005.avoo-familia",
-    ">": "3006.avo-familia",
-    "!": "3007.filho-familia",
-    "?": "3008.filha-familia",
-    "'": "3009.bebe-familia",
-    "\"": "3010.cao-familia",
-    "#": "3011.gato-familia"
+    "%": {
+        "name": "2102.myking",
+        "category": "phrases",
+        "order": 830
+    },
+    "&": {
+        "name": "2103.amote",
+        "category": "phrases",
+        "order": 840
+    },
+    "(": {
+        "name": "2104.strong",
+        "category": "phrases",
+        "order": 850
+    },
+    "|": {
+        "name": "2105.special",
+        "category": "phrases",
+        "order": 890
+    },
+    ")": {
+        "name": "2106.forever",
+        "category": "phrases",
+        "order": 860
+    },
+    "{": {
+        "name": "2107.you&me",
+        "category": "phrases",
+        "order": 880
+    },
+    "}": {
+        "name": "2108.bornfree",
+        "category": "phrases",
+        "order": 900
+    },
+    "[": {
+        "name": "2109.byourself",
+        "category": "phrases",
+        "order": 870
+    },
+    "\\": {
+        "name": "3001.pai1-familia",
+        "category": "people",
+        "order": 600
+    },
+    ":": {
+        "name": "3002.pai2-familia",
+        "category": "people",
+        "order": 610
+    },
+    ";": {
+        "name": "3003.mae1-familia",
+        "category": "people",
+        "order": 620
+    },
+    "<": {
+        "name": "3004.mae2-familia",
+        "category": "people",
+        "order": 630
+    },
+    "=": {
+        "name": "3005.avoo-familia",
+        "category": "people",
+        "order": 640
+    },
+    ">": {
+        "name": "3006.avo-familia",
+        "category": "people",
+        "order": 650
+    },
+    "!": {
+        "name": "3007.filho-familia",
+        "category": "people",
+        "order": 660
+    },
+    "?": {
+        "name": "3008.filha-familia",
+        "category": "people",
+        "order": 670
+    },
+    "'": {
+        "name": "3009.bebe-familia",
+        "category": "people",
+        "order": 680
+    },
+    "\"": {
+        "name": "3010.cao-familia",
+        "category": "people",
+        "order": 690
+    },
+    "#": {
+        "name": "3011.gato-familia",
+        "category": "people",
+        "order": 700
+    }
 }

@@ -49,8 +49,10 @@
             const fontSpec = entry[0];
             const char = entry[1];
             if (fontSpec === "Cool Emojis") {
-                if (mapping[char]) {
-                    result.push([mapping[char], "a"]);
+                const entry = mapping[char];
+                const mapped = typeof entry === "object" && entry !== null ? entry.name : entry;
+                if (mapped) {
+                    result.push([mapped, "a"]);
                 } else if (char === " ") {
                     result.push(["HELVETICA 4L", " "]);
                 }

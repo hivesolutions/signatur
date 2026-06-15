@@ -229,7 +229,7 @@
                          data-label-f3s-network-error="The request failed. The server may be unreachable.">
                         <div class="settings-group">
                             <div class="settings-group-label">Cool Emojis (display)</div>
-                            <div class="emojis-hint">Replaces the bundled <code>coolemojis.ttf</code> display font and, optionally, the companion <code>coolemojis.mapping.json</code> with freshly uploaded payloads. The next viewport load picks the new glyphs up.</div>
+                            <div class="emojis-hint">Replaces the bundled <code>coolemojis.ttf</code> display font and, optionally, the companion <code>coolemojis.mapping.json</code> with freshly uploaded payloads. The mapping also drives the emoji keyboard layout: an entry may be the plain glyph name or an object carrying a <code>category</code> and an <code>order</code>, and entries without a category land on a dedicated "Other" tab. The next viewport load picks the new glyphs and layout up.</div>
                             <div class="emojis-field">
                                 <label class="emojis-field-label" for="emojis-font">Font (.ttf, .otf)</label>
                                 <input class="emojis-field-input" id="emojis-font" type="file" accept=".ttf,.otf" />
@@ -240,6 +240,7 @@
                             </div>
                             <div class="emojis-actions">
                                 <button type="button" class="button button-start emojis-upload">Upload</button>
+                                <a class="button button-ghost emojis-mapping-download" href="/settings/emojis/mapping" download="coolemojis.mapping.json">Download current</a>
                             </div>
                             <div class="emojis-feedback" hidden></div>
                         </div>
