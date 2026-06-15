@@ -36,7 +36,7 @@ Make the emoji keyboard layout — which emoji, in which category, in what order
 ## Decisions taken
 
 - **Source of layout**: extend the existing uploadable `coolemojis.mapping.json` (single source of truth, already uploaded alongside the font).
-- **Rendering**: generate the grid client side in `static/js/plugins/keyboard.js`, reusing the mapping JSON that `main.js` already fetches. This keeps template churn low and lets uploads take effect on the next viewport load without a server restart.
+- **Rendering**: generate the grid client side in `static/js/main.js`, reusing the mapping JSON it already fetches and then initialising the existing keyboard plugin over the generated markup. This keeps template churn low and lets uploads take effect on the next viewport load without a server restart.
 
 ## Mapping format (backward compatible)
 
@@ -86,7 +86,7 @@ This must be relaxed to accept either:
 
 Anything else stays an error, with the same `errors[]` shape the upload route already surfaces. Keep the existing comment style and the existing message phrasing.
 
-### 2. Client side grid generation (`static/js/plugins/keyboard.js`)
+### 2. Client side grid generation (`static/js/main.js`)
 
 - Add a helper that, given the fetched mapping object, normalises every entry to `{ value, name, category, order }`, assigning a sentinel catch-all category (for example `other`) to any entry that declares none.
 - Build the tab strip (`.emojis-tabs > .emojis-tab`) from the distinct categories, mirroring the existing markup and the `data-category` / `active` conventions, with the catch-all "Other" tab appended last and emitted only when at least one uncategorized entry exists.
@@ -101,7 +101,7 @@ Anything else stays an error, with the same `errors[]` shape the upload route al
 ### 4. Template cleanup (`views/viewport.ejs`, `views/viewport-pt_pt.ejs`)
 
 - Reduce the hardcoded emoji blocks to empty containers (the tabs and `.char` spans become generated). Keep the `.emojis-container` / `.emojisp-container` shells, their `data-active` defaults, and the surrounding structure.
-- The Pantograph keyboard (`.emojisp-container`) gets the same treatment, sourced from its own mapping file when one is uploaded.
+- The Pantograph keyboard (`.emojisp-container`) stays static in this iteration because there is no `coolemojisp.mapping.json` to drive it; it keeps its bundled markup until its own mapping file is introduced.
 
 ### 5. Settings copy (`views/settings.ejs`, `views/settings-pt_pt.ejs`)
 

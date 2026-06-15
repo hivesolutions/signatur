@@ -179,5 +179,12 @@ describe("Emojis", function() {
             }));
             assert.deepStrictEqual(errors, ["mapping entry \"A\" must have a numeric \"order\""]);
         });
+
+        it("should reject an object entry with a non-finite order", () => {
+            const errors = lib.validateEmojisMapping(
+                "{ \"A\": { \"name\": \"1101.coracao\", \"order\": 1e309 } }"
+            );
+            assert.deepStrictEqual(errors, ["mapping entry \"A\" must have a numeric \"order\""]);
+        });
     });
 });

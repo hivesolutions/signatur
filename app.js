@@ -402,6 +402,11 @@ app.get("/settings/emojis/mapping", lib.requireAdmin, (req, res, next) => {
         try {
             buffer = await fs.readFile(mappingPath);
         } catch (err) {
+            // treats only the missing file as a 404 and rethrows every
+            // other error (permissions, transient IO) so the existing
+            // error middleware can surface and log it as a 500 instead
+            // of masking a real operational problem behind not found
+            if (err.code !== "ENOENT") throw err;
             res.status(404).json({ error: "mapping not found" });
             return;
         }

@@ -1913,8 +1913,10 @@ const countLines = function(text) {
             const fontSpec = entry[0];
             const char = entry[1];
             if (fontSpec === "Cool Emojis") {
-                if (mapping[char]) {
-                    result.push([mapping[char], "a"]);
+                const entry = mapping[char];
+                const mapped = typeof entry === "object" && entry !== null ? entry.name : entry;
+                if (mapped) {
+                    result.push([mapped, "a"]);
                 } else if (char === " ") {
                     result.push(["HELVETICA 4L", " "]);
                 }
@@ -6050,16 +6052,27 @@ jQuery(document).ready(function() {
     // their own tab instead of disappearing into a real category
     const EMOJI_OTHER_CATEGORY = "other";
 
+    // the categories the keyboard CSS knows how to filter through the
+    // `data-active` selector list, kept in sync with the rules in
+    // `static/css/plugins/keyboard.css` so a tab is only ever created
+    // for a category whose non matching keys can actually be hidden
+    const EMOJI_CATEGORIES = ["symbols", "nature", "people", "pop", "phrases"];
+
     // normalizes a single mapping value into the object form so the
     // grid generation can treat the plain string shape and the
-    // extended object shape uniformly, falling back to the reserved
-    // category for entries that do not declare one
+    // extended object shape uniformly, folding both the missing and
+    // the unknown categories into the reserved one so every tab the
+    // grid renders has a matching filter rule on the CSS side
     const normalizeEmojiEntry = function(value, entry) {
         const object = typeof entry === "string" ? { name: entry } : entry || {};
+        const category =
+            EMOJI_CATEGORIES.indexOf(object.category) === -1
+                ? EMOJI_OTHER_CATEGORY
+                : object.category;
         return {
             value: value,
             name: object.name,
-            category: object.category || EMOJI_OTHER_CATEGORY,
+            category: category,
             order: object.order
         };
     };
