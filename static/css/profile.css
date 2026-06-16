@@ -633,6 +633,46 @@ body.rulers-off .viewport > .main-container > .viewport-preview.profile-active {
     margin: 8px auto 4px auto;
 }
 
+@keyframes face-switch-forward {
+    0% {
+        opacity: 0;
+        transform: translateX(36px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+@keyframes face-switch-back {
+    0% {
+        opacity: 0;
+        transform: translateX(-36px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+.viewport > .main-container > .viewport-preview.face-switching-forward {
+    animation: face-switch-forward 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-animation: face-switch-forward 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-animation: face-switch-forward 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-animation: face-switch-forward 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-animation: face-switch-forward 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-animation: face-switch-forward 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
+.viewport > .main-container > .viewport-preview.face-switching-back {
+    animation: face-switch-back 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -o-animation: face-switch-back 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -ms-animation: face-switch-back 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -moz-animation: face-switch-back 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -khtml-animation: face-switch-back 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+    -webkit-animation: face-switch-back 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+
 .viewport > .main-container > .viewport-preview > .viewport-svg {
     display: none;
     margin: 0px auto 0px auto;

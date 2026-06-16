@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Switching the active face on a double-sided piece now slides and fades the preview in, sliding in from the right when entering the back and from the left when returning to the front
 
 ### Fixed
 

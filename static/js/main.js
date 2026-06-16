@@ -968,6 +968,21 @@ jQuery(document).ready(function() {
         positionFaces();
     };
 
+    // restarts the directional slide and fade animation on the main
+    // preview so switching faces reads as flipping the piece over;
+    // entering the back slides in from the right (forward) and going
+    // back to the front slides in from the left, the previous class is
+    // cleared and a synchronous reflow forced before the new one is
+    // added so the animation replays on every switch rather than only
+    // the first, matching the reflow technique the faces panel uses
+    const animateFaceSwitch = function(side) {
+        viewportPreview.removeClass("face-switching-forward face-switching-back");
+        viewportPreview.get(0).offsetHeight;
+        viewportPreview.addClass(
+            side === "back" ? "face-switching-forward" : "face-switching-back"
+        );
+    };
+
     // switches the editor onto the requested face, parking every
     // setting of the side being left and applying the side being
     // entered so the two faces keep independent text, font size,
@@ -978,6 +993,7 @@ jQuery(document).ready(function() {
         body.data("settings_" + current, captureFace());
         body.data("face", side);
         applyFace(body.data("settings_" + side));
+        animateFaceSwitch(side);
         renderFaces(currentProfile);
     };
 
@@ -1336,6 +1352,7 @@ jQuery(document).ready(function() {
             body.data("face", "front");
             body.data("settings_front", null);
             body.data("settings_back", restoring ? restoreBackSettings() : { text: [] });
+            viewportPreview.removeClass("face-switching-forward face-switching-back");
         }
         renderFaces(currentProfile);
         applyDefaultFont(currentProfile);
