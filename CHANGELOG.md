@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Download the current emoji mapping file from the settings Emojis tab
 * Download the current emoji font from the settings Emojis tab
 * Download the display font and the engraving file of each font from the settings Fonts tab
+* Profiles and inspirations can now describe a second, back face for double-sided engraving
 
 ### Changed
 

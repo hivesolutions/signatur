@@ -233,6 +233,38 @@ describe("Profile", function() {
             assert.strictEqual(true, errors.includes("inspirations must be a string"));
         });
 
+        it("should accept valid double sided field", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                double_sided: { enabled: true, back_background: "test-back.png" },
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject invalid double sided field", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                double_sided: { back_background: 123 },
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.strictEqual(true, errors.includes("double_sided.enabled is required"));
+            assert.strictEqual(
+                true,
+                errors.includes("double_sided.back_background must be a string")
+            );
+        });
+
         it("should accept profile without shape (optional field)", () => {
             const errors = lib.validateProfile({
                 id: "test",
@@ -513,6 +545,47 @@ describe("Profile", function() {
         });
     });
 
+    describe("#validateDoubleSided()", function() {
+        it("should validate correct double sided config", () => {
+            const errors = lib.validateDoubleSided({
+                enabled: true,
+                back_background: "ring-back.png"
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate minimal double sided config", () => {
+            const errors = lib.validateDoubleSided({ enabled: false });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject non-object double sided config", () => {
+            const errors = lib.validateDoubleSided("invalid");
+            assert.strictEqual(true, errors.includes("double_sided must be an object"));
+        });
+
+        it("should require the enabled flag", () => {
+            const errors = lib.validateDoubleSided({});
+            assert.strictEqual(true, errors.includes("double_sided.enabled is required"));
+        });
+
+        it("should reject non-boolean enabled flag", () => {
+            const errors = lib.validateDoubleSided({ enabled: "yes" });
+            assert.strictEqual(
+                true,
+                errors.includes("double_sided.enabled must be a boolean")
+            );
+        });
+
+        it("should reject non-string back background", () => {
+            const errors = lib.validateDoubleSided({ enabled: true, back_background: 1 });
+            assert.strictEqual(
+                true,
+                errors.includes("double_sided.back_background must be a string")
+            );
+        });
+    });
+
     describe("#validateMachine()", function() {
         it("should validate correct machine config", () => {
             const errors = lib.validateMachine({
@@ -616,6 +689,113 @@ describe("Profile", function() {
         it("should reject non-string tag items", () => {
             const errors = lib.validateMetadata({ tags: [123] });
             assert.strictEqual(true, errors.includes("metadata.tags[0] must be a string"));
+        });
+    });
+
+    describe("#validateInspirationFace()", function() {
+        it("should validate a complete valid face", () => {
+            const errors = lib.validateInspirationFace(
+                {
+                    text: [["Script 4L", "T"]],
+                    font_size: 4,
+                    padding: { top: 4, right: 3, bottom: 5, left: 3 },
+                    align: "center"
+                },
+                "inspirations[0]"
+            );
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate a minimal valid face", () => {
+            const errors = lib.validateInspirationFace(
+                {
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 8
+                },
+                "inspirations[0]"
+            );
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should require the text and font size fields", () => {
+            const errors = lib.validateInspirationFace({}, "inspirations[0]");
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].text is required and must be an array")
+            );
+            assert.strictEqual(true, errors.includes("inspirations[0].font_size is required"));
+        });
+
+        it("should reject invalid text pairs", () => {
+            const errors = lib.validateInspirationFace(
+                {
+                    text: [["only-one"]],
+                    font_size: 4
+                },
+                "inspirations[0]"
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].text[0] must be a [font, character] pair")
+            );
+        });
+
+        it("should reject non-positive font size", () => {
+            const errors = lib.validateInspirationFace(
+                {
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 0
+                },
+                "inspirations[0]"
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].font_size must be a positive number")
+            );
+        });
+
+        it("should reject invalid padding", () => {
+            const errors = lib.validateInspirationFace(
+                {
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4,
+                    padding: { top: -1, right: 2, bottom: 2, left: 2 }
+                },
+                "inspirations[0]"
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].padding.top must be a non-negative number")
+            );
+        });
+
+        it("should reject invalid align values", () => {
+            const errors = lib.validateInspirationFace(
+                {
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4,
+                    align: "justify"
+                },
+                "inspirations[0]"
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].align must be one of: left, center, right")
+            );
+        });
+
+        it("should thread the prefix through nested errors", () => {
+            const errors = lib.validateInspirationFace(
+                {
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: -1
+                },
+                "inspirations[0].back"
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].back.font_size must be a positive number")
+            );
         });
     });
 
@@ -829,6 +1009,65 @@ describe("Profile", function() {
             assert.strictEqual(
                 true,
                 errors.includes("inspirations[0].padding.top must be a non-negative number")
+            );
+        });
+
+        it("should validate an optional back face when present", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "two-sided",
+                    title: "Two Sided",
+                    description: "A front and back greeting.",
+                    author: "Hive Solutions",
+                    text: [["Script 4L", "T"]],
+                    font_size: 4,
+                    back: {
+                        text: [["Script 4L", "B"]],
+                        font_size: 3,
+                        align: "center"
+                    }
+                },
+                0
+            );
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject a non-object back face", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4,
+                    back: "invalid"
+                },
+                0
+            );
+            assert.strictEqual(true, errors.includes("inspirations[0].back must be an object"));
+        });
+
+        it("should validate the back face fields", () => {
+            const errors = lib.validateInspiration(
+                {
+                    id: "test",
+                    title: "Test",
+                    description: "Test",
+                    author: "Test",
+                    text: [["Helvetica 1L", "A"]],
+                    font_size: 4,
+                    back: { font_size: 0 }
+                },
+                0
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].back.text is required and must be an array")
+            );
+            assert.strictEqual(
+                true,
+                errors.includes("inspirations[0].back.font_size must be a positive number")
             );
         });
     });

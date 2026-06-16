@@ -42,6 +42,7 @@ PNG background assets live alongside the JSON files under `static/profiles/` and
 | `text`          | object  |    no    | See [text](#text).                                                                    |
 | `metadata`      | object  |    no    | See [metadata](#metadata).                                                            |
 | `calligraphy`   | object  |    no    | See [calligraphy](#calligraphy). Active only when the feature flag is on.             |
+| `double_sided`  | object  |    no    | See [double_sided](#double_sided).                                                    |
 
 ## font_size
 
@@ -139,6 +140,15 @@ Optional configuration for the calligraphy mode on the viewport, which overlays 
 | ------------ | ------ | :------: | --------------------------------------------------------------------------- |
 | `line_width` | number |    no    | Positive. Default stroke thickness, in profile units, for the canvas brush. |
 
+## double_sided
+
+Optional configuration that opts the profile into double-sided engraving, where a back face is engraved alongside the front one. When the block is absent the profile is single-faced and behaves exactly as before.
+
+| Field             | Type    | Required | Notes                                                                      |
+| ----------------- | ------- | :------: | -------------------------------------------------------------------------- |
+| `enabled`         | boolean |   yes    | Turns the back face on. Required whenever the block is present.            |
+| `back_background` | string  |    no    | PNG filename under `static/profiles/` used as the back preview background. |
+
 ## Example
 
 ```json
@@ -179,6 +189,7 @@ Each profile may ship a companion `static/profiles/<id>.inspirations.json` file 
 | `font_size`   | number         |   yes    | Positive. Font size to apply when this preset is loaded.                                          |
 | `padding`     | object         |    no    | Overrides the active padding while this preset is in use.                                         |
 | `align`       | string         |    no    | One of `left`, `center`, `right`. Overrides the profile alignment.                                |
+| `back`        | object         |    no    | Back face preset for double-sided profiles. See [back](#back).                                    |
 
 The `text` array uses one entry per character. A newline is encoded as the pair `[null, "\n"]`. The character string may also be a multi-character run (e.g. a word) which the editor will expand into individual character cells on load.
 
@@ -210,6 +221,17 @@ The `text` array uses one entry per character. A newline is encoded as the pair 
     }
 ]
 ```
+
+### back
+
+Optional back face preset, present only on inspirations meant for double-sided profiles. It carries the same engraving fields as the front face of the entry, so applying the inspiration fills both faces at once.
+
+| Field       | Type           | Required | Notes                                                              |
+| ----------- | -------------- | :------: | ------------------------------------------------------------------ |
+| `text`      | array of pairs |   yes    | Same `[font, character]` pair encoding as the front `text`.        |
+| `font_size` | number         |   yes    | Positive. Font size to apply to the back face.                     |
+| `padding`   | object         |    no    | Overrides the active padding for the back face.                    |
+| `align`     | string         |    no    | One of `left`, `center`, `right`. Overrides the back alignment.    |
 
 ## Validation
 
