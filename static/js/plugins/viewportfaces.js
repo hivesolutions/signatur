@@ -165,7 +165,17 @@
                     context.removeClass("visible");
                     return;
                 }
+
+                // reveals the panel before the thumbnails are measured
+                // and forces a synchronous reflow so the freshly shown
+                // preview containers report their final width; without
+                // this the first render after a page load measures the
+                // not yet laid out containers and the miniature scale
+                // stays stale until a manual click repaints it
                 thumbnails.empty();
+                context.addClass("visible");
+                context.get(0).offsetHeight;
+
                 const side = options.side || "front";
                 renderThumb(
                     context,
@@ -183,7 +193,6 @@
                     backLabel,
                     side === "back"
                 );
-                context.addClass("visible");
                 return;
             }
 
