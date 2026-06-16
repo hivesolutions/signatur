@@ -3203,6 +3203,8 @@ body.ldj .components-entry-preview .components-demo-tabs > .settings-tabs > .set
 .preview-mode .inspiration-panel.visible,
 .preview-mode .viewport-options,
 .preview-mode .viewport-options.visible,
+.preview-mode .viewport-faces,
+.preview-mode .viewport-faces.visible,
 .preview-mode .viewport > .main-container > .fonts-container,
 .preview-mode .viewport > .main-container > .keyboard-container,
 .preview-mode .viewport > .main-container > .emojis-container,
@@ -3222,7 +3224,9 @@ body.ldj .components-entry-preview .components-demo-tabs > .settings-tabs > .set
 .preview-mode .inspiration-panel,
 .preview-mode .inspiration-panel.visible,
 .preview-mode .viewport-options,
-.preview-mode .viewport-options.visible {
+.preview-mode .viewport-options.visible,
+.preview-mode .viewport-faces,
+.preview-mode .viewport-faces.visible {
     transition-delay: 0.06s;
     -o-transition-delay: 0.06s;
     -ms-transition-delay: 0.06s;

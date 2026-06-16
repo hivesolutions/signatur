@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* The double-sided face switcher panel is now hidden when entering preview mode, like the other side panels
 
 ## [1.2.1] - 2026-06-14
 
