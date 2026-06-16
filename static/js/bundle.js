@@ -5334,9 +5334,10 @@ const countLines = function(text) {
      *
      * Actions:
      *   "render" - rebuilds the two thumbnails from the given
-     *              { profile, front, back, side } options, showing
-     *              the panel only for double-sided profiles and
-     *              highlighting the currently active face
+     *              { profile, front, back, side } options, where each
+     *              face is a { text, font_size, padding, align }
+     *              object, showing the panel only for double-sided
+     *              profiles and highlighting the currently active face
      *   "hide"   - hides the panel, used when the active profile is
      *              not double-sided so single-faced editing stays
      *              exactly as before
@@ -5359,11 +5360,15 @@ const countLines = function(text) {
         // the text pre-rendered inside it, reusing the same safe area
         // and scaling math as the inspiration thumbnails so the two
         // panels stay visually consistent
-        const renderPreview = function(profile, text, align, container) {
+        const renderPreview = function(profile, face, container) {
             const width = profile.width * viewportScale;
             const height = profile.height * viewportScale;
-            const padding = profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
-            const fontSize = (profile.font_size && profile.font_size.default) || 3;
+            const text = face.text || [];
+            const align = face.align;
+            const padding = face.padding ||
+                profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+            const fontSize =
+                face.font_size || (profile.font_size && profile.font_size.default) || 3;
             const scaledSize = fontSize * viewportScale * fontSizeScale;
 
             const preview = jQuery('<div class="viewport-preview profile-active"></div>');
@@ -5455,7 +5460,7 @@ const countLines = function(text) {
         // tagging it with the side so the click handler can emit the
         // matching switch event and marking the active face so the
         // styling diverges from the inactive one
-        const renderThumb = function(context, profile, side, text, align, label, active) {
+        const renderThumb = function(context, profile, side, face, label, active) {
             const thumb = jQuery('<div class="viewport-faces-thumb"></div>');
             thumb.attr("data-side", side);
             if (active) thumb.addClass("active");
@@ -5465,7 +5470,7 @@ const countLines = function(text) {
             thumb.append(previewContainer);
             thumb.append(title);
             jQuery(".viewport-faces-thumbnails", context).append(thumb);
-            renderPreview(profile, text, align, previewContainer);
+            renderPreview(profile, face, previewContainer);
         };
 
         elements.each(function() {
@@ -5489,8 +5494,7 @@ const countLines = function(text) {
                     context,
                     profile,
                     "front",
-                    options.front || [],
-                    options.align,
+                    options.front || {},
                     frontLabel,
                     side === "front"
                 );
@@ -5498,8 +5502,7 @@ const countLines = function(text) {
                     context,
                     profile,
                     "back",
-                    options.back || [],
-                    options.align,
+                    options.back || {},
                     backLabel,
                     side === "back"
                 );
@@ -6657,6 +6660,21 @@ jQuery(document).ready(function() {
                 }
             }
 
+            // restores the front face alignment from the URL query
+            // parameter, written only for double sided sessions, so
+            // the live editor resumes the saved alignment of the front
+            const urlAlign = urlParams.get("align");
+            if (urlAlign) {
+                const justify =
+                    urlAlign === "center"
+                        ? "center"
+                        : urlAlign === "right"
+                          ? "flex-end"
+                          : "flex-start";
+                viewportContainer.css("text-align", urlAlign);
+                viewportContainer.css("justify-content", justify);
+            }
+
             // restores the font size mode and value from the
             // URL query parameters if they were previously saved
             const urlFontSizeMode = urlParams.get("font_size_mode");
@@ -6867,11 +6885,23 @@ jQuery(document).ready(function() {
         // applies the font size and recalculates layout
         applyFontSize();
 
-        // parks the optional back face preset into the back buffer
-        // so a paired inspiration fills both faces at once, leaving
-        // the back buffer untouched when the preset is single faced
+        // parks the optional back face preset into the back settings
+        // so a paired inspiration fills both faces at once, carrying
+        // the back specific font size, padding and alignment and
+        // clearing the back when the preset is single faced
         if (profile.double_sided && profile.double_sided.enabled) {
-            body.data("text_back", inspiration.back ? expandText(inspiration.back.text) : []);
+            if (inspiration.back) {
+                const back = inspiration.back;
+                body.data("settings_back", {
+                    text: expandText(back.text),
+                    font_size: back.font_size || null,
+                    font_size_mode: "manual",
+                    margins: back.padding || profile.padding,
+                    align: back.align || inspiration.align || "center"
+                });
+            } else {
+                body.data("settings_back", { text: [] });
+            }
             renderFaces(profile);
         }
 
@@ -6914,54 +6944,138 @@ jQuery(document).ready(function() {
         }
     };
 
-    // resolves the current text of both faces, reading the active
-    // face from the live editor buffer and the inactive one from its
-    // parked buffer so callers (the thumbnails and the URL writer)
-    // always agree on what each face currently holds
-    const getFaceTexts = function() {
+    // snapshots the full set of per-face settings from the live
+    // editor and its controls so the active face can be parked when
+    // the operator switches sides; each face keeps its own text, font
+    // size (and sizing mode), margins and alignment
+    const captureFace = function() {
+        return {
+            text: body.data("text") || [],
+            font_size: parseFloat(fontSizeInput.val()) || null,
+            font_size_mode: fontSizeMode.prop("checked") ? "automatic" : "manual",
+            margins: getMargins(),
+            align: viewportContainer.css("text-align") || "center"
+        };
+    };
+
+    // applies a parked face settings object back onto the live editor
+    // and its controls, rebuilding the text, restoring the font size
+    // mode and value, the margins and the alignment so the entered
+    // face resumes exactly as it was left
+    const applyFace = function(settings) {
+        const face = settings || {};
+        viewportContainer.texteditor("loadText", { text: face.text || [] });
+
+        const automatic = face.font_size_mode === "automatic";
+        fontSizeMode.prop("checked", automatic);
+        fontSizeRange.prop("disabled", automatic);
+        fontSizeInput.prop("disabled", automatic);
+        if (face.font_size) {
+            fontSizeRange.val(face.font_size);
+            fontSizeInput.val(face.font_size);
+        }
+
+        const margins = face.margins || { top: 0, right: 0, bottom: 0, left: 0 };
+        marginLeft.val(margins.left);
+        marginRight.val(margins.right);
+        marginTop.val(margins.top);
+        marginBottom.val(margins.bottom);
+        renderViewportPreview(currentProfile);
+
+        const align = face.align || "center";
+        const justify =
+            align === "center" ? "center" : align === "right" ? "flex-end" : "flex-start";
+        viewportContainer.css("text-align", align);
+        viewportContainer.css("justify-content", justify);
+
+        applyFontSize();
+        updateButtonState(face.text || []);
+    };
+
+    // resolves the settings of both faces, reading the active face
+    // live from the editor and the inactive one from its parked
+    // settings so the thumbnails and the URL writer always agree on
+    // what each face currently holds
+    const getFaceSettings = function() {
         const side = body.data("face") || "front";
-        const live = body.data("text") || [];
+        const live = captureFace();
         return {
             side: side,
-            front: side === "front" ? live : body.data("text_front") || [],
-            back: side === "back" ? live : body.data("text_back") || []
+            front: side === "front" ? live : body.data("settings_front") || { text: [] },
+            back: side === "back" ? live : body.data("settings_back") || { text: [] }
+        };
+    };
+
+    // maps a parked face settings object onto the preview face shape
+    // the viewportfaces plugin expects, translating the flat margins
+    // into the padding key its miniature preview reads
+    const facePreview = function(face) {
+        const settings = face || {};
+        return {
+            text: settings.text || [],
+            font_size: settings.font_size,
+            padding: settings.margins,
+            align: settings.align
         };
     };
 
     // re-renders the front and back face thumbnails from the live
-    // editor buffer and the parked back buffer, hiding the panel
-    // entirely for single faced profiles so the editor chrome stays
-    // unchanged when double sided engraving is not in play
+    // editor and the parked face settings, hiding the panel entirely
+    // for single faced profiles so the editor chrome stays unchanged
+    // when double sided engraving is not in play
     const renderFaces = function(profile) {
         if (!profile || !profile.double_sided || !profile.double_sided.enabled) {
             viewportFaces.viewportfaces("hide");
             return;
         }
-        const faces = getFaceTexts();
+        const faces = getFaceSettings();
         viewportFaces.viewportfaces("render", {
             profile: profile,
-            front: faces.front,
-            back: faces.back,
-            side: faces.side,
-            align: viewportContainer.css("text-align")
+            front: facePreview(faces.front),
+            back: facePreview(faces.back),
+            side: faces.side
         });
         positionFaces();
     };
 
-    // switches the editor onto the requested face, parking the live
-    // buffer into the side being left and loading the side being
-    // entered so the two faces keep independent text while sharing
-    // the single editor surface; a no-op when already on that side
+    // switches the editor onto the requested face, parking every
+    // setting of the side being left and applying the side being
+    // entered so the two faces keep independent text, font size,
+    // margins and alignment; a no-op when already on that side
     const switchFace = function(side) {
         const current = body.data("face") || "front";
         if (side === current) return;
-        body.data("text_" + current, body.data("text") || []);
-        const target = body.data("text_" + side) || [];
+        body.data("settings_" + current, captureFace());
         body.data("face", side);
-        viewportContainer.texteditor("loadText", { text: target });
-        applyFontSize();
-        updateButtonState(target);
+        applyFace(body.data("settings_" + side));
         renderFaces(currentProfile);
+    };
+
+    // rebuilds the parked back face settings from the URL params so
+    // a shared double sided link resumes the back text, font size,
+    // margins and alignment, returning an empty back face when no
+    // back state was carried in the query string
+    const restoreBackSettings = function() {
+        const urlTextBack = urlParams.get("text_back");
+        if (!urlTextBack) return { text: [] };
+        const settings = { text: deserializeText(urlTextBack), font_size_mode: "manual" };
+        const fontSizeBack = urlParams.get("font_size_back");
+        if (fontSizeBack) settings.font_size = parseFloat(fontSizeBack);
+        const marginsBack = urlParams.get("margins_back");
+        if (marginsBack) {
+            const parts = marginsBack.split(",");
+            if (parts.length === 4) {
+                settings.margins = {
+                    left: parseFloat(parts[0]) || 0,
+                    right: parseFloat(parts[1]) || 0,
+                    top: parseFloat(parts[2]) || 0,
+                    bottom: parseFloat(parts[3]) || 0
+                };
+            }
+        }
+        const alignBack = urlParams.get("align_back");
+        if (alignBack) settings.align = alignBack;
+        return settings;
     };
 
     // updates the floating profile info block with the
@@ -7282,17 +7396,16 @@ jQuery(document).ready(function() {
         inspirationPanel.inspirationpanel("update", currentProfile);
 
         // resets the face state on a full profile switch so the back
-        // buffer never bleeds across profiles, keeping the active
-        // face on the front and refreshing the thumbnails (which hide
+        // face never bleeds across profiles, keeping the active face
+        // on the front and refreshing the thumbnails (which hide
         // themselves for single faced profiles); during a session
-        // restore the back buffer is seeded from its URL param so the
+        // restore the back face is seeded from its URL params so the
         // reset and the text restore can run in either order without
         // clobbering the resumed back face
         if (!variantOnly) {
             body.data("face", "front");
-            body.data("text_front", null);
-            const urlTextBack = restoring ? urlParams.get("text_back") : null;
-            body.data("text_back", urlTextBack ? deserializeText(urlTextBack) : []);
+            body.data("settings_front", null);
+            body.data("settings_back", restoring ? restoreBackSettings() : { text: [] });
         }
         renderFaces(currentProfile);
         applyDefaultFont(currentProfile);
@@ -7892,21 +8005,43 @@ jQuery(document).ready(function() {
         if (restoring) return;
         if (viewportContainer.length === 0) return;
         const params = new URLSearchParams(window.location.search);
-        const faces = getFaceTexts();
-        params.delete("text");
-        params.delete("text_back");
-        if (faces.front.length > 0) params.set("text", serializeText(faces.front));
-
-        // carries the back face in its own param for double sided
-        // profiles so a shared link restores both faces, dropping it
-        // for single faced profiles so their URLs stay unchanged
-        if (
+        const doubleSided = Boolean(
             currentProfile &&
-            currentProfile.double_sided &&
-            currentProfile.double_sided.enabled &&
-            faces.back.length > 0
-        ) {
-            params.set("text_back", serializeText(faces.back));
+                currentProfile.double_sided &&
+                currentProfile.double_sided.enabled
+        );
+        const faces = getFaceSettings();
+
+        // always rewrites the front text from the resolved face state
+        // so the param tracks the front regardless of which face is
+        // currently live in the editor
+        params.delete("text");
+        if (faces.front.text.length > 0) params.set("text", serializeText(faces.front.text));
+
+        // carries the full back face state in its own params for
+        // double sided profiles so a shared link restores the back
+        // text, font size, margins and alignment, dropping every back
+        // param for single faced profiles so their URLs stay unchanged
+        params.delete("text_back");
+        params.delete("font_size_back");
+        params.delete("margins_back");
+        params.delete("align_back");
+        if (doubleSided) {
+            const back = faces.back;
+            if (back.text.length > 0) params.set("text_back", serializeText(back.text));
+            if (back.font_size) params.set("font_size_back", String(back.font_size));
+            if (back.margins) {
+                const marginStr =
+                    back.margins.left +
+                    "," +
+                    back.margins.right +
+                    "," +
+                    back.margins.top +
+                    "," +
+                    back.margins.bottom;
+                if (marginStr !== "0,0,0,0") params.set("margins_back", marginStr);
+            }
+            if (back.align && back.align !== "center") params.set("align_back", back.align);
         }
         const selection = profileSelector.profileselector("value");
         params.delete("profile");
@@ -7922,12 +8057,17 @@ jQuery(document).ready(function() {
             const font = body.data("font");
             if (font) params.set("font", font);
         }
-        if (action === "font_size" || action === "restore") {
+        if (action === "font_size" || action === "restore" || doubleSided) {
             params.delete("font_size");
             params.delete("font_size_mode");
-            const fontSize = fontSizeInput.val();
+            // resolves the front font size from the face state for
+            // double sided profiles so the param always tracks the
+            // front even while the back face is the live one
+            const fontSize = doubleSided ? faces.front.font_size : fontSizeInput.val();
             if (fontSize) params.set("font_size", fontSize);
-            const isAutomatic = fontSizeMode.prop("checked");
+            const isAutomatic = doubleSided
+                ? faces.front.font_size_mode === "automatic"
+                : fontSizeMode.prop("checked");
             if (isAutomatic) params.set("font_size_mode", "automatic");
         }
         if (action === "zoom" || action === "restore") {
@@ -7935,12 +8075,19 @@ jQuery(document).ready(function() {
             const zoom = zoomRange.val();
             if (zoom && zoom !== "1") params.set("zoom", zoom);
         }
-        if (action === "margins" || action === "restore") {
+        if (action === "margins" || action === "restore" || doubleSided) {
             params.delete("margins");
-            const margins = getMargins();
+            params.delete("align");
+            // resolves the front margins and alignment from the face
+            // state for double sided profiles so both params track the
+            // front even while the back face is the live one
+            const margins = doubleSided ? faces.front.margins || getMargins() : getMargins();
             const marginStr =
                 margins.left + "," + margins.right + "," + margins.top + "," + margins.bottom;
             if (marginStr !== "0,0,0,0") params.set("margins", marginStr);
+            if (doubleSided && faces.front.align && faces.front.align !== "center") {
+                params.set("align", faces.front.align);
+            }
         }
         if (action === "toggle" || action === "restore") {
             params.delete("rulers");
@@ -7977,13 +8124,12 @@ jQuery(document).ready(function() {
     // initializes the text data array from server-rendered
     // content so that the session state is fully restored
     const restoreText = function() {
-        // restores the back face buffer from its own URL param so a
+        // restores the back face settings from their URL params so a
         // shared double sided link resumes both faces, parked behind
         // the live front buffer until the operator switches faces
-        const urlTextBack = urlParams.get("text_back");
-        if (urlTextBack) {
-            const backData = deserializeText(urlTextBack);
-            if (backData && backData.length > 0) body.data("text_back", backData);
+        const backSettings = restoreBackSettings();
+        if (backSettings.text && backSettings.text.length > 0) {
+            body.data("settings_back", backSettings);
         }
 
         const initialText = viewportContainer.attr("data-text");

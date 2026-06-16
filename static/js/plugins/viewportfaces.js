@@ -11,9 +11,10 @@
      *
      * Actions:
      *   "render" - rebuilds the two thumbnails from the given
-     *              { profile, front, back, side } options, showing
-     *              the panel only for double-sided profiles and
-     *              highlighting the currently active face
+     *              { profile, front, back, side } options, where each
+     *              face is a { text, font_size, padding, align }
+     *              object, showing the panel only for double-sided
+     *              profiles and highlighting the currently active face
      *   "hide"   - hides the panel, used when the active profile is
      *              not double-sided so single-faced editing stays
      *              exactly as before
@@ -36,11 +37,15 @@
         // the text pre-rendered inside it, reusing the same safe area
         // and scaling math as the inspiration thumbnails so the two
         // panels stay visually consistent
-        const renderPreview = function(profile, text, align, container) {
+        const renderPreview = function(profile, face, container) {
             const width = profile.width * viewportScale;
             const height = profile.height * viewportScale;
-            const padding = profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
-            const fontSize = (profile.font_size && profile.font_size.default) || 3;
+            const text = face.text || [];
+            const align = face.align;
+            const padding = face.padding ||
+                profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+            const fontSize =
+                face.font_size || (profile.font_size && profile.font_size.default) || 3;
             const scaledSize = fontSize * viewportScale * fontSizeScale;
 
             const preview = jQuery('<div class="viewport-preview profile-active"></div>');
@@ -132,7 +137,7 @@
         // tagging it with the side so the click handler can emit the
         // matching switch event and marking the active face so the
         // styling diverges from the inactive one
-        const renderThumb = function(context, profile, side, text, align, label, active) {
+        const renderThumb = function(context, profile, side, face, label, active) {
             const thumb = jQuery('<div class="viewport-faces-thumb"></div>');
             thumb.attr("data-side", side);
             if (active) thumb.addClass("active");
@@ -142,7 +147,7 @@
             thumb.append(previewContainer);
             thumb.append(title);
             jQuery(".viewport-faces-thumbnails", context).append(thumb);
-            renderPreview(profile, text, align, previewContainer);
+            renderPreview(profile, face, previewContainer);
         };
 
         elements.each(function() {
@@ -166,8 +171,7 @@
                     context,
                     profile,
                     "front",
-                    options.front || [],
-                    options.align,
+                    options.front || {},
                     frontLabel,
                     side === "front"
                 );
@@ -175,8 +179,7 @@
                     context,
                     profile,
                     "back",
-                    options.back || [],
-                    options.align,
+                    options.back || {},
                     backLabel,
                     side === "back"
                 );
