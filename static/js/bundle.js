@@ -3660,6 +3660,10 @@ const countLines = function(text) {
             const metaMaxLinesLabel = context.attr("data-meta-max-lines-label") || "Max Lines";
             const metaInspirationsLabel =
                 context.attr("data-meta-inspirations-label") || "Inspirations";
+            const metaDoubleSidedLabel =
+                context.attr("data-meta-double-sided-label") || "Double Sided";
+            const metaDoubleSidedValue =
+                context.attr("data-meta-double-sided-value") || "Yes";
             const assetErrorFilename =
                 context.attr("data-asset-error-filename") || "filename is required";
             const assetErrorFile = context.attr("data-asset-error-file") || "file is required";
@@ -3735,6 +3739,9 @@ const countLines = function(text) {
                 }
                 if (profile._inspirations && profile._inspirations.length) {
                     appendMetaRow(metaElement, metaInspirationsLabel, profile._inspirations.length);
+                }
+                if (profile.double_sided && profile.double_sided.enabled) {
+                    appendMetaRow(metaElement, metaDoubleSidedLabel, metaDoubleSidedValue);
                 }
             };
 
