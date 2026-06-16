@@ -29,7 +29,8 @@ const CSS_FILES = [
     "css/plugins/modal.css",
     "css/plugins/printjobs.css",
     "css/plugins/profilemanager.css",
-    "css/plugins/toast.css"
+    "css/plugins/toast.css",
+    "css/plugins/viewportfaces.css"
 ];
 
 const JS_FILES = [
@@ -51,6 +52,7 @@ const JS_FILES = [
     "js/plugins/profileselector.js",
     "js/plugins/texteditor.js",
     "js/plugins/toast.js",
+    "js/plugins/viewportfaces.js",
     "js/plugins/viewportpreview.js",
     "js/plugins/welcome.js",
     "js/main.js"

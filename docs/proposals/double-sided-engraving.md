@@ -29,8 +29,8 @@ These were settled with the maintainer before implementation:
 
 - **Submission**: the back is sent as a **second, independent single-face job** (front then back). The Colony Print protocol and the print-jobs plugin stay unchanged.
 - **Alignment**: **out of scope** for this iteration. We allow a separate back design but ship no mirroring, offset or registration logic.
-- **Phasing**: land the **data model first** — the profile `double_sided` block, the inspiration `back` preset, the validators, the spec docs and the unit tests — as a reviewable first change. The editor, preview and submission wiring follow once the model is agreed.
-- **Back design entry**: driven by **paired inspirations** (a `back` block on an inspiration entry). Manual front/back text entry on `/viewport` is deferred.
+- **Phasing**: the **data model landed first** (the profile `double_sided` block, the inspiration `back` preset, the validators, the spec docs and the unit tests). The **viewport thumbnail face switcher** and the profile manager display followed on the same branch. The submission wiring and per-face controls remain deferred.
+- **Back design entry**: driven by **paired inspirations** (a `back` block on an inspiration entry); the face switcher lets the operator view and switch faces. Free manual typing per face works through the active editor surface, but per-face font size / margins / alignment are deferred.
 
 ## Non-goals (this iteration)
 
@@ -81,11 +81,25 @@ Add an **optional** `back` object on an inspiration entry, with the same shape a
 
 Extend `docs/profile-spec.md` (the authoritative schema doc) with the `double_sided` block and the inspiration `back` field.
 
-### Deferred (later iterations, once the model is agreed)
+### Profile manager display
 
-- A second text buffer for the back face on `/viewport`, gated on the active profile being double-sided.
-- A **thumbnail face switcher**: a small two-up component (a front thumbnail and a back thumbnail, each a miniature viewport preview rendered with the same `renderPreview` machinery the inspiration panel already uses) that the operator clicks to toggle which face the editor is currently editing, with the active thumbnail highlighted. Single-face profiles never render the switcher, so the editor stays unchanged for them.
-- Rendering the active face in the main preview and the inspiration panel; a paired inspiration fills both faces at once and the thumbnails update together.
+The profile manager detail panel shows a **Double Sided** row (driven by `data-meta-double-sided-*` labels on the manager view, rendered only when `double_sided.enabled`) so an admin can see at a glance which templates carry a back face.
+
+### Viewport face switcher (thumbnail component)
+
+The `/viewport` editor gets a **thumbnail face switcher** — the `viewportfaces` plugin (`static/js/plugins/viewportfaces.js` + matching CSS), placed next to the inspiration panel and gated on `double_sided.enabled` (hidden entirely for single-faced profiles, so their editor is untouched).
+
+- It renders a **Front** and a **Back** thumbnail, each a miniature live viewport preview built with the same scaling/safe-area technique as the inspiration panel's `renderPreview`. The active face is highlighted.
+- The editor keeps editing a single surface: the **active** face's text stays in `body.data("text")` (so the text editor, print button, auto font sizing and URL all keep working unchanged), while the **inactive** face is parked in a parallel `body.data("text_front")` / `body.data("text_back")` buffer, with `body.data("face")` tracking the active side.
+- Clicking a thumbnail emits a `switch` event; `main.js` parks the live buffer into the side being left, loads the side being entered through the existing `texteditor("loadText", …)`, and re-renders the thumbnails. Typing refreshes the active thumbnail live.
+- Applying a **paired inspiration** fills the front from `text` and the back from `back.text` at once, and both thumbnails update together.
+
+**Known limitations (folded into the deferred submission work):** the back buffer is not yet serialized to the URL / session (only the active face round-trips through `text=`), font size / margins / alignment are still shared across faces rather than per-face, and the back face is not yet submitted to Colony Print.
+
+### Deferred (later iterations)
+
+- Per-face font size, margins and alignment (today both faces share the active controls).
+- Serializing both faces to the URL / session so a double-sided session resumes fully.
 - On confirm, enqueueing two jobs (front then back), each a normal single-face job, so the print-jobs plugin needs no protocol change — only labelling to tell the two chips apart.
 
 ## Compatibility & testing

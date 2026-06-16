@@ -352,6 +352,7 @@ jQuery(document).ready(function() {
     const modalOverlayPrintJob = jQuery(".modal-overlay-print-job");
     const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
     const inspirationPanel = jQuery(".inspiration-panel");
+    const viewportFaces = jQuery(".viewport-faces");
     const toast = jQuery(".toast");
 
     // gathers the values for the form related fields so that the
@@ -732,19 +733,7 @@ jQuery(document).ready(function() {
         // expands the inspiration text entries into individual
         // character pairs so that each character gets its own
         // DOM element for per-character caret navigation
-        const text = [];
-        const raw = inspiration.text || [];
-        for (let i = 0; i < raw.length; i++) {
-            const font = raw[i][0];
-            const value = raw[i][1];
-            if (value === "\n") {
-                text.push([font, "\n"]);
-            } else {
-                for (let j = 0; j < value.length; j++) {
-                    text.push([font, value[j]]);
-                }
-            }
-        }
+        const text = expandText(inspiration.text);
 
         // loads the expanded text into the editor which
         // rebuilds the DOM and sets the caret position
@@ -803,9 +792,75 @@ jQuery(document).ready(function() {
         // applies the font size and recalculates layout
         applyFontSize();
 
+        // parks the optional back face preset into the back buffer
+        // so a paired inspiration fills both faces at once, leaving
+        // the back buffer untouched when the preset is single faced
+        if (profile.double_sided && profile.double_sided.enabled) {
+            body.data("text_back", inspiration.back ? expandText(inspiration.back.text) : []);
+            renderFaces(profile);
+        }
+
         // updates the print button and report URL
         updateButtonState(text);
         updateUrl("restore");
+    };
+
+    // expands inspiration style text entries into individual
+    // character pairs so each character gets its own cell, matching
+    // the expansion the editor performs when an inspiration loads
+    const expandText = function(raw) {
+        const text = [];
+        const entries = raw || [];
+        for (let i = 0; i < entries.length; i++) {
+            const font = entries[i][0];
+            const value = entries[i][1];
+            if (value === "\n") {
+                text.push([font, "\n"]);
+            } else {
+                for (let j = 0; j < value.length; j++) {
+                    text.push([font, value[j]]);
+                }
+            }
+        }
+        return text;
+    };
+
+    // re-renders the front and back face thumbnails from the live
+    // editor buffer and the parked back buffer, hiding the panel
+    // entirely for single faced profiles so the editor chrome stays
+    // unchanged when double sided engraving is not in play
+    const renderFaces = function(profile) {
+        if (!profile || !profile.double_sided || !profile.double_sided.enabled) {
+            viewportFaces.viewportfaces("hide");
+            return;
+        }
+        const side = body.data("face") || "front";
+        const live = body.data("text") || [];
+        const front = side === "front" ? live : body.data("text_front") || [];
+        const back = side === "back" ? live : body.data("text_back") || [];
+        viewportFaces.viewportfaces("render", {
+            profile: profile,
+            front: front,
+            back: back,
+            side: side,
+            align: viewportContainer.css("text-align")
+        });
+    };
+
+    // switches the editor onto the requested face, parking the live
+    // buffer into the side being left and loading the side being
+    // entered so the two faces keep independent text while sharing
+    // the single editor surface; a no-op when already on that side
+    const switchFace = function(side) {
+        const current = body.data("face") || "front";
+        if (side === current) return;
+        body.data("text_" + current, body.data("text") || []);
+        const target = body.data("text_" + side) || [];
+        body.data("face", side);
+        viewportContainer.texteditor("loadText", { text: target });
+        applyFontSize();
+        updateButtonState(target);
+        renderFaces(currentProfile);
     };
 
     // updates the floating profile info block with the
@@ -1124,6 +1179,17 @@ jQuery(document).ready(function() {
         updateFontSizeControls(currentProfile);
         applyFontSize();
         inspirationPanel.inspirationpanel("update", currentProfile);
+
+        // resets the face state on a full profile switch so the back
+        // buffer never bleeds across profiles, keeping the active
+        // face on the front and refreshing the thumbnails (which hide
+        // themselves for single faced profiles)
+        if (!variantOnly) {
+            body.data("face", "front");
+            body.data("text_front", null);
+            body.data("text_back", []);
+        }
+        renderFaces(currentProfile);
         applyDefaultFont(currentProfile);
 
         // re-initializes the calligraphy canvas if the mode
@@ -1902,6 +1968,7 @@ jQuery(document).ready(function() {
             applyFontSize();
         }
         updateUrl("text");
+        renderFaces(currentProfile);
     });
 
     // registers for the caret change event from the text editor
@@ -1949,6 +2016,17 @@ jQuery(document).ready(function() {
         if (inspiration && currentProfile) {
             applyInspiration(currentProfile, inspiration);
         }
+    });
+
+    // initializes the viewport faces plugin and binds the switch
+    // event so picking a thumbnail swaps the editor onto that face,
+    // sharing the same scale constants as the inspiration previews
+    viewportFaces.viewportfaces({
+        viewport_scale: VIEWPORT_SCALE,
+        font_size_scale: FONT_SIZE_SCALE
+    });
+    viewportFaces.bind("switch", function(event, side) {
+        switchFace(side);
     });
 
     formConsole.formconsole();

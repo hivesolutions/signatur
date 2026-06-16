@@ -5293,6 +5293,213 @@ const countLines = function(text) {
 
 (function(jQuery) {
     /**
+     * Viewport faces plugin that renders the front and back of a
+     * double-sided profile as two miniature live-preview thumbnails
+     * so the operator can switch which face the editor is editing.
+     *
+     * Operates on a .viewport-faces element and discovers its
+     * children (.viewport-faces-thumbnails) by class name
+     * convention, building one .viewport-faces-thumb per face whose
+     * preview mirrors the inspiration panel rendering technique.
+     *
+     * Actions:
+     *   "render" - rebuilds the two thumbnails from the given
+     *              { profile, front, back, side } options, showing
+     *              the panel only for double-sided profiles and
+     *              highlighting the currently active face
+     *   "hide"   - hides the panel, used when the active profile is
+     *              not double-sided so single-faced editing stays
+     *              exactly as before
+     *
+     * Events:
+     *   "switch" - triggered when a face thumbnail is selected,
+     *              passing the chosen side ("front" or "back") as
+     *              argument so the editor can swap the active buffer
+     */
+    jQuery.fn.viewportfaces = function(action, options) {
+        const elements = jQuery(this);
+
+        // resolves the scale constants from the options falling back
+        // to the same defaults used by the inspiration panel so the
+        // face thumbnails render at a comparable visual scale
+        const viewportScale = (options && options.viewport_scale) || 3;
+        const fontSizeScale = (options && options.font_size_scale) || 1.3;
+
+        // renders a single face preview as a miniature viewport with
+        // the text pre-rendered inside it, reusing the same safe area
+        // and scaling math as the inspiration thumbnails so the two
+        // panels stay visually consistent
+        const renderPreview = function(profile, text, align, container) {
+            const width = profile.width * viewportScale;
+            const height = profile.height * viewportScale;
+            const padding = profile.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+            const fontSize = (profile.font_size && profile.font_size.default) || 3;
+            const scaledSize = fontSize * viewportScale * fontSizeScale;
+
+            const preview = jQuery('<div class="viewport-preview profile-active"></div>');
+            preview.css({ width: width + "px", height: height + "px" });
+
+            // applies the background image if the profile has one
+            if (profile.background) {
+                preview.css({
+                    "background-image": "url('/static/profiles/" + profile.background + "')",
+                    "background-size": width + "px " + height + "px",
+                    "background-repeat": "no-repeat",
+                    "background-position": "0px 0px"
+                });
+            }
+
+            // positions the text container over the safe drawable area
+            const safeX = padding.left * viewportScale;
+            const safeY = padding.top * viewportScale;
+            const safeW = width - (padding.left + padding.right) * viewportScale;
+            const safeH = height - (padding.top + padding.bottom) * viewportScale;
+            const viewer = jQuery('<div class="viewer-container"></div>');
+            viewer.css({
+                position: "absolute",
+                left: safeX + "px",
+                top: safeY + "px",
+                width: safeW + "px",
+                height: safeH + "px",
+                margin: "0px",
+                padding: "0px",
+                border: "none",
+                "min-width": "0px",
+                "font-size": scaledSize + "px",
+                "line-height": Math.round(scaledSize * 1.2) + "px",
+                "text-align": align || "center",
+                "align-content": "center",
+                display: "flex",
+                "flex-wrap": "wrap",
+                "justify-content":
+                    align === "left"
+                        ? "flex-start"
+                        : align === "right"
+                          ? "flex-end"
+                          : "center",
+                overflow: "hidden"
+            });
+
+            // renders the text items inside the viewer container
+            // expanding multi-character entries into individual spans
+            for (let i = 0; i < text.length; i++) {
+                const font = text[i][0];
+                const chars = text[i][1];
+                if (chars === "\n") {
+                    viewer.append('<div class="newline"></div>');
+                } else {
+                    for (let j = 0; j < chars.length; j++) {
+                        const value = chars[j] === " " ? "&nbsp;" : chars[j];
+                        viewer.append(
+                            "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
+                        );
+                    }
+                }
+            }
+
+            preview.append(viewer);
+
+            // scales the preview to fit inside the fixed height
+            // container, centering it on both axes so the thumbnail
+            // never overflows regardless of the profile aspect ratio
+            const containerWidth = container.width() || 72;
+            const containerHeight = container.height();
+            const widthScale = containerWidth / width;
+            const heightScale = containerHeight > 0 ? containerHeight / height : Infinity;
+            const scale = Math.min(widthScale, heightScale);
+            const scaledWidth = width * scale;
+            const scaledHeight = height * scale;
+            preview.css({
+                transform: "scale(" + scale + ")",
+                "transform-origin": "0 0",
+                left: Math.max(0, (containerWidth - scaledWidth) / 2) + "px",
+                position: "absolute",
+                top: Math.max(0, (containerHeight - scaledHeight) / 2) + "px"
+            });
+            container.css({ position: "relative" });
+
+            container.append(preview);
+        };
+
+        // builds a single face thumbnail with its preview and label,
+        // tagging it with the side so the click handler can emit the
+        // matching switch event and marking the active face so the
+        // styling diverges from the inactive one
+        const renderThumb = function(context, profile, side, text, align, label, active) {
+            const thumb = jQuery('<div class="viewport-faces-thumb"></div>');
+            thumb.attr("data-side", side);
+            if (active) thumb.addClass("active");
+            const previewContainer = jQuery('<div class="viewport-faces-thumb-preview"></div>');
+            const title = jQuery('<div class="viewport-faces-thumb-title"></div>');
+            title.text(label);
+            thumb.append(previewContainer);
+            thumb.append(title);
+            jQuery(".viewport-faces-thumbnails", context).append(thumb);
+            renderPreview(profile, text, align, previewContainer);
+        };
+
+        elements.each(function() {
+            const context = jQuery(this);
+            const thumbnails = jQuery(".viewport-faces-thumbnails", context);
+            const frontLabel = context.attr("data-label-front") || "Front";
+            const backLabel = context.attr("data-label-back") || "Back";
+
+            // rebuilds both thumbnails from the supplied face buffers,
+            // hiding the panel entirely when the profile is not double
+            // sided so single-faced editing is left untouched
+            if (action === "render") {
+                const profile = options.profile;
+                if (!profile || !profile.double_sided || !profile.double_sided.enabled) {
+                    context.removeClass("visible");
+                    return;
+                }
+                thumbnails.empty();
+                const side = options.side || "front";
+                renderThumb(
+                    context,
+                    profile,
+                    "front",
+                    options.front || [],
+                    options.align,
+                    frontLabel,
+                    side === "front"
+                );
+                renderThumb(
+                    context,
+                    profile,
+                    "back",
+                    options.back || [],
+                    options.align,
+                    backLabel,
+                    side === "back"
+                );
+                context.addClass("visible");
+                return;
+            }
+
+            // hides the panel without touching the thumbnails so the
+            // caller can collapse it when leaving a double-sided
+            // profile for a single-faced one
+            if (action === "hide") {
+                context.removeClass("visible");
+                return;
+            }
+
+            // registers a delegated click handler on the thumbnails so
+            // selecting a face emits the switch event before its markup
+            // is rebuilt, surviving every render that swaps the nodes
+            thumbnails.on("click", ".viewport-faces-thumb", function() {
+                const side = jQuery(this).attr("data-side");
+                if (side) context.triggerHandler("switch", [side]);
+            });
+        });
+
+        return elements;
+    };
+})(jQuery);
+
+(function(jQuery) {
+    /**
      * Viewport preview plugin that manages the visual rendering
      * of the engraving preview area including SVG bounds, safe
      * drawable area, background images, rulers, and zoom scaling.
@@ -6190,6 +6397,7 @@ jQuery(document).ready(function() {
     const modalOverlayPrintJob = jQuery(".modal-overlay-print-job");
     const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
     const inspirationPanel = jQuery(".inspiration-panel");
+    const viewportFaces = jQuery(".viewport-faces");
     const toast = jQuery(".toast");
 
     // gathers the values for the form related fields so that the
@@ -6570,19 +6778,7 @@ jQuery(document).ready(function() {
         // expands the inspiration text entries into individual
         // character pairs so that each character gets its own
         // DOM element for per-character caret navigation
-        const text = [];
-        const raw = inspiration.text || [];
-        for (let i = 0; i < raw.length; i++) {
-            const font = raw[i][0];
-            const value = raw[i][1];
-            if (value === "\n") {
-                text.push([font, "\n"]);
-            } else {
-                for (let j = 0; j < value.length; j++) {
-                    text.push([font, value[j]]);
-                }
-            }
-        }
+        const text = expandText(inspiration.text);
 
         // loads the expanded text into the editor which
         // rebuilds the DOM and sets the caret position
@@ -6641,9 +6837,75 @@ jQuery(document).ready(function() {
         // applies the font size and recalculates layout
         applyFontSize();
 
+        // parks the optional back face preset into the back buffer
+        // so a paired inspiration fills both faces at once, leaving
+        // the back buffer untouched when the preset is single faced
+        if (profile.double_sided && profile.double_sided.enabled) {
+            body.data("text_back", inspiration.back ? expandText(inspiration.back.text) : []);
+            renderFaces(profile);
+        }
+
         // updates the print button and report URL
         updateButtonState(text);
         updateUrl("restore");
+    };
+
+    // expands inspiration style text entries into individual
+    // character pairs so each character gets its own cell, matching
+    // the expansion the editor performs when an inspiration loads
+    const expandText = function(raw) {
+        const text = [];
+        const entries = raw || [];
+        for (let i = 0; i < entries.length; i++) {
+            const font = entries[i][0];
+            const value = entries[i][1];
+            if (value === "\n") {
+                text.push([font, "\n"]);
+            } else {
+                for (let j = 0; j < value.length; j++) {
+                    text.push([font, value[j]]);
+                }
+            }
+        }
+        return text;
+    };
+
+    // re-renders the front and back face thumbnails from the live
+    // editor buffer and the parked back buffer, hiding the panel
+    // entirely for single faced profiles so the editor chrome stays
+    // unchanged when double sided engraving is not in play
+    const renderFaces = function(profile) {
+        if (!profile || !profile.double_sided || !profile.double_sided.enabled) {
+            viewportFaces.viewportfaces("hide");
+            return;
+        }
+        const side = body.data("face") || "front";
+        const live = body.data("text") || [];
+        const front = side === "front" ? live : body.data("text_front") || [];
+        const back = side === "back" ? live : body.data("text_back") || [];
+        viewportFaces.viewportfaces("render", {
+            profile: profile,
+            front: front,
+            back: back,
+            side: side,
+            align: viewportContainer.css("text-align")
+        });
+    };
+
+    // switches the editor onto the requested face, parking the live
+    // buffer into the side being left and loading the side being
+    // entered so the two faces keep independent text while sharing
+    // the single editor surface; a no-op when already on that side
+    const switchFace = function(side) {
+        const current = body.data("face") || "front";
+        if (side === current) return;
+        body.data("text_" + current, body.data("text") || []);
+        const target = body.data("text_" + side) || [];
+        body.data("face", side);
+        viewportContainer.texteditor("loadText", { text: target });
+        applyFontSize();
+        updateButtonState(target);
+        renderFaces(currentProfile);
     };
 
     // updates the floating profile info block with the
@@ -6962,6 +7224,17 @@ jQuery(document).ready(function() {
         updateFontSizeControls(currentProfile);
         applyFontSize();
         inspirationPanel.inspirationpanel("update", currentProfile);
+
+        // resets the face state on a full profile switch so the back
+        // buffer never bleeds across profiles, keeping the active
+        // face on the front and refreshing the thumbnails (which hide
+        // themselves for single faced profiles)
+        if (!variantOnly) {
+            body.data("face", "front");
+            body.data("text_front", null);
+            body.data("text_back", []);
+        }
+        renderFaces(currentProfile);
         applyDefaultFont(currentProfile);
 
         // re-initializes the calligraphy canvas if the mode
@@ -7740,6 +8013,7 @@ jQuery(document).ready(function() {
             applyFontSize();
         }
         updateUrl("text");
+        renderFaces(currentProfile);
     });
 
     // registers for the caret change event from the text editor
@@ -7787,6 +8061,17 @@ jQuery(document).ready(function() {
         if (inspiration && currentProfile) {
             applyInspiration(currentProfile, inspiration);
         }
+    });
+
+    // initializes the viewport faces plugin and binds the switch
+    // event so picking a thumbnail swaps the editor onto that face,
+    // sharing the same scale constants as the inspiration previews
+    viewportFaces.viewportfaces({
+        viewport_scale: VIEWPORT_SCALE,
+        font_size_scale: FONT_SIZE_SCALE
+    });
+    viewportFaces.bind("switch", function(event, side) {
+        switchFace(side);
     });
 
     formConsole.formconsole();
