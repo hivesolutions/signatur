@@ -825,6 +825,34 @@ jQuery(document).ready(function() {
         return text;
     };
 
+    // anchors the faces panel directly below the inspiration panel
+    // so the two stacked cards read as a single column, falling back
+    // to the inspiration panel resting offset when it is hidden so
+    // the faces panel never floats over the top of the page
+    const positionFaces = function() {
+        const gap = 16;
+        if (inspirationPanel.hasClass("visible")) {
+            const top = inspirationPanel.offset().top + inspirationPanel.outerHeight() + gap;
+            viewportFaces.css("top", top + "px");
+        } else {
+            viewportFaces.css("top", "");
+        }
+    };
+
+    // resolves the current text of both faces, reading the active
+    // face from the live editor buffer and the inactive one from its
+    // parked buffer so callers (the thumbnails and the URL writer)
+    // always agree on what each face currently holds
+    const getFaceTexts = function() {
+        const side = body.data("face") || "front";
+        const live = body.data("text") || [];
+        return {
+            side: side,
+            front: side === "front" ? live : body.data("text_front") || [],
+            back: side === "back" ? live : body.data("text_back") || []
+        };
+    };
+
     // re-renders the front and back face thumbnails from the live
     // editor buffer and the parked back buffer, hiding the panel
     // entirely for single faced profiles so the editor chrome stays
@@ -834,17 +862,15 @@ jQuery(document).ready(function() {
             viewportFaces.viewportfaces("hide");
             return;
         }
-        const side = body.data("face") || "front";
-        const live = body.data("text") || [];
-        const front = side === "front" ? live : body.data("text_front") || [];
-        const back = side === "back" ? live : body.data("text_back") || [];
+        const faces = getFaceTexts();
         viewportFaces.viewportfaces("render", {
             profile: profile,
-            front: front,
-            back: back,
-            side: side,
+            front: faces.front,
+            back: faces.back,
+            side: faces.side,
             align: viewportContainer.css("text-align")
         });
+        positionFaces();
     };
 
     // switches the editor onto the requested face, parking the live
@@ -1183,11 +1209,15 @@ jQuery(document).ready(function() {
         // resets the face state on a full profile switch so the back
         // buffer never bleeds across profiles, keeping the active
         // face on the front and refreshing the thumbnails (which hide
-        // themselves for single faced profiles)
+        // themselves for single faced profiles); during a session
+        // restore the back buffer is seeded from its URL param so the
+        // reset and the text restore can run in either order without
+        // clobbering the resumed back face
         if (!variantOnly) {
             body.data("face", "front");
             body.data("text_front", null);
-            body.data("text_back", []);
+            const urlTextBack = restoring ? urlParams.get("text_back") : null;
+            body.data("text_back", urlTextBack ? deserializeText(urlTextBack) : []);
         }
         renderFaces(currentProfile);
         applyDefaultFont(currentProfile);
@@ -1787,9 +1817,22 @@ jQuery(document).ready(function() {
         if (restoring) return;
         if (viewportContainer.length === 0) return;
         const params = new URLSearchParams(window.location.search);
-        const text = body.data("text") || [];
+        const faces = getFaceTexts();
         params.delete("text");
-        if (text.length > 0) params.set("text", serializeText(text));
+        params.delete("text_back");
+        if (faces.front.length > 0) params.set("text", serializeText(faces.front));
+
+        // carries the back face in its own param for double sided
+        // profiles so a shared link restores both faces, dropping it
+        // for single faced profiles so their URLs stay unchanged
+        if (
+            currentProfile &&
+            currentProfile.double_sided &&
+            currentProfile.double_sided.enabled &&
+            faces.back.length > 0
+        ) {
+            params.set("text_back", serializeText(faces.back));
+        }
         const selection = profileSelector.profileselector("value");
         params.delete("profile");
         params.delete("variant");
@@ -1859,14 +1902,30 @@ jQuery(document).ready(function() {
     // initializes the text data array from server-rendered
     // content so that the session state is fully restored
     const restoreText = function() {
+        // restores the back face buffer from its own URL param so a
+        // shared double sided link resumes both faces, parked behind
+        // the live front buffer until the operator switches faces
+        const urlTextBack = urlParams.get("text_back");
+        if (urlTextBack) {
+            const backData = deserializeText(urlTextBack);
+            if (backData && backData.length > 0) body.data("text_back", backData);
+        }
+
         const initialText = viewportContainer.attr("data-text");
-        if (!initialText) return;
+        if (!initialText) {
+            renderFaces(currentProfile);
+            return;
+        }
         const textData = deserializeText(initialText);
-        if (!textData || textData.length === 0) return;
+        if (!textData || textData.length === 0) {
+            renderFaces(currentProfile);
+            return;
+        }
         body.data("text", textData);
         body.data("caret_position", textData.length - 1);
         viewportContainer.texteditor("bindExisting");
         updateButtonState(textData);
+        renderFaces(currentProfile);
     };
 
     const printReceipt = async function() {
@@ -2027,6 +2086,16 @@ jQuery(document).ready(function() {
     });
     viewportFaces.bind("switch", function(event, side) {
         switchFace(side);
+    });
+
+    // keeps the faces panel pinned below the inspiration panel when
+    // the latter is collapsed or expanded, waiting for its max-height
+    // transition to settle before measuring the new bottom edge
+    jQuery(".inspiration-panel-title", inspirationPanel).click(function() {
+        jQuery(".inspiration-panel-body", inspirationPanel).one(
+            "transitionend",
+            positionFaces
+        );
     });
 
     formConsole.formconsole();

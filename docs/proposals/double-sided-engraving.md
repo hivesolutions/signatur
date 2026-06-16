@@ -87,19 +87,29 @@ The profile manager detail panel shows a **Double Sided** row (driven by `data-m
 
 ### Viewport face switcher (thumbnail component)
 
-The `/viewport` editor gets a **thumbnail face switcher** — the `viewportfaces` plugin (`static/js/plugins/viewportfaces.js` + matching CSS), placed next to the inspiration panel and gated on `double_sided.enabled` (hidden entirely for single-faced profiles, so their editor is untouched).
+The `/viewport` editor gets a **thumbnail face switcher** — the `viewportfaces` plugin (`static/js/plugins/viewportfaces.js` + matching CSS), pinned **directly below the inspiration panel** (its `top` is computed from the inspiration panel's resting bottom edge and re-pinned when that panel collapses or expands) and gated on `double_sided.enabled` (hidden entirely for single-faced profiles, so their editor is untouched).
 
 - It renders a **Front** and a **Back** thumbnail, each a miniature live viewport preview built with the same scaling/safe-area technique as the inspiration panel's `renderPreview`. The active face is highlighted.
-- The editor keeps editing a single surface: the **active** face's text stays in `body.data("text")` (so the text editor, print button, auto font sizing and URL all keep working unchanged), while the **inactive** face is parked in a parallel `body.data("text_front")` / `body.data("text_back")` buffer, with `body.data("face")` tracking the active side.
+- The editor keeps editing a single surface: the **active** face's text stays in `body.data("text")` (so the text editor, print button and auto font sizing keep working unchanged), while the **inactive** face is parked in a parallel `body.data("text_front")` / `body.data("text_back")` buffer, with `body.data("face")` tracking the active side.
 - Clicking a thumbnail emits a `switch` event; `main.js` parks the live buffer into the side being left, loads the side being entered through the existing `texteditor("loadText", …)`, and re-renders the thumbnails. Typing refreshes the active thumbnail live.
 - Applying a **paired inspiration** fills the front from `text` and the back from `back.text` at once, and both thumbnails update together.
 
-**Known limitations (folded into the deferred submission work):** the back buffer is not yet serialized to the URL / session (only the active face round-trips through `text=`), font size / margins / alignment are still shared across faces rather than per-face, and the back face is not yet submitted to Colony Print.
+### Double-sided inspiration previews
+
+For a double-sided profile, an inspiration that carries a `back` block previews **both faces side by side** (a front half and a back half within the same thumbnail / card) in both the inspiration panel and the View-all modal, so the operator sees what each face will hold before applying it. Single-faced inspirations (and double-sided inspirations on a single-faced profile) keep the single preview they have always rendered.
+
+### URL state (both faces)
+
+The viewport round-trips both faces through the query string so a shared or bookmarked link resumes the full double-sided session:
+
+- `text` — the **front** face, serialized exactly as today. Single-faced links are unchanged and fully backward compatible.
+- `text_back` — the **back** face, using the same serialization, written only for double-sided profiles with a non-empty back buffer and dropped otherwise.
+
+On restore, `text` rebuilds the live front buffer (as before) and `text_back` seeds the parked back buffer; the seeding is duplicated in the profile-refresh reset and in the text-restore step so the two can run in either order during load without clobbering the resumed back face.
 
 ### Deferred (later iterations)
 
 - Per-face font size, margins and alignment (today both faces share the active controls).
-- Serializing both faces to the URL / session so a double-sided session resumes fully.
 - On confirm, enqueueing two jobs (front then back), each a normal single-face job, so the print-jobs plugin needs no protocol change — only labelling to tell the two chips apart.
 
 ## Compatibility & testing

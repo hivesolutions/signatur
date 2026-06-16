@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Download the current emoji mapping file from the settings Emojis tab
 * Download the current emoji font from the settings Emojis tab
 * Download the display font and the engraving file of each font from the settings Fonts tab
-* Profiles and inspirations can now describe a second, back face for double-sided engraving
-* Switch between the front and back of a double-sided piece from a thumbnail preview on the engraving layout
+* Profiles and inspirations can now describe a second, back face for double-sided engraving, with double-sided inspirations previewing both faces at once
+* Switch between the front and back of a double-sided piece from a thumbnail preview on the engraving layout, with shared links restoring both faces
 * The profile detail panel now shows whether a profile is double-sided
 
 ### Changed

@@ -4078,6 +4078,18 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     vertical-align: top;
 }
 
+.inspiration-preview-dual {
+    display: flex;
+    gap: 4px;
+}
+
+.inspiration-preview-dual > .inspiration-preview-half {
+    flex: 1 1 50%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
 .inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails > .inspiration-thumb:hover > .inspiration-thumb-preview {
     transform: translateY(-2px);
     -o-transform: translateY(-2px);
@@ -7358,7 +7370,7 @@ body.ldj .toast {
     pointer-events: none;
     position: fixed;
     right: 22px;
-    top: 60px;
+    top: 226px;
     transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -o-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);
     -ms-transition: opacity 0.35s cubic-bezier(0.645, 0.045, 0.355, 1.0);

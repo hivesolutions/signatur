@@ -140,6 +140,36 @@
                 container.append(preview);
             };
 
+            // returns true when the profile opts into double sided
+            // engraving and the inspiration carries a back face, the
+            // only case where the preview is split into two halves
+            const isDoubleSided = function(profile, inspiration) {
+                return Boolean(
+                    profile.double_sided &&
+                        profile.double_sided.enabled &&
+                        inspiration.back
+                );
+            };
+
+            // renders the preview(s) for an inspiration into the given
+            // container, splitting it into a front and a back half when
+            // the inspiration is double sided so both faces are visible
+            // at a glance, and falling back to the single preview that
+            // every single faced inspiration has always used
+            const renderPreviews = function(profile, inspiration, container) {
+                if (!isDoubleSided(profile, inspiration)) {
+                    renderPreview(profile, inspiration, container);
+                    return;
+                }
+                container.addClass("inspiration-preview-dual");
+                const front = jQuery('<div class="inspiration-preview-half"></div>');
+                const back = jQuery('<div class="inspiration-preview-half"></div>');
+                container.append(front);
+                container.append(back);
+                renderPreview(profile, inspiration, front);
+                renderPreview(profile, inspiration.back, back);
+            };
+
             // renders the inspiration thumbnails in the side panel
             // showing the first 3 entries from the profile inspirations
             const renderPanel = function(profile) {
@@ -163,7 +193,7 @@
                     thumb.append(title);
                     thumb.data("inspiration", inspiration);
                     thumbnails.append(thumb);
-                    renderPreview(profile, inspiration, previewContainer);
+                    renderPreviews(profile, inspiration, previewContainer);
                 }
 
                 context.addClass("visible");
@@ -216,7 +246,7 @@
                     card.append(author);
                     card.data("inspiration", inspiration);
                     modalGrid.append(card);
-                    renderPreview(profile, inspiration, previewContainer);
+                    renderPreviews(profile, inspiration, previewContainer);
                 }
             };
 
