@@ -166,15 +166,18 @@
                     return;
                 }
 
-                // reveals the panel before the thumbnails are measured
-                // and forces a synchronous reflow so the freshly shown
-                // preview containers report their final width; without
-                // this the first render after a page load measures the
-                // not yet laid out containers and the miniature scale
-                // stays stale until a manual click repaints it
+                // reveals the panel before the thumbnails are measured,
+                // forcing a synchronous reflow on the first reveal so
+                // the freshly shown preview containers report their
+                // final width instead of the not yet laid out size that
+                // would otherwise leave the miniature scale stale; the
+                // reflow is skipped once the panel is already visible so
+                // a realtime font size repaint does not pay for it
                 thumbnails.empty();
-                context.addClass("visible");
-                context.get(0).offsetHeight;
+                if (!context.hasClass("visible")) {
+                    context.addClass("visible");
+                    context.get(0).offsetHeight;
+                }
 
                 const side = options.side || "front";
                 renderThumb(

@@ -5489,15 +5489,18 @@ const countLines = function(text) {
                     return;
                 }
 
-                // reveals the panel before the thumbnails are measured
-                // and forces a synchronous reflow so the freshly shown
-                // preview containers report their final width; without
-                // this the first render after a page load measures the
-                // not yet laid out containers and the miniature scale
-                // stays stale until a manual click repaints it
+                // reveals the panel before the thumbnails are measured,
+                // forcing a synchronous reflow on the first reveal so
+                // the freshly shown preview containers report their
+                // final width instead of the not yet laid out size that
+                // would otherwise leave the miniature scale stale; the
+                // reflow is skipped once the panel is already visible so
+                // a realtime font size repaint does not pay for it
                 thumbnails.empty();
-                context.addClass("visible");
-                context.get(0).offsetHeight;
+                if (!context.hasClass("visible")) {
+                    context.addClass("visible");
+                    context.get(0).offsetHeight;
+                }
 
                 const side = options.side || "front";
                 renderThumb(
@@ -6766,6 +6769,14 @@ jQuery(document).ready(function() {
             }
             restoring = false;
             updateUrl("restore");
+
+            // re-renders the face thumbnails once the full restore has
+            // settled so they reflect the resolved front font size,
+            // margins and alignment; the text restore runs from a
+            // separate async callback, so rendering here as well means
+            // whichever of the two finishes last leaves a correct
+            // thumbnail instead of one stuck on the profile defaults
+            renderFaces(currentProfile);
         } catch (err) {
             restoring = false;
             // silently ignores profile loading errors
@@ -7460,6 +7471,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the font size number input
@@ -7470,6 +7482,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the font size mode checkbox
@@ -7482,6 +7495,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the click on each font size preset chip so
@@ -7595,6 +7609,7 @@ jQuery(document).ready(function() {
         renderViewportPreview(currentProfile);
         applyFontSize();
         updateUrl("margins");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the crosshair mode checkbox

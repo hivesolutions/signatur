@@ -679,6 +679,14 @@ jQuery(document).ready(function() {
             }
             restoring = false;
             updateUrl("restore");
+
+            // re-renders the face thumbnails once the full restore has
+            // settled so they reflect the resolved front font size,
+            // margins and alignment; the text restore runs from a
+            // separate async callback, so rendering here as well means
+            // whichever of the two finishes last leaves a correct
+            // thumbnail instead of one stuck on the profile defaults
+            renderFaces(currentProfile);
         } catch (err) {
             restoring = false;
             // silently ignores profile loading errors
@@ -1373,6 +1381,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the font size number input
@@ -1383,6 +1392,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the font size mode checkbox
@@ -1395,6 +1405,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the click on each font size preset chip so
@@ -1508,6 +1519,7 @@ jQuery(document).ready(function() {
         renderViewportPreview(currentProfile);
         applyFontSize();
         updateUrl("margins");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the crosshair mode checkbox
