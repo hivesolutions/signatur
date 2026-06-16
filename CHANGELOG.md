@@ -20,10 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Switching the active face on a double-sided piece now slides and fades the preview in, sliding in from the right when entering the back and from the left when returning to the front
+* Applying an inspiration now pulses and glows the preview to highlight that the design changed
 
 ### Fixed
 
 * The double-sided face switcher panel is now hidden when entering preview mode, like the other side panels
+* Applying an inspiration whose font matches the active one no longer toggles the selected font off, which had hidden the keyboard
 
 ## [1.2.1] - 2026-06-14
 

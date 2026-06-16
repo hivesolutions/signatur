@@ -673,6 +673,30 @@ body.rulers-off .viewport > .main-container > .viewport-preview.profile-active {
     -webkit-animation: face-switch-back 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.0);
 }
 
+@keyframes inspiration-apply {
+    0% {
+        box-shadow: 0px 0px 0px rgba(24, 24, 24, 0);
+        transform: scale(1);
+    }
+    45% {
+        box-shadow: 0px 6px 26px rgba(24, 24, 24, 0.22);
+        transform: scale(1.04);
+    }
+    100% {
+        box-shadow: 0px 0px 0px rgba(24, 24, 24, 0);
+        transform: scale(1);
+    }
+}
+
+.viewport > .main-container > .viewport-preview.inspiration-applying {
+    animation: inspiration-apply 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    -o-animation: inspiration-apply 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    -ms-animation: inspiration-apply 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    -moz-animation: inspiration-apply 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    -khtml-animation: inspiration-apply 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    -webkit-animation: inspiration-apply 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .viewport > .main-container > .viewport-preview > .viewport-svg {
     display: none;
     margin: 0px auto 0px auto;

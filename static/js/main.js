@@ -750,6 +750,20 @@ jQuery(document).ready(function() {
         viewportPreview.viewportpreview("zoom", { zoom: zoom });
     };
 
+    // restarts the pulse and glow highlight on the main preview so
+    // applying an inspiration reads as a deliberate change, clearing
+    // the class (and any in flight face switch animation it would
+    // otherwise contend with) and forcing a synchronous reflow before
+    // re-adding it so the animation replays on every apply rather than
+    // only the first, matching the reflow technique the faces panel uses
+    const animateInspirationApply = function() {
+        viewportPreview.removeClass(
+            "inspiration-applying face-switching-forward face-switching-back"
+        );
+        viewportPreview.get(0).offsetHeight;
+        viewportPreview.addClass("inspiration-applying");
+    };
+
     // applies an inspiration configuration to the viewport
     // setting the text, font size, margins, and font selection
     const applyInspiration = function(profile, inspiration) {
@@ -774,7 +788,7 @@ jQuery(document).ready(function() {
         if (primaryFont) {
             const fontElement = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
             if (fontElement.length === 0) return;
-            if (!fontElement.hasClass("active")) fontElement.click();
+            if (!fontElement.hasClass("selected")) fontElement.click();
         }
 
         // applies the font size from the inspiration and
@@ -834,6 +848,10 @@ jQuery(document).ready(function() {
             }
             renderFaces(profile);
         }
+
+        // pulses the preview to highlight that the inspiration
+        // has been applied
+        animateInspirationApply();
 
         // updates the print button and report URL
         updateButtonState(text);
