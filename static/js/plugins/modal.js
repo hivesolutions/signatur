@@ -376,6 +376,7 @@
                 // the viewport information from the selected profile if available
                 const dryRun = jQuery(".modal-dry-run", context).prop("checked");
                 const record = jQuery(".modal-record", context).prop("checked");
+                const checkPath = jQuery(".modal-check-path", context).prop("checked");
                 let textPayload = multifont && multifont.length > 0 ? multifont : text;
                 const fontPayload = font === "Cool Emojis" ? null : font;
 
@@ -423,7 +424,8 @@
                     font: fontPayload,
                     debug: true,
                     dry_run: dryRun,
-                    record: record
+                    record: record,
+                    check_path: Boolean(checkPath)
                 };
                 if (Object.keys(extraFonts).length > 0) {
                     printData.extra_fonts = extraFonts;
