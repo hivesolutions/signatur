@@ -717,6 +717,11 @@ describe("Profile", function() {
             assert.deepStrictEqual(errors, []);
         });
 
+        it("should reject a non-object face", () => {
+            const errors = lib.validateInspirationFace("invalid", "inspirations[0]");
+            assert.deepStrictEqual(errors, ["inspirations[0] must be an object"]);
+        });
+
         it("should require the text and font size fields", () => {
             const errors = lib.validateInspirationFace({}, "inspirations[0]");
             assert.strictEqual(

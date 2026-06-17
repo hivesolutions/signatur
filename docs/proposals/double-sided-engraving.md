@@ -29,8 +29,8 @@ These were settled with the maintainer before implementation:
 
 - **Submission**: the back is sent as a **second, independent single-face job** (front then back). The Colony Print protocol and the print-jobs plugin stay unchanged.
 - **Alignment**: **out of scope** for this iteration. We allow a separate back design but ship no mirroring, offset or registration logic.
-- **Phasing**: the **data model landed first** (the profile `double_sided` block, the inspiration `back` preset, the validators, the spec docs and the unit tests). The **viewport thumbnail face switcher** and the profile manager display followed on the same branch. The submission wiring and per-face controls remain deferred.
-- **Back design entry**: driven by **paired inspirations** (a `back` block on an inspiration entry); the face switcher lets the operator view and switch faces. Free manual typing per face works through the active editor surface, but per-face font size / margins / alignment are deferred.
+- **Phasing**: the **data model landed first** (the profile `double_sided` block, the inspiration `back` preset, the validators, the spec docs and the unit tests). The **viewport thumbnail face switcher**, the per-face editing controls and the profile manager display followed on the same branch. Only the submission wiring remains deferred.
+- **Back design entry**: driven by **paired inspirations** (a `back` block on an inspiration entry); the face switcher lets the operator view and switch faces. Free manual typing per face works through the active editor surface, and each face keeps its own font size, margins and alignment.
 
 ## Non-goals (this iteration)
 
@@ -89,14 +89,14 @@ The profile manager detail panel shows a **Double Sided** row (driven by `data-m
 
 The `/viewport` editor gets a **thumbnail face switcher** — the `viewportfaces` plugin (`static/js/plugins/viewportfaces.js` + matching CSS), pinned **directly below the inspiration panel** (its `top` is computed from the inspiration panel's resting bottom edge and re-pinned when that panel collapses or expands) and gated on `double_sided.enabled` (hidden entirely for single-faced profiles, so their editor is untouched).
 
-- It renders a **Front** and a **Back** thumbnail, each a miniature live viewport preview built with the same scaling/safe-area technique as the inspiration panel's `renderPreview`, and each rendered at **its own** font size, margins and alignment so the thumbnail faithfully reflects that face. The active face is highlighted.
+- It renders a **Front** and a **Back** thumbnail, each a miniature live viewport preview built with the same scaling/safe-area technique as the inspiration panel's `renderPreview`, and each rendered at **its own** font size, margins, alignment and background so the thumbnail faithfully reflects that face. The back thumbnail and the main editor preview use `double_sided.back_background` when it is set (falling back to the shared front `background`). The active face is highlighted.
 - Each face owns a full **settings** object — `{ text, font_size, font_size_mode, margins, align }`. The **active** face stays live in the editor (its text in `body.data("text")` and its font size / margins / alignment in the existing controls, so the text editor, print button and auto font sizing keep working unchanged), while the **inactive** face is parked in `body.data("settings_front")` / `body.data("settings_back")`, with `body.data("face")` tracking the active side.
 - Clicking a thumbnail emits a `switch` event; `main.js` captures every setting of the side being left into its parked object, then applies the side being entered (rebuilding the text through `texteditor("loadText", …)` and restoring its font size, margins and alignment), and re-renders the thumbnails. Typing or changing a control refreshes the active thumbnail live.
 - Applying a **paired inspiration** fills the front from `text` (and the front controls) and parks the back from `back.text` / `back.font_size` / `back.padding` / `back.align` at once, and both thumbnails update together.
 
 ### Double-sided inspiration previews
 
-For a double-sided profile, an inspiration that carries a `back` block previews **both faces side by side** (a front half and a back half within the same thumbnail / card) in both the inspiration panel and the View-all modal, so the operator sees what each face will hold before applying it. Single-faced inspirations (and double-sided inspirations on a single-faced profile) keep the single preview they have always rendered.
+For a double-sided profile, an inspiration that carries a `back` block previews **both faces side by side** (a front half and a back half within the same thumbnail / card) in both the inspiration panel and the View-all modal, so the operator sees what each face will hold before applying it. The back half renders against `double_sided.back_background` when set. Single-faced inspirations (and double-sided inspirations on a single-faced profile) keep the single preview they have always rendered.
 
 ### URL state (both faces, full per-face settings)
 

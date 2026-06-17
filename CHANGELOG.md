@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * The double-sided face switcher panel is now hidden when entering preview mode, like the other side panels
 * Applying an inspiration whose font matches the active one no longer toggles the selected font off, which had hidden the keyboard
+* Applying an inspiration now selects the keyboard for the font under the cursor instead of the first character's font
+* Face thumbnails now render each side's text in its own font
 
 ## [1.2.1] - 2026-06-14
 

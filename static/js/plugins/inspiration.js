@@ -38,7 +38,7 @@
 
             // renders a single inspiration thumbnail as a miniature
             // viewport preview with the text pre-rendered inside it
-            const renderPreview = function(profile, inspiration, container) {
+            const renderPreview = function(profile, inspiration, side, container) {
                 const width = profile.width * viewportScale;
                 const height = profile.height * viewportScale;
                 const padding = inspiration.padding ||
@@ -49,10 +49,19 @@
                 const preview = jQuery('<div class="viewport-preview profile-active"></div>');
                 preview.css({ width: width + "px", height: height + "px" });
 
-                // applies the background image if the profile has one
-                if (profile.background) {
+                // applies the background image if the face has one,
+                // preferring the dedicated back background for the back
+                // half so the preview matches the surface that gets
+                // engraved and falling back to the shared front one
+                const background =
+                    side === "back" &&
+                    profile.double_sided &&
+                    profile.double_sided.back_background
+                        ? profile.double_sided.back_background
+                        : profile.background;
+                if (background) {
                     preview.css({
-                        "background-image": "url('/static/profiles/" + profile.background + "')",
+                        "background-image": "url('/static/profiles/" + background + "')",
                         "background-size": width + "px " + height + "px",
                         "background-repeat": "no-repeat",
                         "background-position": "0px 0px"
@@ -99,10 +108,11 @@
                         viewer.append('<div class="newline"></div>');
                     } else {
                         for (let j = 0; j < chars.length; j++) {
-                            const value = chars[j] === " " ? "&nbsp;" : chars[j];
-                            viewer.append(
-                                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-                            );
+                            const value = chars[j] === " " ? "\u00a0" : chars[j];
+                            const span = jQuery("<span></span>");
+                            span.css("font-family", "'" + font + "'");
+                            span.text(value);
+                            viewer.append(span);
                         }
                     }
                 }
@@ -158,7 +168,7 @@
             // every single faced inspiration has always used
             const renderPreviews = function(profile, inspiration, container) {
                 if (!isDoubleSided(profile, inspiration)) {
-                    renderPreview(profile, inspiration, container);
+                    renderPreview(profile, inspiration, "front", container);
                     return;
                 }
                 container.addClass("inspiration-preview-dual");
@@ -166,8 +176,8 @@
                 const back = jQuery('<div class="inspiration-preview-half"></div>');
                 container.append(front);
                 container.append(back);
-                renderPreview(profile, inspiration, front);
-                renderPreview(profile, inspiration.back, back);
+                renderPreview(profile, inspiration, "front", front);
+                renderPreview(profile, inspiration.back, "back", back);
             };
 
             // renders the inspiration thumbnails in the side panel

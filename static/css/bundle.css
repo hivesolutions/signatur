@@ -7550,7 +7550,7 @@ body.ldj .toast {
     border-color: rgba(24, 24, 24, 0.4);
 }
 
-.viewport-faces > .viewport-faces-thumbnails > .viewport-faces-thumb > .viewport-faces-thumb-preview .newline {
+.viewport-faces > .viewport-faces-thumbnails > .viewport-faces-thumb > .viewport-faces-thumb-preview > .newline {
     height: 0px;
     width: 100%;
 }

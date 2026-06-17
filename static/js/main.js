@@ -724,8 +724,23 @@ jQuery(document).ready(function() {
     // renders the viewport preview using the viewport preview
     // plugin with the current profile and margin configuration
     const renderViewportPreview = function(profile) {
+        // swaps in the dedicated back background while the back face is
+        // active so the main editor preview shows the surface that gets
+        // engraved, leaving the front and single faced profiles to use
+        // their own background unchanged
+        let rendered = profile;
+        if (
+            profile &&
+            body.data("face") === "back" &&
+            profile.double_sided &&
+            profile.double_sided.back_background
+        ) {
+            rendered = Object.assign({}, profile, {
+                background: profile.double_sided.back_background
+            });
+        }
         viewportPreview.viewportpreview("render", {
-            profile: profile,
+            profile: rendered,
             scale: VIEWPORT_SCALE,
             padding: getMargins()
         });
@@ -767,6 +782,21 @@ jQuery(document).ready(function() {
     // applies an inspiration configuration to the viewport
     // setting the text, font size, margins, and font selection
     const applyInspiration = function(profile, inspiration) {
+        // a paired inspiration always fills the front from `text` and
+        // the back from `back`, so when the back face is the live one
+        // the editor is returned to the front first (parking the back)
+        // before loading the preset, otherwise the front design would
+        // land on the back face and the parked back would be ignored
+        if (
+            profile.double_sided &&
+            profile.double_sided.enabled &&
+            body.data("face") === "back"
+        ) {
+            body.data("settings_back", captureFace());
+            body.data("face", "front");
+            applyFace(body.data("settings_front"));
+        }
+
         // expands the inspiration text entries into individual
         // character pairs so that each character gets its own
         // DOM element for per-character caret navigation
@@ -776,17 +806,20 @@ jQuery(document).ready(function() {
         // rebuilds the DOM and sets the caret position
         viewportContainer.texteditor("loadText", { text: text });
 
-        // determines the primary font from the text entries
-        // and skips the preset if the font is not available
-        let primaryFont = null;
-        for (let i = 0; i < text.length; i++) {
+        // determines the font under the caret (which loadText leaves
+        // at the last character) by searching left for the nearest
+        // entry that carries a font, so the selected keyboard matches
+        // the caret position rather than the first character, and
+        // skips the preset when that font is not available
+        let caretFont = null;
+        for (let i = text.length - 1; i >= 0; i--) {
             if (text[i][0] !== null) {
-                primaryFont = text[i][0];
+                caretFont = text[i][0];
                 break;
             }
         }
-        if (primaryFont) {
-            const fontElement = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
+        if (caretFont) {
+            const fontElement = fontsContainer.find('.font[data-font="' + caretFont + '"]');
             if (fontElement.length === 0) return;
             if (!fontElement.hasClass("selected")) fontElement.click();
         }
@@ -912,7 +945,15 @@ jQuery(document).ready(function() {
     // face resumes exactly as it was left
     const applyFace = function(settings) {
         const face = settings || {};
-        viewportContainer.texteditor("loadText", { text: face.text || [] });
+        const text = face.text || [];
+        viewportContainer.texteditor("loadText", { text: text });
+
+        // syncs the selected font and keyboard to the entered face,
+        // since loadText rebuilds the dom without emitting the caret
+        // change that normally keeps the font picker in step, so new
+        // input on the entered face would otherwise type in the font
+        // left over from the previous face
+        viewportContainer.triggerHandler("caretchange", [text, text.length - 1]);
 
         const automatic = face.font_size_mode === "automatic";
         fontSizeMode.prop("checked", automatic);
@@ -923,7 +964,12 @@ jQuery(document).ready(function() {
             fontSizeInput.val(face.font_size);
         }
 
-        const margins = face.margins || { top: 0, right: 0, bottom: 0, left: 0 };
+        // falls back to the profile padding rather than zero margins
+        // so a fresh back face keeps the configured safe area instead
+        // of silently dropping it on the first switch
+        const defaultMargins =
+            (currentProfile && currentProfile.padding) || { top: 0, right: 0, bottom: 0, left: 0 };
+        const margins = face.margins || defaultMargins;
         marginLeft.val(margins.left);
         marginRight.val(margins.right);
         marginTop.val(margins.top);
@@ -937,7 +983,7 @@ jQuery(document).ready(function() {
         viewportContainer.css("justify-content", justify);
 
         applyFontSize();
-        updateButtonState(face.text || []);
+        updateButtonState(text);
     };
 
     // resolves the settings of both faces, reading the active face
@@ -2275,7 +2321,7 @@ jQuery(document).ready(function() {
     // initializes the viewport faces plugin and binds the switch
     // event so picking a thumbnail swaps the editor onto that face,
     // sharing the same scale constants as the inspiration previews
-    viewportFaces.viewportfaces({
+    viewportFaces.viewportfaces(null, {
         viewport_scale: VIEWPORT_SCALE,
         font_size_scale: FONT_SIZE_SCALE
     });

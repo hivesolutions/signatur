@@ -37,7 +37,7 @@
         // the text pre-rendered inside it, reusing the same safe area
         // and scaling math as the inspiration thumbnails so the two
         // panels stay visually consistent
-        const renderPreview = function(profile, face, container) {
+        const renderPreview = function(profile, face, side, container) {
             const width = profile.width * viewportScale;
             const height = profile.height * viewportScale;
             const text = face.text || [];
@@ -51,10 +51,17 @@
             const preview = jQuery('<div class="viewport-preview profile-active"></div>');
             preview.css({ width: width + "px", height: height + "px" });
 
-            // applies the background image if the profile has one
-            if (profile.background) {
+            // applies the background image if the face has one, preferring
+            // the dedicated back background for the back face so the
+            // thumbnail matches the surface that gets engraved and falling
+            // back to the shared front background when it is not set
+            const background =
+                side === "back" && profile.double_sided && profile.double_sided.back_background
+                    ? profile.double_sided.back_background
+                    : profile.background;
+            if (background) {
                 preview.css({
-                    "background-image": "url('/static/profiles/" + profile.background + "')",
+                    "background-image": "url('/static/profiles/" + background + "')",
                     "background-size": width + "px " + height + "px",
                     "background-repeat": "no-repeat",
                     "background-position": "0px 0px"
@@ -101,10 +108,11 @@
                     viewer.append('<div class="newline"></div>');
                 } else {
                     for (let j = 0; j < chars.length; j++) {
-                        const value = chars[j] === " " ? "&nbsp;" : chars[j];
-                        viewer.append(
-                            "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-                        );
+                        const value = chars[j] === " " ? "\u00a0" : chars[j];
+                        const span = jQuery("<span></span>");
+                        span.css("font-family", "'" + font + "'");
+                        span.text(value);
+                        viewer.append(span);
                     }
                 }
             }
@@ -136,10 +144,16 @@
         // builds a single face thumbnail with its preview and label,
         // tagging it with the side so the click handler can emit the
         // matching switch event and marking the active face so the
-        // styling diverges from the inactive one
+        // styling diverges from the inactive one; the thumbnail carries
+        // button semantics so keyboard only operators can reach and
+        // toggle the face without a pointer
         const renderThumb = function(context, profile, side, face, label, active) {
             const thumb = jQuery('<div class="viewport-faces-thumb"></div>');
             thumb.attr("data-side", side);
+            thumb.attr("role", "button");
+            thumb.attr("tabindex", "0");
+            thumb.attr("aria-pressed", active ? "true" : "false");
+            thumb.attr("aria-label", label);
             if (active) thumb.addClass("active");
             const previewContainer = jQuery('<div class="viewport-faces-thumb-preview"></div>');
             const title = jQuery('<div class="viewport-faces-thumb-title"></div>');
@@ -147,7 +161,7 @@
             thumb.append(previewContainer);
             thumb.append(title);
             jQuery(".viewport-faces-thumbnails", context).append(thumb);
-            renderPreview(profile, face, previewContainer);
+            renderPreview(profile, face, side, previewContainer);
         };
 
         elements.each(function() {
@@ -160,7 +174,7 @@
             // hiding the panel entirely when the profile is not double
             // sided so single-faced editing is left untouched
             if (action === "render") {
-                const profile = options.profile;
+                const profile = options && options.profile;
                 if (!profile || !profile.double_sided || !profile.double_sided.enabled) {
                     context.removeClass("visible");
                     return;
@@ -207,12 +221,22 @@
                 return;
             }
 
-            // registers a delegated click handler on the thumbnails so
-            // selecting a face emits the switch event before its markup
-            // is rebuilt, surviving every render that swaps the nodes
-            thumbnails.on("click", ".viewport-faces-thumb", function() {
-                const side = jQuery(this).attr("data-side");
+            // registers delegated click and keyboard handlers on the
+            // thumbnails so selecting a face emits the switch event
+            // before its markup is rebuilt, surviving every render that
+            // swaps the nodes and letting keyboard operators toggle the
+            // face with Enter or Space just like a native button
+            const triggerSwitch = function(element) {
+                const side = element.attr("data-side");
                 if (side) context.triggerHandler("switch", [side]);
+            };
+            thumbnails.on("click", ".viewport-faces-thumb", function() {
+                triggerSwitch(jQuery(this));
+            });
+            thumbnails.on("keydown", ".viewport-faces-thumb", function(event) {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                triggerSwitch(jQuery(this));
             });
         });
 
