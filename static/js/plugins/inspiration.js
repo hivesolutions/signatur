@@ -38,7 +38,7 @@
 
             // renders a single inspiration thumbnail as a miniature
             // viewport preview with the text pre-rendered inside it
-            const renderPreview = function(profile, inspiration, container) {
+            const renderPreview = function(profile, inspiration, side, container) {
                 const width = profile.width * viewportScale;
                 const height = profile.height * viewportScale;
                 const padding = inspiration.padding ||
@@ -49,10 +49,19 @@
                 const preview = jQuery('<div class="viewport-preview profile-active"></div>');
                 preview.css({ width: width + "px", height: height + "px" });
 
-                // applies the background image if the profile has one
-                if (profile.background) {
+                // applies the background image if the face has one,
+                // preferring the dedicated back background for the back
+                // half so the preview matches the surface that gets
+                // engraved and falling back to the shared front one
+                const background =
+                    side === "back" &&
+                    profile.double_sided &&
+                    profile.double_sided.back_background
+                        ? profile.double_sided.back_background
+                        : profile.background;
+                if (background) {
                     preview.css({
-                        "background-image": "url('/static/profiles/" + profile.background + "')",
+                        "background-image": "url('/static/profiles/" + background + "')",
                         "background-size": width + "px " + height + "px",
                         "background-repeat": "no-repeat",
                         "background-position": "0px 0px"
@@ -99,10 +108,11 @@
                         viewer.append('<div class="newline"></div>');
                     } else {
                         for (let j = 0; j < chars.length; j++) {
-                            const value = chars[j] === " " ? "&nbsp;" : chars[j];
-                            viewer.append(
-                                "<span style=\"font-family: '" + font + "';\">" + value + "</span>"
-                            );
+                            const value = chars[j] === " " ? "\u00a0" : chars[j];
+                            const span = jQuery("<span></span>");
+                            span.css("font-family", "'" + font + "'");
+                            span.text(value);
+                            viewer.append(span);
                         }
                     }
                 }
@@ -140,6 +150,36 @@
                 container.append(preview);
             };
 
+            // returns true when the profile opts into double sided
+            // engraving and the inspiration carries a back face, the
+            // only case where the preview is split into two halves
+            const isDoubleSided = function(profile, inspiration) {
+                return Boolean(
+                    profile.double_sided &&
+                        profile.double_sided.enabled &&
+                        inspiration.back
+                );
+            };
+
+            // renders the preview(s) for an inspiration into the given
+            // container, splitting it into a front and a back half when
+            // the inspiration is double sided so both faces are visible
+            // at a glance, and falling back to the single preview that
+            // every single faced inspiration has always used
+            const renderPreviews = function(profile, inspiration, container) {
+                if (!isDoubleSided(profile, inspiration)) {
+                    renderPreview(profile, inspiration, "front", container);
+                    return;
+                }
+                container.addClass("inspiration-preview-dual");
+                const front = jQuery('<div class="inspiration-preview-half"></div>');
+                const back = jQuery('<div class="inspiration-preview-half"></div>');
+                container.append(front);
+                container.append(back);
+                renderPreview(profile, inspiration, "front", front);
+                renderPreview(profile, inspiration.back, "back", back);
+            };
+
             // renders the inspiration thumbnails in the side panel
             // showing the first 3 entries from the profile inspirations
             const renderPanel = function(profile) {
@@ -163,7 +203,7 @@
                     thumb.append(title);
                     thumb.data("inspiration", inspiration);
                     thumbnails.append(thumb);
-                    renderPreview(profile, inspiration, previewContainer);
+                    renderPreviews(profile, inspiration, previewContainer);
                 }
 
                 context.addClass("visible");
@@ -216,7 +256,7 @@
                     card.append(author);
                     card.data("inspiration", inspiration);
                     modalGrid.append(card);
-                    renderPreview(profile, inspiration, previewContainer);
+                    renderPreviews(profile, inspiration, previewContainer);
                 }
             };
 

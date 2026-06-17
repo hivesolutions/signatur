@@ -135,6 +135,18 @@
     vertical-align: top;
 }
 
+.inspiration-preview-dual {
+    display: flex;
+    gap: 4px;
+}
+
+.inspiration-preview-dual > .inspiration-preview-half {
+    flex: 1 1 50%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
 .inspiration-panel > .inspiration-panel-body > .inspiration-thumbnails > .inspiration-thumb:hover > .inspiration-thumb-preview {
     transform: translateY(-2px);
     -o-transform: translateY(-2px);

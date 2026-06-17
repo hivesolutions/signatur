@@ -1,7 +1,7 @@
 {
     "id": "plate",
     "name": "Steel Plate",
-    "description": "A 70x70 steel plate.",
+    "description": "A 70x70 steel plate engravable on both faces.",
     "sku": "TEST-PLT-001",
     "category": "plates",
     "width": 70,
@@ -33,6 +33,9 @@
     },
     "calligraphy": {
         "line_width": 2
+    },
+    "double_sided": {
+        "enabled": true
     },
     "background": "plate.png",
     "default_font": "Roman 4L",

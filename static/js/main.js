@@ -352,6 +352,7 @@ jQuery(document).ready(function() {
     const modalOverlayPrintJob = jQuery(".modal-overlay-print-job");
     const modalOverlayFeedback = jQuery(".modal-overlay-feedback");
     const inspirationPanel = jQuery(".inspiration-panel");
+    const viewportFaces = jQuery(".viewport-faces");
     const toast = jQuery(".toast");
 
     // gathers the values for the form related fields so that the
@@ -581,6 +582,21 @@ jQuery(document).ready(function() {
                 }
             }
 
+            // restores the front face alignment from the URL query
+            // parameter, written only for double sided sessions, so
+            // the live editor resumes the saved alignment of the front
+            const urlAlign = urlParams.get("align");
+            if (urlAlign) {
+                const justify =
+                    urlAlign === "center"
+                        ? "center"
+                        : urlAlign === "right"
+                          ? "flex-end"
+                          : "flex-start";
+                viewportContainer.css("text-align", urlAlign);
+                viewportContainer.css("justify-content", justify);
+            }
+
             // restores the font size mode and value from the
             // URL query parameters if they were previously saved
             const urlFontSizeMode = urlParams.get("font_size_mode");
@@ -663,6 +679,14 @@ jQuery(document).ready(function() {
             }
             restoring = false;
             updateUrl("restore");
+
+            // re-renders the face thumbnails once the full restore has
+            // settled so they reflect the resolved front font size,
+            // margins and alignment; the text restore runs from a
+            // separate async callback, so rendering here as well means
+            // whichever of the two finishes last leaves a correct
+            // thumbnail instead of one stuck on the profile defaults
+            renderFaces(currentProfile);
         } catch (err) {
             restoring = false;
             // silently ignores profile loading errors
@@ -700,8 +724,23 @@ jQuery(document).ready(function() {
     // renders the viewport preview using the viewport preview
     // plugin with the current profile and margin configuration
     const renderViewportPreview = function(profile) {
+        // swaps in the dedicated back background while the back face is
+        // active so the main editor preview shows the surface that gets
+        // engraved, leaving the front and single faced profiles to use
+        // their own background unchanged
+        let rendered = profile;
+        if (
+            profile &&
+            body.data("face") === "back" &&
+            profile.double_sided &&
+            profile.double_sided.back_background
+        ) {
+            rendered = Object.assign({}, profile, {
+                background: profile.double_sided.back_background
+            });
+        }
         viewportPreview.viewportpreview("render", {
-            profile: profile,
+            profile: rendered,
             scale: VIEWPORT_SCALE,
             padding: getMargins()
         });
@@ -726,43 +765,63 @@ jQuery(document).ready(function() {
         viewportPreview.viewportpreview("zoom", { zoom: zoom });
     };
 
+    // restarts the pulse and glow highlight on the main preview so
+    // applying an inspiration reads as a deliberate change, clearing
+    // the class (and any in flight face switch animation it would
+    // otherwise contend with) and forcing a synchronous reflow before
+    // re-adding it so the animation replays on every apply rather than
+    // only the first, matching the reflow technique the faces panel uses
+    const animateInspirationApply = function() {
+        viewportPreview.removeClass(
+            "inspiration-applying face-switching-forward face-switching-back"
+        );
+        viewportPreview.get(0).offsetHeight;
+        viewportPreview.addClass("inspiration-applying");
+    };
+
     // applies an inspiration configuration to the viewport
     // setting the text, font size, margins, and font selection
     const applyInspiration = function(profile, inspiration) {
+        // a paired inspiration always fills the front from `text` and
+        // the back from `back`, so when the back face is the live one
+        // the editor is returned to the front first (parking the back)
+        // before loading the preset, otherwise the front design would
+        // land on the back face and the parked back would be ignored
+        if (
+            profile.double_sided &&
+            profile.double_sided.enabled &&
+            body.data("face") === "back"
+        ) {
+            body.data("settings_back", captureFace());
+            body.data("face", "front");
+            applyFace(body.data("settings_front"));
+        }
+
         // expands the inspiration text entries into individual
         // character pairs so that each character gets its own
         // DOM element for per-character caret navigation
-        const text = [];
-        const raw = inspiration.text || [];
-        for (let i = 0; i < raw.length; i++) {
-            const font = raw[i][0];
-            const value = raw[i][1];
-            if (value === "\n") {
-                text.push([font, "\n"]);
-            } else {
-                for (let j = 0; j < value.length; j++) {
-                    text.push([font, value[j]]);
-                }
-            }
-        }
+        const text = expandText(inspiration.text);
 
         // loads the expanded text into the editor which
         // rebuilds the DOM and sets the caret position
         viewportContainer.texteditor("loadText", { text: text });
 
-        // determines the primary font from the text entries
-        // and skips the preset if the font is not available
-        let primaryFont = null;
-        for (let i = 0; i < text.length; i++) {
+        // determines the font under the caret (which loadText leaves
+        // at the last character) by searching left for the nearest
+        // entry that carries a font, so the selected keyboard matches
+        // the caret position rather than the first character, and
+        // skips the preset when that font is not available
+        let caretFont = null;
+        for (let i = text.length - 1; i >= 0; i--) {
             if (text[i][0] !== null) {
-                primaryFont = text[i][0];
+                caretFont = text[i][0];
                 break;
             }
         }
-        if (primaryFont) {
-            const fontElement = fontsContainer.find('.font[data-font="' + primaryFont + '"]');
+        if (caretFont) {
+            const fontElement = fontsContainer.find('.font[data-font="' + caretFont + '"]');
             if (fontElement.length === 0) return;
-            if (!fontElement.hasClass("active")) fontElement.click();
+            if (!fontElement.hasClass("selected")) fontElement.click();
         }
 
         // applies the font size from the inspiration and
@@ -803,9 +862,233 @@ jQuery(document).ready(function() {
         // applies the font size and recalculates layout
         applyFontSize();
 
+        // parks the optional back face preset into the back settings
+        // so a paired inspiration fills both faces at once, carrying
+        // the back specific font size, padding and alignment and
+        // clearing the back when the preset is single faced
+        if (profile.double_sided && profile.double_sided.enabled) {
+            if (inspiration.back) {
+                const back = inspiration.back;
+                body.data("settings_back", {
+                    text: expandText(back.text),
+                    font_size: back.font_size || null,
+                    font_size_mode: "manual",
+                    margins: back.padding || profile.padding,
+                    align: back.align || inspiration.align || "center"
+                });
+            } else {
+                body.data("settings_back", { text: [] });
+            }
+            renderFaces(profile);
+        }
+
+        // pulses the preview to highlight that the inspiration
+        // has been applied
+        animateInspirationApply();
+
         // updates the print button and report URL
         updateButtonState(text);
         updateUrl("restore");
+    };
+
+    // expands inspiration style text entries into individual
+    // character pairs so each character gets its own cell, matching
+    // the expansion the editor performs when an inspiration loads
+    const expandText = function(raw) {
+        const text = [];
+        const entries = raw || [];
+        for (let i = 0; i < entries.length; i++) {
+            const font = entries[i][0];
+            const value = entries[i][1];
+            if (value === "\n") {
+                text.push([font, "\n"]);
+            } else {
+                for (let j = 0; j < value.length; j++) {
+                    text.push([font, value[j]]);
+                }
+            }
+        }
+        return text;
+    };
+
+    // anchors the faces panel directly below the inspiration panel
+    // so the two stacked cards read as a single column, falling back
+    // to the inspiration panel resting offset when it is hidden so
+    // the faces panel never floats over the top of the page
+    const positionFaces = function() {
+        const gap = 16;
+        if (inspirationPanel.hasClass("visible")) {
+            const top = inspirationPanel.offset().top + inspirationPanel.outerHeight() + gap;
+            viewportFaces.css("top", top + "px");
+        } else {
+            viewportFaces.css("top", "");
+        }
+    };
+
+    // snapshots the full set of per-face settings from the live
+    // editor and its controls so the active face can be parked when
+    // the operator switches sides; each face keeps its own text, font
+    // size (and sizing mode), margins and alignment
+    const captureFace = function() {
+        return {
+            text: body.data("text") || [],
+            font_size: parseFloat(fontSizeInput.val()) || null,
+            font_size_mode: fontSizeMode.prop("checked") ? "automatic" : "manual",
+            margins: getMargins(),
+            align: viewportContainer.css("text-align") || "center"
+        };
+    };
+
+    // applies a parked face settings object back onto the live editor
+    // and its controls, rebuilding the text, restoring the font size
+    // mode and value, the margins and the alignment so the entered
+    // face resumes exactly as it was left
+    const applyFace = function(settings) {
+        const face = settings || {};
+        const text = face.text || [];
+        viewportContainer.texteditor("loadText", { text: text });
+
+        // syncs the selected font and keyboard to the entered face,
+        // since loadText rebuilds the dom without emitting the caret
+        // change that normally keeps the font picker in step, so new
+        // input on the entered face would otherwise type in the font
+        // left over from the previous face
+        viewportContainer.triggerHandler("caretchange", [text, text.length - 1]);
+
+        const automatic = face.font_size_mode === "automatic";
+        fontSizeMode.prop("checked", automatic);
+        fontSizeRange.prop("disabled", automatic);
+        fontSizeInput.prop("disabled", automatic);
+        if (face.font_size) {
+            fontSizeRange.val(face.font_size);
+            fontSizeInput.val(face.font_size);
+        }
+
+        // falls back to the profile padding rather than zero margins
+        // so a fresh back face keeps the configured safe area instead
+        // of silently dropping it on the first switch
+        const defaultMargins =
+            (currentProfile && currentProfile.padding) || { top: 0, right: 0, bottom: 0, left: 0 };
+        const margins = face.margins || defaultMargins;
+        marginLeft.val(margins.left);
+        marginRight.val(margins.right);
+        marginTop.val(margins.top);
+        marginBottom.val(margins.bottom);
+        renderViewportPreview(currentProfile);
+
+        const align = face.align || "center";
+        const justify =
+            align === "center" ? "center" : align === "right" ? "flex-end" : "flex-start";
+        viewportContainer.css("text-align", align);
+        viewportContainer.css("justify-content", justify);
+
+        applyFontSize();
+        updateButtonState(text);
+    };
+
+    // resolves the settings of both faces, reading the active face
+    // live from the editor and the inactive one from its parked
+    // settings so the thumbnails and the URL writer always agree on
+    // what each face currently holds
+    const getFaceSettings = function() {
+        const side = body.data("face") || "front";
+        const live = captureFace();
+        return {
+            side: side,
+            front: side === "front" ? live : body.data("settings_front") || { text: [] },
+            back: side === "back" ? live : body.data("settings_back") || { text: [] }
+        };
+    };
+
+    // maps a parked face settings object onto the preview face shape
+    // the viewportfaces plugin expects, translating the flat margins
+    // into the padding key its miniature preview reads
+    const facePreview = function(face) {
+        const settings = face || {};
+        return {
+            text: settings.text || [],
+            font_size: settings.font_size,
+            padding: settings.margins,
+            align: settings.align
+        };
+    };
+
+    // re-renders the front and back face thumbnails from the live
+    // editor and the parked face settings, hiding the panel entirely
+    // for single faced profiles so the editor chrome stays unchanged
+    // when double sided engraving is not in play
+    const renderFaces = function(profile) {
+        if (!profile || !profile.double_sided || !profile.double_sided.enabled) {
+            viewportFaces.viewportfaces("hide");
+            return;
+        }
+        const faces = getFaceSettings();
+        viewportFaces.viewportfaces("render", {
+            profile: profile,
+            front: facePreview(faces.front),
+            back: facePreview(faces.back),
+            side: faces.side
+        });
+        positionFaces();
+    };
+
+    // restarts the directional slide and fade animation on the main
+    // preview so switching faces reads as flipping the piece over;
+    // entering the back slides in from the right (forward) and going
+    // back to the front slides in from the left, the previous class
+    // (and any lingering inspiration pulse it would otherwise contend
+    // with) is cleared and a synchronous reflow forced before the new
+    // one is added so the animation replays on every switch rather than
+    // only the first, matching the reflow technique the faces panel uses
+    const animateFaceSwitch = function(side) {
+        viewportPreview.removeClass(
+            "face-switching-forward face-switching-back inspiration-applying"
+        );
+        viewportPreview.get(0).offsetHeight;
+        viewportPreview.addClass(
+            side === "back" ? "face-switching-forward" : "face-switching-back"
+        );
+    };
+
+    // switches the editor onto the requested face, parking every
+    // setting of the side being left and applying the side being
+    // entered so the two faces keep independent text, font size,
+    // margins and alignment; a no-op when already on that side
+    const switchFace = function(side) {
+        const current = body.data("face") || "front";
+        if (side === current) return;
+        body.data("settings_" + current, captureFace());
+        body.data("face", side);
+        applyFace(body.data("settings_" + side));
+        animateFaceSwitch(side);
+        renderFaces(currentProfile);
+    };
+
+    // rebuilds the parked back face settings from the URL params so
+    // a shared double sided link resumes the back text, font size,
+    // margins and alignment, returning an empty back face when no
+    // back state was carried in the query string
+    const restoreBackSettings = function() {
+        const urlTextBack = urlParams.get("text_back");
+        if (!urlTextBack) return { text: [] };
+        const settings = { text: deserializeText(urlTextBack), font_size_mode: "manual" };
+        const fontSizeBack = urlParams.get("font_size_back");
+        if (fontSizeBack) settings.font_size = parseFloat(fontSizeBack);
+        const marginsBack = urlParams.get("margins_back");
+        if (marginsBack) {
+            const parts = marginsBack.split(",");
+            if (parts.length === 4) {
+                settings.margins = {
+                    left: parseFloat(parts[0]) || 0,
+                    right: parseFloat(parts[1]) || 0,
+                    top: parseFloat(parts[2]) || 0,
+                    bottom: parseFloat(parts[3]) || 0
+                };
+            }
+        }
+        const alignBack = urlParams.get("align_back");
+        if (alignBack) settings.align = alignBack;
+        return settings;
     };
 
     // updates the floating profile info block with the
@@ -1124,6 +1407,23 @@ jQuery(document).ready(function() {
         updateFontSizeControls(currentProfile);
         applyFontSize();
         inspirationPanel.inspirationpanel("update", currentProfile);
+
+        // resets the face state on a full profile switch so the back
+        // face never bleeds across profiles, keeping the active face
+        // on the front and refreshing the thumbnails (which hide
+        // themselves for single faced profiles); during a session
+        // restore the back face is seeded from its URL params so the
+        // reset and the text restore can run in either order without
+        // clobbering the resumed back face
+        if (!variantOnly) {
+            body.data("face", "front");
+            body.data("settings_front", null);
+            body.data("settings_back", restoring ? restoreBackSettings() : { text: [] });
+            viewportPreview.removeClass(
+                "face-switching-forward face-switching-back inspiration-applying"
+            );
+        }
+        renderFaces(currentProfile);
         applyDefaultFont(currentProfile);
 
         // re-initializes the calligraphy canvas if the mode
@@ -1167,6 +1467,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the font size number input
@@ -1177,6 +1478,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the font size mode checkbox
@@ -1189,6 +1491,7 @@ jQuery(document).ready(function() {
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
+        renderFaces(currentProfile);
     });
 
     // registers for the click on each font size preset chip so
@@ -1302,6 +1605,7 @@ jQuery(document).ready(function() {
         renderViewportPreview(currentProfile);
         applyFontSize();
         updateUrl("margins");
+        renderFaces(currentProfile);
     });
 
     // registers for the change in the crosshair mode checkbox
@@ -1721,9 +2025,44 @@ jQuery(document).ready(function() {
         if (restoring) return;
         if (viewportContainer.length === 0) return;
         const params = new URLSearchParams(window.location.search);
-        const text = body.data("text") || [];
+        const doubleSided = Boolean(
+            currentProfile &&
+                currentProfile.double_sided &&
+                currentProfile.double_sided.enabled
+        );
+        const faces = getFaceSettings();
+
+        // always rewrites the front text from the resolved face state
+        // so the param tracks the front regardless of which face is
+        // currently live in the editor
         params.delete("text");
-        if (text.length > 0) params.set("text", serializeText(text));
+        if (faces.front.text.length > 0) params.set("text", serializeText(faces.front.text));
+
+        // carries the full back face state in its own params for
+        // double sided profiles so a shared link restores the back
+        // text, font size, margins and alignment, dropping every back
+        // param for single faced profiles so their URLs stay unchanged
+        params.delete("text_back");
+        params.delete("font_size_back");
+        params.delete("margins_back");
+        params.delete("align_back");
+        if (doubleSided) {
+            const back = faces.back;
+            if (back.text.length > 0) params.set("text_back", serializeText(back.text));
+            if (back.font_size) params.set("font_size_back", String(back.font_size));
+            if (back.margins) {
+                const marginStr =
+                    back.margins.left +
+                    "," +
+                    back.margins.right +
+                    "," +
+                    back.margins.top +
+                    "," +
+                    back.margins.bottom;
+                if (marginStr !== "0,0,0,0") params.set("margins_back", marginStr);
+            }
+            if (back.align && back.align !== "center") params.set("align_back", back.align);
+        }
         const selection = profileSelector.profileselector("value");
         params.delete("profile");
         params.delete("variant");
@@ -1738,12 +2077,17 @@ jQuery(document).ready(function() {
             const font = body.data("font");
             if (font) params.set("font", font);
         }
-        if (action === "font_size" || action === "restore") {
+        if (action === "font_size" || action === "restore" || doubleSided) {
             params.delete("font_size");
             params.delete("font_size_mode");
-            const fontSize = fontSizeInput.val();
+            // resolves the front font size from the face state for
+            // double sided profiles so the param always tracks the
+            // front even while the back face is the live one
+            const fontSize = doubleSided ? faces.front.font_size : fontSizeInput.val();
             if (fontSize) params.set("font_size", fontSize);
-            const isAutomatic = fontSizeMode.prop("checked");
+            const isAutomatic = doubleSided
+                ? faces.front.font_size_mode === "automatic"
+                : fontSizeMode.prop("checked");
             if (isAutomatic) params.set("font_size_mode", "automatic");
         }
         if (action === "zoom" || action === "restore") {
@@ -1751,12 +2095,19 @@ jQuery(document).ready(function() {
             const zoom = zoomRange.val();
             if (zoom && zoom !== "1") params.set("zoom", zoom);
         }
-        if (action === "margins" || action === "restore") {
+        if (action === "margins" || action === "restore" || doubleSided) {
             params.delete("margins");
-            const margins = getMargins();
+            params.delete("align");
+            // resolves the front margins and alignment from the face
+            // state for double sided profiles so both params track the
+            // front even while the back face is the live one
+            const margins = doubleSided ? faces.front.margins || getMargins() : getMargins();
             const marginStr =
                 margins.left + "," + margins.right + "," + margins.top + "," + margins.bottom;
             if (marginStr !== "0,0,0,0") params.set("margins", marginStr);
+            if (doubleSided && faces.front.align && faces.front.align !== "center") {
+                params.set("align", faces.front.align);
+            }
         }
         if (action === "toggle" || action === "restore") {
             params.delete("rulers");
@@ -1793,14 +2144,29 @@ jQuery(document).ready(function() {
     // initializes the text data array from server-rendered
     // content so that the session state is fully restored
     const restoreText = function() {
+        // restores the back face settings from their URL params so a
+        // shared double sided link resumes both faces, parked behind
+        // the live front buffer until the operator switches faces
+        const backSettings = restoreBackSettings();
+        if (backSettings.text && backSettings.text.length > 0) {
+            body.data("settings_back", backSettings);
+        }
+
         const initialText = viewportContainer.attr("data-text");
-        if (!initialText) return;
+        if (!initialText) {
+            renderFaces(currentProfile);
+            return;
+        }
         const textData = deserializeText(initialText);
-        if (!textData || textData.length === 0) return;
+        if (!textData || textData.length === 0) {
+            renderFaces(currentProfile);
+            return;
+        }
         body.data("text", textData);
         body.data("caret_position", textData.length - 1);
         viewportContainer.texteditor("bindExisting");
         updateButtonState(textData);
+        renderFaces(currentProfile);
     };
 
     const printReceipt = async function() {
@@ -1902,6 +2268,7 @@ jQuery(document).ready(function() {
             applyFontSize();
         }
         updateUrl("text");
+        renderFaces(currentProfile);
     });
 
     // registers for the caret change event from the text editor
@@ -1949,6 +2316,27 @@ jQuery(document).ready(function() {
         if (inspiration && currentProfile) {
             applyInspiration(currentProfile, inspiration);
         }
+    });
+
+    // initializes the viewport faces plugin and binds the switch
+    // event so picking a thumbnail swaps the editor onto that face,
+    // sharing the same scale constants as the inspiration previews
+    viewportFaces.viewportfaces(null, {
+        viewport_scale: VIEWPORT_SCALE,
+        font_size_scale: FONT_SIZE_SCALE
+    });
+    viewportFaces.bind("switch", function(event, side) {
+        switchFace(side);
+    });
+
+    // keeps the faces panel pinned below the inspiration panel when
+    // the latter is collapsed or expanded, waiting for its max-height
+    // transition to settle before measuring the new bottom edge
+    jQuery(".inspiration-panel-title", inspirationPanel).click(function() {
+        jQuery(".inspiration-panel-body", inspirationPanel).one(
+            "transitionend",
+            positionFaces
+        );
     });
 
     formConsole.formconsole();

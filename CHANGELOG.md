@@ -13,14 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Download the current emoji mapping file from the settings Emojis tab
 * Download the current emoji font from the settings Emojis tab
 * Download the display font and the engraving file of each font from the settings Fonts tab
+* Profiles and inspirations can now describe a second, back face for double-sided engraving, with double-sided inspirations previewing both faces at once
+* Switch between the front and back of a double-sided piece from a thumbnail preview on the engraving layout, each face keeping its own text, font size, margins and alignment, with shared links restoring both faces
+* The profile detail panel now shows whether a profile is double-sided
 
 ### Changed
 
-*
+* Switching the active face on a double-sided piece now slides and fades the preview in, sliding in from the right when entering the back and from the left when returning to the front
+* Applying an inspiration now pulses and glows the preview to highlight that the design changed
 
 ### Fixed
 
-*
+* The double-sided face switcher panel is now hidden when entering preview mode, like the other side panels
+* Applying an inspiration whose font matches the active one no longer toggles the selected font off, which had hidden the keyboard
+* Applying an inspiration now selects the keyboard for the font under the cursor instead of the first character's font
+* Face thumbnails now render each side's text in its own font
 
 ## [1.2.1] - 2026-06-14
 

@@ -2,7 +2,7 @@
     {
         "id": "company-nameplate",
         "title": "Company Nameplate",
-        "description": "A company name with department below in Helvetica 4L.",
+        "description": "A company name with department below in Helvetica 4L, plus contact details on the back.",
         "author": "Hive Solutions",
         "text": [
             ["Helvetica 4L", "Hive Solutions"],
@@ -10,12 +10,21 @@
             ["Helvetica 1L", "Engineering"]
         ],
         "font_size": 6,
-        "align": "center"
+        "align": "center",
+        "back": {
+            "text": [
+                ["Helvetica 1L", "hive.pt"],
+                [null, "\n"],
+                ["Helvetica 1L", "+351 220 000 000"]
+            ],
+            "font_size": 6,
+            "align": "center"
+        }
     },
     {
         "id": "serial-number",
         "title": "Serial Number",
-        "description": "An industrial serial number label in Helvetica 1L.",
+        "description": "An industrial serial number label in Helvetica 1L, with the batch code on the back.",
         "author": "Hive Solutions",
         "text": [
             ["Helvetica 1L", "SN-2024"],
@@ -23,12 +32,21 @@
             ["Helvetica 1L", "00451"]
         ],
         "font_size": 8,
-        "align": "center"
+        "align": "center",
+        "back": {
+            "text": [
+                ["Helvetica 1L", "BATCH"],
+                [null, "\n"],
+                ["Helvetica 1L", "B-77"]
+            ],
+            "font_size": 8,
+            "align": "center"
+        }
     },
     {
         "id": "warning-label",
         "title": "Warning Label",
-        "description": "A two-line warning notice in bold Helvetica 4L.",
+        "description": "A two-line warning notice in bold Helvetica 4L, with the safety instruction on the back.",
         "author": "Hive Solutions",
         "text": [
             ["Helvetica 4L", "DANGER"],
@@ -36,12 +54,21 @@
             ["Helvetica 1L", "High Voltage"]
         ],
         "font_size": 6,
-        "align": "center"
+        "align": "center",
+        "back": {
+            "text": [
+                ["Helvetica 1L", "Disconnect"],
+                [null, "\n"],
+                ["Helvetica 1L", "before service"]
+            ],
+            "font_size": 6,
+            "align": "center"
+        }
     },
     {
         "id": "property-tag",
         "title": "Property Tag",
-        "description": "An asset property identification tag with owner and ID.",
+        "description": "An asset property identification tag with owner and ID, plus return instructions on the back.",
         "author": "Hive Solutions",
         "text": [
             ["Helvetica 1L", "Property of"],
@@ -51,7 +78,16 @@
             ["Helvetica 1L", "ID: 7842"]
         ],
         "font_size": 6,
-        "align": "center"
+        "align": "center",
+        "back": {
+            "text": [
+                ["Helvetica 1L", "If found return to"],
+                [null, "\n"],
+                ["Helvetica 1L", "Rua das Flores, Porto"]
+            ],
+            "font_size": 6,
+            "align": "center"
+        }
     },
     {
         "id": "date-location",
