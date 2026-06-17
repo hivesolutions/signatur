@@ -32,6 +32,8 @@ Supported file format include:
 | `ENGRAVE_NODE`        | `str`  | value of `PRINT_NODE`                | Name of the Colony Print node to use when sending an engraving job; falls back to `PRINT_NODE` so existing single-printer deployments keep working.                                                                             |
 | `ENGRAVE_PRINTER`     | `str`  | value of `PRINT_PRINTER`             | Name of the printer (within the engrave node) to use when sending an engraving job; falls back to `PRINT_PRINTER` for the same backward compat reason.                                                                          |
 | `FEATURE_CALLIGRAPHY` | `bool` | `false`                              | Base value of the calligraphy feature flag; when set to a truthy value (`1`, `true`, `yes`, `on`) the calligraphy mode controls render on `/viewport`. May be overridden per session through the `Features` tab on `/settings`. |
+| `FEATURE_FACES`       | `bool` | `true`                               | Base value of the faces feature flag; when set to a falsy value (`0`, `false`, `no`, `off`) the double-sided front/back thumbnail switcher is hidden on `/viewport`. May be overridden per session on the `Features` tab.       |
+| `FEATURE_FEEDBACK`    | `bool` | `true`                               | Base value of the feedback feature flag; when set to a falsy value (`0`, `false`, `no`, `off`) the feedback submission flow is disabled. May be overridden per session on the `Features` tab.                                   |
 
 ## Authentication
 
