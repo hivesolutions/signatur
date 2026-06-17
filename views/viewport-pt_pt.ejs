@@ -205,10 +205,12 @@
                 <span class="button button-small button-view-all">Ver todas</span>
             </div>
         </div>
-        <div class="viewport-faces" data-label-front="Frente" data-label-back="Verso">
-            <div class="viewport-faces-title">Faces</div>
-            <div class="viewport-faces-thumbnails"></div>
-        </div>
+        <% if (features.faces) { %>
+            <div class="viewport-faces" data-label-front="Frente" data-label-back="Verso">
+                <div class="viewport-faces-title">Faces</div>
+                <div class="viewport-faces-thumbnails"></div>
+            </div>
+        <% } %>
         <div class="viewport">
             <div class="main-container">
                 <div class="viewport-preview">
