@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [1.3.0] - 2026-08-13
+
+### Added
+
 * Emoji keyboard layout, categories and order are now driven by the uploadable emoji mapping, with uncategorized emojis gathered on a dedicated "Other" tab
 * Download the current emoji mapping file from the settings Emojis tab
 * Download the current emoji font from the settings Emojis tab
