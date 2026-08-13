@@ -845,7 +845,6 @@ app.get("/viewport", (req, res, next) => {
     req.session.config = req.session.config || {};
     req.session.config.text = req.query.text || req.session.config.text || null;
     const features = lib.resolveFeatures(req.session);
-    const isAdmin = Boolean(req.session.user && req.session.user.role === "admin");
     res.render("viewport" + (locale ? `-${locale}` : ""), {
         fullscreen: fullscreen,
         theme: theme,
@@ -858,7 +857,6 @@ app.get("/viewport", (req, res, next) => {
         viewportMode: req.session.viewport_mode === "store" ? "store" : "technical",
         features: features,
         featuresb64: Buffer.from(JSON.stringify(features)).toString("base64"),
-        isAdmin: isAdmin,
         back: "/"
     });
 });

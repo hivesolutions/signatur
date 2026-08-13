@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Switching the active face on a double-sided piece now slides and fades the preview in, sliding in from the right when entering the back and from the left when returning to the front
 * Applying an inspiration now pulses and glows the preview to highlight that the design changed
+* The check path toggle in the engraving modal is now shown to every user when the feature is enabled, no longer restricted to admins
 
 ### Fixed
 

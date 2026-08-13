@@ -15,6 +15,7 @@ describe("Smoke", function() {
     let child = null;
     let port = null;
     let sessionCookie = null;
+    let userSessionCookie = null;
     let hadExistingUsers = false;
 
     const findFreePort = function() {
@@ -54,12 +55,12 @@ describe("Smoke", function() {
     };
 
     before(async function() {
-        // seeds a single admin user into the on disk users file so
-        // the subprocess can run with authentication enabled while
-        // the smoke suite logs in once and reuses the session cookie
-        // for every protected route assertion below, backing up any
-        // pre existing users file so the developer's local
-        // credentials are not clobbered by the test run
+        // seeds an admin and a regular user into the on disk users
+        // file so the subprocess can run with authentication enabled
+        // while the smoke suite logs in once per role and reuses the
+        // session cookies for every protected route assertion below,
+        // backing up any pre existing users file so the developer's
+        // local credentials are not clobbered by the test run
         if (fs.existsSync(usersPath)) {
             fs.copyFileSync(usersPath, usersBackupPath);
             hadExistingUsers = true;
@@ -68,7 +69,10 @@ describe("Smoke", function() {
         fs.writeFileSync(
             usersPath,
             JSON.stringify(
-                [{ username: "smoke", password_hash: passwordHash, role: "admin" }],
+                [
+                    { username: "smoke", password_hash: passwordHash, role: "admin" },
+                    { username: "smokeuser", password_hash: passwordHash }
+                ],
                 null,
                 4
             ) + "\n",
@@ -80,7 +84,8 @@ describe("Smoke", function() {
             env: Object.assign({}, process.env, {
                 HOST: host,
                 PORT: String(port),
-                NODE_ENV: process.env.NODE_ENV || "test"
+                NODE_ENV: process.env.NODE_ENV || "test",
+                FEATURE_CHECK_PATH: "1"
             }),
             stdio: ["ignore", "pipe", "pipe"]
         });
@@ -105,6 +110,20 @@ describe("Smoke", function() {
             throw new Error("login did not return a session cookie");
         }
         sessionCookie = setCookie.map(entry => entry.split(";")[0]).join("; ");
+
+        // logs in the regular user on a separate session so the
+        // assertions below can exercise the non admin rendering of
+        // the protected routes without the admin role attached
+        const userLoginResponse = await request("POST", "/login", {
+            skipAuth: true,
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "username=smokeuser&password=smokepw"
+        });
+        const userSetCookie = userLoginResponse.headers["set-cookie"];
+        if (!userSetCookie || userSetCookie.length === 0) {
+            throw new Error("user login did not return a session cookie");
+        }
+        userSessionCookie = userSetCookie.map(entry => entry.split(";")[0]).join("; ");
     });
 
     after(function(done) {
@@ -257,6 +276,22 @@ describe("Smoke", function() {
             const response = await request("GET", "/welcome");
             assert.strictEqual(response.status, 200);
             assert.ok(response.body.includes("</html>"));
+        });
+    });
+
+    describe("#viewport()", function() {
+        it("should render the check path toggle for an admin user", async () => {
+            const response = await request("GET", "/viewport");
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes("modal-check-path"));
+        });
+
+        it("should render the check path toggle for a non admin user", async () => {
+            const response = await request("GET", "/viewport", {
+                headers: { Cookie: userSessionCookie }
+            });
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes("modal-check-path"));
         });
     });
 
