@@ -4682,11 +4682,18 @@ const countLines = function(text) {
      * the insertion point.
      *
      * Actions:
-     *   "option"       - updates configuration (maxLines)
+     *   "option"       - updates configuration (maxLines, overflow)
      *   "loadText"     - loads text from an array of [font, char]
      *                    pairs, replacing the current content
      *   "bindExisting" - binds click handlers to server-rendered
      *                    text spans for caret positioning
+     *   "trim"         - removes the trailing characters of every
+     *                    line wrapping past the container width,
+     *                    while overflow is not allowed, so the text
+     *                    fits the lines again after a size, margin
+     *                    or template change
+     *   "overflowing"  - returns whether any line is currently
+     *                    wrapping past the container width
      *
      * Events:
      *   "change"      - triggered when the text content changes,
@@ -4695,9 +4702,21 @@ const countLines = function(text) {
      *                   without altering the text content, passing
      *                   the text array and new caret position as
      *                   arguments
+     *   "overflow"    - triggered when a character is refused because
+     *                   its line would wrap past the container width,
+     *                   passing the text array and caret position
+     *   "trim"        - triggered when the trim action removed text,
+     *                   passing the text array and the number of
+     *                   characters that were removed
      */
     jQuery.fn.texteditor = function(action, options) {
         const elements = jQuery(this);
+
+        // returns whether any line of the first matched element
+        // is currently wrapping past the width of its container
+        if (action === "overflowing") {
+            return overflowIndex(elements.first()) !== -1;
+        }
 
         elements.each(function() {
             const context = jQuery(this);
@@ -4709,10 +4728,15 @@ const countLines = function(text) {
 
             // updates the max lines constraint from the profile
             // configuration to enforce the line limit on newlines
+            // and the overflow flag that, when set, allows the lines
+            // to wrap past the width of the container
             if (action === "option") {
                 if (options && options.maxLines !== undefined) {
                     maxLines = options.maxLines;
                     context.data("_maxLines", maxLines);
+                }
+                if (options && options.overflow !== undefined) {
+                    context.data("_overflow", options.overflow);
                 }
                 return;
             }
@@ -4750,6 +4774,35 @@ const countLines = function(text) {
                     const element = jQuery(this);
                     bindCaretClick(element, context, body);
                 });
+                return;
+            }
+
+            // trims the characters wrapping past the width of the
+            // container while overflow is not allowed, dropping the
+            // last character of the offending line until every line
+            // fits again and notifying both the change and the trim
+            // when something was removed; held off while a character
+            // is being inserted so the refusal falls on the inserted
+            // character instead of on a trailing one
+            if (action === "trim") {
+                if (context.data("_overflow") || context.data("_inserting")) return;
+                const text = body.data("text") || [];
+                let caretPosition =
+                    body.data("caret_position") === undefined ? -1 : body.data("caret_position");
+                let removed = 0;
+                let index = overflowIndex(context);
+                while (index !== -1 && index < text.length) {
+                    context.children(":not(.caret)").eq(index).remove();
+                    text.splice(index, 1);
+                    if (index <= caretPosition) caretPosition--;
+                    removed++;
+                    index = overflowIndex(context);
+                }
+                if (removed === 0) return;
+                body.data("text", text);
+                body.data("caret_position", caretPosition);
+                context.triggerHandler("change", [text, caretPosition]);
+                context.triggerHandler("trim", [text, removed]);
                 return;
             }
 
@@ -4950,8 +5003,7 @@ const countLines = function(text) {
                 bindCaretClick(element, context, body);
                 text.splice(caretPosition + 1, 0, [font, " "]);
                 caretPosition++;
-                setText(text, caretPosition);
-                return true;
+                return commit(element, text, caretPosition);
             };
 
             const newline = function() {
@@ -5154,7 +5206,30 @@ const countLines = function(text) {
                 bindCaretClick(element, context, body);
                 text.splice(caretPosition + 1, 0, [font, value]);
                 caretPosition++;
+                return commit(element, text, caretPosition);
+            };
+
+            // commits the insertion of the given element by storing
+            // the new text and caret position and notifying the
+            // change, then rolls the insertion back when overflow is
+            // not allowed and a line is now wrapping past the width
+            // of the container; the measurement runs only after the
+            // change has been notified so listeners (eg: automatic
+            // font sizing) get to re-fit the text first, holding off
+            // the trim action in the meantime so the refusal falls
+            // on the inserted character, returns if it was kept
+            const commit = function(element, text, caretPosition) {
+                context.data("_inserting", true);
                 setText(text, caretPosition);
+                const kept = context.data("_overflow") || overflowIndex(context) === -1;
+                context.data("_inserting", false);
+                if (kept) return true;
+                element.remove();
+                text.splice(caretPosition, 1);
+                caretPosition--;
+                setText(text, caretPosition);
+                context.triggerHandler("overflow", [text, caretPosition]);
+                return false;
             };
 
             const getText = function() {
@@ -5301,6 +5376,50 @@ const countLines = function(text) {
 
             if (nearest) placeCaretFromClick(jQuery(nearest), event, container, body);
         });
+    };
+
+    /**
+     * Resolves the index of the last character of the first line
+     * whose contents are wrapping past the width of the container,
+     * detected by a character sitting lower than the first one of
+     * its own line (the flex layout wrapped it into a new row) or
+     * by a character reaching past the right edge of the container
+     * (a single character wider than the container never wraps but
+     * still overflows it), so that both the insertion of a character
+     * and the trim action measure the real rendering instead of
+     * estimating the glyph widths of the selected font; the caret is
+     * taken out of the flow while measuring, as it is a flex item of
+     * its own and would otherwise push the characters that follow it
+     * into wrapping when parked in the middle of an almost full line.
+     *
+     * @param {Element} container The viewer container holding all elements.
+     * @returns {Number} The index of the last character of the first
+     * overflowing line or -1 when every line fits the container.
+     */
+    const overflowIndex = function(container) {
+        if (container.length === 0) return -1;
+        const caret = container.children(".caret");
+        const caretDisplay = caret.length > 0 ? caret.get(0).style.display : null;
+        if (caret.length > 0) caret.get(0).style.display = "none";
+        const bounds = container.get(0).getBoundingClientRect();
+        const children = container.children(":not(.caret)");
+        let lineTop = null;
+        let lineEnd = -1;
+        let overflowing = false;
+        for (let index = 0; index < children.length; index++) {
+            const element = children.get(index);
+            if (jQuery(element).hasClass("newline")) {
+                if (overflowing) break;
+                lineTop = null;
+                continue;
+            }
+            const rect = element.getBoundingClientRect();
+            if (lineTop === null) lineTop = rect.top;
+            if (rect.top > lineTop + 1 || rect.right > bounds.right + 1) overflowing = true;
+            lineEnd = index;
+        }
+        if (caret.length > 0) caret.get(0).style.display = caretDisplay;
+        return overflowing ? lineEnd : -1;
     };
 })(jQuery);
 
