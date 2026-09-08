@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [1.4.0] - 2026-09-08
+
+### Added
+
 * Allow overflow option on the engraving layout options panel, off by default, that lets lines wrap past the engraving area again - [#26](https://github.com/hivesolutions/signatur/issues/26)
 * Unit tests for the engraving text editor and a coverage report script
 
