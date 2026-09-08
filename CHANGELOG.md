@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* The allow overflow option is now only shown in the technical viewport mode, and store mode always keeps overflow blocked
 
 ## [1.4.0] - 2026-09-08
 

@@ -6937,15 +6937,17 @@ jQuery(document).ready(function() {
                 viewportContainer.texteditor("option", { overflow: true });
             }
 
-            // forces the rulers, crosshair and guidelines off when
-            // the viewport is running in store mode by routing the
-            // change through the existing checkbox handlers so the
-            // URL state and the visuals stay in sync with the off
-            // position regardless of the previous URL parameters
+            // forces the rulers, crosshair, guidelines and overflow
+            // off when the viewport is running in store mode by
+            // routing the change through the existing checkbox
+            // handlers so the URL state and the visuals stay in sync
+            // with the off position regardless of the previous URL
+            // parameters, as none of these controls is shown there
             if (body.hasClass("store-mode")) {
                 rulersMode.prop("checked", false).trigger("change");
                 crosshairMode.prop("checked", false).trigger("change");
                 guidelinesMode.prop("checked", false).trigger("change");
+                overflowMode.prop("checked", false).trigger("change");
             }
 
             // restores the calligraphy mode from the URL

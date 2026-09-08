@@ -3214,6 +3214,7 @@ body.ldj .components-entry-preview .components-demo-tabs > .settings-tabs > .set
 .store-mode .viewport-options > .viewport-options-body > .viewport-options-keyboard,
 .store-mode .viewport-options > .viewport-options-body > .viewport-options-guidelines,
 .store-mode .viewport-options > .viewport-options-body > .viewport-options-caret,
+.store-mode .viewport-options > .viewport-options-body > .viewport-options-overflow,
 .store-mode .viewport-options > .viewport-options-body > .zoom-container,
 .store-mode .viewport-options > .viewport-options-body > .margin-container,
 .store-mode .viewport-options > .viewport-options-body > .position-container {
