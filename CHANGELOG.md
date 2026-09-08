@@ -9,15 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Allow overflow option on the engraving layout options panel, off by default, that lets lines wrap past the engraving area again - [#26](https://github.com/hivesolutions/signatur/issues/26)
+* Unit tests for the engraving text editor and a coverage report script
 
 ### Changed
 
-*
+* Automatic font size now steps down until the text really fits the line width instead of trusting the character width estimate
 
 ### Fixed
 
-*
+* Lines can no longer overflow the engraving area: a character that would not fit its line is refused with a warning and the text is trimmed to fit when the font size, margins or template change - [#26](https://github.com/hivesolutions/signatur/issues/26)
 
 ## [1.3.0] - 2026-08-13
 

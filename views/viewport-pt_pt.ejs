@@ -158,6 +158,12 @@
                     Mostrar Cursor
                 </label>
             </div>
+            <div class="viewport-options-field viewport-options-checkbox viewport-options-overflow">
+                <label class="viewport-options-option">
+                    <input class="overflow-mode" type="checkbox" />
+                    Permitir Transbordo
+                </label>
+            </div>
             <div class="viewport-options-field slider-field zoom-container">
                 <label class="viewport-options-label">Zoom</label>
                 <div class="slider-presets zoom-presets">
@@ -222,7 +228,9 @@
                     <% if (features.calligraphy) { %>
                         <div class="calligraphy-container"></div>
                     <% } %>
-                    <div class="viewer-container caret-active" data-text="<%= config.text %>">
+                    <div class="viewer-container caret-active" data-text="<%= config.text %>"
+                         data-label-overflow="Linha cheia"
+                         data-label-trim="Texto cortado para caber na linha">
                     <% if (text) { %>
                         <% text.forEach(function(item){ %>
                             <% if (item[1] === "\n") { %>
