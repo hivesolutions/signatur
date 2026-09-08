@@ -1365,9 +1365,9 @@ jQuery(document).ready(function() {
         // selected font, so wide fonts still end up fitting the
         // line down to the minimum size of the profile
         if (isAutomatic && size) {
-            const fs = currentProfile.font_size;
-            const minSize = fs.min || 4;
-            const step = fs.step || 1;
+            const fontSizeConfig = currentProfile.font_size;
+            const minSize = fontSizeConfig.min || 4;
+            const step = fontSizeConfig.step || 1;
             while (size > minSize && viewportContainer.texteditor("overflowing")) {
                 size = Math.max(size - step, minSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
@@ -1882,6 +1882,11 @@ jQuery(document).ready(function() {
             if (currentProfile && currentProfile.font_size) {
                 fontSizeContainer.addClass("visible");
             }
+
+            // re-fits and trims the text now that the editor is visible
+            // again, since keys pressed while it was hidden could not be
+            // measured against the engraving area
+            applyFontSize();
         }
         updateUrl("calligraphy");
     });
@@ -2343,6 +2348,16 @@ jQuery(document).ready(function() {
     viewportContainer.bind("trim", function() {
         toast.toast("show", viewportContainer.attr("data-label-trim") || "Text trimmed to fit");
     });
+
+    // re-fits and trims the text whenever a batch of fonts finishes
+    // loading, since any measurement taken while an engraving font
+    // was still being fetched (cold cache, or a font used for the
+    // first time) was discarded by the editor as not representative
+    if (document.fonts) {
+        document.fonts.addEventListener("loadingdone", function() {
+            applyFontSize();
+        });
+    }
 
     // registers for the caret change event from the text editor
     // to keep the selected font in sync with the character around

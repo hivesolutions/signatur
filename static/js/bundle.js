@@ -4780,10 +4780,13 @@ const countLines = function(text) {
             // trims the characters wrapping past the width of the
             // container while overflow is not allowed, dropping the
             // last character of the offending line until every line
-            // fits again and notifying both the change and the trim
-            // when something was removed; held off while a character
-            // is being inserted so the refusal falls on the inserted
-            // character instead of on a trailing one
+            // fits again (an entry holding a run of characters, as
+            // restored from a serialized payload, is shortened one
+            // character at a time before being dropped) and notifying
+            // both the change and the trim when something was removed;
+            // held off while a character is being inserted so the
+            // refusal falls on the inserted character instead of on
+            // a trailing one
             if (action === "trim") {
                 if (context.data("_overflow") || context.data("_inserting")) return;
                 const text = body.data("text") || [];
@@ -4792,9 +4795,16 @@ const countLines = function(text) {
                 let removed = 0;
                 let index = overflowIndex(context);
                 while (index !== -1 && index < text.length) {
-                    context.children(":not(.caret)").eq(index).remove();
-                    text.splice(index, 1);
-                    if (index <= caretPosition) caretPosition--;
+                    const element = context.children(":not(.caret)").eq(index);
+                    const value = text[index][1] || "";
+                    if (value.length > 1) {
+                        text[index][1] = value.slice(0, -1);
+                        element.text(text[index][1]);
+                    } else {
+                        element.remove();
+                        text.splice(index, 1);
+                        if (index <= caretPosition) caretPosition--;
+                    }
                     removed++;
                     index = overflowIndex(context);
                 }
@@ -5003,7 +5013,8 @@ const countLines = function(text) {
                 bindCaretClick(element, context, body);
                 text.splice(caretPosition + 1, 0, [font, " "]);
                 caretPosition++;
-                return commit(element, text, caretPosition);
+                commit(element, text, caretPosition);
+                return true;
             };
 
             const newline = function() {
@@ -5206,7 +5217,7 @@ const countLines = function(text) {
                 bindCaretClick(element, context, body);
                 text.splice(caretPosition + 1, 0, [font, value]);
                 caretPosition++;
-                return commit(element, text, caretPosition);
+                commit(element, text, caretPosition);
             };
 
             // commits the insertion of the given element by storing
@@ -5217,19 +5228,20 @@ const countLines = function(text) {
             // change has been notified so listeners (eg: automatic
             // font sizing) get to re-fit the text first, holding off
             // the trim action in the meantime so the refusal falls
-            // on the inserted character, returns if it was kept
+            // on the inserted character; the key press still counts
+            // as handled by the callers so the browser default of the
+            // key (eg: page scroll on space) never kicks in
             const commit = function(element, text, caretPosition) {
                 context.data("_inserting", true);
                 setText(text, caretPosition);
                 const kept = context.data("_overflow") || overflowIndex(context) === -1;
                 context.data("_inserting", false);
-                if (kept) return true;
+                if (kept) return;
                 element.remove();
                 text.splice(caretPosition, 1);
                 caretPosition--;
                 setText(text, caretPosition);
                 context.triggerHandler("overflow", [text, caretPosition]);
-                return false;
             };
 
             const getText = function() {
@@ -5383,14 +5395,20 @@ const countLines = function(text) {
      * whose contents are wrapping past the width of the container,
      * detected by a character sitting lower than the first one of
      * its own line (the flex layout wrapped it into a new row) or
-     * by a character reaching past the right edge of the container
-     * (a single character wider than the container never wraps but
-     * still overflows it), so that both the insertion of a character
-     * and the trim action measure the real rendering instead of
-     * estimating the glyph widths of the selected font; the caret is
-     * taken out of the flow while measuring, as it is a flex item of
-     * its own and would otherwise push the characters that follow it
-     * into wrapping when parked in the middle of an almost full line.
+     * by a character reaching past either edge of the container (a
+     * single character wider than the container never wraps but
+     * still overflows it, to the right, to the left on a right
+     * aligned line or both ways when centered), so that both the
+     * insertion of a character and the trim action measure the real
+     * rendering instead of estimating the glyph widths of the
+     * selected font; the caret is taken out of the flow while
+     * measuring, as it is a flex item of its own and would otherwise
+     * push the characters that follow it into wrapping when parked
+     * in the middle of an almost full line, and the measurement is
+     * discarded while the document is still loading fonts (checked
+     * only after the layout ran, so a font used for the first time
+     * gets requested) as fallback glyphs are not representative,
+     * leaving the host to re-fit the text once the loading is done.
      *
      * @param {Element} container The viewer container holding all elements.
      * @returns {Number} The index of the last character of the first
@@ -5415,10 +5433,13 @@ const countLines = function(text) {
             }
             const rect = element.getBoundingClientRect();
             if (lineTop === null) lineTop = rect.top;
-            if (rect.top > lineTop + 1 || rect.right > bounds.right + 1) overflowing = true;
+            const wrapped = rect.top > lineTop + 1;
+            const outside = rect.right > bounds.right + 1 || rect.left < bounds.left - 1;
+            if (wrapped || outside) overflowing = true;
             lineEnd = index;
         }
         if (caret.length > 0) caret.get(0).style.display = caretDisplay;
+        if (document.fonts && document.fonts.status === "loading") return -1;
         return overflowing ? lineEnd : -1;
     };
 })(jQuery);
@@ -7610,9 +7631,9 @@ jQuery(document).ready(function() {
         // selected font, so wide fonts still end up fitting the
         // line down to the minimum size of the profile
         if (isAutomatic && size) {
-            const fs = currentProfile.font_size;
-            const minSize = fs.min || 4;
-            const step = fs.step || 1;
+            const fontSizeConfig = currentProfile.font_size;
+            const minSize = fontSizeConfig.min || 4;
+            const step = fontSizeConfig.step || 1;
             while (size > minSize && viewportContainer.texteditor("overflowing")) {
                 size = Math.max(size - step, minSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
@@ -8127,6 +8148,11 @@ jQuery(document).ready(function() {
             if (currentProfile && currentProfile.font_size) {
                 fontSizeContainer.addClass("visible");
             }
+
+            // re-fits and trims the text now that the editor is visible
+            // again, since keys pressed while it was hidden could not be
+            // measured against the engraving area
+            applyFontSize();
         }
         updateUrl("calligraphy");
     });
@@ -8588,6 +8614,16 @@ jQuery(document).ready(function() {
     viewportContainer.bind("trim", function() {
         toast.toast("show", viewportContainer.attr("data-label-trim") || "Text trimmed to fit");
     });
+
+    // re-fits and trims the text whenever a batch of fonts finishes
+    // loading, since any measurement taken while an engraving font
+    // was still being fetched (cold cache, or a font used for the
+    // first time) was discarded by the editor as not representative
+    if (document.fonts) {
+        document.fonts.addEventListener("loadingdone", function() {
+            applyFontSize();
+        });
+    }
 
     // registers for the caret change event from the text editor
     // to keep the selected font in sync with the character around

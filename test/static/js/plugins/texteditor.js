@@ -19,36 +19,51 @@ describe("TextEditor", function() {
 
     // installs a fake layout on the document, since jsdom computes
     // none, placing every visible child of the container left to
-    // right with the given width (or its own data-width) and wrapping
-    // the ones that would not fit the container width onto a new row,
-    // the same way the flex wrap of the viewport css does, while a
-    // newline element always starts a new row; the caret takes part
-    // in the flow like any other flex item unless hidden
-    const layout = function(containerWidth, charWidth) {
+    // right with the given width per character (or its own data-width)
+    // and wrapping the ones that would not fit the container width
+    // onto a new row, the same way the flex wrap of the viewport css
+    // does, while a newline element always starts a new row; each row
+    // is then aligned to the left, the right or the center like the
+    // justify content of the viewport, and the caret takes part in the
+    // flow like any other flex item unless hidden
+    const layout = function(containerWidth, charWidth, align) {
         window.Element.prototype.getBoundingClientRect = function() {
             if (this.classList.contains("viewer-container")) {
                 return { top: 0, right: containerWidth, bottom: 100, left: 0 };
             }
             const children = this.parentNode ? this.parentNode.children : [];
+            const rows = [[]];
             let x = 0;
-            let row = 0;
             for (const child of children) {
                 if (child.style.display === "none") continue;
                 if (child.classList.contains("newline")) {
-                    if (child === this) return { top: row * 10, right: 0, bottom: 0, left: 0 };
+                    rows.push([{ element: child, width: 0 }]);
+                    rows.push([]);
                     x = 0;
-                    row++;
                     continue;
                 }
-                const width = parseFloat(child.getAttribute("data-width")) || charWidth;
+                const width =
+                    parseFloat(child.getAttribute("data-width")) ||
+                    child.textContent.length * charWidth;
                 if (x > 0 && x + width > containerWidth) {
+                    rows.push([]);
                     x = 0;
-                    row++;
                 }
-                if (child === this) {
-                    return { top: row * 10, right: x + width, bottom: row * 10 + 10, left: x };
-                }
+                rows[rows.length - 1].push({ element: child, width: width });
                 x += width;
+            }
+            for (let row = 0; row < rows.length; row++) {
+                const total = rows[row].reduce((sum, item) => sum + item.width, 0);
+                let left = 0;
+                if (align === "right") left = containerWidth - total;
+                if (align === "center") left = (containerWidth - total) / 2;
+                for (const item of rows[row]) {
+                    if (item.element === this) {
+                        const top = row * 10;
+                        return { top: top, right: left + item.width, bottom: top + 10, left: left };
+                    }
+                    left += item.width;
+                }
             }
             return { top: 0, right: 0, bottom: 0, left: 0 };
         };
@@ -276,6 +291,25 @@ describe("TextEditor", function() {
             assert.strictEqual(trims.length, 0);
         });
 
+        it("should shorten a restored run of characters one character at a time", () => {
+            const caret = container.children(".caret");
+            caret.before("<span style=\"font-family: 'Helvetica';\">ABCDEFGH</span>");
+            caret.before("<span style=\"font-family: 'Helvetica';\">I</span>");
+            body.data("text", [
+                ["Helvetica", "ABCDEFGH"],
+                ["Helvetica", "I"]
+            ]);
+            body.data("caret_position", 1);
+            container.texteditor("bindExisting");
+
+            container.texteditor("trim");
+            assert.deepStrictEqual(plain(body.data("text")), [["Helvetica", "ABCD"]]);
+            assert.strictEqual(rendered(), "ABCD");
+            assert.strictEqual(body.data("caret_position"), 0);
+            assert.deepStrictEqual(trims[0][1], 5);
+            assert.strictEqual(changes.length, 1);
+        });
+
         it("should leave server rendered text alone until its state is loaded", () => {
             const caret = container.children(".caret");
             for (const value of ["a", "b", "c", "d", "e", "f"]) {
@@ -312,6 +346,22 @@ describe("TextEditor", function() {
             assert.strictEqual(characters(), "abcd");
             assert.strictEqual(rendered(), "abcd");
             assert.strictEqual(overflows.length, 1);
+        });
+
+        it("should still consume a refused physical space key press", () => {
+            load("abcd");
+            const event = jQuery.Event("keydown", { key: " " });
+            body.trigger(event);
+            assert.strictEqual(characters(), "abcd");
+            assert.strictEqual(overflows.length, 1);
+            assert.strictEqual(event.isDefaultPrevented(), true);
+        });
+
+        it("should not consume a space key press when there is no caret", () => {
+            container.children(".caret").remove();
+            const event = jQuery.Event("keydown", { key: " " });
+            body.trigger(event);
+            assert.strictEqual(event.isDefaultPrevented(), false);
         });
     });
 
@@ -437,6 +487,41 @@ describe("TextEditor", function() {
             container.texteditor("trim");
             assert.strictEqual(characters(), "abcd");
             assert.strictEqual(trims.length, 0);
+        });
+
+        it("should detect a single character pushed past the left edge of a right aligned line", () => {
+            layout(40, 10, "right");
+            load("abcd");
+            assert.strictEqual(container.texteditor("overflowing"), false);
+
+            load("a");
+            container.children(":not(.caret)").first().attr("data-width", 50);
+            assert.strictEqual(container.texteditor("overflowing"), true);
+        });
+
+        it("should detect a single character spilling both ways on a centered line", () => {
+            layout(40, 10, "center");
+            load("a");
+            container.children(":not(.caret)").first().attr("data-width", 50);
+            assert.strictEqual(container.texteditor("overflowing"), true);
+        });
+
+        it("should discard the measurement while the document is still loading fonts", () => {
+            const fonts = { status: "loading" };
+            Object.defineProperty(window.document, "fonts", { value: fonts, configurable: true });
+            load("abcdef");
+            assert.strictEqual(container.texteditor("overflowing"), false);
+
+            container.texteditor("trim");
+            assert.strictEqual(characters(), "abcdef");
+            press("g");
+            assert.strictEqual(characters(), "abcdefg");
+            assert.strictEqual(overflows.length, 0);
+
+            fonts.status = "loaded";
+            assert.strictEqual(container.texteditor("overflowing"), true);
+            container.texteditor("trim");
+            assert.strictEqual(characters(), "abcd");
         });
 
         it("should leave a hidden caret hidden after measuring", () => {
