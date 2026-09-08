@@ -64,7 +64,7 @@
         "eslint-config-hive": "^0.7.0",
         "eslint-plugin-n": "^18.0.1",
         "jquery": "^3.7.1",
-        "jsdom": "^30.0.1",
+        "jsdom": "^29.1.1",
         "mocha": "^11.7.6",
         "nodemon": "^3.1.14",
         "npm-check-updates": "^22.2.0",
