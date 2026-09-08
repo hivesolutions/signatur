@@ -4682,11 +4682,18 @@ const countLines = function(text) {
      * the insertion point.
      *
      * Actions:
-     *   "option"       - updates configuration (maxLines)
+     *   "option"       - updates configuration (maxLines, overflow)
      *   "loadText"     - loads text from an array of [font, char]
      *                    pairs, replacing the current content
      *   "bindExisting" - binds click handlers to server-rendered
      *                    text spans for caret positioning
+     *   "trim"         - removes the trailing characters of every
+     *                    line wrapping past the container width,
+     *                    while overflow is not allowed, so the text
+     *                    fits the lines again after a size, margin
+     *                    or template change
+     *   "overflowing"  - returns whether any line is currently
+     *                    wrapping past the container width
      *
      * Events:
      *   "change"      - triggered when the text content changes,
@@ -4695,9 +4702,21 @@ const countLines = function(text) {
      *                   without altering the text content, passing
      *                   the text array and new caret position as
      *                   arguments
+     *   "overflow"    - triggered when a character is refused because
+     *                   its line would wrap past the container width,
+     *                   passing the text array and caret position
+     *   "trim"        - triggered when the trim action removed text,
+     *                   passing the text array and the number of
+     *                   characters that were removed
      */
     jQuery.fn.texteditor = function(action, options) {
         const elements = jQuery(this);
+
+        // returns whether any line of the first matched element
+        // is currently wrapping past the width of its container
+        if (action === "overflowing") {
+            return overflowIndex(elements.first()) !== -1;
+        }
 
         elements.each(function() {
             const context = jQuery(this);
@@ -4709,10 +4728,15 @@ const countLines = function(text) {
 
             // updates the max lines constraint from the profile
             // configuration to enforce the line limit on newlines
+            // and the overflow flag that, when set, allows the lines
+            // to wrap past the width of the container
             if (action === "option") {
                 if (options && options.maxLines !== undefined) {
                     maxLines = options.maxLines;
                     context.data("_maxLines", maxLines);
+                }
+                if (options && options.overflow !== undefined) {
+                    context.data("_overflow", options.overflow);
                 }
                 return;
             }
@@ -4750,6 +4774,45 @@ const countLines = function(text) {
                     const element = jQuery(this);
                     bindCaretClick(element, context, body);
                 });
+                return;
+            }
+
+            // trims the characters wrapping past the width of the
+            // container while overflow is not allowed, dropping the
+            // last character of the offending line until every line
+            // fits again (an entry holding a run of characters, as
+            // restored from a serialized payload, is shortened one
+            // character at a time before being dropped) and notifying
+            // both the change and the trim when something was removed;
+            // held off while a character is being inserted so the
+            // refusal falls on the inserted character instead of on
+            // a trailing one
+            if (action === "trim") {
+                if (context.data("_overflow") || context.data("_inserting")) return;
+                const text = body.data("text") || [];
+                let caretPosition =
+                    body.data("caret_position") === undefined ? -1 : body.data("caret_position");
+                let removed = 0;
+                let index = overflowIndex(context);
+                while (index !== -1 && index < text.length) {
+                    const element = context.children(":not(.caret)").eq(index);
+                    const value = text[index][1] || "";
+                    if (value.length > 1) {
+                        text[index][1] = value.slice(0, -1);
+                        element.text(text[index][1]);
+                    } else {
+                        element.remove();
+                        text.splice(index, 1);
+                        if (index <= caretPosition) caretPosition--;
+                    }
+                    removed++;
+                    index = overflowIndex(context);
+                }
+                if (removed === 0) return;
+                body.data("text", text);
+                body.data("caret_position", caretPosition);
+                context.triggerHandler("change", [text, caretPosition]);
+                context.triggerHandler("trim", [text, removed]);
                 return;
             }
 
@@ -4950,7 +5013,7 @@ const countLines = function(text) {
                 bindCaretClick(element, context, body);
                 text.splice(caretPosition + 1, 0, [font, " "]);
                 caretPosition++;
-                setText(text, caretPosition);
+                commit(element, text, caretPosition);
                 return true;
             };
 
@@ -5154,7 +5217,31 @@ const countLines = function(text) {
                 bindCaretClick(element, context, body);
                 text.splice(caretPosition + 1, 0, [font, value]);
                 caretPosition++;
+                commit(element, text, caretPosition);
+            };
+
+            // commits the insertion of the given element by storing
+            // the new text and caret position and notifying the
+            // change, then rolls the insertion back when overflow is
+            // not allowed and a line is now wrapping past the width
+            // of the container; the measurement runs only after the
+            // change has been notified so listeners (eg: automatic
+            // font sizing) get to re-fit the text first, holding off
+            // the trim action in the meantime so the refusal falls
+            // on the inserted character; the key press still counts
+            // as handled by the callers so the browser default of the
+            // key (eg: page scroll on space) never kicks in
+            const commit = function(element, text, caretPosition) {
+                context.data("_inserting", true);
                 setText(text, caretPosition);
+                const kept = context.data("_overflow") || overflowIndex(context) === -1;
+                context.data("_inserting", false);
+                if (kept) return;
+                element.remove();
+                text.splice(caretPosition, 1);
+                caretPosition--;
+                setText(text, caretPosition);
+                context.triggerHandler("overflow", [text, caretPosition]);
             };
 
             const getText = function() {
@@ -5301,6 +5388,59 @@ const countLines = function(text) {
 
             if (nearest) placeCaretFromClick(jQuery(nearest), event, container, body);
         });
+    };
+
+    /**
+     * Resolves the index of the last character of the first line
+     * whose contents are wrapping past the width of the container,
+     * detected by a character sitting lower than the first one of
+     * its own line (the flex layout wrapped it into a new row) or
+     * by a character reaching past either edge of the container (a
+     * single character wider than the container never wraps but
+     * still overflows it, to the right, to the left on a right
+     * aligned line or both ways when centered), so that both the
+     * insertion of a character and the trim action measure the real
+     * rendering instead of estimating the glyph widths of the
+     * selected font; the caret is taken out of the flow while
+     * measuring, as it is a flex item of its own and would otherwise
+     * push the characters that follow it into wrapping when parked
+     * in the middle of an almost full line, and the measurement is
+     * discarded while the document is still loading fonts (checked
+     * only after the layout ran, so a font used for the first time
+     * gets requested) as fallback glyphs are not representative,
+     * leaving the host to re-fit the text once the loading is done.
+     *
+     * @param {Element} container The viewer container holding all elements.
+     * @returns {Number} The index of the last character of the first
+     * overflowing line or -1 when every line fits the container.
+     */
+    const overflowIndex = function(container) {
+        if (container.length === 0) return -1;
+        const caret = container.children(".caret");
+        const caretDisplay = caret.length > 0 ? caret.get(0).style.display : null;
+        if (caret.length > 0) caret.get(0).style.display = "none";
+        const bounds = container.get(0).getBoundingClientRect();
+        const children = container.children(":not(.caret)");
+        let lineTop = null;
+        let lineEnd = -1;
+        let overflowing = false;
+        for (let index = 0; index < children.length; index++) {
+            const element = children.get(index);
+            if (jQuery(element).hasClass("newline")) {
+                if (overflowing) break;
+                lineTop = null;
+                continue;
+            }
+            const rect = element.getBoundingClientRect();
+            if (lineTop === null) lineTop = rect.top;
+            const wrapped = rect.top > lineTop + 1;
+            const outside = rect.right > bounds.right + 1 || rect.left < bounds.left - 1;
+            if (wrapped || outside) overflowing = true;
+            lineEnd = index;
+        }
+        if (caret.length > 0) caret.get(0).style.display = caretDisplay;
+        if (document.fonts && document.fonts.status === "loading") return -1;
+        return overflowing ? lineEnd : -1;
     };
 })(jQuery);
 
@@ -6307,6 +6447,8 @@ jQuery(document).ready(function() {
     const viewportOptionsGuidelines = jQuery(".viewport-options-guidelines");
     const caretMode = jQuery(".caret-mode");
     const viewportOptionsCaret = jQuery(".viewport-options-caret");
+    const overflowMode = jQuery(".overflow-mode");
+    const viewportOptionsOverflow = jQuery(".viewport-options-overflow");
     const zoomContainer = jQuery(".zoom-container");
     const zoomRange = jQuery(".zoom-range");
     const zoomPresets = jQuery(".zoom-preset");
@@ -6786,6 +6928,15 @@ jQuery(document).ready(function() {
                 viewportContainer.removeClass("caret-active");
             }
 
+            // restores the overflow mode from the URL query
+            // parameters if it was previously saved, allowing
+            // the lines to wrap past the engraving area again
+            const urlOverflow = urlParams.get("overflow");
+            if (urlOverflow === "1") {
+                overflowMode.prop("checked", true);
+                viewportContainer.texteditor("option", { overflow: true });
+            }
+
             // forces the rulers, crosshair and guidelines off when
             // the viewport is running in store mode by routing the
             // change through the existing checkbox handlers so the
@@ -6805,6 +6956,13 @@ jQuery(document).ready(function() {
             }
             restoring = false;
             updateUrl("restore");
+
+            // trims the text that no longer fits the line width now
+            // that the size, margins and overflow mode are all in
+            // place, since trimming is held off while restoring so
+            // the profile default size (applied first) does not eat
+            // text that still fits at the restored size
+            viewportContainer.texteditor("trim");
 
             // re-renders the face thumbnails once the full restore has
             // settled so they reflect the resolved front font size,
@@ -7466,6 +7624,34 @@ jQuery(document).ready(function() {
             viewportContainer.css("font-size", scaledSize + "px");
             viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
         }
+
+        // steps the automatic size down while a line is still
+        // wrapping past the safe area, since the character width
+        // heuristic cannot know the real glyph widths of the
+        // selected font, so wide fonts still end up fitting the
+        // line down to the minimum size of the profile
+        if (isAutomatic && size) {
+            const fontSizeConfig = currentProfile.font_size;
+            const minSize = fontSizeConfig.min || 4;
+            const step = fontSizeConfig.step || 1;
+            while (size > minSize && viewportContainer.texteditor("overflowing")) {
+                size = Math.max(size - step, minSize);
+                const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
+                viewportContainer.css("font-size", scaledSize + "px");
+                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                fontSizeRange.val(size);
+                fontSizeInput.val(size);
+                refreshFontSizeBubble();
+            }
+        }
+
+        // trims the text that no longer fits the line width at
+        // the applied size, so a larger size, tighter margins or
+        // a template change never leave a line wrapping past the
+        // engraving area (no-op while overflow is allowed), held
+        // off while restoring since the size applied by the profile
+        // selection is not yet the one saved on the URL
+        if (!restoring) viewportContainer.texteditor("trim");
     };
 
     // refreshes the viewport and controls based on the
@@ -7484,6 +7670,7 @@ jQuery(document).ready(function() {
             viewportOptionsCrosshair.addClass("visible");
             viewportOptionsGuidelines.addClass("visible");
             viewportOptionsCaret.addClass("visible");
+            viewportOptionsOverflow.addClass("visible");
             zoomContainer.addClass("visible");
             positionContainer.addClass("visible");
             calligraphyModeContainer.addClass("visible");
@@ -7493,6 +7680,7 @@ jQuery(document).ready(function() {
             viewportOptionsCrosshair.removeClass("visible");
             viewportOptionsGuidelines.removeClass("visible");
             viewportOptionsCaret.removeClass("visible");
+            viewportOptionsOverflow.removeClass("visible");
             zoomContainer.removeClass("visible");
             positionContainer.removeClass("visible");
             calligraphyModeContainer.removeClass("visible");
@@ -7792,6 +7980,17 @@ jQuery(document).ready(function() {
         updateUrl("toggle");
     });
 
+    // registers for the change in the overflow mode checkbox
+    // to allow or block the lines from wrapping past the
+    // engraving area, trimming the text that no longer fits
+    // as soon as the lines are blocked again
+    overflowMode.bind("change", function() {
+        const allowOverflow = overflowMode.prop("checked");
+        viewportContainer.texteditor("option", { overflow: allowOverflow });
+        viewportContainer.texteditor("trim");
+        updateUrl("toggle");
+    });
+
     // tracks the previous visibility state of the visual toggles so
     // exiting preview mode restores exactly the configuration the
     // user had before entering
@@ -7949,6 +8148,11 @@ jQuery(document).ready(function() {
             if (currentProfile && currentProfile.font_size) {
                 fontSizeContainer.addClass("visible");
             }
+
+            // re-fits and trims the text now that the editor is visible
+            // again, since keys pressed while it was hidden could not be
+            // measured against the engraving area
+            applyFontSize();
         }
         updateUrl("calligraphy");
     });
@@ -8241,11 +8445,13 @@ jQuery(document).ready(function() {
             params.delete("keyboard");
             params.delete("guidelines");
             params.delete("caret");
+            params.delete("overflow");
             if (!rulersMode.prop("checked")) params.set("rulers", "0");
             if (!crosshairMode.prop("checked")) params.set("crosshair", "0");
             if (!keyboardMode.prop("checked")) params.set("keyboard", "0");
             if (!guidelinesMode.prop("checked")) params.set("guidelines", "0");
             if (!caretMode.prop("checked")) params.set("caret", "0");
+            if (overflowMode.prop("checked")) params.set("overflow", "1");
         }
         if (action === "calligraphy" || action === "restore") {
             params.delete("calligraphy");
@@ -8291,6 +8497,7 @@ jQuery(document).ready(function() {
         body.data("text", textData);
         body.data("caret_position", textData.length - 1);
         viewportContainer.texteditor("bindExisting");
+        viewportContainer.texteditor("trim");
         updateButtonState(textData);
         renderFaces(currentProfile);
     };
@@ -8396,6 +8603,27 @@ jQuery(document).ready(function() {
         updateUrl("text");
         renderFaces(currentProfile);
     });
+
+    // registers for the overflow and trim events from the text
+    // editor to warn the operator that the line is full and the
+    // character was refused, or that trailing text was removed
+    // so the lines fit the engraving area again
+    viewportContainer.bind("overflow", function() {
+        toast.toast("show", viewportContainer.attr("data-label-overflow") || "Line is full");
+    });
+    viewportContainer.bind("trim", function() {
+        toast.toast("show", viewportContainer.attr("data-label-trim") || "Text trimmed to fit");
+    });
+
+    // re-fits and trims the text whenever a batch of fonts finishes
+    // loading, since any measurement taken while an engraving font
+    // was still being fetched (cold cache, or a font used for the
+    // first time) was discarded by the editor as not representative
+    if (document.fonts) {
+        document.fonts.addEventListener("loadingdone", function() {
+            applyFontSize();
+        });
+    }
 
     // registers for the caret change event from the text editor
     // to keep the selected font in sync with the character around

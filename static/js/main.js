@@ -181,6 +181,8 @@ jQuery(document).ready(function() {
     const viewportOptionsGuidelines = jQuery(".viewport-options-guidelines");
     const caretMode = jQuery(".caret-mode");
     const viewportOptionsCaret = jQuery(".viewport-options-caret");
+    const overflowMode = jQuery(".overflow-mode");
+    const viewportOptionsOverflow = jQuery(".viewport-options-overflow");
     const zoomContainer = jQuery(".zoom-container");
     const zoomRange = jQuery(".zoom-range");
     const zoomPresets = jQuery(".zoom-preset");
@@ -660,6 +662,15 @@ jQuery(document).ready(function() {
                 viewportContainer.removeClass("caret-active");
             }
 
+            // restores the overflow mode from the URL query
+            // parameters if it was previously saved, allowing
+            // the lines to wrap past the engraving area again
+            const urlOverflow = urlParams.get("overflow");
+            if (urlOverflow === "1") {
+                overflowMode.prop("checked", true);
+                viewportContainer.texteditor("option", { overflow: true });
+            }
+
             // forces the rulers, crosshair and guidelines off when
             // the viewport is running in store mode by routing the
             // change through the existing checkbox handlers so the
@@ -679,6 +690,13 @@ jQuery(document).ready(function() {
             }
             restoring = false;
             updateUrl("restore");
+
+            // trims the text that no longer fits the line width now
+            // that the size, margins and overflow mode are all in
+            // place, since trimming is held off while restoring so
+            // the profile default size (applied first) does not eat
+            // text that still fits at the restored size
+            viewportContainer.texteditor("trim");
 
             // re-renders the face thumbnails once the full restore has
             // settled so they reflect the resolved front font size,
@@ -1340,6 +1358,34 @@ jQuery(document).ready(function() {
             viewportContainer.css("font-size", scaledSize + "px");
             viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
         }
+
+        // steps the automatic size down while a line is still
+        // wrapping past the safe area, since the character width
+        // heuristic cannot know the real glyph widths of the
+        // selected font, so wide fonts still end up fitting the
+        // line down to the minimum size of the profile
+        if (isAutomatic && size) {
+            const fontSizeConfig = currentProfile.font_size;
+            const minSize = fontSizeConfig.min || 4;
+            const step = fontSizeConfig.step || 1;
+            while (size > minSize && viewportContainer.texteditor("overflowing")) {
+                size = Math.max(size - step, minSize);
+                const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
+                viewportContainer.css("font-size", scaledSize + "px");
+                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                fontSizeRange.val(size);
+                fontSizeInput.val(size);
+                refreshFontSizeBubble();
+            }
+        }
+
+        // trims the text that no longer fits the line width at
+        // the applied size, so a larger size, tighter margins or
+        // a template change never leave a line wrapping past the
+        // engraving area (no-op while overflow is allowed), held
+        // off while restoring since the size applied by the profile
+        // selection is not yet the one saved on the URL
+        if (!restoring) viewportContainer.texteditor("trim");
     };
 
     // refreshes the viewport and controls based on the
@@ -1358,6 +1404,7 @@ jQuery(document).ready(function() {
             viewportOptionsCrosshair.addClass("visible");
             viewportOptionsGuidelines.addClass("visible");
             viewportOptionsCaret.addClass("visible");
+            viewportOptionsOverflow.addClass("visible");
             zoomContainer.addClass("visible");
             positionContainer.addClass("visible");
             calligraphyModeContainer.addClass("visible");
@@ -1367,6 +1414,7 @@ jQuery(document).ready(function() {
             viewportOptionsCrosshair.removeClass("visible");
             viewportOptionsGuidelines.removeClass("visible");
             viewportOptionsCaret.removeClass("visible");
+            viewportOptionsOverflow.removeClass("visible");
             zoomContainer.removeClass("visible");
             positionContainer.removeClass("visible");
             calligraphyModeContainer.removeClass("visible");
@@ -1666,6 +1714,17 @@ jQuery(document).ready(function() {
         updateUrl("toggle");
     });
 
+    // registers for the change in the overflow mode checkbox
+    // to allow or block the lines from wrapping past the
+    // engraving area, trimming the text that no longer fits
+    // as soon as the lines are blocked again
+    overflowMode.bind("change", function() {
+        const allowOverflow = overflowMode.prop("checked");
+        viewportContainer.texteditor("option", { overflow: allowOverflow });
+        viewportContainer.texteditor("trim");
+        updateUrl("toggle");
+    });
+
     // tracks the previous visibility state of the visual toggles so
     // exiting preview mode restores exactly the configuration the
     // user had before entering
@@ -1823,6 +1882,11 @@ jQuery(document).ready(function() {
             if (currentProfile && currentProfile.font_size) {
                 fontSizeContainer.addClass("visible");
             }
+
+            // re-fits and trims the text now that the editor is visible
+            // again, since keys pressed while it was hidden could not be
+            // measured against the engraving area
+            applyFontSize();
         }
         updateUrl("calligraphy");
     });
@@ -2115,11 +2179,13 @@ jQuery(document).ready(function() {
             params.delete("keyboard");
             params.delete("guidelines");
             params.delete("caret");
+            params.delete("overflow");
             if (!rulersMode.prop("checked")) params.set("rulers", "0");
             if (!crosshairMode.prop("checked")) params.set("crosshair", "0");
             if (!keyboardMode.prop("checked")) params.set("keyboard", "0");
             if (!guidelinesMode.prop("checked")) params.set("guidelines", "0");
             if (!caretMode.prop("checked")) params.set("caret", "0");
+            if (overflowMode.prop("checked")) params.set("overflow", "1");
         }
         if (action === "calligraphy" || action === "restore") {
             params.delete("calligraphy");
@@ -2165,6 +2231,7 @@ jQuery(document).ready(function() {
         body.data("text", textData);
         body.data("caret_position", textData.length - 1);
         viewportContainer.texteditor("bindExisting");
+        viewportContainer.texteditor("trim");
         updateButtonState(textData);
         renderFaces(currentProfile);
     };
@@ -2270,6 +2337,27 @@ jQuery(document).ready(function() {
         updateUrl("text");
         renderFaces(currentProfile);
     });
+
+    // registers for the overflow and trim events from the text
+    // editor to warn the operator that the line is full and the
+    // character was refused, or that trailing text was removed
+    // so the lines fit the engraving area again
+    viewportContainer.bind("overflow", function() {
+        toast.toast("show", viewportContainer.attr("data-label-overflow") || "Line is full");
+    });
+    viewportContainer.bind("trim", function() {
+        toast.toast("show", viewportContainer.attr("data-label-trim") || "Text trimmed to fit");
+    });
+
+    // re-fits and trims the text whenever a batch of fonts finishes
+    // loading, since any measurement taken while an engraving font
+    // was still being fetched (cold cache, or a font used for the
+    // first time) was discarded by the editor as not representative
+    if (document.fonts) {
+        document.fonts.addEventListener("loadingdone", function() {
+            applyFontSize();
+        });
+    }
 
     // registers for the caret change event from the text editor
     // to keep the selected font in sync with the character around
