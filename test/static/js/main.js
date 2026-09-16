@@ -37,8 +37,8 @@ const FONT_SIZE_SCALE = 1.3;
 
 // profiles served to the viewport, a plate whose safe area is
 // 30 mm wide (90 px once scaled), a finer twin of it whose font
-// size slider moves in half unit steps and an automatically sized
-// twin that declares no step at all
+// size slider moves in half unit steps, an automatically sized
+// twin that declares no step at all and a double sided twin
 const PROFILES = {
     plate: {
         id: "plate",
@@ -72,6 +72,18 @@ const PROFILES = {
         padding: { top: 0, right: 0, bottom: 0, left: 0 },
         font_size: { mode: "automatic", min: 1, max: 8 },
         text: { max_lines: 2 }
+    },
+    double: {
+        id: "double",
+        name: "Double",
+        width: 30,
+        height: 10,
+        unit: "mm",
+        orientation: "landscape",
+        padding: { top: 0, right: 0, bottom: 0, left: 0 },
+        font_size: { mode: "manual", default: 2, min: 1, max: 8, step: 1 },
+        text: { max_lines: 2 },
+        double_sided: { enabled: true }
     }
 };
 
@@ -82,6 +94,7 @@ describe("Main", function() {
     let container = null;
     let fontSizeRange = null;
     let fontSizeInput = null;
+    let fonts = null;
 
     // installs a fake layout on the document, since jsdom computes
     // none, sizing the viewer container with the safe area width the
@@ -182,6 +195,15 @@ describe("Main", function() {
         jQuery('.font-size-preset[data-preset="' + name + '"]').click();
     };
 
+    // simulates the document finishing loading its fonts, notifying
+    // the viewport through the loading done event of its font set
+    const loadingDone = function() {
+        fonts.status = "loaded";
+        for (const [type, listener] of fonts.listeners) {
+            if (type === "loadingdone") listener();
+        }
+    };
+
     beforeEach(async function() {
         const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
             url: "http://localhost/viewport?profile=plate",
@@ -205,6 +227,18 @@ describe("Main", function() {
         jQuery.fn.jSignature = function() {
             return this;
         };
+
+        // stands in for the font set of the document, which jsdom lacks,
+        // with every font loaded by default so that a test can flag them
+        // as still loading and then notify the viewport once they are done
+        fonts = {
+            status: "loaded",
+            listeners: [],
+            addEventListener: function(type, listener) {
+                this.listeners.push([type, listener]);
+            }
+        };
+        Object.defineProperty(window.document, "fonts", { value: fonts, configurable: true });
 
         const context = dom.getInternalVMContext();
         for (const script of SCRIPTS) {
@@ -241,6 +275,8 @@ describe("Main", function() {
         viewport.appendTo(body);
         container = jQuery('<div class="viewer-container"><span class="caret">|</span></div>');
         container.appendTo(preview);
+        const faces = jQuery('<div class="viewport-faces"></div>').appendTo(body);
+        faces.append('<div class="viewport-faces-thumbnails"></div>');
         body.append('<div class="toast"></div>');
         fontSizeRange = jQuery(".font-size-range");
         fontSizeInput = jQuery(".font-size-input");
@@ -370,6 +406,16 @@ describe("Main", function() {
             assert.strictEqual(container.texteditor("overflowing"), true);
         });
 
+        it("should apply an increase made while the fonts load without measuring it", () => {
+            fonts.status = "loading";
+            load("abcd");
+            slide(8);
+            assert.strictEqual(fontSizeInput.val(), "8");
+            assert.strictEqual(fontSize(), scaled(8));
+            assert.strictEqual(characters(), "abcd");
+            assert.strictEqual(jQuery(".toast").hasClass("visible"), false);
+        });
+
         it("should keep trimming the text when a margin change narrows the line", () => {
             load("abcd");
             slide(5);
@@ -438,6 +484,104 @@ describe("Main", function() {
             assert.strictEqual(fontSizeInput.val(), "5");
             assert.strictEqual(fontSize(), scaled(5));
             assert.strictEqual(characters(), "abcd");
+        });
+    });
+
+    describe("#fontsLoadingDone()", function() {
+        it("should stop an increase made while the fonts load at the largest size the text fits", () => {
+            fonts.status = "loading";
+            load("abcd");
+            slide(8);
+            loadingDone();
+            assert.strictEqual(fontSizeRange.val(), "5");
+            assert.strictEqual(fontSizeInput.val(), "5");
+            assert.strictEqual(fontSize(), scaled(5));
+            assert.strictEqual(characters(), "abcd");
+            assert.strictEqual(rendered(), "abcd");
+            assert.strictEqual(jQuery(".toast").hasClass("visible"), false);
+        });
+
+        it("should sync the presets, the bubble and the URL to the stopped size", () => {
+            fonts.status = "loading";
+            load("abcd");
+            preset("xl");
+            loadingDone();
+            assert.strictEqual(jQuery(".font-size-preset.active").length, 0);
+            assert.strictEqual(jQuery(".font-size-bubble").text(), "5 mm");
+            const params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("font_size"), "5");
+        });
+
+        it("should sync the face thumbnails of a double sided profile to the stopped size", () => {
+            jQuery(".profile-select").val("double").trigger("change");
+            fonts.status = "loading";
+            load("abcd");
+            slide(8);
+            loadingDone();
+            const front = jQuery('.viewport-faces-thumb[data-side="front"]');
+            assert.strictEqual(fontSizeInput.val(), "5");
+            assert.strictEqual(jQuery(".viewer-container", front).get(0).style.fontSize, scaled(5));
+            assert.strictEqual(characters(), "abcd");
+        });
+
+        it("should keep an increase made while the fonts load that still fits", () => {
+            fonts.status = "loading";
+            load("abcd");
+            slide(4);
+            loadingDone();
+            assert.strictEqual(fontSizeInput.val(), "4");
+            assert.strictEqual(fontSize(), scaled(4));
+            assert.strictEqual(characters(), "abcd");
+        });
+
+        it("should stop several increases made while the fonts load from the size before the first one", () => {
+            fonts.status = "loading";
+            load("abcd");
+            slide(6);
+            slide(8);
+            loadingDone();
+            assert.strictEqual(fontSizeInput.val(), "5");
+            assert.strictEqual(fontSize(), scaled(5));
+            assert.strictEqual(characters(), "abcd");
+        });
+
+        it("should stop from a lower size applied in between the increases made while the fonts load", () => {
+            fonts.status = "loading";
+            load("abcdefghijkl");
+            slide(3);
+            slide(1);
+            slide(6);
+            loadingDone();
+            assert.strictEqual(fontSizeInput.val(), "1");
+            assert.strictEqual(fontSize(), scaled(1));
+            assert.strictEqual(characters(), "abcdefghijkl");
+        });
+
+        it("should keep trimming the text when no increase is pending", () => {
+            load("abcd");
+            slide(5);
+            fonts.status = "loading";
+            jQuery(".margin-left").val(10).trigger("input");
+            assert.strictEqual(characters(), "abcd");
+
+            loadingDone();
+            assert.strictEqual(fontSizeInput.val(), "5");
+            assert.strictEqual(characters(), "abc");
+            assert.strictEqual(jQuery(".toast").hasClass("visible"), true);
+        });
+
+        it("should forget the pending size once the fonts are done", () => {
+            fonts.status = "loading";
+            load("abcd");
+            slide(8);
+            loadingDone();
+            assert.strictEqual(fontSizeInput.val(), "5");
+
+            fonts.status = "loading";
+            jQuery(".margin-left").val(10).trigger("input");
+            loadingDone();
+            assert.strictEqual(fontSizeInput.val(), "5");
+            assert.strictEqual(characters(), "abc");
         });
     });
 });
