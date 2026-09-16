@@ -1336,9 +1336,17 @@ jQuery(document).ready(function() {
         return Math.round(size);
     };
 
+    // tracks the lowest size applied before a manual size increase
+    // made while the fonts were still loading, when the text could
+    // not be measured, so that the re-fit run once they are done can
+    // still stop that increase at the largest size the text fits
+    let pendingPreviousSize = null;
+
     // applies the current font size to the viewport text
-    // display based on the selected profile configuration
-    const applyFontSize = function() {
+    // display based on the selected profile configuration,
+    // holding a manual increase from the given previous size
+    // back to the largest size at which the text still fits
+    const applyFontSize = function(previousSize) {
         if (!currentProfile) return;
 
         const isAutomatic = fontSizeMode.prop("checked");
@@ -1372,6 +1380,33 @@ jQuery(document).ready(function() {
             const step = fontSizeConfig.step || 1;
             while (size > minSize && viewportContainer.texteditor("overflowing")) {
                 size = Math.max(size - step, minSize);
+                const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
+                viewportContainer.css("font-size", scaledSize + "px");
+                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                fontSizeRange.val(size);
+                fontSizeInput.val(size);
+                refreshFontSizeBubble();
+            }
+        }
+
+        // steps a manual size increase back down while a line is
+        // wrapping past the safe area and overflow is not allowed,
+        // so growing the size (dragging the slider or picking a
+        // larger preset) stops at the largest size the text still
+        // fits instead of trimming the characters that no longer
+        // fit, never going below the previous size that was applied
+        if (!isAutomatic && size > previousSize && !overflowMode.prop("checked")) {
+            // keeps the lowest previous size while the fonts are still
+            // loading, as the measurement below is then discarded and
+            // the increase can only be stopped once they are done
+            if (document.fonts && document.fonts.status === "loading") {
+                if (pendingPreviousSize === null || previousSize < pendingPreviousSize) {
+                    pendingPreviousSize = previousSize;
+                }
+            }
+            const step = currentProfile.font_size.step || 1;
+            while (size > previousSize && viewportContainer.texteditor("overflowing")) {
+                size = Math.max(size - step, previousSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
                 viewportContainer.css("font-size", scaledSize + "px");
                 viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
@@ -1510,10 +1545,13 @@ jQuery(document).ready(function() {
     });
 
     // registers for the change in the font size range slider
-    // to sync the number input and apply the new size
+    // to sync the number input and apply the new size, passing
+    // the previously applied size so that an increase stops at
+    // the largest size the text still fits
     fontSizeRange.bind("input", function() {
+        const previousSize = parseFloat(fontSizeInput.val());
         fontSizeInput.val(jQuery(this).val());
-        applyFontSize();
+        applyFontSize(previousSize);
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
@@ -1521,10 +1559,13 @@ jQuery(document).ready(function() {
     });
 
     // registers for the change in the font size number input
-    // to sync the range slider and apply the new size
+    // to sync the range slider and apply the new size, passing
+    // the previously applied size so that an increase stops at
+    // the largest size the text still fits
     fontSizeInput.bind("input", function() {
+        const previousSize = parseFloat(fontSizeRange.val());
         fontSizeRange.val(jQuery(this).val());
-        applyFontSize();
+        applyFontSize(previousSize);
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
@@ -2354,10 +2395,22 @@ jQuery(document).ready(function() {
     // re-fits and trims the text whenever a batch of fonts finishes
     // loading, since any measurement taken while an engraving font
     // was still being fetched (cold cache, or a font used for the
-    // first time) was discarded by the editor as not representative
+    // first time) was discarded by the editor as not representative,
+    // stopping a manual size increase made in the meantime at the
+    // largest size the text fits instead of trimming it and syncing
+    // the size presets, the URL and the faces to where it stopped
     if (document.fonts) {
         document.fonts.addEventListener("loadingdone", function() {
-            applyFontSize();
+            const previousSize = pendingPreviousSize;
+            pendingPreviousSize = null;
+            if (previousSize === null) {
+                applyFontSize();
+                return;
+            }
+            applyFontSize(previousSize);
+            refreshFontSizePresets();
+            updateUrl("font_size");
+            renderFaces(currentProfile);
         });
     }
 

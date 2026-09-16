@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Unit tests for the font size controls of the engraving layout
 
 ### Changed
 
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * The allow overflow option is now only shown in the technical viewport mode, and store mode always keeps overflow blocked
+* Increasing the font size no longer deletes characters, it now stops at the largest size where the text still fits - [#74](https://github.com/hivesolutions/signatur/issues/74)
 
 ## [1.4.0] - 2026-09-08
 
