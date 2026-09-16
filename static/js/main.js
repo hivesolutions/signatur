@@ -1337,8 +1337,10 @@ jQuery(document).ready(function() {
     };
 
     // applies the current font size to the viewport text
-    // display based on the selected profile configuration
-    const applyFontSize = function() {
+    // display based on the selected profile configuration,
+    // holding a manual increase from the given previous size
+    // back to the largest size at which the text still fits
+    const applyFontSize = function(previousSize) {
         if (!currentProfile) return;
 
         const isAutomatic = fontSizeMode.prop("checked");
@@ -1372,6 +1374,25 @@ jQuery(document).ready(function() {
             const step = fontSizeConfig.step || 1;
             while (size > minSize && viewportContainer.texteditor("overflowing")) {
                 size = Math.max(size - step, minSize);
+                const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
+                viewportContainer.css("font-size", scaledSize + "px");
+                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                fontSizeRange.val(size);
+                fontSizeInput.val(size);
+                refreshFontSizeBubble();
+            }
+        }
+
+        // steps a manual size increase back down while a line is
+        // wrapping past the safe area and overflow is not allowed,
+        // so growing the size (dragging the slider or picking a
+        // larger preset) stops at the largest size the text still
+        // fits instead of trimming the characters that no longer
+        // fit, never going below the previous size that was applied
+        if (!isAutomatic && size > previousSize && !overflowMode.prop("checked")) {
+            const step = currentProfile.font_size.step || 1;
+            while (size > previousSize && viewportContainer.texteditor("overflowing")) {
+                size = Math.max(size - step, previousSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
                 viewportContainer.css("font-size", scaledSize + "px");
                 viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
@@ -1510,10 +1531,13 @@ jQuery(document).ready(function() {
     });
 
     // registers for the change in the font size range slider
-    // to sync the number input and apply the new size
+    // to sync the number input and apply the new size, passing
+    // the previously applied size so that an increase stops at
+    // the largest size the text still fits
     fontSizeRange.bind("input", function() {
+        const previousSize = parseFloat(fontSizeInput.val());
         fontSizeInput.val(jQuery(this).val());
-        applyFontSize();
+        applyFontSize(previousSize);
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
@@ -1521,10 +1545,13 @@ jQuery(document).ready(function() {
     });
 
     // registers for the change in the font size number input
-    // to sync the range slider and apply the new size
+    // to sync the range slider and apply the new size, passing
+    // the previously applied size so that an increase stops at
+    // the largest size the text still fits
     fontSizeInput.bind("input", function() {
+        const previousSize = parseFloat(fontSizeRange.val());
         fontSizeRange.val(jQuery(this).val());
-        applyFontSize();
+        applyFontSize(previousSize);
         refreshFontSizePresets();
         refreshFontSizeBubble();
         updateUrl("font_size");
