@@ -1,8 +1,31 @@
 const assert = require("assert");
+const path = require("path");
+const childProcess = require("child_process");
 const lib = require("../../../lib");
 
 describe("Config", function() {
+    const commit = "7fcb0702d0ee401710b24cf41eec3dca6f3a88a7";
     let featuresBackup = null;
+
+    // starts the library on a separate process with the given commit
+    // environment, so that neither the environment nor the logging
+    // handlers set up by the start leak into the rest of the suite,
+    // returning the commit of the running build it resolved
+    const startCommit = function(env) {
+        const libPath = path.resolve(__dirname, "..", "..", "..", "lib");
+        const script =
+            "const lib = require(" +
+            JSON.stringify(libPath) +
+            ");" +
+            "lib.start().then(() => process.stdout.write(JSON.stringify(lib.conf.GIT_COMMIT)));";
+        const environment = Object.assign({}, process.env);
+        delete environment.GIT_COMMIT;
+        const output = childProcess.execFileSync(process.execPath, ["-e", script], {
+            env: Object.assign(environment, env),
+            encoding: "utf8"
+        });
+        return JSON.parse(output);
+    };
 
     before(function() {
         // backs up the base feature values resolved at start time so
@@ -20,6 +43,22 @@ describe("Config", function() {
 
     after(function() {
         lib.conf.FEATURES = featuresBackup;
+    });
+
+    describe("#start()", function() {
+        this.timeout(20000);
+
+        it("should read the commit of the running build", () => {
+            assert.strictEqual(startCommit({ GIT_COMMIT: commit }), commit);
+        });
+
+        it("should resolve an empty commit, as left by a build without the arg, to null", () => {
+            assert.strictEqual(startCommit({ GIT_COMMIT: "" }), null);
+        });
+
+        it("should resolve a missing commit to null", () => {
+            assert.strictEqual(startCommit({}), null);
+        });
     });
 
     describe("#resolveFeatures()", function() {

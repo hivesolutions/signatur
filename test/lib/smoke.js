@@ -10,6 +10,7 @@ describe("Smoke", function() {
     this.timeout(20000);
 
     const host = "127.0.0.1";
+    const commit = "7fcb0702d0ee401710b24cf41eec3dca6f3a88a7";
     const usersPath = path.resolve(__dirname, "..", "..", "config", "users.json");
     const usersBackupPath = usersPath + ".bak";
     let child = null;
@@ -85,7 +86,8 @@ describe("Smoke", function() {
                 HOST: host,
                 PORT: String(port),
                 NODE_ENV: process.env.NODE_ENV || "test",
-                FEATURE_CHECK_PATH: "1"
+                FEATURE_CHECK_PATH: "1",
+                GIT_COMMIT: commit
             }),
             stdio: ["ignore", "pipe", "pipe"]
         });
@@ -301,6 +303,24 @@ describe("Smoke", function() {
             assert.strictEqual(response.status, 200);
             assert.ok(response.body.includes('data-tab="diagnostics"'));
         });
+
+        it("should render the short commit below the version linked to the commit", async () => {
+            const response = await request("GET", "/settings");
+            assert.strictEqual(response.status, 200);
+            assert.ok(
+                response.body.includes(
+                    'href="https://github.com/hivesolutions/signatur/commit/' + commit + '"'
+                )
+            );
+            assert.ok(response.body.includes(">" + commit.slice(0, 7) + "</a>"));
+        });
+
+        it("should render the short commit on the portuguese settings view", async () => {
+            const response = await request("GET", "/settings?locale=pt_pt");
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes("Versão"));
+            assert.ok(response.body.includes(">" + commit.slice(0, 7) + "</a>"));
+        });
     });
 
     describe("#settingsFontsResolve()", function() {
@@ -427,6 +447,15 @@ describe("Smoke", function() {
             const payload = JSON.parse(response.body);
             assert.ok(Array.isArray(payload.errors));
             assert.ok(payload.errors.length > 0);
+        });
+    });
+
+    describe("#info()", function() {
+        it("should return the commit of the running build without a session", async () => {
+            const response = await request("GET", "/info", { skipAuth: true });
+            assert.strictEqual(response.status, 200);
+            const payload = JSON.parse(response.body);
+            assert.strictEqual(payload.commit, commit);
         });
     });
 
