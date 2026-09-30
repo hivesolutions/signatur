@@ -161,6 +161,17 @@ jQuery(document).ready(function() {
         });
     });
 
+    // localizes the build date on the settings screen from the unix
+    // timestamp rendered by the server, so the operator reads it in
+    // the locale and time zone of the browser instead of the ones of
+    // the server, keeping the server rendered date when it is missing
+    jQuery(".settings-build-date").each(function() {
+        const element = jQuery(this);
+        const timestamp = parseInt(element.attr("data-timestamp"));
+        if (!timestamp) return;
+        element.text(new Date(timestamp * 1000).toLocaleString());
+    });
+
     const fontSizeContainer = jQuery(".font-size-container");
     const fontSizeRange = jQuery(".font-size-range");
     const fontSizeInput = jQuery(".font-size-input");

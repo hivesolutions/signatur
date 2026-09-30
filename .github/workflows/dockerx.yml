@@ -40,6 +40,9 @@ jobs:
             BRANCH_NAME=${ref_name//\//_}
             echo "tag=$BRANCH_NAME" >> $GITHUB_OUTPUT
           fi
+      - name: Set build date
+        id: set_date
+        run: echo "build_date=$(date +%s)" >> $GITHUB_OUTPUT
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
@@ -50,6 +53,9 @@ jobs:
           provenance: mode=max
           sbom: true
           tags: hivesolutions/signatur:${{ steps.set_tag.outputs.tag }}
+          build-args: |
+            GIT_COMMIT=${{ github.sha }}
+            BUILD_DATE=${{ steps.set_date.outputs.build_date }}
   trigger-deploy:
     name: Trigger signatur-latest deployment
     needs: build

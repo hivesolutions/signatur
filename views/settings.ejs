@@ -93,8 +93,20 @@
                         </div>
                         <div class="settings-group">
                             <div class="settings-group-label">Version</div>
-                            <div class="settings-readout"><%= info.version %></div>
+                            <a class="settings-readout settings-link" href="https://github.com/hivesolutions/signatur/blob/master/CHANGELOG.md" target="_blank" rel="noopener"><%= info.version %></a>
                         </div>
+                        <% if (conf.GIT_COMMIT) { %>
+                            <div class="settings-group">
+                                <div class="settings-group-label">Build</div>
+                                <a class="settings-readout settings-link" href="https://github.com/hivesolutions/signatur/commit/<%= conf.GIT_COMMIT %>" target="_blank" rel="noopener">#<%= conf.GIT_COMMIT.slice(0, 8) %></a>
+                            </div>
+                        <% } %>
+                        <% if (conf.BUILD_DATE) { %>
+                            <div class="settings-group">
+                                <div class="settings-group-label">Build Date</div>
+                                <div class="settings-readout settings-build-date" data-timestamp="<%= conf.BUILD_DATE %>"><%= lib.dateTimeString(conf.BUILD_DATE) %></div>
+                            </div>
+                        <% } %>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="printing" style="display: none;">
                         <div class="settings-printing">

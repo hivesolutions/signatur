@@ -30,6 +30,10 @@ const SCRIPTS = [
     "main.js"
 ];
 
+// unix timestamp of the build rendered on the settings screen, for
+// the main script to localize in the locale and time zone of the browser
+const BUILD_DATE = 1790677148;
+
 // scale factors the viewport applies to a font size in profile
 // units to get the pixels of the viewer container font size
 const VIEWPORT_SCALE = 3;
@@ -278,6 +282,13 @@ describe("Main", function() {
         const faces = jQuery('<div class="viewport-faces"></div>').appendTo(body);
         faces.append('<div class="viewport-faces-thumbnails"></div>');
         body.append('<div class="toast"></div>');
+        const build = jQuery('<div class="settings-group"></div>').appendTo(body);
+        build.append(
+            '<div class="settings-readout settings-build-date" data-timestamp="' +
+                BUILD_DATE +
+                '">29/09/2026 10:19:08</div>'
+        );
+        build.append('<div class="settings-readout settings-build-date">29/09/2026 10:19:08</div>');
         fontSizeRange = jQuery(".font-size-range");
         fontSizeInput = jQuery(".font-size-input");
         layout();
@@ -291,6 +302,19 @@ describe("Main", function() {
 
     afterEach(function() {
         window.close();
+    });
+
+    describe("#settingsBuildDate()", function() {
+        it("should localize the build date to the locale and time zone of the browser", () => {
+            const buildDate = jQuery(".settings-build-date").eq(0);
+            assert.strictEqual(buildDate.text(), new Date(BUILD_DATE * 1000).toLocaleString());
+            assert.notStrictEqual(buildDate.text(), "29/09/2026 10:19:08");
+        });
+
+        it("should keep the server rendered date when the timestamp is missing", () => {
+            const buildDate = jQuery(".settings-build-date").eq(1);
+            assert.strictEqual(buildDate.text(), "29/09/2026 10:19:08");
+        });
     });
 
     describe("#applyFontSize()", function() {

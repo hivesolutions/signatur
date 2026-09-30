@@ -110,6 +110,25 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     color: #6b5a8a;
 }
 
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-readout.settings-link {
+    text-decoration: none;
+    text-transform: none;
+    transition: color 0.18s ease;
+    -o-transition: color 0.18s ease;
+    -ms-transition: color 0.18s ease;
+    -moz-transition: color 0.18s ease;
+    -khtml-transition: color 0.18s ease;
+    -webkit-transition: color 0.18s ease;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-readout.settings-link:hover {
+    color: #1f2330;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-readout.settings-link:hover {
+    color: #1f1430;
+}
+
 .welcome > .form.form-settings > .welcome-catalog > .settings-tabs {
     border-bottom: 1px solid #e6e8ee;
     box-sizing: border-box;
