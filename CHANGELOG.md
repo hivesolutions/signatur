@@ -11,11 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Unit tests for the font size controls of the engraving layout
 * Unit tests for the font size sent with the engraving job
-* Short commit hash of the running build below the version on the settings page, linking to the commit on GitHub, with the full commit also returned by the `/info` endpoint - [#77](https://github.com/hivesolutions/signatur/issues/77)
+* Build and build date items below the version on the settings page, showing the short commit of the running build linked to the commit on GitHub and the date it was built, both also returned by the `/info` endpoint - [#77](https://github.com/hivesolutions/signatur/issues/77)
 
 ### Changed
 
-*
+* The version on the settings page now links to the changelog on GitHub - [#77](https://github.com/hivesolutions/signatur/issues/77)
 
 ### Fixed
 

@@ -38,7 +38,9 @@ RUN groupadd --gid 10001 signatur &&\
 USER signatur
 
 ARG GIT_COMMIT
+ARG BUILD_DATE
 
 ENV GIT_COMMIT=${GIT_COMMIT}
+ENV BUILD_DATE=${BUILD_DATE}
 
 CMD ["node", "/app/app.js"]
