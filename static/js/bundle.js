@@ -2280,7 +2280,7 @@ const countLines = function(text) {
                     buttonPrint.attr("data-node") ||
                     null;
                 const key = localStorage.getItem("key") || buttonPrint.attr("data-key") || null;
-                const fontSizeRange = jQuery(".font-size-range");
+                const fontSizeInput = jQuery(".font-size-input");
                 const profileSelect = jQuery(".profile-select");
                 const profileKey = profileSelect.val();
 
@@ -2356,7 +2356,10 @@ const countLines = function(text) {
                             (machine.viewport_height || profile.height) +
                             (extraPadding.top || 0) +
                             (extraPadding.bottom || 0);
-                        printData.font_size = parseInt(fontSizeRange.val());
+                        // sends the font size as previewed and listed on the
+                        // confirm specs, keeping its fractional part so that
+                        // a size between whole units is not engraved smaller
+                        printData.font_size = parseFloat(fontSizeInput.val());
                         const ml =
                             (parseFloat(jQuery(".margin-left").val()) || 0) +
                             (extraPadding.left || 0);
