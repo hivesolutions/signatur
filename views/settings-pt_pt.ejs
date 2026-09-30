@@ -94,6 +94,9 @@
                         <div class="settings-group">
                             <div class="settings-group-label">Versão</div>
                             <div class="settings-readout"><%= info.version %></div>
+                            <% if (conf.GIT_COMMIT) { %>
+                                <a class="settings-commit" href="https://github.com/hivesolutions/signatur/commit/<%= conf.GIT_COMMIT %>" target="_blank" rel="noopener"><%= conf.GIT_COMMIT.slice(0, 7) %></a>
+                            <% } %>
                         </div>
                     </div>
                     <div class="settings-container settings-tab-content" data-tab="printing" style="display: none;">

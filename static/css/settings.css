@@ -110,6 +110,35 @@ body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container
     color: #6b5a8a;
 }
 
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-commit {
+    color: #9aa0ad;
+    display: table;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    padding: 0px 16px 0px 16px;
+    text-decoration: none;
+    transition: color 0.18s ease;
+    -o-transition: color 0.18s ease;
+    -ms-transition: color 0.18s ease;
+    -moz-transition: color 0.18s ease;
+    -khtml-transition: color 0.18s ease;
+    -webkit-transition: color 0.18s ease;
+}
+
+.welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-commit:hover {
+    color: #4b5260;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-commit {
+    color: #9b87c2;
+}
+
+body.ldj .welcome > .form.form-settings > .welcome-catalog > .settings-container > .settings-group > .settings-commit:hover {
+    color: #6b5a8a;
+}
+
 .welcome > .form.form-settings > .welcome-catalog > .settings-tabs {
     border-bottom: 1px solid #e6e8ee;
     box-sizing: border-box;

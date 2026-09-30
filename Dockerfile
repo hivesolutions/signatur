@@ -37,4 +37,8 @@ RUN groupadd --gid 10001 signatur &&\
     chown -R signatur:signatur /app
 USER signatur
 
+ARG GIT_COMMIT
+
+ENV GIT_COMMIT=${GIT_COMMIT}
+
 CMD ["node", "/app/app.js"]

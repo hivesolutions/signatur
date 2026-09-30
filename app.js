@@ -1501,6 +1501,7 @@ app.get("/info", (req, res, next) => {
     res.json({
         name: info.name,
         version: info.version,
+        commit: lib.conf.GIT_COMMIT,
         node: process.version
     });
 });

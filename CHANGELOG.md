@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Unit tests for the font size controls of the engraving layout
 * Unit tests for the font size sent with the engraving job
+* Short commit hash of the running build below the version on the settings page, linking to the commit on GitHub, with the full commit also returned by the `/info` endpoint - [#77](https://github.com/hivesolutions/signatur/issues/77)
 
 ### Changed
 
