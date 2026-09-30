@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Unit tests for the font size controls of the engraving layout
+* Unit tests for the font size sent with the engraving job
 
 ### Changed
 
