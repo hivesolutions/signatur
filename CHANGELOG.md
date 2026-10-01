@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Wide gap around the @ and slightly off tilde letters in the engraving matched fonts
 
 ## [1.5.0] - 2026-10-01
 
