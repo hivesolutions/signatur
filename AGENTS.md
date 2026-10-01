@@ -2,7 +2,7 @@
 
 ## Skills
 
-Project-specific skills are available in `.agents/skills/` read `.agents/skills/README.md` for details.
+Project-specific skills are available in `.agents/skills/`. Read `.agents/skills/README.md` for details.
 
 ## Building
 
