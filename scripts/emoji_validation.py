@@ -37,6 +37,13 @@ def main():
     with open(MAPPING_PATH, encoding="utf-8") as f:
         mapping = json.load(f)
 
+    # the values are the F3S font name or an object with the name (and
+    # the category and order of the emoji keyboard)
+    mapping = dict(
+        (c, entry["name"] if isinstance(entry, dict) else entry)
+        for c, entry in mapping.items()
+    )
+
     chars = [c for c in mapping.keys() if len(c) == 1]
     chars = sorted(chars, key=lambda c: mapping[c])
 

@@ -42,7 +42,7 @@ def get_glyph_metrics(ttfont, ch):
     name = cmap.get(code, ".notdef")
     aw, lsb = hmtx[name]
     g = glyf_table.get(name)
-    has_outline = g and hasattr(g, "xMin") and g.numberOfContours > 0
+    has_outline = g and hasattr(g, "xMin") and g.numberOfContours != 0
     return {
         "char": ch,
         "aw": aw,
