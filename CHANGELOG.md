@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [1.5.0] - 2026-10-01
+
+### Added
+
 * F3S versions of the Helvetica 1L, Helvetica 4L, Roman 4L, Script 412 1L, Script 4L and Script Round 1L fonts, the same size as the regular ones but with their letters spaced like the engraving software
 * Use F3S Fonts option on the viewport that previews the text and the keyboard with the F3S fonts
 * Unit tests for the font size controls of the engraving layout
