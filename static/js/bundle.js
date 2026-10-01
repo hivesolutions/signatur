@@ -6966,24 +6966,25 @@ jQuery(document).ready(function() {
             // restores the F3S fonts mode from the URL query
             // parameters if it was previously saved, rendering
             // the fonts with their F3S derived counterparts
+            // unless they were turned off
             const urlF3s = urlParams.get("f3s");
-            if (urlF3s === "1") {
-                f3sMode.prop("checked", true);
-                applyF3sFonts();
+            if (urlF3s === "0") {
+                f3sMode.prop("checked", false);
             }
+            applyF3sFonts();
 
-            // forces the rulers, crosshair, guidelines, overflow and
-            // F3S fonts off when the viewport is running in store mode
-            // by routing the change through the existing checkbox
-            // handlers so the URL state and the visuals stay in sync
-            // with the off position regardless of the previous URL
-            // parameters, as none of these controls is shown there
+            // forces the rulers, crosshair, guidelines and overflow
+            // off and the F3S fonts on when the viewport is running in
+            // store mode by routing the change through the existing
+            // checkbox handlers so the URL state and the visuals stay
+            // in sync with those positions regardless of the previous
+            // URL parameters, as none of these controls is shown there
             if (body.hasClass("store-mode")) {
                 rulersMode.prop("checked", false).trigger("change");
                 crosshairMode.prop("checked", false).trigger("change");
                 guidelinesMode.prop("checked", false).trigger("change");
                 overflowMode.prop("checked", false).trigger("change");
-                f3sMode.prop("checked", false).trigger("change");
+                f3sMode.prop("checked", true).trigger("change");
             }
 
             // restores the calligraphy mode from the URL
@@ -8586,7 +8587,7 @@ jQuery(document).ready(function() {
             if (!guidelinesMode.prop("checked")) params.set("guidelines", "0");
             if (!caretMode.prop("checked")) params.set("caret", "0");
             if (overflowMode.prop("checked")) params.set("overflow", "1");
-            if (f3sMode.prop("checked")) params.set("f3s", "1");
+            if (!f3sMode.prop("checked")) params.set("f3s", "0");
         }
         if (action === "calligraphy" || action === "restore") {
             params.delete("calligraphy");

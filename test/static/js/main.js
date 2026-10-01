@@ -334,7 +334,7 @@ describe("Main", function() {
         sizes.append('<input class="font-size-mode" type="checkbox" hidden />');
         options.append('<input class="overflow-mode" type="checkbox" />');
         const f3sOption = jQuery('<div class="viewport-options-f3s"></div>').appendTo(options);
-        f3sOption.append('<input class="f3s-mode" type="checkbox" />');
+        f3sOption.append('<input class="f3s-mode" type="checkbox" checked />');
         for (const side of ["left", "right", "top", "bottom"]) {
             const margin = jQuery('<input class="margin-input" type="number" value="0" />');
             margin.addClass("margin-" + side).appendTo(options);
@@ -368,7 +368,7 @@ describe("Main", function() {
     };
 
     beforeEach(async function() {
-        await mount("http://localhost/viewport?profile=plate");
+        await mount("http://localhost/viewport?profile=plate&f3s=0");
     });
 
     afterEach(function() {
@@ -389,29 +389,36 @@ describe("Main", function() {
     });
 
     describe("#loadProfiles()", function() {
-        it("should restore the F3S fonts saved on the URL", async () => {
+        it("should render the F3S fonts by default", async () => {
             window.close();
-            await mount("http://localhost/viewport?profile=plate&f3s=1");
+            await mount("http://localhost/viewport?profile=plate");
             assert.strictEqual(jQuery(".f3s-mode").prop("checked"), true);
             assert.deepStrictEqual(families(), Object.keys(F3S_FONTS));
-            const params = new URLSearchParams(window.location.search);
-            assert.strictEqual(params.get("f3s"), "1");
-        });
-
-        it("should ignore an F3S fonts value other than 1 on the URL", async () => {
-            window.close();
-            await mount("http://localhost/viewport?profile=plate&f3s=true");
-            assert.strictEqual(jQuery(".f3s-mode").prop("checked"), false);
-            assert.deepStrictEqual(families(), []);
             const params = new URLSearchParams(window.location.search);
             assert.strictEqual(params.get("f3s"), null);
         });
 
-        it("should force the F3S fonts off in store mode", async () => {
-            window.close();
-            await mount("http://localhost/viewport?profile=plate&f3s=1", "store-mode");
+        it("should restore the F3S fonts turned off on the URL", async () => {
             assert.strictEqual(jQuery(".f3s-mode").prop("checked"), false);
             assert.deepStrictEqual(families(), []);
+            const params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), "0");
+        });
+
+        it("should ignore an F3S fonts value other than 0 on the URL", async () => {
+            window.close();
+            await mount("http://localhost/viewport?profile=plate&f3s=false");
+            assert.strictEqual(jQuery(".f3s-mode").prop("checked"), true);
+            assert.deepStrictEqual(families(), Object.keys(F3S_FONTS));
+            const params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), null);
+        });
+
+        it("should force the F3S fonts on in store mode", async () => {
+            window.close();
+            await mount("http://localhost/viewport?profile=plate&f3s=0", "store-mode");
+            assert.strictEqual(jQuery(".f3s-mode").prop("checked"), true);
+            assert.deepStrictEqual(families(), Object.keys(F3S_FONTS));
             const params = new URLSearchParams(window.location.search);
             assert.strictEqual(params.get("f3s"), null);
         });
@@ -686,18 +693,18 @@ describe("Main", function() {
             assert.deepStrictEqual(families(), []);
             assert.strictEqual(characters(), "abc");
             const params = new URLSearchParams(window.location.search);
-            assert.strictEqual(params.get("f3s"), "1");
+            assert.strictEqual(params.get("f3s"), null);
         });
     });
 
     describe("#f3sMode()", function() {
-        it("should save the F3S fonts on the URL only while checked", () => {
+        it("should save the F3S fonts on the URL only while unchecked", () => {
             f3s(true);
             let params = new URLSearchParams(window.location.search);
-            assert.strictEqual(params.get("f3s"), "1");
+            assert.strictEqual(params.get("f3s"), null);
             f3s(false);
             params = new URLSearchParams(window.location.search);
-            assert.strictEqual(params.get("f3s"), null);
+            assert.strictEqual(params.get("f3s"), "0");
             assert.strictEqual(params.get("profile"), "plate");
         });
 
