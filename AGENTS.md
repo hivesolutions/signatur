@@ -1,5 +1,9 @@
 # AGENTS.md file
 
+## Skills
+
+Project-specific skills are available in `.agents/skills/`. Read `.agents/skills/README.md` for details.
+
 ## Building
 
 Always rebuild bundles before committing to ensure `bundle.js` and `bundle.css` are up to date, using:
@@ -28,6 +32,13 @@ Run the mocha test suite before committing new code:
 
 ```bash
 npm test
+```
+
+Run the Python test suite (the scripts and the skills) when changing Python code:
+
+```bash
+pip install -r requirements.txt pytest
+pytest
 ```
 
 ## jQuery Plugin Components
@@ -137,7 +148,8 @@ Before committing, ensure that the following items check:
 
 - [ ] Bundles are rebuilt: `npm run build`
 - [ ] Linting passes: `npm run lint`
-- [ ] Tests pass: `npm test`
+- [ ] Tests pass: `npm test` (and `pytest` for Python code)
+- [ ] Python code is formatted: `black . --check`
 - [ ] CHANGELOG.md is updated in [Unreleased] section
 - [ ] No debugging console.log statements or commented-out code
 - [ ] New plugins are registered in both `scripts/build.js` and `views/head.ejs`

@@ -9,15 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Agent skill to tune the preview fonts and prove they match the engraving
+* Unit tests for the font matching skill and the font scripts, also run by the CI
 
 ### Changed
 
-*
+* Engraving matched fonts are now the default in the viewport
 
 ### Fixed
 
-*
+* Wide gap around the @ and slightly off tilde letters in the engraving matched fonts
+* Emoji validation script failing with the current emoji mapping
+* Font metrics script drawing accented letters with a wrong box
 
 ## [1.5.0] - 2026-10-01
 

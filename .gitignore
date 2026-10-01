@@ -11,3 +11,5 @@ package-lock.json
 /data
 
 /config/users.json
+
+__pycache__/

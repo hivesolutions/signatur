@@ -1,0 +1,333 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+    :root {
+        --ground: #f4f5f7;
+        --surface: #ffffff;
+        --ink: #1b2129;
+        --muted: #5b6573;
+        --rule: #d8dce2;
+        --accent: #8a5a19;
+        --pass-ink: #135c35;
+        --pass-ground: #dff3e6;
+        --fail-ink: #8c1d1d;
+        --fail-ground: #fbe1e1;
+        --retry-ink: #7a5300;
+        --retry-ground: #fbefd5;
+        --red: #e22e2e;
+        --blue: #2860e2;
+        --purple: #481660;
+        --plate: #ffffff;
+        color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+            --ground: #14171c;
+            --surface: #1c2027;
+            --ink: #e6e9ee;
+            --muted: #9aa3b0;
+            --rule: #2f353f;
+            --accent: #d9a35a;
+            --pass-ink: #8fe0ad;
+            --pass-ground: #143524;
+            --fail-ink: #f4a3a3;
+            --fail-ground: #3d1b1b;
+            --retry-ink: #f0c873;
+            --retry-ground: #3a2e14;
+            --red: #ff6b6b;
+            --blue: #7aa2ff;
+            --purple: #c7a3e8;
+            color-scheme: dark;
+        }
+    }
+    :root[data-theme="dark"] {
+        --ground: #14171c;
+        --surface: #1c2027;
+        --ink: #e6e9ee;
+        --muted: #9aa3b0;
+        --rule: #2f353f;
+        --accent: #d9a35a;
+        --pass-ink: #8fe0ad;
+        --pass-ground: #143524;
+        --fail-ink: #f4a3a3;
+        --fail-ground: #3d1b1b;
+        --retry-ink: #f0c873;
+        --retry-ground: #3a2e14;
+        --red: #ff6b6b;
+        --blue: #7aa2ff;
+        --purple: #c7a3e8;
+        color-scheme: dark;
+    }
+    body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font: 15px/1.55 "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding-inline: 16px;
+        padding-block: 32px 64px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+    }
+    main > *, .case, .view, .figures > * {
+        min-width: 0;
+    }
+    .rules li, .metrics, .case header p {
+        overflow-wrap: anywhere;
+    }
+    h1, h2, h3 {
+        margin: 0;
+        text-wrap: balance;
+        font-weight: 600;
+    }
+    h1 {
+        font-size: 28px;
+    }
+    h2 {
+        font-size: 19px;
+        margin-bottom: 8px;
+    }
+    h3 {
+        font-size: 16px;
+        font-family: "IBM Plex Mono", Menlo, Consolas, monospace;
+    }
+    p {
+        margin: 0;
+        max-width: 72ch;
+    }
+    code, .num, .sample {
+        font-family: "IBM Plex Mono", Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+    }
+    code {
+        font-size: 0.9em;
+    }
+    a {
+        color: var(--accent);
+    }
+    .muted {
+        color: var(--muted);
+    }
+    .small {
+        font-size: 13px;
+    }
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 12px;
+        color: var(--accent);
+        font-weight: 600;
+    }
+    .intro {
+        display: grid;
+        gap: 10px;
+    }
+    .tallies {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .tally {
+        display: grid;
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        padding: 12px 16px;
+        min-width: 150px;
+    }
+    .tally-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+    }
+    .tally-value {
+        font: 600 24px "IBM Plex Mono", Menlo, Consolas, monospace;
+    }
+    .tally-note {
+        font-size: 12px;
+        color: var(--muted);
+    }
+    .rules {
+        margin: 0;
+        padding-left: 18px;
+        display: grid;
+        gap: 4px;
+        max-width: 90ch;
+    }
+    .scroll {
+        overflow-x: auto;
+    }
+    table {
+        border-collapse: collapse;
+        font-size: inherit;
+        width: 100%;
+    }
+    .summary th, .summary td {
+        padding: 6px 10px;
+        border-bottom: 1px solid var(--rule);
+        text-align: left;
+        white-space: nowrap;
+    }
+    .summary th {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .summary td.num {
+        text-align: right;
+    }
+    .badge {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 999px;
+        font: 600 12px "IBM Plex Mono", Menlo, Consolas, monospace;
+        letter-spacing: 0.04em;
+    }
+    .badge.pass {
+        color: var(--pass-ink);
+        background: var(--pass-ground);
+    }
+    .badge.fail {
+        color: var(--fail-ink);
+        background: var(--fail-ground);
+    }
+    .badge.retry {
+        color: var(--retry-ink);
+        background: var(--retry-ground);
+    }
+    .cases {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+    .case {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 10px;
+        padding: 18px;
+        display: grid;
+        gap: 16px;
+    }
+    .case header {
+        display: grid;
+        gap: 4px;
+    }
+    .sample {
+        font-size: 14px;
+    }
+    .figures {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        align-items: start;
+    }
+    .figures.triple {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    details summary {
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--muted);
+    }
+    img.full {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin-top: 8px;
+        border-radius: 4px;
+    }
+    figure {
+        margin: 0;
+        display: grid;
+        gap: 6px;
+    }
+    figure img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        background: var(--plate);
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+    }
+    figcaption {
+        font-size: 12px;
+        color: var(--muted);
+    }
+    .view {
+        display: grid;
+        gap: 8px;
+        border-top: 1px solid var(--rule);
+        padding-top: 14px;
+    }
+    .view-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+    .metrics {
+        font-size: 14px;
+        max-width: none;
+    }
+    .reasons {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--fail-ink);
+        font-size: 14px;
+    }
+    .red {
+        color: var(--red);
+        font-weight: 600;
+    }
+    .blue {
+        color: var(--blue);
+        font-weight: 600;
+    }
+    .purple {
+        color: var(--purple);
+        font-weight: 600;
+    }
+</style>
+<main>
+    <section class="intro">
+        <span class="eyebrow">Signatur viewport vs gravo-pilot dry run</span>
+        <h1>{{title}}</h1>
+        <p class="muted">Generated {{date}} by the match-f3s-fonts skill. Every case compares what the Signatur viewport shows with the Gravostyle composition screenshot that gravo-pilot captured for the same composition, sent as a dry run, measured glyph by glyph in plate millimetres.</p>
+        <div class="tallies">{{tallies}}</div>
+    </section>
+    <section>
+        <h2>How to read it</h2>
+        <ul class="rules">
+            <li><strong>Spacing</strong>: glyph centre error after removing the mean offset of each line, the measure of the TTF spacing against the F3S one.</li>
+            <li><strong>Line width</strong>: error of the distance between the first and the last glyph of each line.</li>
+            <li><strong>Baseline</strong>: vertical error of each line, the measure of the size and the line height.</li>
+            <li><strong>F3S match</strong>: share of the F3S strokes, drawn at the payload size, found on the engraving; low values mean another font or size was engraved (Gravostyle resizes text that overflows the area).</li>
+            <li><strong>Absolute</strong>: raw centre error, which also holds the line centring (Gravostyle centres each line on its ink, the viewport on its advances), reported only.</li>
+            <li><strong>Overlay</strong>: <span class="red">Gravostyle ink</span>, <span class="blue">viewport ink</span>, <span class="purple">both</span>, at the same millimetre scale on the whole plate.</li>
+            <li><strong>Pass</strong>: {{thresholds}}.</li>
+        </ul>
+    </section>
+    <section>
+        <h2>Sources</h2>
+        <ul class="rules">{{provenance}}</ul>
+    </section>
+    <section>
+        <h2>Summary</h2>
+        <div class="scroll">{{summary}}</div>
+    </section>
+    {{checks}}
+    <section>
+        <h2>Cases</h2>
+        <div class="cases">{{cases}}</div>
+    </section>
+</main>

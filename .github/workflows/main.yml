@@ -25,3 +25,32 @@ jobs:
         run: npm run lint
       - name: Run unit tests
         run: npm test
+  build-python:
+    name: Build Python
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code from repository
+        uses: actions/checkout@v7
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+        env:
+          PIP_TRUSTED_HOST: "pypi.python.org pypi.org files.pythonhosted.org"
+      - name: Print Python information
+        run: python --version
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Verify Python code formatting
+        if: matrix.python-version == '3.14'
+        run: |
+          pip install black
+          black . --check
+      - name: Run unit tests
+        run: |
+          pip install pytest
+          pytest
