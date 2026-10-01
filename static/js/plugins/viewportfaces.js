@@ -31,7 +31,8 @@
         // to the same defaults used by the inspiration panel so the
         // face thumbnails render at a comparable visual scale
         const viewportScale = (options && options.viewport_scale) || 3;
-        const fontSizeScale = (options && options.font_size_scale) || 1.3;
+        const fontSizeScale = (options && options.font_size_scale) || 1 / 0.7;
+        const lineHeightScale = (options && options.line_height_scale) || 1.232;
 
         // renders a single face preview as a miniature viewport with
         // the text pre-rendered inside it, reusing the same safe area
@@ -85,7 +86,7 @@
                 border: "none",
                 "min-width": "0px",
                 "font-size": scaledSize + "px",
-                "line-height": Math.round(scaledSize * 1.2) + "px",
+                "line-height": scaledSize * lineHeightScale + "px",
                 "text-align": align || "center",
                 "align-content": "center",
                 display: "flex",

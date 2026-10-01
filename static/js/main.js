@@ -543,9 +543,17 @@ jQuery(document).ready(function() {
     // viewport preview SVG rendering (pixels per mm)
     const VIEWPORT_SCALE = 3;
 
-    // correction factor applied to the font size to compensate
-    // for the difference between CSS em-square and visual cap height
-    const FONT_SIZE_SCALE = 1.3;
+    // correction factor applied to the font size so that the cap
+    // height of the fonts, 0.7 of their em-square, renders at the
+    // font size, as the engraving software sizes the text by the
+    // height of its capitals
+    const FONT_SIZE_SCALE = 1 / 0.7;
+
+    // line height applied to the scaled font size, matching the
+    // engraving software that spaces consecutive lines by 1.76
+    // times the font size (1.76 * 0.7 = 1.232), kept fractional
+    // so that small font sizes are not spaced by rounded pixels
+    const LINE_HEIGHT_SCALE = 1.232;
 
     // stores the currently selected profile and the loaded
     // profiles dictionary for later reference
@@ -1389,7 +1397,7 @@ jQuery(document).ready(function() {
         if (size) {
             const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
             viewportContainer.css("font-size", scaledSize + "px");
-            viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+            viewportContainer.css("line-height", scaledSize * LINE_HEIGHT_SCALE + "px");
         }
 
         // steps the automatic size down while a line is still
@@ -1405,7 +1413,7 @@ jQuery(document).ready(function() {
                 size = Math.max(size - step, minSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
                 viewportContainer.css("font-size", scaledSize + "px");
-                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                viewportContainer.css("line-height", scaledSize * LINE_HEIGHT_SCALE + "px");
                 fontSizeRange.val(size);
                 fontSizeInput.val(size);
                 refreshFontSizeBubble();
@@ -1432,7 +1440,7 @@ jQuery(document).ready(function() {
                 size = Math.max(size - step, previousSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
                 viewportContainer.css("font-size", scaledSize + "px");
-                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                viewportContainer.css("line-height", scaledSize * LINE_HEIGHT_SCALE + "px");
                 fontSizeRange.val(size);
                 fontSizeInput.val(size);
                 refreshFontSizeBubble();
@@ -2532,7 +2540,8 @@ jQuery(document).ready(function() {
     // apply event to set the viewport text and configuration
     inspirationPanel.inspirationpanel({
         viewport_scale: VIEWPORT_SCALE,
-        font_size_scale: FONT_SIZE_SCALE
+        font_size_scale: FONT_SIZE_SCALE,
+        line_height_scale: LINE_HEIGHT_SCALE
     });
     inspirationPanel.bind("apply", function(event, inspiration) {
         if (inspiration && currentProfile) {
@@ -2545,7 +2554,8 @@ jQuery(document).ready(function() {
     // sharing the same scale constants as the inspiration previews
     viewportFaces.viewportfaces(null, {
         viewport_scale: VIEWPORT_SCALE,
-        font_size_scale: FONT_SIZE_SCALE
+        font_size_scale: FONT_SIZE_SCALE,
+        line_height_scale: LINE_HEIGHT_SCALE
     });
     viewportFaces.bind("switch", function(event, side) {
         switchFace(side);

@@ -36,9 +36,16 @@ const SCRIPTS = [
 const BUILD_DATE = 1790677148;
 
 // scale factors the viewport applies to a font size in profile
-// units to get the pixels of the viewer container font size
+// units to get the pixels of the viewer container font size, and
+// to that font size to get the pixels of its line height
 const VIEWPORT_SCALE = 3;
-const FONT_SIZE_SCALE = 1.3;
+const FONT_SIZE_SCALE = 1 / 0.7;
+const LINE_HEIGHT_SCALE = 1.232;
+
+// width of every character of the fake layout in em, which keeps
+// each character 1.3 times the font size in profile units (times the
+// viewport scale) wide, the width the scenarios below are laid out with
+const CHAR_WIDTH = 0.91;
 
 // fonts rendered with an F3S derived counterpart while the F3S fonts
 // option is checked, mapped to the source of their F3S font face
@@ -114,7 +121,7 @@ describe("Main", function() {
 
     // installs a fake layout on the document, since jsdom computes
     // none, sizing the viewer container with the safe area width the
-    // viewport preview gives it and every character one em wide at
+    // viewport preview gives it and every character 0.91 em wide at
     // the font size applied to the container, placing them left to
     // right and wrapping the ones that would not fit the container
     // width onto a new row, the same way the flex wrap of the viewport
@@ -129,7 +136,7 @@ describe("Main", function() {
             const parent = this.parentNode;
             const children = parent ? parent.children : [];
             const containerWidth = parent ? parseFloat(parent.style.width) || 0 : 0;
-            const charWidth = parent ? parseFloat(parent.style.fontSize) || 0 : 0;
+            const charWidth = parent ? (parseFloat(parent.style.fontSize) || 0) * CHAR_WIDTH : 0;
             const rows = [[]];
             let x = 0;
             for (const child of children) {
@@ -202,6 +209,17 @@ describe("Main", function() {
     // given font size in profile units
     const scaled = function(size) {
         return size * VIEWPORT_SCALE * FONT_SIZE_SCALE + "px";
+    };
+
+    // returns the line height currently applied to the container
+    const lineHeight = function() {
+        return container.get(0).style.lineHeight;
+    };
+
+    // returns the container line height the viewport applies for
+    // the given font size in profile units
+    const leading = function(size) {
+        return size * VIEWPORT_SCALE * FONT_SIZE_SCALE * LINE_HEIGHT_SCALE + "px";
     };
 
     // simulates the operator moving the font size slider to the
@@ -443,6 +461,20 @@ describe("Main", function() {
             assert.strictEqual(fontSizeRange.val(), "1");
             assert.strictEqual(fontSizeInput.val(), "1");
             assert.strictEqual(fontSize(), scaled(1));
+        });
+
+        it("should space the lines by the line height scale of the font size", () => {
+            load("abcd");
+            slide(3);
+            assert.strictEqual(fontSize(), scaled(3));
+            assert.strictEqual(lineHeight(), leading(3));
+        });
+
+        it("should keep the line height fractional on small font sizes", () => {
+            load("abcd");
+            slide(1);
+            assert.strictEqual(lineHeight(), leading(1));
+            assert.notStrictEqual(lineHeight(), Math.round(parseFloat(leading(1))) + "px");
         });
 
         it("should keep the text intact across repeated size increases and decreases", () => {
