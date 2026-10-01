@@ -125,15 +125,17 @@ All under `scripts/`, run from that directory (Python with the requirements abov
 
 ## Pass criteria
 
-Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <= 0.30, line width error <= 0.35, baseline error <= 0.30, median F3S match >= 0.60, nothing trimmed, no fallback glyph. The tuned PR #79 fonts reach about 0.01 to 0.09 mm spacing mean (from 0.12 to 4.18 mm before).
+Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <= 0.30, line width error <= 0.35, baseline error <= 0.30, median F3S match >= 0.60, nothing trimmed, no fallback glyph, no line past the margin box. A case whose engraving lost, doubled or swapped a character gets `RETRY` instead: its other lines are measured, the dry run must be submitted again before it counts. The tuned PR #79 fonts reach about 0.01 to 0.09 mm spacing mean (from 0.12 to 4.18 mm before).
 
 ## Reading failures
 
 | Symptom | Meaning |
 | --- | --- |
+| RETRY, a character dropped, doubled or engraved as another | gravo-pilot typed the text wrong (it pastes every character from the clipboard; 4 of about 800 characters on 2026-10-01): submit the dry run again, never tune a font on such a line |
+| the engraving runs past the margin box | the text is wider than the area at that size (Gravostyle draws past it or resizes it), pick a smaller size |
 | viewport trims the text | the composition does not fit the viewport at that size, pick a smaller size |
 | previewed with a fallback font | the TTF lacks the glyph (Roman 4L and the script TTFs have no `ç`), the browser draws another font |
-| low F3S match | Gravostyle engraved another font or size: overflow resize, wrong dropdown pick (internal F3S name order), or text that differs from the case (the `|` URL limit) |
+| low F3S match | Gravostyle engraved another font or size: overflow resize, wrong dropdown pick (internal F3S name order), or text that differs from the case (the pipe emoji that cannot travel in the URL) |
 | one glyph not found on the engraving | its F3S strokes differ from what Gravostyle drew (left out of the numbers, listed); check the parser on that glyph |
 | spacing max on one glyph | a glyph whose TTF advance or centre is off (run `check`), or a fallback glyph earlier in the line |
 | steps off around one glyph | the same centre to centre residual next to different neighbours: a glyph Gravostyle sets differently from the model, correct it with `--adjust`; a residual on one pair only is optical kerning, leave it |
@@ -151,6 +153,8 @@ Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <
 
 - Never derive spacing from dot or repeat pattern jobs: they include Gravostyle optical kerning; use the model and verify with real words.
 - Never measure overflowing compositions; Gravostyle resizes them and Signatur trims them.
+- The engraving is not always the text that was sent: check `RETRY` verdicts before reading any number, and look at the engraving image of a line that fails strangely (a lost `E`, an `F` engraved as `E`).
+- Accents of capitals and the markers of the family emojis stand apart from their line; `measure.py` merges them back into the expected number of lines, so a case must list every line it engraves.
 - The repo keeps CRLF in `.py`, `.js`, CSS and EJS (mixed per file, check first); `npm run lint` is the arbiter, never run standalone prettier on existing files.
 - `report.html` with `--embed` is a single file but large (about 1 MB per case); the default writes `img/`.
 

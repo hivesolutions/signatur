@@ -25,6 +25,25 @@ $PY cases.py check cov.json         # 3 cases, 0 problems
 
 The generated lines take every glyph shared by the TTF and the F3S in code point order (`!"#$%&'()*+,-./`, `0123456789:;=`, `?@ABCDEFGHI`, ...), each line filling up to 90% of the area as predicted by the model. On the PR #79 cases `cases.py check` flags exactly the ones that failed for a reason other than the TTF spacing: the 8 lines with `ç` (fallback glyph) and the 6 old size limits (overflow).
 
+## Coverage verification (2026-10-01)
+
+The full check of the rebuilt fonts: 35 generated cases (`cov` at 5 mm, `small` at 2.5 mm and `limit` at 8 mm for each of the six fonts), the branch Signatur submitting the dry runs and a `master` copy captured alongside:
+
+```bash
+for font in "Helvetica 1L" "Helvetica 4L" "Roman 4L" "Script 412 1L" "Script 4L" "Script Round 1L"; do
+    $PY cases.py generate --font "$font" --size 5 --lines 3 --prefix cov > cov.json
+    $PY cases.py generate --font "$font" --size 2.5 --lines 5 --prefix small > small.json
+    $PY cases.py generate --font "$font" --size 8 --lines 2 --chars "ABCDEFGHIJKLMNOPQRSTUVWXYZ" --prefix limit > limit.json
+done    # merged into all.json, keeping the first small and limit case of each font
+$PY cases.py check all.json                                   # 35 cases, 0 problems
+node capture.js all.json $SCRATCH/run-branch --label branch --submit
+node capture.js all.json $SCRATCH/run-master --base http://127.0.0.1:3124 --label master --root $SCRATCH/master
+$PY gravo_job.py fetch $SCRATCH/run-branch
+$PY measure.py --viewport master=$SCRATCH/run-master --viewport branch=$SCRATCH/run-branch --out $SCRATCH/report
+```
+
+The first pass gave 4 `RETRY` verdicts (`E` and `Q` lost, `F` engraved as `E`, `L` as `K`); submitting those cases again (`capture.js retry.json $SCRATCH/run-branch --submit`, which replaces their jobs in the run) gave 2 more (`S` lost, `)` engraved as `(`) and a third pass none. Final: rebuilt fonts 35 of 35 PASS, `master` 33 of 35 (the `@` of Helvetica 4L trims two lines), spacing mean 0.02 to 0.09 mm and spacing max at most 0.23 mm for both.
+
 ## End to end verification (2026-10-01)
 
 Six cases against the shipped fonts (port 3123), the skill generator output (candidate, port 3124) and the candidate with a measured `@` adjustment (port 3125), all compared with the same six gravo-gold-std dry run screenshots.
@@ -114,7 +133,7 @@ $PY measure.py --viewport before=$SCRATCH/run-before --viewport after=$SCRATCH/r
 | Viewport | Pass | Typical spacing mean | Notes |
 | --- | --- | --- | --- |
 | before | 1 / 75 | 0.12 to 4.18 mm | line widths up to 18.8 mm off |
-| after | 60 / 75 | 0.01 to 0.09 mm | the 15 FAIL: 6 trimmed old limits, 1 `|` URL job, 8 `ç` fallbacks |
+| after | 60 / 75 | 0.01 to 0.09 mm | the 15 FAIL: 6 trimmed old limits, 1 pipe emoji job (not in the URL), 8 `ç` fallbacks |
 
 ## Pre-flight check output
 
