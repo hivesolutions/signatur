@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Six F3S-derived TrueType fonts: Helvetica 1L, Helvetica 4L, Roman 4L, Script 412 1L, Script 4L and Script Rund 1L, alongside the existing font files
+* Six F3S-derived TrueType fonts: Helvetica 1L, Helvetica 4L, Roman 4L, Script 412 1L, Script 4L and Script Round 1L, alongside the existing font files
 * Unit tests for the font size controls of the engraving layout
 * Unit tests for the font size sent with the engraving job
 * Build and build date items below the version on the settings page, showing the short commit of the running build linked to the commit on GitHub and the date it was built, both also returned by the `/info` endpoint - [#77](https://github.com/hivesolutions/signatur/issues/77)
