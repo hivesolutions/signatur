@@ -72,7 +72,7 @@ ENGRAVE_NODE=gravo-gold-std ENGRAVE_PRINTER=gravo PORT=3123 HOST=127.0.0.1 node 
 - A released version for the before side: `git archive master | tar -x -C $SCRATCH/master`, symlink `node_modules`, copy `config/users.json`, run it on another port and capture it with `--root $SCRATCH/master`.
 - A capture keeps pointing at the root that served it: once the fonts of that root change, measure the old capture against a root with the fonts it rendered (edit `meta.root` of its `capture.json`), else `measure.py` stops on the font hash.
 - Playwright: `PLAYWRIGHT_PATH` (the module path, e.g. the mise install) and `CHROMIUM_PATH` (`/usr/bin/chromium`).
-- The Python scripts need `fonttools numpy pillow scipy` and a checkout of gravo-native (F3S parser) and gravo-pilot (bundled F3S fonts) next to this repo, or `GRAVO_NATIVE` and `GRAVO_PILOT`.
+- The Python scripts need `fonttools numpy pillow scipy` (`pip install -r requirements.txt` from the repository root) and a checkout of gravo-native (F3S parser) and gravo-pilot (bundled F3S fonts) next to this repo, or `GRAVO_NATIVE` and `GRAVO_PILOT`.
 
 ## The model
 
@@ -170,7 +170,7 @@ The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared gly
 ## Maintaining the scripts
 
 - Python in the house style: docstrings with the quotes on their own lines and a blank line after them, `%` formatting, no string concatenation, `== None` and `not x in y`, Black, CRLF line endings; JS (`capture.js`, covered by `npm run lint`) with template literals instead of concatenation.
-- After any change run `selftest.py`, re-measure an existing run and compare its `report.json` with the previous one (verdicts and numbers must only change where the change explains it), and run `npm run lint`.
+- After any change run `selftest.py` and the unit tests (`pytest` from the repository root, the F3S parser and fonts faked so they run in the CI too), re-measure an existing run and compare its `report.json` with the previous one (verdicts and numbers must only change where the change explains it), and run `npm run lint`.
 - Run Python with `PYTHONDONTWRITEBYTECODE=1` or remove `scripts/__pycache__` (ignored by git) afterwards.
 - The repo keeps CRLF in `.py`, `.js`, CSS and EJS (mixed per file, check first); `npm run lint` is the arbiter, never run standalone prettier on existing files.
 
