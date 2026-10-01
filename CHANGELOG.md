@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* F3S versions of the Helvetica 1L, Helvetica 4L, Roman 4L, Script 412 1L, Script 4L and Script Round 1L fonts, the same size as the regular ones but with their letters spaced like the engraving software
+* Use F3S Fonts option on the viewport that previews the text and the keyboard with the F3S fonts
 * Unit tests for the font size controls of the engraving layout
 * Unit tests for the font size sent with the engraving job
 * Build and build date items below the version on the settings page, showing the short commit of the running build linked to the commit on GitHub and the date it was built, both also returned by the `/info` endpoint - [#77](https://github.com/hivesolutions/signatur/issues/77)
@@ -16,9 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * The version on the settings page now links to the changelog on GitHub - [#77](https://github.com/hivesolutions/signatur/issues/77)
+* The preview now renders the text at its engraved size and with its engraved line spacing
 
 ### Fixed
 
+* The infinity, rings, camera, graduation cap, scales and Aquarius emojis, and the space between emojis, now preview at the size and width they are engraved
 * The allow overflow option is now only shown in the technical viewport mode, and store mode always keeps overflow blocked
 * Increasing the font size no longer deletes characters, it now stops at the largest size where the text still fits - [#74](https://github.com/hivesolutions/signatur/issues/74)
 * The engraving job now sends the font size shown on the preview instead of rounding it down to a whole number, so fractional sizes such as 2.75 on small medals are no longer engraved smaller - [#67](https://github.com/hivesolutions/signatur/issues/67)

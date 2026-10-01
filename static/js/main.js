@@ -194,6 +194,8 @@ jQuery(document).ready(function() {
     const viewportOptionsCaret = jQuery(".viewport-options-caret");
     const overflowMode = jQuery(".overflow-mode");
     const viewportOptionsOverflow = jQuery(".viewport-options-overflow");
+    const f3sMode = jQuery(".f3s-mode");
+    const viewportOptionsF3s = jQuery(".viewport-options-f3s");
     const zoomContainer = jQuery(".zoom-container");
     const zoomRange = jQuery(".zoom-range");
     const zoomPresets = jQuery(".zoom-preset");
@@ -541,9 +543,17 @@ jQuery(document).ready(function() {
     // viewport preview SVG rendering (pixels per mm)
     const VIEWPORT_SCALE = 3;
 
-    // correction factor applied to the font size to compensate
-    // for the difference between CSS em-square and visual cap height
-    const FONT_SIZE_SCALE = 1.3;
+    // correction factor applied to the font size so that the cap
+    // height of the fonts, 0.7 of their em-square, renders at the
+    // font size, as the engraving software sizes the text by the
+    // height of its capitals
+    const FONT_SIZE_SCALE = 1 / 0.7;
+
+    // line height applied to the scaled font size, matching the
+    // engraving software that spaces consecutive lines by 1.76
+    // times the font size (1.76 * 0.7 = 1.232), kept fractional
+    // so that small font sizes are not spaced by rounded pixels
+    const LINE_HEIGHT_SCALE = 1.232;
 
     // stores the currently selected profile and the loaded
     // profiles dictionary for later reference
@@ -682,9 +692,18 @@ jQuery(document).ready(function() {
                 viewportContainer.texteditor("option", { overflow: true });
             }
 
-            // forces the rulers, crosshair, guidelines and overflow
-            // off when the viewport is running in store mode by
-            // routing the change through the existing checkbox
+            // restores the F3S fonts mode from the URL query
+            // parameters if it was previously saved, rendering
+            // the fonts with their F3S derived counterparts
+            const urlF3s = urlParams.get("f3s");
+            if (urlF3s === "1") {
+                f3sMode.prop("checked", true);
+                applyF3sFonts();
+            }
+
+            // forces the rulers, crosshair, guidelines, overflow and
+            // F3S fonts off when the viewport is running in store mode
+            // by routing the change through the existing checkbox
             // handlers so the URL state and the visuals stay in sync
             // with the off position regardless of the previous URL
             // parameters, as none of these controls is shown there
@@ -693,6 +712,7 @@ jQuery(document).ready(function() {
                 crosshairMode.prop("checked", false).trigger("change");
                 guidelinesMode.prop("checked", false).trigger("change");
                 overflowMode.prop("checked", false).trigger("change");
+                f3sMode.prop("checked", false).trigger("change");
             }
 
             // restores the calligraphy mode from the URL
@@ -1377,7 +1397,7 @@ jQuery(document).ready(function() {
         if (size) {
             const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
             viewportContainer.css("font-size", scaledSize + "px");
-            viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+            viewportContainer.css("line-height", scaledSize * LINE_HEIGHT_SCALE + "px");
         }
 
         // steps the automatic size down while a line is still
@@ -1393,7 +1413,7 @@ jQuery(document).ready(function() {
                 size = Math.max(size - step, minSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
                 viewportContainer.css("font-size", scaledSize + "px");
-                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                viewportContainer.css("line-height", scaledSize * LINE_HEIGHT_SCALE + "px");
                 fontSizeRange.val(size);
                 fontSizeInput.val(size);
                 refreshFontSizeBubble();
@@ -1420,7 +1440,7 @@ jQuery(document).ready(function() {
                 size = Math.max(size - step, previousSize);
                 const scaledSize = size * VIEWPORT_SCALE * FONT_SIZE_SCALE;
                 viewportContainer.css("font-size", scaledSize + "px");
-                viewportContainer.css("line-height", Math.round(scaledSize * 1.2) + "px");
+                viewportContainer.css("line-height", scaledSize * LINE_HEIGHT_SCALE + "px");
                 fontSizeRange.val(size);
                 fontSizeInput.val(size);
                 refreshFontSizeBubble();
@@ -1453,6 +1473,7 @@ jQuery(document).ready(function() {
             viewportOptionsGuidelines.addClass("visible");
             viewportOptionsCaret.addClass("visible");
             viewportOptionsOverflow.addClass("visible");
+            viewportOptionsF3s.addClass("visible");
             zoomContainer.addClass("visible");
             positionContainer.addClass("visible");
             calligraphyModeContainer.addClass("visible");
@@ -1463,6 +1484,7 @@ jQuery(document).ready(function() {
             viewportOptionsGuidelines.removeClass("visible");
             viewportOptionsCaret.removeClass("visible");
             viewportOptionsOverflow.removeClass("visible");
+            viewportOptionsF3s.removeClass("visible");
             zoomContainer.removeClass("visible");
             positionContainer.removeClass("visible");
             calligraphyModeContainer.removeClass("visible");
@@ -1776,6 +1798,58 @@ jQuery(document).ready(function() {
         const allowOverflow = overflowMode.prop("checked");
         viewportContainer.texteditor("option", { overflow: allowOverflow });
         viewportContainer.texteditor("trim");
+        updateUrl("toggle");
+    });
+
+    // display fonts that have an F3S derived counterpart under
+    // `static/fonts/`, keyed by the font name stored in the text
+    // and sent for engraving, valued by the base name of the
+    // regular font file that the counterpart extends with `-f3s`
+    const F3S_FONTS = {
+        "Helvetica 1L": "helvetica1l",
+        "Helvetica 4L": "helvetica4l",
+        "Roman 4L": "roman4l",
+        "Script 4L": "script4l",
+        "Script 412 1L": "script4121l",
+        "Script Round 1L": "scriptround1l"
+    };
+
+    // stores the font faces currently rendering the fonts with
+    // their F3S derived counterparts, empty while the regular
+    // fonts declared in the CSS are the ones in use
+    let f3sFaces = [];
+
+    // swaps the rendering of the fonts for their F3S derived
+    // counterparts, or back to the regular ones, according to the
+    // F3S fonts checkbox, by adding (or removing) font faces with
+    // the same family names to the font set of the document, which
+    // take precedence over the ones declared in the CSS, so the
+    // viewport, the keyboard and every other preview switch while
+    // the font names stored in the text stay the same
+    const applyF3sFonts = function() {
+        if (!document.fonts) return;
+        for (const face of f3sFaces) {
+            document.fonts.delete(face);
+        }
+        f3sFaces = [];
+        if (!f3sMode.prop("checked")) return;
+        const fonts = Object.keys(F3S_FONTS);
+        for (const font of fonts) {
+            const source = "url(/static/fonts/" + F3S_FONTS[font] + "-f3s.ttf)";
+            const face = new FontFace(font, source);
+            document.fonts.add(face);
+            f3sFaces.push(face);
+        }
+    };
+
+    // registers for the change in the F3S fonts checkbox to
+    // swap the rendering of the fonts, re-fitting the text to
+    // the widths of the glyphs now in use, which the fonts
+    // loading listener does again once a font fetched for the
+    // first time is done loading
+    f3sMode.bind("change", function() {
+        applyF3sFonts();
+        applyFontSize();
         updateUrl("toggle");
     });
 
@@ -2234,12 +2308,14 @@ jQuery(document).ready(function() {
             params.delete("guidelines");
             params.delete("caret");
             params.delete("overflow");
+            params.delete("f3s");
             if (!rulersMode.prop("checked")) params.set("rulers", "0");
             if (!crosshairMode.prop("checked")) params.set("crosshair", "0");
             if (!keyboardMode.prop("checked")) params.set("keyboard", "0");
             if (!guidelinesMode.prop("checked")) params.set("guidelines", "0");
             if (!caretMode.prop("checked")) params.set("caret", "0");
             if (overflowMode.prop("checked")) params.set("overflow", "1");
+            if (f3sMode.prop("checked")) params.set("f3s", "1");
         }
         if (action === "calligraphy" || action === "restore") {
             params.delete("calligraphy");
@@ -2464,7 +2540,8 @@ jQuery(document).ready(function() {
     // apply event to set the viewport text and configuration
     inspirationPanel.inspirationpanel({
         viewport_scale: VIEWPORT_SCALE,
-        font_size_scale: FONT_SIZE_SCALE
+        font_size_scale: FONT_SIZE_SCALE,
+        line_height_scale: LINE_HEIGHT_SCALE
     });
     inspirationPanel.bind("apply", function(event, inspiration) {
         if (inspiration && currentProfile) {
@@ -2477,7 +2554,8 @@ jQuery(document).ready(function() {
     // sharing the same scale constants as the inspiration previews
     viewportFaces.viewportfaces(null, {
         viewport_scale: VIEWPORT_SCALE,
-        font_size_scale: FONT_SIZE_SCALE
+        font_size_scale: FONT_SIZE_SCALE,
+        line_height_scale: LINE_HEIGHT_SCALE
     });
     viewportFaces.bind("switch", function(event, side) {
         switchFace(side);

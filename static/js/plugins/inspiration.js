@@ -34,7 +34,8 @@
             // constants for use across rendering functions
             let currentProfile = context.data("_profile") || null;
             const viewportScale = (options && options.viewport_scale) || 3;
-            const fontSizeScale = (options && options.font_size_scale) || 1.3;
+            const fontSizeScale = (options && options.font_size_scale) || 1 / 0.7;
+            const lineHeightScale = (options && options.line_height_scale) || 1.232;
 
             // renders a single inspiration thumbnail as a miniature
             // viewport preview with the text pre-rendered inside it
@@ -85,7 +86,7 @@
                     border: "none",
                     "min-width": "0px",
                     "font-size": scaledSize + "px",
-                    "line-height": Math.round(scaledSize * 1.2) + "px",
+                    "line-height": scaledSize * lineHeightScale + "px",
                     "text-align": inspiration.align || "center",
                     "align-content": "center",
                     display: "flex",

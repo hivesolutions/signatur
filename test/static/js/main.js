@@ -5,6 +5,7 @@ const vm = require("vm");
 const { JSDOM } = require("jsdom");
 
 const STATIC_PATH = path.resolve(__dirname, "..", "..", "..", "static", "js");
+const FONTS_PATH = path.resolve(__dirname, "..", "..", "..", "static", "fonts");
 const SCRIPTS = [
     "util.js",
     "plugins/calligraphy.js",
@@ -35,9 +36,27 @@ const SCRIPTS = [
 const BUILD_DATE = 1790677148;
 
 // scale factors the viewport applies to a font size in profile
-// units to get the pixels of the viewer container font size
+// units to get the pixels of the viewer container font size, and
+// to that font size to get the pixels of its line height
 const VIEWPORT_SCALE = 3;
-const FONT_SIZE_SCALE = 1.3;
+const FONT_SIZE_SCALE = 1 / 0.7;
+const LINE_HEIGHT_SCALE = 1.232;
+
+// width of every character of the fake layout in em, which keeps
+// each character 1.3 times the font size in profile units (times the
+// viewport scale) wide, the width the scenarios below are laid out with
+const CHAR_WIDTH = 0.91;
+
+// fonts rendered with an F3S derived counterpart while the F3S fonts
+// option is checked, mapped to the source of their F3S font face
+const F3S_FONTS = {
+    "Helvetica 1L": "url(/static/fonts/helvetica1l-f3s.ttf)",
+    "Helvetica 4L": "url(/static/fonts/helvetica4l-f3s.ttf)",
+    "Roman 4L": "url(/static/fonts/roman4l-f3s.ttf)",
+    "Script 4L": "url(/static/fonts/script4l-f3s.ttf)",
+    "Script 412 1L": "url(/static/fonts/script4121l-f3s.ttf)",
+    "Script Round 1L": "url(/static/fonts/scriptround1l-f3s.ttf)"
+};
 
 // profiles served to the viewport, a plate whose safe area is
 // 30 mm wide (90 px once scaled), a finer twin of it whose font
@@ -102,11 +121,13 @@ describe("Main", function() {
 
     // installs a fake layout on the document, since jsdom computes
     // none, sizing the viewer container with the safe area width the
-    // viewport preview gives it and every character one em wide at
+    // viewport preview gives it and every character 0.91 em wide at
     // the font size applied to the container, placing them left to
     // right and wrapping the ones that would not fit the container
     // width onto a new row, the same way the flex wrap of the viewport
-    // css does, while a newline element always starts a new row
+    // css does, while a newline element always starts a new row, and
+    // drawing the glyphs of a font that an F3S font face renders a
+    // quarter of an em wider, so swapping the fonts changes the widths
     const layout = function() {
         window.Element.prototype.getBoundingClientRect = function() {
             if (this.classList.contains("viewer-container")) {
@@ -115,7 +136,7 @@ describe("Main", function() {
             const parent = this.parentNode;
             const children = parent ? parent.children : [];
             const containerWidth = parent ? parseFloat(parent.style.width) || 0 : 0;
-            const charWidth = parent ? parseFloat(parent.style.fontSize) || 0 : 0;
+            const charWidth = parent ? (parseFloat(parent.style.fontSize) || 0) * CHAR_WIDTH : 0;
             const rows = [[]];
             let x = 0;
             for (const child of children) {
@@ -126,7 +147,9 @@ describe("Main", function() {
                     x = 0;
                     continue;
                 }
-                const width = child.textContent.length * charWidth;
+                const family = child.style.fontFamily.replace(/['"]/g, "");
+                const swapped = fonts.faces.some(face => face.family === family);
+                const width = child.textContent.length * charWidth * (swapped ? 1.25 : 1);
                 if (x > 0 && x + width > containerWidth) {
                     rows.push([]);
                     x = 0;
@@ -149,11 +172,12 @@ describe("Main", function() {
     };
 
     // loads the given characters into the editor as the [font, char]
-    // pairs the viewport works with, newlines included
-    const load = function(values) {
+    // pairs the viewport works with, newlines included, in the given
+    // font or in Helvetica when none is given
+    const load = function(values, font) {
         const text = [];
         for (const value of values) {
-            text.push(value === "\n" ? [null, "\n"] : ["Helvetica", value]);
+            text.push(value === "\n" ? [null, "\n"] : [font || "Helvetica", value]);
         }
         container.texteditor("loadText", { text: text });
         return text;
@@ -187,6 +211,17 @@ describe("Main", function() {
         return size * VIEWPORT_SCALE * FONT_SIZE_SCALE + "px";
     };
 
+    // returns the line height currently applied to the container
+    const lineHeight = function() {
+        return container.get(0).style.lineHeight;
+    };
+
+    // returns the container line height the viewport applies for
+    // the given font size in profile units
+    const leading = function(size) {
+        return size * VIEWPORT_SCALE * FONT_SIZE_SCALE * LINE_HEIGHT_SCALE + "px";
+    };
+
     // simulates the operator moving the font size slider to the
     // given value
     const slide = function(value) {
@@ -199,6 +234,18 @@ describe("Main", function() {
         jQuery('.font-size-preset[data-preset="' + name + '"]').click();
     };
 
+    // simulates the operator checking or unchecking the F3S fonts
+    // option
+    const f3s = function(checked) {
+        jQuery(".f3s-mode").prop("checked", checked).trigger("change");
+    };
+
+    // returns the families of the font faces added to the font set
+    // of the document, in the order they were added
+    const families = function() {
+        return fonts.faces.map(face => face.family);
+    };
+
     // simulates the document finishing loading its fonts, notifying
     // the viewport through the loading done event of its font set
     const loadingDone = function() {
@@ -208,9 +255,11 @@ describe("Main", function() {
         }
     };
 
-    beforeEach(async function() {
+    // mounts the viewport on a new document loaded from the given
+    // address, with the given classes rendered on its body
+    const mount = async function(url, classes) {
         const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
-            url: "http://localhost/viewport?profile=plate",
+            url: url,
             runScripts: "outside-only"
         });
         window = dom.window;
@@ -232,12 +281,27 @@ describe("Main", function() {
             return this;
         };
 
+        // stands in for the font face constructor, which jsdom lacks,
+        // keeping the family and the source the face is created with
+        window.FontFace = function(family, source) {
+            this.family = family;
+            this.source = source;
+        };
+
         // stands in for the font set of the document, which jsdom lacks,
         // with every font loaded by default so that a test can flag them
-        // as still loading and then notify the viewport once they are done
+        // as still loading and then notify the viewport once they are done,
+        // keeping the font faces added to it in the order they were added
         fonts = {
             status: "loaded",
+            faces: [],
             listeners: [],
+            add: function(face) {
+                this.faces.push(face);
+            },
+            delete: function(face) {
+                this.faces = this.faces.filter(candidate => candidate !== face);
+            },
             addEventListener: function(type, listener) {
                 this.listeners.push([type, listener]);
             }
@@ -256,6 +320,7 @@ describe("Main", function() {
         // ready handler of the viewport runs on the next tick
         body = jQuery("body");
         body.addClass("profiles-loading");
+        if (classes) body.addClass(classes);
         const options = jQuery('<div class="viewport-options-body"></div>').appendTo(body);
         options.append('<select class="profile-select"><option value="">None</option></select>');
         options.append('<select class="variant-select"><option value="">None</option></select>');
@@ -268,6 +333,8 @@ describe("Main", function() {
         sizes.append('<input class="font-size-input" type="hidden" value="12" />');
         sizes.append('<input class="font-size-mode" type="checkbox" hidden />');
         options.append('<input class="overflow-mode" type="checkbox" />');
+        const f3sOption = jQuery('<div class="viewport-options-f3s"></div>').appendTo(options);
+        f3sOption.append('<input class="f3s-mode" type="checkbox" />');
         for (const side of ["left", "right", "top", "bottom"]) {
             const margin = jQuery('<input class="margin-input" type="number" value="0" />');
             margin.addClass("margin-" + side).appendTo(options);
@@ -298,6 +365,10 @@ describe("Main", function() {
         while (body.hasClass("profiles-loading")) {
             await new Promise(resolve => window.setTimeout(resolve));
         }
+    };
+
+    beforeEach(async function() {
+        await mount("http://localhost/viewport?profile=plate");
     });
 
     afterEach(function() {
@@ -314,6 +385,35 @@ describe("Main", function() {
         it("should keep the server rendered date when the timestamp is missing", () => {
             const buildDate = jQuery(".settings-build-date").eq(1);
             assert.strictEqual(buildDate.text(), "29/09/2026 10:19:08");
+        });
+    });
+
+    describe("#loadProfiles()", function() {
+        it("should restore the F3S fonts saved on the URL", async () => {
+            window.close();
+            await mount("http://localhost/viewport?profile=plate&f3s=1");
+            assert.strictEqual(jQuery(".f3s-mode").prop("checked"), true);
+            assert.deepStrictEqual(families(), Object.keys(F3S_FONTS));
+            const params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), "1");
+        });
+
+        it("should ignore an F3S fonts value other than 1 on the URL", async () => {
+            window.close();
+            await mount("http://localhost/viewport?profile=plate&f3s=true");
+            assert.strictEqual(jQuery(".f3s-mode").prop("checked"), false);
+            assert.deepStrictEqual(families(), []);
+            const params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), null);
+        });
+
+        it("should force the F3S fonts off in store mode", async () => {
+            window.close();
+            await mount("http://localhost/viewport?profile=plate&f3s=1", "store-mode");
+            assert.strictEqual(jQuery(".f3s-mode").prop("checked"), false);
+            assert.deepStrictEqual(families(), []);
+            const params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), null);
         });
     });
 
@@ -361,6 +461,20 @@ describe("Main", function() {
             assert.strictEqual(fontSizeRange.val(), "1");
             assert.strictEqual(fontSizeInput.val(), "1");
             assert.strictEqual(fontSize(), scaled(1));
+        });
+
+        it("should space the lines by the line height scale of the font size", () => {
+            load("abcd");
+            slide(3);
+            assert.strictEqual(fontSize(), scaled(3));
+            assert.strictEqual(lineHeight(), leading(3));
+        });
+
+        it("should keep the line height fractional on small font sizes", () => {
+            load("abcd");
+            slide(1);
+            assert.strictEqual(lineHeight(), leading(1));
+            assert.notStrictEqual(lineHeight(), Math.round(parseFloat(leading(1))) + "px");
         });
 
         it("should keep the text intact across repeated size increases and decreases", () => {
@@ -451,6 +565,17 @@ describe("Main", function() {
         });
     });
 
+    describe("#refreshProfile()", function() {
+        it("should show the F3S fonts option while a profile is selected", () => {
+            assert.strictEqual(jQuery(".viewport-options-f3s").hasClass("visible"), true);
+        });
+
+        it("should hide the F3S fonts option once no profile is selected", () => {
+            jQuery(".profile-select").val("").trigger("change");
+            assert.strictEqual(jQuery(".viewport-options-f3s").hasClass("visible"), false);
+        });
+    });
+
     describe("#fontSizeRange()", function() {
         it("should sync the number input, the bubble and the URL to the stopped size", () => {
             load("abcd");
@@ -508,6 +633,126 @@ describe("Main", function() {
             assert.strictEqual(fontSizeInput.val(), "5");
             assert.strictEqual(fontSize(), scaled(5));
             assert.strictEqual(characters(), "abcd");
+        });
+    });
+
+    describe("#applyF3sFonts()", function() {
+        it("should render every font that has one with its F3S counterpart", () => {
+            f3s(true);
+            assert.deepStrictEqual(families(), Object.keys(F3S_FONTS));
+            for (const face of fonts.faces) {
+                assert.strictEqual(face.source, F3S_FONTS[face.family]);
+            }
+        });
+
+        it("should point every F3S face to a font shipped next to its regular font", () => {
+            f3s(true);
+            assert.strictEqual(fonts.faces.length, 6);
+            for (const face of fonts.faces) {
+                const filename = face.source.match(/^url\(\/static\/fonts\/(.+)\)$/)[1];
+                const regular = filename.replace(/-f3s\.ttf$/, ".ttf");
+                assert.notStrictEqual(regular, filename);
+                assert.strictEqual(fs.existsSync(path.join(FONTS_PATH, filename)), true);
+                assert.strictEqual(fs.existsSync(path.join(FONTS_PATH, regular)), true);
+            }
+        });
+
+        it("should keep the emoji fonts with their regular faces", () => {
+            f3s(true);
+            assert.strictEqual(families().includes("Cool Emojis"), false);
+            assert.strictEqual(families().includes("Cool Emojis Pantograph"), false);
+        });
+
+        it("should render the regular fonts again once unchecked", () => {
+            f3s(true);
+            f3s(false);
+            assert.deepStrictEqual(families(), []);
+        });
+
+        it("should keep a single F3S face per font across repeated changes", () => {
+            f3s(true);
+            const previous = fonts.faces.slice();
+            f3s(true);
+            assert.deepStrictEqual(families(), Object.keys(F3S_FONTS));
+            for (const face of previous) {
+                assert.strictEqual(fonts.faces.includes(face), false);
+            }
+        });
+
+        it("should leave the fonts alone when the browser has no font set", () => {
+            delete window.document.fonts;
+            load("abc", "Helvetica 1L");
+            f3s(true);
+            assert.deepStrictEqual(families(), []);
+            assert.strictEqual(characters(), "abc");
+            const params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), "1");
+        });
+    });
+
+    describe("#f3sMode()", function() {
+        it("should save the F3S fonts on the URL only while checked", () => {
+            f3s(true);
+            let params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), "1");
+            f3s(false);
+            params = new URLSearchParams(window.location.search);
+            assert.strictEqual(params.get("f3s"), null);
+            assert.strictEqual(params.get("profile"), "plate");
+        });
+
+        it("should keep the font names stored in the text", () => {
+            load("abc", "Helvetica 1L");
+            f3s(true);
+            const fontNames = body.data("text").map(item => item[0]);
+            assert.deepStrictEqual(fontNames, ["Helvetica 1L", "Helvetica 1L", "Helvetica 1L"]);
+        });
+
+        it("should trim the text that no longer fits the wider F3S glyphs", () => {
+            load("abcdefghijk", "Helvetica 1L");
+            assert.strictEqual(jQuery(".toast").hasClass("visible"), false);
+            f3s(true);
+            assert.strictEqual(characters(), "abcdefghi");
+            assert.strictEqual(rendered(), "abcdefghi");
+            assert.strictEqual(jQuery(".toast").hasClass("visible"), true);
+        });
+
+        it("should keep the text of a font without an F3S counterpart", () => {
+            load("abcdefghijk", "Helvetica");
+            f3s(true);
+            assert.strictEqual(characters(), "abcdefghijk");
+            assert.strictEqual(jQuery(".toast").hasClass("visible"), false);
+        });
+
+        it("should keep the text intact until the F3S fonts are done loading", () => {
+            load("abcdefghijk", "Helvetica 1L");
+            fonts.status = "loading";
+            f3s(true);
+            assert.strictEqual(characters(), "abcdefghijk");
+            loadingDone();
+            assert.strictEqual(characters(), "abcdefghi");
+        });
+
+        it("should keep the text that no longer fits while overflow is allowed", () => {
+            jQuery(".overflow-mode").prop("checked", true).trigger("change");
+            load("abcdefghijk", "Helvetica 1L");
+            f3s(true);
+            assert.strictEqual(characters(), "abcdefghijk");
+            assert.strictEqual(jQuery(".toast").hasClass("visible"), false);
+        });
+
+        it("should step the automatic size down to fit the F3S glyphs and back up without them", () => {
+            load("abcdefghijk", "Helvetica 1L");
+            jQuery(".profile-select").val("automatic").trigger("change");
+            assert.strictEqual(fontSizeInput.val(), "2");
+            f3s(true);
+            assert.strictEqual(fontSizeInput.val(), "1");
+            assert.strictEqual(fontSize(), scaled(1));
+            assert.strictEqual(characters(), "abcdefghijk");
+            f3s(false);
+            assert.strictEqual(fontSizeInput.val(), "2");
+            assert.strictEqual(fontSize(), scaled(2));
+            assert.strictEqual(characters(), "abcdefghijk");
         });
     });
 
