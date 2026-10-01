@@ -91,6 +91,8 @@ def validate(case, root=None):
     mapping = M.load_mapping()
 
     lines = M.case_lines(case)
+    if not lines:
+        return ["%s: no lines" % name]
     for index, line in enumerate(lines):
         for element_font, char in M.elements(line, font):
             if char == "|" and index < len(case["lines"]):
@@ -158,7 +160,8 @@ def generate(args):
         for char in chars:
             candidate = "%s %s" % (current, char) if current else char
             extent = line_extents([[M.EMOJI_FONT, candidate]], args.font, args.size)
-            if current and (len(current) > 1 or extent[1] - extent[0] > area * FILL):
+            wide = extent and extent[1] - extent[0] > area * FILL
+            if current and (len(current) > 1 or wide):
                 lines.append([[M.EMOJI_FONT, current]])
                 candidate = char
             current = candidate
@@ -174,11 +177,11 @@ def generate(args):
         )
         lines, current = [], ""
         for char in chars:
-            extent = line_extents(current + char, args.font, args.size)
+            extent = line_extents("%s%s" % (current, char), args.font, args.size)
             if current and extent and extent[1] - extent[0] > area * FILL:
                 lines.append(current)
                 current = ""
-            current += char
+            current = "%s%s" % (current, char)
         if current:
             lines.append(current)
 

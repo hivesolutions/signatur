@@ -164,7 +164,9 @@ def resolve(font, char, mapping=None):
     if font == EMOJI_FONT:
         if char == " ":
             return load_f3s(EMOJI_SPACE_FONT)["glyphs"].get(32)
-        name = (mapping or load_mapping()).get(char)
+        if mapping == None:
+            mapping = load_mapping()
+        name = mapping.get(char)
         if name == None:
             return None
         return load_f3s(name)["glyphs"].get(ord("a"))

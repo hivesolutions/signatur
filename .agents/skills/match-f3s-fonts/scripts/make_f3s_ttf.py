@@ -108,11 +108,7 @@ def drop_hinting(font):
     for tag in HINTING_TABLES:
         if tag in font:
             del font[tag]
-    glyf = font["glyf"]
-    for name in font.getGlyphOrder():
-        glyph = glyf[name]
-        if hasattr(glyph, "program"):
-            del glyph.program
+    font["glyf"].removeHinting()
 
 
 def scale_outlines(font, factor):
@@ -504,8 +500,10 @@ def run_build(args):
         data = build_font(entry)
         path = os.path.join(args.output or FONTS_DIR, "%s-f3s.ttf" % entry["stem"])
         if args.verify:
-            with open(path, "rb") as file:
-                same = file.read() == data
+            same = False
+            if os.path.exists(path):
+                with open(path, "rb") as file:
+                    same = file.read() == data
             print("%s: %s" % (path, "identical" if same else "DIFFERENT"))
             if not same:
                 differences.append(path)

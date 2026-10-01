@@ -165,6 +165,11 @@ class Screenshot(object):
                 band = [pending[0], band[1]]
                 pending = None
             folded.append(band)
+        # a short band with no band below it (a last line of dashes or
+        # dots) stays a band of its own, the count merging it into the
+        # line above when it is a part of that line
+        if pending != None:
+            folded.append(pending)
         while count and len(folded) > count:
             spans = [
                 folded[index + 1][1] - folded[index][0]
@@ -727,9 +732,6 @@ def verdict(result, thresholds):
             "the viewport trims the text (%s of %s glyphs shown)"
             % (result["shown"], result["expected"])
         ]
-    # a dry run whose engraving lost or doubled a glyph shows another
-    # text than the case, so it says nothing about the fonts and must be
-    # submitted again
     overflow = result.get("overflow") or []
     if overflow:
         return "FAIL", [
@@ -737,6 +739,9 @@ def verdict(result, thresholds):
             "resize it), lines left out, use a smaller size"
             % "/".join(str(line) for line in overflow)
         ]
+    # a dry run whose engraving lost or doubled a glyph shows another
+    # text than the case, so it says nothing about the fonts and must be
+    # submitted again
     typing = result.get("typing") or []
     if typing:
         return "RETRY", [
@@ -1214,6 +1219,8 @@ def main():
 
     captures = []
     for item in args.viewport:
+        if not "=" in item:
+            parser.error("--viewport takes LABEL=DIR, got %r" % item)
         label, directory = item.split("=", 1)
         with open(os.path.join(directory, "capture.json"), encoding="utf-8") as file:
             captures.append((label, json.load(file), directory))

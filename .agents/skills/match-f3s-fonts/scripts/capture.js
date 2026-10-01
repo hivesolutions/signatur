@@ -67,7 +67,8 @@ const serialize = function(font, lines) {
 
 const guard = async function(route) {
     const request = route.request();
-    if (request.method() === "GET" || request.url().startsWith(baseUrl)) {
+    const origin = new URL(request.url()).origin;
+    if (request.method() === "GET" || origin === new URL(baseUrl).origin) {
         return route.continue();
     }
     if (/\/nodes\/[^/]+\/print$/.test(request.url())) {
@@ -110,16 +111,19 @@ const openCase = async function(page, item) {
     await page.waitForTimeout(700);
 
     // types the lines that cannot travel in the URL (the "|" emoji is
-    // the separator of the serialized text) through the emoji keyboard
-    for (const line of item.typed || []) {
-        await page.click(".emojis-container.selected .char[data-value='\u21b5']");
+    // the separator of the serialized text) through the emoji keyboard,
+    // each on a new line unless it is the first line of the text
+    for (const [index, line] of (item.typed || []).entries()) {
+        if (index > 0 || item.lines.length > 0) {
+            await page.click(".emojis-container.selected .char[data-value='\u21b5']");
+        }
         for (const char of line) {
             if (char === " ") {
                 await page.click(".emojis-container.selected .char[data-value='\u23b5']");
                 continue;
             }
             const key =
-                `.emojis-container.selected .char[data-value='${char.replace("'", "\\'")}']`;
+                `.emojis-container.selected .char[data-value='${char.replace(/['\\]/g, "\\$&")}']`;
             const category = await page.getAttribute(key, "data-category");
             await page.click(
                 `.emojis-container.selected .emojis-tab[data-category='${category}']`
@@ -253,12 +257,16 @@ const submit = async function(page, prefix) {
     const index = fs.existsSync(indexPath)
         ? JSON.parse(fs.readFileSync(indexPath, "utf-8"))
         : { cases: {} };
+
+    // keeps the fonts of an earlier run in the same directory, as its
+    // cases stay in the index and are measured against them too
     index.meta = {
         label: label,
         base_url: baseUrl,
         root: root,
         date: new Date().toISOString(),
-        device_scale_factor: 2
+        device_scale_factor: 2,
+        fonts: Object.assign({}, index.meta && index.meta.fonts)
     };
     for (const item of cases) {
         const prefix = path.join(outDir, item.name);
@@ -293,7 +301,7 @@ const submit = async function(page, prefix) {
             console.log("  submitted dry run job %s", sent.job.id);
         }
         index.cases[item.name] = entry;
-        index.meta.fonts = Object.assign(index.meta.fonts || {}, fonts);
+        Object.assign(index.meta.fonts, fonts);
         fs.writeFileSync(indexPath, JSON.stringify(index, null, 4));
     }
     await browser.close();

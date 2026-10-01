@@ -60,7 +60,7 @@ def key():
 
 def request(path, data=None, timeout=60):
     request = urllib.request.Request(
-        PRINT_URL + path, data=data, headers={"X-Secret-Key": key()}
+        "%s%s" % (PRINT_URL, path), data=data, headers={"X-Secret-Key": key()}
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return response.read()
@@ -175,15 +175,16 @@ def collect(jobs, out_dir):
 
     results = dict()
     for index, (name, job_id) in enumerate(jobs):
-        job = wait(job_id)
-        status = job.get("status")
-
         # removes the files of a previous job of the case (a retry), so
-        # a job that does not finish leaves no screenshot to be measured
+        # a job that does not finish (or is not waited for) leaves no
+        # screenshot to be measured
         for target in ("composition.png", "engraving.png", "result.json"):
             path = os.path.join(out_dir, "%s-%s" % (name, target))
             if os.path.exists(path):
                 os.remove(path)
+
+        job = wait(job_id)
+        status = job.get("status")
         files = download(job_id, out_dir, name) if status == "finished" else []
         results[name] = dict(
             job_id=job_id,
