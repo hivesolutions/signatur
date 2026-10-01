@@ -60,12 +60,12 @@ def main():
         font=header_font,
         fill="#000000",
     )
-    draw.text((MARGIN, 70), "Font: " + font_name, font=header_font, fill="#666666")
+    draw.text((MARGIN, 70), "Font: %s" % font_name, font=header_font, fill="#666666")
     draw.text(
-        (MARGIN, 125), "Glyphs: " + str(len(chars)), font=header_font, fill="#666666"
+        (MARGIN, 125), "Glyphs: %d" % len(chars), font=header_font, fill="#666666"
     )
     draw.text(
-        (MARGIN, 180), "Rendered: " + render_date, font=header_font, fill="#666666"
+        (MARGIN, 180), "Rendered: %s" % render_date, font=header_font, fill="#666666"
     )
 
     for i, ch in enumerate(chars):
@@ -98,15 +98,15 @@ def main():
             pass
 
         f3s = mapping.get(ch, "?")
-        char_label = "Key: " + repr(ch)
+        char_label = "Key: %r" % ch
         draw.text(
             (x0 + 8, y0 + CELL_H - 50), char_label, font=title_font, fill="#888888"
         )
         draw.text((x0 + 8, y0 + CELL_H - 30), f3s, font=label_font, fill="#cc3333")
 
     img.save(OUTPUT_PATH)
-    print("Saved validation image: " + OUTPUT_PATH)
-    print("Size: {}x{}, {} glyphs".format(img_w, img_h, len(chars)))
+    print("Saved validation image: %s" % OUTPUT_PATH)
+    print("Size: %dx%d, %d glyphs" % (img_w, img_h, len(chars)))
 
 
 if __name__ == "__main__":

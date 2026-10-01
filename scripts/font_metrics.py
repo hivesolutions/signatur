@@ -127,7 +127,7 @@ def render_metrics(font_path, text, font_size, output_path):
             )
 
         # per-glyph label with metrics
-        label = "{} aw={} lsb={}".format(g["char"], g["aw"], g["lsb"])
+        label = "%s aw=%d lsb=%d" % (g["char"], g["aw"], g["lsb"])
         draw.text(
             (cursor_x + 2, baseline_y + LABEL_OFFSET),
             label,
@@ -152,8 +152,8 @@ def render_metrics(font_path, text, font_size, output_path):
     draw.text((485, ly - 2), "Overshoot", fill="#333")
 
     img.save(output_path)
-    print("Saved metrics image: " + output_path)
-    print("Size: {}x{}, {} glyphs".format(img_w, img_h, len(glyphs)))
+    print("Saved metrics image: %s" % output_path)
+    print("Size: %dx%d, %d glyphs" % (img_w, img_h, len(glyphs)))
 
 
 def main():
