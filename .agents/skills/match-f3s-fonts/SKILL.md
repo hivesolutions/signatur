@@ -31,11 +31,13 @@ The matching is proven only by comparing **the visible Signatur viewport** with 
 3. **Set up** Colony Print access and the local Signatur servers (see Setup).
 4. **Pre-flight** the current TTF with `make_f3s_ttf.py check` to see the spacing, size and coverage gaps.
 5. **Tune** into a scratch directory: `make_f3s_ttf.py text` for a text font (or `emoji` for Cool Emojis glyphs), then `check` the output (it must PASS).
-6. **Serve** the candidate: copy the repo to a scratch root with the candidate fonts and run it on a second port next to the shipped one.
+6. **Serve** the candidate: copy the repo to a scratch root with the candidate fonts and run it on a second port next to the shipped one (and a copy of the released version, from `git archive`, when a before and after is wanted).
 7. **Write cases** with `cases.py generate` (or by hand, see Cases), validate them with `cases.py check`, then run `capture.js --submit` against one server (dry run jobs) plus `capture.js` without `--submit` against the others.
-8. **Fetch** the Gravostyle screenshots with `gravo_job.py fetch` (the node reports the whole batch at the end, about 45 s per job).
-9. **Measure and report** with `measure.py`, passing every viewport run and the check JSONs. Open `report.html`, review every FAIL against Reading failures, and iterate: retune, capture the viewport again (no `--submit`) and measure against the same screenshots; new dry run jobs are only needed for new cases.
-10. **Report** to the user with the numbers and the report, then, once approved, record the font in `fonts.json` (with any measured correction), write it with `make_f3s_ttf.py build`, wire it (Wiring a new font), update `CHANGELOG.md` and run `selftest.py`, `npm run build`, `npm run lint` and `npm test`.
+8. **Fetch** the Gravostyle screenshots with `gravo_job.py fetch` (the node reports the whole batch at the end, about 45 s per job, so 35 cases take about 30 minutes).
+9. **Measure and report** with `measure.py`, passing every viewport run and the check JSONs. Open `report.html` and review every verdict against Reading failures.
+10. **Retry** every `RETRY` case: put those cases in a file, submit them again with `capture.js retry.json RUN --submit` (their jobs are replaced in the run), `gravo_job.py fetch RUN` and measure again; about one long case in six needs it.
+11. **Iterate** on the fonts: retune, capture the viewport again (no `--submit`) and measure against the same screenshots; new dry run jobs are only needed for new cases.
+12. **Report** to the user with the numbers and the report (publish it when asked), then, once approved, record the font in `fonts.json` (with any measured correction), write it with `make_f3s_ttf.py build`, wire it (Wiring a new font), update `CHANGELOG.md` and run `selftest.py`, `npm run build`, `npm run lint` and `npm test`.
 
 ## Setup
 
@@ -67,6 +69,8 @@ ENGRAVE_NODE=gravo-gold-std ENGRAVE_PRINTER=gravo PORT=3123 HOST=127.0.0.1 node 
 - Viewport query parameters used by `capture.js`: `profile`, `font`, `font_size`, `margins` (l,r,t,b), `text` (`font:char` joined by `|`, `\n` between lines), `caret=0`, `zoom` and `f3s` (`1` or `0`, always sent so older Signatur versions, where the fonts were opt-in, behave the same).
 - The F3S fonts are on by default (the F3S fonts option of the viewport, `f3s=0` turns them off, store mode forces them on), rendering the families of `F3S_FONTS` in `static/js/main.js` with their `-f3s.ttf` faces.
 - Candidate fonts without touching the repo: `rsync -a --exclude .git --exclude node_modules ./ $SCRATCH/candidate/`, symlink `node_modules`, copy the candidate TTFs into its `static/fonts/` and run it on port 3124; pass `--root $SCRATCH/candidate` to `capture.js` so `measure.py` reads the right TTFs.
+- A released version for the before side: `git archive master | tar -x -C $SCRATCH/master`, symlink `node_modules`, copy `config/users.json`, run it on another port and capture it with `--root $SCRATCH/master`.
+- A capture keeps pointing at the root that served it: once the fonts of that root change, measure the old capture against a root with the fonts it rendered (edit `meta.root` of its `capture.json`), else `measure.py` stops on the font hash.
 - Playwright: `PLAYWRIGHT_PATH` (the module path, e.g. the mise install) and `CHROMIUM_PATH` (`/usr/bin/chromium`).
 - The Python scripts need `fonttools numpy pillow scipy` and a checkout of gravo-native (F3S parser) and gravo-pilot (bundled F3S fonts) next to this repo, or `GRAVO_NATIVE` and `GRAVO_PILOT`.
 
@@ -125,13 +129,15 @@ All under `scripts/`, run from that directory (Python with the requirements abov
 
 ## Pass criteria
 
-Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <= 0.30, line width error <= 0.35, baseline error <= 0.30, median F3S match >= 0.60, nothing trimmed, no fallback glyph, no line past the margin box. A case whose engraving lost, doubled or swapped a character gets `RETRY` instead: its other lines are measured, the dry run must be submitted again before it counts. The tuned PR #79 fonts reach about 0.01 to 0.09 mm spacing mean (from 0.12 to 4.18 mm before).
+Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <= 0.30, line width error <= 0.35, baseline error <= 0.30, median F3S match >= 0.60, nothing trimmed, no fallback glyph, no line past the margin box. A case whose engraving lost, doubled or swapped a character gets `RETRY` instead: its other lines are measured, the dry run must be submitted again before it counts.
+
+The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared glyph of the six fonts at 5, 2.5 and 8 mm: spacing mean 0.02 to 0.09 mm, spacing max 0.23 mm, line width 0.26 mm, baseline 0.16 mm), the 1.5.0 ones 33 of 35 (the Helvetica 4L `@`), the regular TTFs with the old factors 1 of 75 (0.12 to 4.18 mm spacing mean).
 
 ## Reading failures
 
 | Symptom | Meaning |
 | --- | --- |
-| RETRY, a character dropped, doubled or engraved as another | gravo-pilot typed the text wrong (it pastes every character from the clipboard; 4 of about 800 characters on 2026-10-01): submit the dry run again, never tune a font on such a line |
+| RETRY, a character dropped, doubled or engraved as another | gravo-pilot typed the text wrong: it pastes every character from the clipboard and 6 of about 950 characters were lost or pasted stale on 2026-10-01 (`E` lost, `F` engraved as the `E` before it). Submit the dry run again, never tune a font on such a line |
 | the engraving runs past the margin box | the text is wider than the area at that size (Gravostyle draws past it or resizes it), pick a smaller size |
 | viewport trims the text | the composition does not fit the viewport at that size, pick a smaller size |
 | previewed with a fallback font | the TTF lacks the glyph (Roman 4L and the script TTFs have no `ç`), the browser draws another font |
@@ -155,8 +161,18 @@ Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <
 - Never measure overflowing compositions; Gravostyle resizes them and Signatur trims them.
 - The engraving is not always the text that was sent: check `RETRY` verdicts before reading any number, and look at the engraving image of a line that fails strangely (a lost `E`, an `F` engraved as `E`).
 - Accents of capitals and the markers of the family emojis stand apart from their line; `measure.py` merges them back into the expected number of lines, so a case must list every line it engraves.
+- `measure.py` already copes with what fooled earlier versions: a baseline guessed from the bottom of a crossbar (`T`) or of punctuation (it keeps the baseline under which the whole line matches best), a simple glyph matching inside a complex one (an `I` on the stem of an `H` is not a lost `H`, every typing hypothesis is checked on the next glyph too), text that fills the area up to the margin box (only glyphs past it, or cut by it, make an overflow) and the Gravostyle text cursor drawn after the last glyph.
+- The Engrave button of a long text sits below the window in the confirm modal; `capture.js` dispatches the click to it once Dry run is asserted.
+- The size figures of `make_f3s_ttf.py check` only inform for text fonts (outline thickness around the F3S centre lines, own accent drawings); spacing decides. For emojis they decide too.
+- `cases.py generate` pairs emojis two per line, gives a wide one its own line and leaves the pipe emoji out (it cannot travel in the viewport URL, use a `typed` line).
+- `report.html` with `--embed` is a single file but large (about 1 MB per case); the default writes `img/` (about 6 images and 300 KB per case).
+
+## Maintaining the scripts
+
+- Python in the house style: docstrings with the quotes on their own lines and a blank line after them, `%` formatting, no string concatenation, `== None` and `not x in y`, Black, CRLF line endings; JS (`capture.js`, covered by `npm run lint`) with template literals instead of concatenation.
+- After any change run `selftest.py`, re-measure an existing run and compare its `report.json` with the previous one (verdicts and numbers must only change where the change explains it), and run `npm run lint`.
+- Run Python with `PYTHONDONTWRITEBYTECODE=1` or remove `scripts/__pycache__` (ignored by git) afterwards.
 - The repo keeps CRLF in `.py`, `.js`, CSS and EJS (mixed per file, check first); `npm run lint` is the arbiter, never run standalone prettier on existing files.
-- `report.html` with `--embed` is a single file but large (about 1 MB per case); the default writes `img/`.
 
 ## Reference
 
