@@ -92,6 +92,11 @@ def validate(case, root=None):
 
     for line in case["lines"]:
         for element_font, char in M.elements(line, font):
+            if char == "|":
+                problems.append(
+                    "%s: '|' cannot travel in the viewport URL, put it in typed lines"
+                    % name
+                )
             if char.isspace() and element_font != M.EMOJI_FONT:
                 continue
             if M.resolve(element_font, char, mapping) == None:
@@ -142,9 +147,22 @@ def generate(args):
     area = width - 2 * args.margins
     mapping = M.load_mapping()
     if args.font == M.EMOJI_FONT:
-        chars = args.chars or "".join(sorted(mapping))
-        lines = [chars[index : index + 2] for index in range(0, len(chars), 2)]
-        lines = [[[M.EMOJI_FONT, " ".join(line)]] for line in lines]
+        # leaves out the pipe emoji, the separator of the text serialized
+        # in the viewport URL, which only typed lines can hold
+        chars = (args.chars or "".join(sorted(mapping))).replace("|", "")
+
+        # pairs the emojis two per line, a wide emoji getting its own line
+        # when the pair would not fit the area
+        lines, current = [], ""
+        for char in chars:
+            candidate = "%s %s" % (current, char) if current else char
+            extent = line_extents([[M.EMOJI_FONT, candidate]], args.font, args.size)
+            if current and (len(current) > 1 or extent[1] - extent[0] > area * FILL):
+                lines.append([[M.EMOJI_FONT, current]])
+                candidate = char
+            current = candidate
+        if current:
+            lines.append([[M.EMOJI_FONT, current]])
     else:
         path = M.ttf_for(args.font, f3s=True)
         glyphs = M.load_f3s(args.font)["glyphs"]
