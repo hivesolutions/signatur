@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* The infinity, rings, camera, graduation cap, scales and Aquarius emojis, and the space between emojis, now preview at the size and width they are engraved
 * The allow overflow option is now only shown in the technical viewport mode, and store mode always keeps overflow blocked
 * Increasing the font size no longer deletes characters, it now stops at the largest size where the text still fits - [#74](https://github.com/hivesolutions/signatur/issues/74)
 * The engraving job now sends the font size shown on the preview instead of rounding it down to a whole number, so fractional sizes such as 2.75 on small medals are no longer engraved smaller - [#67](https://github.com/hivesolutions/signatur/issues/67)
