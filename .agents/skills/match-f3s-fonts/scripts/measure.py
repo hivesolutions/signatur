@@ -56,6 +56,10 @@ THRESHOLDS = dict(
 # strokes not being found where expected on the engraving
 GLYPH_MATCH = 0.5
 
+# the match score under which a located glyph is checked against the
+# engraving having lost or doubled a keystroke
+CLEAR_MATCH = 0.9
+
 # the step difference (mm) between consecutive glyphs worth listing
 STEP_NOTE = 0.15
 
@@ -114,11 +118,26 @@ class Screenshot(object):
         mask[max(0, y_a) : y_b + 1, max(0, x_a) : x_b + 1] = True
         return dark & mask
 
-    def bands(self, ink, size, gap_px=2):
+    def columns(self, margins, guard_px=3):
+        """
+        Returns the first and the last pixel columns of the ink mask, the
+        margin box less the guard that keeps its dashed lines out.
+        """
+
+        x_a = int(round(self.to_px(margins[0], 0)[0])) + guard_px
+        x_b = int(round(self.to_px(self.width_mm - margins[1], 0)[0])) - guard_px
+        return x_a, x_b
+
+    def bands(self, ink, size, count=None, gap_px=2):
         """
         Splits the ink in horizontal line bands, folding the bands too
         short to be a line (the marker dots of the family emojis drawn
         above the figure) into the band right below them.
+
+        When the number of lines is given, the bands left beyond it are
+        merged with a neighbour two at a time, the pair spanning the
+        least first, as the accents of the capitals (and the markers)
+        stand apart from their line while two lines always span more.
         """
 
         rows = ink.any(axis=1)
@@ -146,6 +165,13 @@ class Screenshot(object):
                 band = [pending[0], band[1]]
                 pending = None
             folded.append(band)
+        while count and len(folded) > count:
+            spans = [
+                folded[index + 1][1] - folded[index][0]
+                for index in range(len(folded) - 1)
+            ]
+            index = spans.index(min(spans))
+            folded[index : index + 2] = [[folded[index][0], folded[index + 1][1]]]
         return folded
 
 
@@ -235,47 +261,174 @@ def walk(shot, sub, line, font, mapping, size, baseline_px, vertical_px):
     first one being seeded by the left edge of the band ink, returning
     the glyphs (centre in mm, plate coordinates of the main ink centre,
     plus the match score and vertical offset of each).
+
+    A glyph that is not clearly found is tested against the engraving
+    having lost it (the next glyph sits where it was expected) or having
+    the previous glyph twice or in its place (a keystroke lost, doubled
+    or pasted stale while typing the text into Gravostyle), each
+    hypothesis scored over two glyphs
+    against the plain reading so that a simple glyph matching inside a
+    complex one (an I on the stem of an H) is not taken for a lost one,
+    the glyph being flagged as dropped, replaced or following an extra
+    copy.
     """
 
-    columns = numpy.nonzero(sub.any(axis=0))[0]
-    ink_left_px, pending, previous, located = None, 0.0, None, False
-    result = []
+    elements = []
     for element_font, char in M.elements(line, font):
         glyph = M.resolve(element_font, char, mapping)
-        if glyph == None:
-            result.append(dict(char=char, centre=None, missing=True))
-            continue
-        unit_mm = size / M.size_units(glyph)
+        unit_mm = None if glyph == None else size / M.size_units(glyph)
+        elements.append((char, glyph, unit_mm))
+
+    def gap(first, second):
+        # the distance (px) from the ink left of an element to the ink
+        # left of another element typed right after it
+        glyph, unit_mm = elements[first][1:]
+        next_glyph, next_unit = elements[second][1:]
+        distance = glyph["metrics"][6] * unit_mm - next_glyph["metrics"][2] * next_unit
+        return distance * shot.px_mm_x
+
+    def drawn(index):
+        return (
+            index < len(elements)
+            and elements[index][1] != None
+            and not elements[index][0].isspace()
+        )
+
+    def locate(index, ink_left_px=None, stroke_left_px=None):
+        # matches the template of the element around its expected ink
+        # left (or the stroke left given), None for blank elements; the
+        # template left edge is the stroke left, which sits that many px
+        # right of the ink left (-m[2] from the pen) of the glyph
+        char, glyph, unit_mm = elements[index]
         unit_px = unit_mm * shot.px_mm_x
-        if previous != None:
-            previous_glyph, previous_unit = previous
-            pending += (
-                previous_glyph["metrics"][6] * previous_unit
-                - glyph["metrics"][2] * unit_mm
-            ) * shot.px_mm_x
-        previous = (glyph, unit_mm)
         template = None if char.isspace() else glyph_template(glyph, unit_px)
         if template == None:
-            result.append(dict(char=char, centre=None))
-            continue
-
-        # the template left edge is the stroke left, which sits that many
-        # units right of the ink left (-m[2] from the pen) of the glyph
+            return None
         offset_px = (template[3] + glyph["metrics"][2]) * unit_px
-        guess = ink_left_px + pending + offset_px if located else columns.min() + 0.5
-        search_px = int(max(4, round(0.1 * size * shot.px_mm_x)))
+        if stroke_left_px == None:
+            stroke_left_px = ink_left_px + offset_px
         found = match(
-            sub, template, baseline_px, guess, search_px, vertical_px=vertical_px
+            sub,
+            template,
+            baseline_px,
+            stroke_left_px,
+            search_px,
+            vertical_px=vertical_px,
         )
-        if found == None:
-            result.append(dict(char=char, centre=None))
-            continue
-        x_px, hit, dy = found
+        return None if found == None else (found, template, offset_px)
+
+    def score(located):
+        return 0.0 if located == None else located[0][1]
+
+    def follow(index, located, next_index):
+        # matches the element typed right after a located element
+        ink_left_px = located[0][0] - located[2]
+        return locate(next_index, ink_left_px=ink_left_px + gap(index, next_index))
+
+    def clearer(first, second, plain):
+        # if a two glyph hypothesis clearly explains the engraving better
+        # than the plain reading of the same two glyphs
+        return (
+            score(first) >= CLEAR_MATCH
+            and score(second) >= CLEAR_MATCH
+            and score(first) + score(second) > plain + 0.2
+        )
+
+    def record(index, located, **flags):
+        char, glyph, unit_mm = elements[index]
+        (x_px, hit, dy), template, offset_px = located
         stroke_left = shot.to_mm(x_px, 0)[0]
         box = M.main_ink(glyph)
         centre = stroke_left + ((box[0] + box[2]) / 2.0 - template[3]) * unit_mm
-        result.append(dict(char=char, centre=centre, hit=float(hit), dy=dy))
-        ink_left_px, pending, located = x_px - offset_px, 0.0, True
+        ink = (
+            stroke_left + (box[0] - template[3]) * unit_mm,
+            stroke_left + (box[2] - template[3]) * unit_mm,
+        )
+        result.append(
+            dict(char=char, centre=centre, ink=ink, hit=float(hit), dy=dy, **flags)
+        )
+        return x_px - offset_px
+
+    columns = numpy.nonzero(sub.any(axis=0))[0]
+    search_px = int(max(4, round(0.1 * size * shot.px_mm_x)))
+    ink_left_px, pending, previous, last = None, 0.0, None, None
+    result = []
+    index = 0
+    while index < len(elements):
+        char, glyph, _unit_mm = elements[index]
+        if glyph == None:
+            result.append(dict(char=char, centre=None, missing=True))
+            index += 1
+            continue
+        if previous != None:
+            pending += gap(previous, index)
+        if last == None:
+            located = locate(index, stroke_left_px=columns.min() + 0.5)
+        else:
+            located = locate(index, ink_left_px=ink_left_px + pending)
+        if located == None:
+            result.append(dict(char=char, centre=None))
+            previous, index = index, index + 1
+            continue
+
+        flags = dict()
+        if last != None and score(located) < CLEAR_MATCH and drawn(index + 1):
+            plain = score(located) + score(follow(index, located, index + 1))
+
+            # the engraving lost this glyph: the next one sits where this
+            # one was expected, as if this glyph had not been typed
+            if drawn(index + 2):
+                skipped = pending - gap(previous, index) + gap(previous, index + 1)
+                alternative = locate(index + 1, ink_left_px=ink_left_px + skipped)
+                after = (
+                    None
+                    if alternative == None
+                    else follow(index + 1, alternative, index + 2)
+                )
+                if clearer(alternative, after, plain):
+                    result.append(dict(char=char, centre=None, dropped=True))
+                    ink_left_px = record(index + 1, alternative)
+                    pending, previous, last = 0.0, index + 1, index + 1
+                    index += 2
+                    continue
+
+            # the engraving has the previous glyph twice: this glyph sits
+            # one more advance of the previous glyph further
+            if previous == last:
+                extra = ink_left_px + pending + gap(previous, previous)
+                alternative = locate(index, ink_left_px=extra)
+                after = (
+                    None
+                    if alternative == None
+                    else follow(index, alternative, index + 1)
+                )
+                if clearer(alternative, after, plain):
+                    located, flags = alternative, dict(extra=elements[previous][0])
+
+            # the engraving has the previous glyph again in place of this
+            # one (a stale paste), drawn from the pen of this glyph with
+            # the next glyph following it
+            if previous == last and not flags:
+                pen_px = pending - gap(previous, index)
+                alternative = locate(
+                    previous, ink_left_px=ink_left_px + pen_px + gap(previous, previous)
+                )
+                after = (
+                    None
+                    if alternative == None
+                    else follow(previous, alternative, index + 1)
+                )
+                if clearer(alternative, after, plain):
+                    replaced = elements[previous][0]
+                    result.append(dict(char=char, centre=None, replaced=replaced))
+                    ink_left_px = alternative[0][0] - alternative[2]
+                    pending, last = 0.0, previous
+                    index += 1
+                    continue
+
+        ink_left_px = record(index, located, **flags)
+        pending, previous, last = 0.0, index, index
+        index += 1
     return result
 
 
@@ -285,14 +438,21 @@ def gravostyle_lines(shot, payload, lines, font, mapping):
     line the glyphs and the baseline (mm, plate coordinates).
 
     The baseline is first estimated as the most common bottom row of the
-    ink columns (where most text glyphs sit) and then refined by a wide
-    vertical template search, as the bottoms of emojis and script glyphs
-    are rarely flat, before the glyphs are located again around it.
+    ink columns (where most text glyphs sit) and then refined by vertical
+    template searches, as the bottoms of emojis, script glyphs, crossbars
+    and punctuation are often off the baseline, the glyphs being located
+    again around each candidate (the refined estimates and the other
+    common bottom rows) and the best matching line kept.
+
+    A line whose glyphs run past the margin box (or reach it cut) is
+    flagged as overflowing, as Gravostyle draws (or resizes) such text
+    past the engraving area.
     """
 
     size = payload["font_size"]
     ink = shot.ink(payload["margins"])
-    bands = shot.bands(ink, size)
+    bands = shot.bands(ink, size, count=len(lines))
+    limits = shot.columns(payload["margins"])
     out = []
     for band, line in zip(bands, lines):
         margin = int(0.6 * size * shot.px_mm_x)
@@ -307,16 +467,49 @@ def gravostyle_lines(shot, payload, lines, font, mapping):
         values, counts = numpy.unique(bottoms, return_counts=True)
         baseline_px = values[counts.argmax()] + 0.5
 
-        wide = int(max(3, round(0.3 * size * shot.px_mm_y)))
-        first = walk(shot, sub, line, font, mapping, size, baseline_px, wide)
-        offsets = [
-            glyph["dy"] for glyph in first if glyph.get("hit", 0.0) >= GLYPH_MATCH
-        ]
-        if offsets:
-            baseline_px += float(numpy.median(offsets))
-        result = walk(shot, sub, line, font, mapping, size, baseline_px, 3)
+        # refines the estimate by a vertical template search of half and
+        # of the whole band, then keeps the baseline (one of the refined
+        # estimates or of the most common bottom rows) under which the
+        # line matches best
+        candidates = []
+        for reach in (0.3, 0.6):
+            wide = int(max(3, round(reach * size * shot.px_mm_y)))
+            first = walk(shot, sub, line, font, mapping, size, baseline_px, wide)
+            offsets = [
+                glyph["dy"] for glyph in first if glyph.get("hit", 0.0) >= GLYPH_MATCH
+            ]
+            if offsets:
+                candidates.append(baseline_px + float(numpy.median(offsets)))
+        for value in values[numpy.argsort(counts)[::-1][:4]]:
+            candidates.append(value + 0.5)
+        best = None
+        for candidate in candidates:
+            result = walk(shot, sub, line, font, mapping, size, candidate, 3)
+            total = sum(glyph.get("hit", 0.0) for glyph in result)
+            if best == None or total > best[0]:
+                best = (total, candidate, result)
+        _total, baseline_px, result = best
+
+        # the line overflows when the ink of its glyphs runs past the
+        # margin box, or reaches it with a glyph that cannot be matched
+        # there (cut by the margin box)
+        found = [glyph for glyph in result if glyph.get("hit", 0.0) >= GLYPH_MATCH]
+        drawn = [glyph for glyph in result if "hit" in glyph]
+        overflow = any(
+            glyph["ink"][0] < payload["margins"][0] - 0.1
+            or glyph["ink"][1] > payload["width"] - payload["margins"][1] + 0.1
+            for glyph in found
+        )
+        if drawn and columns.min() <= limits[0] and drawn[0]["hit"] < GLYPH_MATCH:
+            overflow = True
+        if drawn and columns.max() >= limits[1] and drawn[-1]["hit"] < GLYPH_MATCH:
+            overflow = True
         out.append(
-            dict(glyphs=result, baseline=shot.to_mm(0, top_row + baseline_px)[1])
+            dict(
+                glyphs=result,
+                baseline=shot.to_mm(0, top_row + baseline_px)[1],
+                overflow=bool(overflow),
+            )
         )
     return out, bands
 
@@ -402,7 +595,31 @@ def compare(gravo, view, expected):
     if shown < expected:
         return dict(trimmed=True, shown=shown, expected=expected)
     absolute, spacing, widths, baselines, worst, steps = [], [], [], [], [], []
+    typing, overflow = [], []
     for index, (line_g, line_v) in enumerate(zip(gravo, view)):
+        # leaves out the lines that run past the margin box, whose ink is
+        # cut (and that Gravostyle may resize)
+        if line_g.get("overflow"):
+            overflow.append(index + 1)
+            continue
+
+        # leaves out the lines whose engraving lost or doubled a glyph, as
+        # their text is not the one the viewport shows
+        anomalies = []
+        for g in line_g["glyphs"]:
+            if g.get("dropped"):
+                anomalies.append("%r dropped on line %d" % (g["char"], index + 1))
+            if g.get("extra"):
+                anomalies.append("%r doubled on line %d" % (g["extra"], index + 1))
+            if g.get("replaced"):
+                anomalies.append(
+                    "%r engraved as %r on line %d"
+                    % (g["char"], g["replaced"], index + 1)
+                )
+        hits = [g["hit"] for g in line_g["glyphs"] if g.get("hit") != None]
+        if anomalies and numpy.median(hits) >= CLEAR_MATCH:
+            typing.extend(anomalies)
+            continue
         pairs = [
             (g, v)
             for g, v in zip(line_g["glyphs"], line_v["glyphs"])
@@ -460,7 +677,14 @@ def compare(gravo, view, expected):
         if g.get("hit") != None and g["hit"] < GLYPH_MATCH
     ]
     if not spacing:
-        return dict(trimmed=False, empty=True, shown=shown, expected=expected)
+        return dict(
+            trimmed=False,
+            empty=True,
+            shown=shown,
+            expected=expected,
+            typing=typing,
+            overflow=overflow,
+        )
     worst.sort(reverse=True)
     return dict(
         trimmed=False,
@@ -482,6 +706,8 @@ def compare(gravo, view, expected):
         missing_in_ttf=missing,
         missing_in_f3s=missing_f3s,
         unmatched=unmatched,
+        typing=typing,
+        overflow=overflow,
         steps_off=sorted(
             (step for step in steps if abs(step["difference"]) > STEP_NOTE),
             key=lambda step: -abs(step["difference"]),
@@ -498,6 +724,22 @@ def verdict(result, thresholds):
         return "FAIL", [
             "the viewport trims the text (%s of %s glyphs shown)"
             % (result["shown"], result["expected"])
+        ]
+    # a dry run whose engraving lost or doubled a glyph shows another
+    # text than the case, so it says nothing about the fonts and must be
+    # submitted again
+    overflow = result.get("overflow") or []
+    if overflow:
+        return "FAIL", [
+            "the engraving runs past the margin box on line %s (Gravostyle may also "
+            "resize it), lines left out, use a smaller size"
+            % "/".join(str(line) for line in overflow)
+        ]
+    typing = result.get("typing") or []
+    if typing:
+        return "RETRY", [
+            "the engraving differs from the case (%s), lines left out, submit "
+            "the dry run again" % ", ".join(typing)
         ]
     if result.get("empty"):
         return "FAIL", ["no glyph could be paired"]

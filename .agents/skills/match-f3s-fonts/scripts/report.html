@@ -14,6 +14,8 @@
         --pass-ground: #dff3e6;
         --fail-ink: #8c1d1d;
         --fail-ground: #fbe1e1;
+        --retry-ink: #7a5300;
+        --retry-ground: #fbefd5;
         --red: #e22e2e;
         --blue: #2860e2;
         --purple: #481660;
@@ -32,6 +34,8 @@
             --pass-ground: #143524;
             --fail-ink: #f4a3a3;
             --fail-ground: #3d1b1b;
+            --retry-ink: #f0c873;
+            --retry-ground: #3a2e14;
             --red: #ff6b6b;
             --blue: #7aa2ff;
             --purple: #c7a3e8;
@@ -49,6 +53,8 @@
         --pass-ground: #143524;
         --fail-ink: #f4a3a3;
         --fail-ground: #3d1b1b;
+        --retry-ink: #f0c873;
+        --retry-ground: #3a2e14;
         --red: #ff6b6b;
         --blue: #7aa2ff;
         --purple: #c7a3e8;
@@ -193,6 +199,10 @@
     .badge.fail {
         color: var(--fail-ink);
         background: var(--fail-ground);
+    }
+    .badge.retry {
+        color: var(--retry-ink);
+        background: var(--retry-ground);
     }
     .cases {
         display: grid;
