@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Agent skill to tune the preview fonts and prove they match the engraving
 
 ### Changed
 

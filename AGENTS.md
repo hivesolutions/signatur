@@ -1,5 +1,9 @@
 # AGENTS.md file
 
+## Skills
+
+Project-specific skills are available in `.agents/skills/` read `.agents/skills/README.md` for details.
+
 ## Building
 
 Always rebuild bundles before committing to ensure `bundle.js` and `bundle.css` are up to date, using:

@@ -1,0 +1,43 @@
+[
+    {
+        "stem": "helvetica1l",
+        "f3s": "Helvetica 1L",
+        "f3s_sha256": "7c03225ab8cab99599afd1b7e1c3502387c65627ffd83cab054c614b5efe3763",
+        "adjust": {}
+    },
+    {
+        "stem": "helvetica4l",
+        "f3s": "Helvetica 4L",
+        "f3s_sha256": "7ed5944a3cb604bf5cfda54d9c7092725af58736fe1f9b03ceb273a6b7901942",
+        "adjust": {
+            "@": {
+                "left": -43,
+                "right": -18
+            }
+        }
+    },
+    {
+        "stem": "roman4l",
+        "f3s": "Roman 4L",
+        "f3s_sha256": "350e99e81993770960a282cc53f290ca79a12bdc8ad2ccae6a86450a8e955535",
+        "adjust": {}
+    },
+    {
+        "stem": "script4121l",
+        "f3s": "Script 412 1L",
+        "f3s_sha256": "6cd195ef205959a61f6ba3a1fadb4f064ecda0a712609ec8326536a3110c65a3",
+        "adjust": {}
+    },
+    {
+        "stem": "script4l",
+        "f3s": "Script 4L",
+        "f3s_sha256": "24b20abeca7838d1049f22fd8afe8628d070fead1fa6f507cd05a45d68b43126",
+        "adjust": {}
+    },
+    {
+        "stem": "scriptround1l",
+        "f3s": "Script Round 1L",
+        "f3s_sha256": "8131d8f5907f4877380b22c01c3a8659c94e9eeee3fa4ef3b6a91c4b3c8428fd",
+        "adjust": {}
+    }
+]
