@@ -90,9 +90,10 @@ def validate(case, root=None):
     name, font, size = case["name"], case["font"], case["font_size"]
     mapping = M.load_mapping()
 
-    for line in case["lines"]:
+    lines = M.case_lines(case)
+    for index, line in enumerate(lines):
         for element_font, char in M.elements(line, font):
-            if char == "|":
+            if char == "|" and index < len(case["lines"]):
                 problems.append(
                     "%s: '|' cannot travel in the viewport URL, put it in typed lines"
                     % name
@@ -111,7 +112,7 @@ def validate(case, root=None):
     left, right, top, bottom = case["margins"]
     area_width = case["width"] - left - right
     area_height = case["height"] - top - bottom
-    extents = [line_extents(line, font, size, mapping) for line in case["lines"]]
+    extents = [line_extents(line, font, size, mapping) for line in lines]
     for index, extent in enumerate(extents):
         if extent and extent[1] - extent[0] > area_width - 2 * SAFETY:
             problems.append(
@@ -119,7 +120,7 @@ def validate(case, root=None):
                 % (name, index + 1, extent[1] - extent[0], area_width)
             )
     pitch = M.LINE_PITCH * size
-    span = (len(case["lines"]) - 1) * pitch + size
+    span = (len(lines) - 1) * pitch + size
     cap_top = (area_height - span) / 2.0
     ink_top = cap_top - max(0.0, (extents[0] or (0, 0, size, 0))[2] - size)
     ink_bottom = cap_top + span + (extents[-1] or (0, 0, 0, 0))[3]

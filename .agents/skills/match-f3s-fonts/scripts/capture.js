@@ -275,9 +275,10 @@ const submit = async function(page, prefix) {
         if (submitJobs && item.submit !== false) {
             // refuses to engrave a composition other than the case, the
             // font size being changed by Signatur or the text trimmed
-            const expected = item.lines
-                .map(line => segments(line, item.font).map(([, text]) => text).join(""))
-                .join("").length;
+            const expected =
+                item.lines
+                    .map(line => segments(line, item.font).map(([, text]) => text).join(""))
+                    .join("").length + (item.typed || []).join("").length;
             const shown = data.spans.filter(
                 span => span.char !== "\n" && span.display !== "none"
             ).length;

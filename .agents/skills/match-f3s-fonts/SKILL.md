@@ -104,7 +104,7 @@ Cases are a JSON list shared by every script ([examples.md](examples.md) has rea
 ## Determinism
 
 - `fonts.json` lists every generated font: the regular TTF stem, the F3S font, the SHA-256 of the F3S file and the measured corrections. `make_f3s_ttf.py build` regenerates all the `-f3s.ttf` fonts from it byte for byte (the head timestamp of the regular TTF is kept) and refuses an F3S file whose hash changed, as the corrections were measured with the old one; `build --verify` proves the committed fonts are its output.
-- `capture.js` records the SHA-256 of every TTF the page loads and `measure.py` refuses to measure a TTF that is not the one the browser rendered (a stale server or the wrong `--root`).
+- `capture.js` records the SHA-256 of every TTF the page loads and `measure.py` refuses to measure a TTF that is not one the browser rendered (a stale server, the wrong `--root` or a font the page never loaded).
 - `cases.py generate` packs the glyphs shared by the TTF and the F3S in code point order, so the same font always gives the same cases, and `cases.py check` predicts every overflow and fallback glyph before a job is sent (it flags exactly the 14 failing cases of the PR #79 evidence).
 - The measurement floor: on a 70 mm plate one screenshot pixel is about 0.08 mm and the same pair measured twice differs by about 0.06 mm (median), so differences below 0.1 mm are noise; text that fills the area gives the best relative precision.
 

@@ -85,13 +85,13 @@ def build_payload(case):
     """
     Builds the gravo payload Signatur sends for a case (see the confirm
     modal in `static/js/plugins/modal.js`): the text as [font, text]
-    segments split by [None, "\n"], the Cool Emojis characters rewritten
+    segments split by [None, "\\n"], the Cool Emojis characters rewritten
     to their per glyph engraving fonts and their spaces to Helvetica 4L.
     """
 
     mapping = M.load_mapping()
     text = []
-    for index, line in enumerate(case["lines"]):
+    for index, line in enumerate(M.case_lines(case)):
         if index > 0:
             text.append([None, "\n"])
         for font, chars in M.segments(line, case["font"]):
@@ -177,6 +177,13 @@ def collect(jobs, out_dir):
     for index, (name, job_id) in enumerate(jobs):
         job = wait(job_id)
         status = job.get("status")
+
+        # removes the files of a previous job of the case (a retry), so
+        # a job that does not finish leaves no screenshot to be measured
+        for target in ("composition.png", "engraving.png", "result.json"):
+            path = os.path.join(out_dir, "%s-%s" % (name, target))
+            if os.path.exists(path):
+                os.remove(path)
         files = download(job_id, out_dir, name) if status == "finished" else []
         results[name] = dict(
             job_id=job_id,

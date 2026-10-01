@@ -31,10 +31,14 @@ The full check of the rebuilt fonts: 35 generated cases (`cov` at 5 mm, `small` 
 
 ```bash
 for font in "Helvetica 1L" "Helvetica 4L" "Roman 4L" "Script 412 1L" "Script 4L" "Script Round 1L"; do
-    $PY cases.py generate --font "$font" --size 5 --lines 3 --prefix cov > cov.json
-    $PY cases.py generate --font "$font" --size 2.5 --lines 5 --prefix small > small.json
-    $PY cases.py generate --font "$font" --size 8 --lines 2 --chars "ABCDEFGHIJKLMNOPQRSTUVWXYZ" --prefix limit > limit.json
-done    # merged into all.json, keeping the first small and limit case of each font
+    stem=$(echo "$font" | tr -d " " | tr "A-Z" "a-z")
+    $PY cases.py generate --font "$font" --size 5 --lines 3 --prefix cov > cov-$stem.json
+    $PY cases.py generate --font "$font" --size 2.5 --lines 5 --prefix small > small-$stem.json
+    $PY cases.py generate --font "$font" --size 8 --lines 2 --chars "ABCDEFGHIJKLMNOPQRSTUVWXYZ" \
+        --prefix limit > limit-$stem.json
+done
+# every coverage case plus the first small and limit case of each font
+$PY -c 'import glob, json; print(json.dumps(sum((json.load(open(path)) for path in sorted(glob.glob("cov-*.json"))), []) + [json.load(open(path))[0] for path in sorted(glob.glob("small-*.json") + glob.glob("limit-*.json"))], indent=4, ensure_ascii=False))' > all.json
 $PY cases.py check all.json                                   # 35 cases, 0 problems
 node capture.js all.json $SCRATCH/run-branch --label branch --submit
 node capture.js all.json $SCRATCH/run-master --base http://127.0.0.1:3124 --label master --root $SCRATCH/master

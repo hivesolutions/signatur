@@ -573,15 +573,17 @@ def viewport_lines(entry, width_mm, font, f3s, root):
 def verify_fonts(paths, served):
     """
     Checks that every TTF about to be measured is the file the browser
-    loaded (by SHA-256), raising otherwise (a stale server or the wrong
-    `--root`), and returns the font entries of the report.
+    loaded (by SHA-256), raising otherwise (a stale server, the wrong
+    `--root` or a font the viewport never loaded), and returns the font
+    entries of the report; captures that recorded no font at all (made
+    before the hashes were recorded) are measured as not verified.
     """
 
     entries = []
     for path in paths:
         sha256 = M.file_sha256(path)
         loaded = served.get("/static/fonts/%s" % os.path.basename(path))
-        if loaded and loaded != sha256:
+        if served and loaded != sha256:
             raise RuntimeError(
                 "%s is not the font the viewport loaded (sha256 %s, served %s)"
                 % (path, sha256, loaded)
@@ -873,8 +875,9 @@ def measure_case(name, captures, gravo_dir, thresholds, scale_px, images):
     composition = os.path.join(gravo_dir, "%s-composition.png" % name)
     shot = Screenshot(composition, payload["width"], payload["height"])
     mapping = M.load_mapping()
-    gravo, bands = gravostyle_lines(shot, payload, case["lines"], case["font"], mapping)
-    expected = sum(len(M.elements(line, case["font"])) for line in case["lines"])
+    lines = M.case_lines(case)
+    gravo, bands = gravostyle_lines(shot, payload, lines, case["font"], mapping)
+    expected = sum(len(M.elements(line, case["font"])) for line in lines)
     crop, box = plate_crop(shot, scale_px)
     jobs = dict()
     if os.path.exists(os.path.join(gravo_dir, "jobs.json")):
@@ -889,7 +892,7 @@ def measure_case(name, captures, gravo_dir, thresholds, scale_px, images):
         job=(first.get("job") or dict()).get("id")
         or jobs.get(name, dict()).get("job_id"),
         lines_found=len(bands),
-        lines_expected=len(case["lines"]),
+        lines_expected=len(lines),
         images=dict(
             gravostyle=images.add(crop, "%s-gravostyle" % name),
             composition=images.add(shot.image, "%s-composition" % name),
@@ -941,13 +944,13 @@ def measure_case(name, captures, gravo_dir, thresholds, scale_px, images):
                 ),
             )
         )
-    if len(bands) != len(case["lines"]):
+    if len(bands) != len(lines):
         for view in record["views"]:
             view["status"] = "FAIL"
             view["reasons"].insert(
                 0,
                 "found %s text lines on the composition for %s case lines"
-                % (len(bands), len(case["lines"])),
+                % (len(bands), len(lines)),
             )
     return record
 
@@ -1017,7 +1020,7 @@ def render(records, captures, checks, thresholds, title):
         case = record["case"]
         text = " / ".join(
             "".join(text for _font, text in M.segments(line, case["font"]))
-            for line in case["lines"]
+            for line in M.case_lines(case)
         )
         views = []
         for view in record["views"]:
@@ -1068,7 +1071,11 @@ def render(records, captures, checks, thresholds, title):
                 % (
                     html.escape(font["path"]),
                     font["sha"],
-                    " (the file the browser loaded)" if font.get("verified") else "",
+                    (
+                        " (the file the browser loaded)"
+                        if font.get("verified")
+                        else " (not verified, the capture recorded no fonts)"
+                    ),
                 )
                 for font in view["fonts"]
             )

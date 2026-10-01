@@ -263,6 +263,17 @@ def ttf_for(family, f3s=False, root=None):
     return path
 
 
+def case_lines(case):
+    """
+    Returns the lines a case engraves, the lines of its text plus its
+    typed lines (Cool Emojis lines typed through the viewport keyboard,
+    as the pipe emoji cannot travel in the viewport URL).
+    """
+
+    typed = [[[EMOJI_FONT, line]] for line in case.get("typed", [])]
+    return case["lines"] + typed
+
+
 def segments(line, font):
     """
     Returns a case line as a list of (font, text) segments, a line being
