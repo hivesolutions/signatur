@@ -451,6 +451,7 @@ class MeasureTest(unittest.TestCase):
             absolute_max=0.08,
             widths=[-0.01, 0.02],
             baselines=[0.02, 0.10],
+            height=0.01,
             match=0.98,
             match_min=0.91,
             worst=[
@@ -748,7 +749,9 @@ class MeasureTest(unittest.TestCase):
         result = measure.walk(shot, ink, "HXOV", FONT, dict(), SIZE, baseline_px, 3)
         self.assertEqual([glyph["char"] for glyph in result], ["H", "X", "O", "V"])
         for glyph, placed in zip(result, layout[0]["glyphs"]):
-            self.assertEqual(sorted(glyph), ["centre", "char", "dy", "hit", "ink"])
+            self.assertEqual(
+                sorted(glyph), ["centre", "char", "dy", "height", "hit", "ink"]
+            )
             self.assertAlmostEqual(glyph["centre"], placed["centre"], delta=0.08)
             self.assertGreaterEqual(glyph["hit"], 0.95)
             self.assertLessEqual(abs(glyph["dy"]), 2)
@@ -758,6 +761,7 @@ class MeasureTest(unittest.TestCase):
             self.assertAlmostEqual(
                 glyph["ink"][1], ink_left + metrics[9] * placed["unit"], delta=0.08
             )
+            self.assertAlmostEqual(glyph["height"], SIZE, delta=1e-9)
 
         # a line of segments reads the font of every segment
         line = [[FONT, "HX"], [FONT, "OV"]]
@@ -951,6 +955,7 @@ class MeasureTest(unittest.TestCase):
         unit = SIZE / 9417.0
         ink = result[0]["glyphs"][0]["ink"]
         self.assertAlmostEqual(ink[1] - ink[0], 5705 * unit, delta=1e-9)
+        self.assertAlmostEqual(result[0]["glyphs"][0]["height"], 8297 * unit)
 
     def test_viewport_lines(self):
         root = self._root()
@@ -996,13 +1001,18 @@ class MeasureTest(unittest.TestCase):
         )
         self.assertEqual(lines[0]["glyphs"][0]["missing"], False)
 
+        # the outline of the H is the cap, as tall as the font size
+        self.assertAlmostEqual(lines[0]["glyphs"][0]["height"], SIZE)
+
         # the no-break space is the space of the font, a glyph without
         # contours, while the TTF lacks the less than sign
         self.assertEqual(
-            lines[0]["glyphs"][1], dict(char="\u00a0", centre=None, missing=False)
+            lines[0]["glyphs"][1],
+            dict(char="\u00a0", centre=None, height=None, missing=False),
         )
         self.assertEqual(
-            lines[0]["glyphs"][2], dict(char="<", centre=None, missing=True)
+            lines[0]["glyphs"][2],
+            dict(char="<", centre=None, height=None, missing=True),
         )
 
         # the span of another family is measured with its own TTF, the
@@ -1105,19 +1115,19 @@ class MeasureTest(unittest.TestCase):
         gravo = [
             dict(
                 glyphs=[
-                    dict(char="H", centre=10.0, hit=1.0),
+                    dict(char="H", centre=10.0, height=5.0, hit=1.0),
                     dict(char=" ", centre=None),
-                    dict(char="X", centre=15.0, hit=0.95),
-                    dict(char="O", centre=20.0, hit=0.97),
+                    dict(char="X", centre=15.0, height=5.0, hit=0.95),
+                    dict(char="O", centre=20.0, height=5.0, hit=0.97),
                 ],
                 baseline=8.0,
                 overflow=False,
             ),
             dict(
                 glyphs=[
-                    dict(char="L", centre=10.0, hit=0.9),
-                    dict(char="V", centre=14.0, hit=0.4),
-                    dict(char="<", centre=18.0, hit=0.92),
+                    dict(char="L", centre=10.0, height=5.0, hit=0.9),
+                    dict(char="V", centre=14.0, height=5.0, hit=0.4),
+                    dict(char="<", centre=18.0, height=4.0, hit=0.92),
                     dict(char="Z", centre=None, missing=True),
                 ],
                 baseline=15.1,
@@ -1127,25 +1137,25 @@ class MeasureTest(unittest.TestCase):
         view = [
             dict(
                 glyphs=[
-                    dict(char="H", centre=10.1, missing=False),
-                    dict(char=" ", centre=None, missing=False),
-                    dict(char="X", centre=15.4, missing=False),
-                    dict(char="O", centre=20.2, missing=False),
+                    dict(char="H", centre=10.1, height=5.2, missing=False),
+                    dict(char=" ", centre=None, height=None, missing=False),
+                    dict(char="X", centre=15.4, height=5.5, missing=False),
+                    dict(char="O", centre=20.2, height=4.9, missing=False),
                 ],
                 baseline=8.05,
             ),
             dict(
                 glyphs=[
-                    dict(char="L", centre=10.2, missing=False),
-                    dict(char="V", centre=14.2, missing=False),
-                    dict(char="<", centre=None, missing=True),
-                    dict(char="Z", centre=22.0, missing=False),
+                    dict(char="L", centre=10.2, height=5.1, missing=False),
+                    dict(char="V", centre=14.2, height=5.0, missing=False),
+                    dict(char="<", centre=None, height=None, missing=True),
+                    dict(char="Z", centre=22.0, height=5.0, missing=False),
                 ],
                 baseline=15.0,
             ),
         ]
 
-        result = measure.compare(gravo, view, 8)
+        result = measure.compare(gravo, view, 8, 5)
         self.assertEqual(result["trimmed"], False)
         self.assertEqual((result["shown"], result["expected"]), (8, 8))
 
@@ -1162,6 +1172,10 @@ class MeasureTest(unittest.TestCase):
         self.assertEqual(len(result["baselines"]), 2)
         self.assertAlmostEqual(result["baselines"][0], 0.05, delta=1e-9)
         self.assertAlmostEqual(result["baselines"][1], -0.1, delta=1e-9)
+
+        # the median ink height ratio of the paired glyphs (1.04, 1.10,
+        # 0.98 and 1.02)
+        self.assertAlmostEqual(result["height"], 0.03, delta=1e-9)
 
         # the match is over every located glyph, paired or not
         self.assertAlmostEqual(result["match"], 0.935, delta=1e-9)
@@ -1194,10 +1208,10 @@ class MeasureTest(unittest.TestCase):
         gravo = [dict(glyphs=[dict(char="H", centre=10.0, hit=1.0)], baseline=8.0)]
         view = [dict(glyphs=[dict(char="H", centre=10.0)], baseline=8.0)]
 
-        result = measure.compare(gravo, view, 2)
+        result = measure.compare(gravo, view, 2, SIZE)
         self.assertEqual(result, dict(trimmed=True, shown=1, expected=2))
 
-        result = measure.compare(gravo, view, 1)
+        result = measure.compare(gravo, view, 1, SIZE)
         self.assertEqual(result["trimmed"], False)
         self.assertEqual(result["spacing_max"], 0.0)
 
@@ -1215,12 +1229,12 @@ class MeasureTest(unittest.TestCase):
             dict(glyphs=[dict(char="L", centre=1.0)], baseline=15.0),
         ]
 
-        result = measure.compare(gravo, view, 2)
+        result = measure.compare(gravo, view, 2, SIZE)
         self.assertEqual(result["overflow"], [2])
         self.assertEqual(result["glyphs"], 1)
         self.assertEqual(result["baselines"], [0.0])
 
-        result = measure.compare(gravo[1:], view[1:], 1)
+        result = measure.compare(gravo[1:], view[1:], 1, SIZE)
         self.assertEqual(result["empty"], True)
         self.assertEqual(result["overflow"], [1])
 
@@ -1249,7 +1263,7 @@ class MeasureTest(unittest.TestCase):
 
         # the line whose engraving lost, doubled or swapped a glyph is left
         # out of the numbers, the other lines measured
-        result = measure.compare(gravo, view, 6)
+        result = measure.compare(gravo, view, 6, SIZE)
         self.assertEqual(
             result["typing"],
             [
@@ -1262,7 +1276,7 @@ class MeasureTest(unittest.TestCase):
         self.assertEqual(len(result["baselines"]), 1)
 
         # without another line nothing is left to measure
-        result = measure.compare(gravo[:1], view[:1], 5)
+        result = measure.compare(gravo[:1], view[:1], 5, SIZE)
         self.assertEqual(result["empty"], True)
         self.assertEqual(len(result["typing"]), 3)
         self.assertEqual(result["overflow"], [])
@@ -1270,9 +1284,45 @@ class MeasureTest(unittest.TestCase):
         # a line that matches poorly is no evidence of a typing error and
         # is measured as it is
         poor = [dict(glyph, hit=0.6) if "hit" in glyph else glyph for glyph in typed]
-        result = measure.compare([dict(glyphs=poor, baseline=8.0)], view[:1], 5)
+        result = measure.compare([dict(glyphs=poor, baseline=8.0)], view[:1], 5, SIZE)
         self.assertEqual(result["typing"], [])
         self.assertEqual(result["glyphs"], 3)
+
+    def test_compare_height(self):
+        gravo = [
+            dict(
+                glyphs=[
+                    dict(char="H", centre=10.0, height=5.0, hit=1.0),
+                    dict(char="-", centre=12.0, height=0.1, hit=0.9),
+                    dict(char="o", centre=14.0, height=3.6, hit=0.95),
+                    dict(char="X", centre=16.0, height=5.0, hit=0.97),
+                ],
+                baseline=8.0,
+            )
+        ]
+        view = [
+            dict(
+                glyphs=[
+                    dict(char="H", centre=10.0, height=6.5),
+                    dict(char="-", centre=12.0, height=0.6),
+                    dict(char="o", centre=14.0, height=4.68),
+                    dict(char="X", centre=16.0, height=None),
+                ],
+                baseline=8.0,
+            )
+        ]
+
+        # outlines 30% taller than the engraved strokes, with the advances
+        # and the centres right, the dash being too low to tell a size and
+        # the X drawn without contours
+        result = measure.compare(gravo, view, 4, 5)
+        self.assertAlmostEqual(result["height"], 0.3, delta=1e-9)
+        self.assertEqual(result["spacing_max"], 0.0)
+
+        # no glyph is a third of the size tall, so there is no height
+        result = measure.compare(gravo, view, 4, 20)
+        self.assertEqual(result["height"], None)
+        self.assertEqual(result["glyphs"], 4)
 
     def test_compare_empty(self):
         gravo = [dict(glyphs=[dict(char="H", centre=10.0, hit=1.0)], baseline=8.0)]
@@ -1286,7 +1336,7 @@ class MeasureTest(unittest.TestCase):
         ):
             gravo[0]["glyphs"][0]["hit"] = hit
             view = [dict(glyphs=[glyph], baseline=8.0)]
-            result = measure.compare(gravo, view, 1)
+            result = measure.compare(gravo, view, 1, SIZE)
             self.assertEqual(
                 result,
                 dict(
@@ -1309,16 +1359,20 @@ class MeasureTest(unittest.TestCase):
         self.assertEqual(status, "PASS")
         self.assertEqual(reasons, [])
 
-        # the limits themselves pass, one glyph in four not found too
+        # the limits themselves pass
         result = self._result(
             spacing_mean=0.10,
             spacing_max=0.30,
             widths=[-0.35],
             baselines=[0.30],
+            height=-0.15,
             match=0.60,
-            unmatched=[dict(char="V", line=1, match=0.3)],
-            glyphs=4,
         )
+        self.assertEqual(measure.verdict(result, measure.THRESHOLDS), ("PASS", []))
+
+        # a case without a glyph tall enough to tell a size is not judged
+        # on the height
+        result = self._result(height=None)
         self.assertEqual(measure.verdict(result, measure.THRESHOLDS), ("PASS", []))
 
     def test_verdict_trimmed(self):
@@ -1396,6 +1450,7 @@ class MeasureTest(unittest.TestCase):
             ],
             widths=[0.1, -0.5],
             baselines=[0.31, -0.02],
+            height=0.2,
             unmatched=[
                 dict(char="V", line=1, match=0.3),
                 dict(char="L", line=2, match=0.1),
@@ -1414,9 +1469,25 @@ class MeasureTest(unittest.TestCase):
                 "spacing max 0.41 mm ('O' line 1, \"'\" line 2)",
                 "line width +0.10/-0.50 mm",
                 "baseline +0.31/-0.02 mm",
-                "too many glyphs whose F3S strokes are not found on the engraving",
+                "glyph height +20.0%",
+                "not found on the engraving, not measured: 'V' line 1, 'L' line 2",
                 "previewed with a fallback font: <[",
             ],
+        )
+
+        # a single glyph left out of the numbers fails a long case, as the
+        # case does not prove that glyph
+        result = self._result(unmatched=[dict(char="7", line=2, match=0.45)], glyphs=20)
+        self.assertEqual(
+            measure.verdict(result, measure.THRESHOLDS),
+            ("FAIL", ["not found on the engraving, not measured: '7' line 2"]),
+        )
+
+        # outlines drawn smaller than the engraving fail as well
+        result = self._result(height=-0.16)
+        self.assertEqual(
+            measure.verdict(result, measure.THRESHOLDS),
+            ("FAIL", ["glyph height -16.0%"]),
         )
 
         # the thresholds are the ones given
@@ -1606,6 +1677,7 @@ class MeasureTest(unittest.TestCase):
             self.assertAlmostEqual(value, 0.0, delta=0.1)
         for value in result["baselines"]:
             self.assertAlmostEqual(value, 0.0, delta=0.15)
+        self.assertAlmostEqual(result["height"], 0.0, delta=0.01)
         self.assertGreaterEqual(result["match_min"], 0.95)
         self.assertEqual(result["unmatched"], [])
         self.assertEqual(result["steps_off"], [])
@@ -1788,6 +1860,61 @@ class MeasureTest(unittest.TestCase):
             [step["pair"] for step in view["result"]["steps_off"]], ["O..V"]
         )
 
+    def test_measure_case_height(self):
+        self._fonts()
+        root = self._root()
+        directory = os.path.join(self.temp_dir, "run")
+        self._gravo(directory, "height", ["HXOV", "LXH"])
+
+        # a candidate whose outlines are 30% larger, scaled from the
+        # baseline around their own centres, keeping the advances and the
+        # centres of the tuned font
+        path = os.path.join(root, "static", "fonts", "helvetica4l-f3s.ttf")
+        face = TTFont(path)
+        glyf = face["glyf"]
+        for name in face.getGlyphOrder():
+            glyph = glyf[name]
+            if glyph.numberOfContours <= 0:
+                continue
+            glyph.recalcBounds(glyf)
+            centre = (glyph.xMin + glyph.xMax) / 2.0
+            glyph.coordinates.translate((-centre, 0))
+            glyph.coordinates.scale((1.3, 1.3))
+            glyph.coordinates.translate((centre, 0))
+        face.save(path)
+        capture = self._capture(directory, root, [("height", ["HXOV", "LXH"])])
+
+        # the spacing alone cannot tell such outlines from the right ones
+        record = self._measure("height", [("after", capture, directory)], directory)
+        view = record["views"][0]
+        result = view["result"]
+        self.assertLess(result["spacing_max"], 0.1)
+        self.assertAlmostEqual(result["height"], 0.3, delta=0.02)
+        self.assertEqual(view["status"], "FAIL")
+        self.assertEqual(
+            view["reasons"], ["glyph height %+.1f%%" % (result["height"] * 100)]
+        )
+
+    def test_measure_case_unmatched(self):
+        self._fonts()
+        root = self._root()
+        directory = os.path.join(self.temp_dir, "run")
+        capture = self._capture(directory, root, [("unmatched", ["HXOV", "LXH"])])
+
+        # the engraving draws no V at the end of the first line, whose F3S
+        # strokes are then not found, so the case never measures the V
+        layout = self._layout(["HXOV", "LXH"])
+        layout[0]["glyphs"][3]["glyph"] = dict(V, strokes=[])
+        self._composition(os.path.join(directory, "unmatched-composition.png"), layout)
+        record = self._measure("unmatched", [("after", capture, directory)], directory)
+        view = record["views"][0]
+        self.assertEqual(view["status"], "FAIL")
+        self.assertEqual(
+            view["reasons"], ["not found on the engraving, not measured: 'V' line 1"]
+        )
+        self.assertEqual(view["result"]["glyphs"], 6)
+        self.assertLess(view["result"]["spacing_max"], 0.1)
+
     def test_measure_case_fallback(self):
         self._fonts()
         root = self._root()
@@ -1888,7 +2015,9 @@ class MeasureTest(unittest.TestCase):
             label="before",
             status="FAIL",
             reasons=["spacing mean 0.22 mm", "baseline <x> mm"],
-            result=self._result(spacing_mean=0.22, spacing_max=0.5, widths=[0.4]),
+            result=self._result(
+                spacing_mean=0.22, spacing_max=0.5, widths=[0.4], height=None
+            ),
             fonts=[
                 dict(
                     path="static/fonts/helvetica4l.ttf",
@@ -2007,13 +2136,19 @@ class MeasureTest(unittest.TestCase):
         # the numbers of a measured view, its steps off and the glyphs left
         # out, and the reasons of a failure
         self.assertIn(
-            "<p class='metrics'>spacing mean 0.01 mm, max 0.05 mm &middot; line width -0.20/+0.10 mm &middot; baseline +0.05 mm &middot; absolute mean 0.07 mm &middot; F3S match 0.98 (min 0.91)"
+            "<p class='metrics'>spacing mean 0.01 mm, max 0.05 mm &middot; line width -0.20/+0.10 mm &middot; baseline +0.05 mm &middot; glyph height +1.0% &middot; absolute mean 0.07 mm &middot; F3S match 0.98 (min 0.91)"
             " &middot; steps off (viewport minus Gravostyle): H..X +0.20"
             " &middot; not found on the engraving (left out): &#x27;V&#x27; line 2 (0.31)</p>",
             page,
         )
         self.assertIn(
             "<ul class='reasons'><li>spacing mean 0.22 mm</li><li>baseline &lt;x&gt; mm</li></ul>",
+            page,
+        )
+
+        # a view without a glyph tall enough to tell a size has no height
+        self.assertIn(
+            "baseline +0.02/+0.10 mm &middot; glyph height - &middot; absolute mean",
             page,
         )
         self.assertIn(
@@ -2055,7 +2190,7 @@ class MeasureTest(unittest.TestCase):
         )
         self.assertIn("(head of /srv/signatur), captured 2026-10-01T16:28:03Z", page)
         self.assertIn(
-            "spacing mean &lt;= 0.10 mm, spacing max &lt;= 0.30 mm, line width &lt;= 0.35 mm, baseline &lt;= 0.30 mm, F3S match &gt;= 0.60, nothing trimmed",
+            "spacing mean &lt;= 0.10 mm, spacing max &lt;= 0.30 mm, line width &lt;= 0.35 mm, baseline &lt;= 0.30 mm, glyph height &lt;= 15%, F3S match &gt;= 0.60, nothing trimmed",
             page,
         )
 

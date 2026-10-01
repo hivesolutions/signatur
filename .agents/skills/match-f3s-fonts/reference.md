@@ -56,7 +56,7 @@ For each glyph shared by the TTF and the F3S, with `u = 0.7 * unitsPerEm / m[0]`
 
 For an emoji glyph the outline is also scaled to the main ink height `(box height) * u` from its bottom left, placed on the ink bottom `box y_min * u` and centred on the ink centre, the box leaving out the single point markers. When a whole TTF draws its capitals at another height than 0.7 em, `--scale auto` first scales all outlines so the `H` matches the F3S `H` (dropping the hinting).
 
-Text font outlines have a thickness around the F3S centre lines and their own accent and punctuation drawings, so their ink heights differ from the F3S ones; only the spacing is tuned for them.
+Text font outlines have a thickness around the F3S centre lines and their own accent and punctuation drawings, so their ink heights differ from the F3S ones; only the spacing is tuned for them. `measure.py` still compares the median ink height of the viewport glyphs with the engraved ones: -4% to +10% for the six fonts (Script 4L has the thickest strokes), against -10% to -12% for the preview of the regular TTFs with the old factors.
 
 ## Measured results
 
@@ -64,10 +64,10 @@ Text font outlines have a thickness around the F3S centre lines and their own ac
 
 | Viewport | Cases passing | Spacing mean | Line width |
 | --- | --- | --- | --- |
-| regular TTFs, old size factor | 1 of 75 | 0.12 to 4.18 mm | up to 18.8 mm |
-| `-f3s.ttf`, 1/0.7 and 1.232 | 60 of 75 | 0.01 to 0.09 mm | within 0.35 mm |
+| regular TTFs, old size factor | 0 of 75 | 0.12 to 4.18 mm | up to 18.8 mm |
+| `-f3s.ttf`, 1/0.7 and 1.232 | 57 of 75 | 0.01 to 0.09 mm | within 0.35 mm |
 
-The 15 failing after are all explained: 6 old size limits that no longer fit the viewport (trimmed), 1 job whose `|` emoji did not travel in the URL, and 8 lines with `ç`, which Roman 4L and the script TTFs lack (fallback glyph).
+The 18 failing after are all explained: 6 old size limits that no longer fit the viewport (trimmed), 1 job whose `|` emoji did not travel in the URL, 1 case written before `typed` lines were counted that lists its typed `|` line twice, 8 lines with `ç`, which Roman 4L and the script TTFs lack (fallback glyph), and 2 glyphs whose F3S strokes were not found on the engraving (the Roman 4L `7` at 2.5 mm and a Helvetica 4L `õ`), so not measured.
 
 ### Pre-flight check of the fonts (2026-10-01)
 

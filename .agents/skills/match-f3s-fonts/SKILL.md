@@ -129,9 +129,9 @@ All under `scripts/`, run from that directory (Python with the requirements abov
 
 ## Pass criteria
 
-Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <= 0.30, line width error <= 0.35, baseline error <= 0.30, median F3S match >= 0.60, nothing trimmed, no fallback glyph, no line past the margin box. A case whose engraving lost, doubled or swapped a character gets `RETRY` instead: its other lines are measured, the dry run must be submitted again before it counts.
+Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <= 0.30, line width error <= 0.35, baseline error <= 0.30, glyph height (median viewport to engraved ink height) within 15%, median F3S match >= 0.60, every glyph found on the engraving, nothing trimmed, no fallback glyph, no line past the margin box. A case whose engraving lost, doubled or swapped a character gets `RETRY` instead: its other lines are measured, the dry run must be submitted again before it counts.
 
-The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared glyph of the six fonts at 5, 2.5 and 8 mm: spacing mean 0.02 to 0.09 mm, spacing max 0.23 mm, line width 0.26 mm, baseline 0.16 mm), the 1.5.0 ones 33 of 35 (the Helvetica 4L `@`), the regular TTFs with the old factors 1 of 75 (0.12 to 4.18 mm spacing mean).
+The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared glyph of the six fonts at 5, 2.5 and 8 mm: spacing mean 0.02 to 0.09 mm, spacing max 0.23 mm, line width 0.26 mm, baseline 0.16 mm), the 1.5.0 ones 33 of 35 (the Helvetica 4L `@`), the regular TTFs with the old factors 0 of 75 (0.12 to 4.18 mm spacing mean).
 
 ## Reading failures
 
@@ -142,7 +142,8 @@ The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared gly
 | viewport trims the text | the composition does not fit the viewport at that size, pick a smaller size |
 | previewed with a fallback font | the TTF lacks the glyph (Roman 4L and the script TTFs have no `ç`), the browser draws another font |
 | low F3S match | Gravostyle engraved another font or size: overflow resize, wrong dropdown pick (internal F3S name order), or text that differs from the case (the pipe emoji that cannot travel in the URL) |
-| one glyph not found on the engraving | its F3S strokes differ from what Gravostyle drew (left out of the numbers, listed); check the parser on that glyph |
+| not found on the engraving, not measured | its F3S strokes differ from what Gravostyle drew, so the case does not prove that glyph; check the parser on that glyph |
+| glyph height off | the TTF outlines are drawn at another scale than the F3S glyphs (a cap that is not 0.7 em, or a `scale` missing from `fonts.json`); the outlines carry their stroke width, so up to +10% is normal (Script 4L) |
 | spacing max on one glyph | a glyph whose TTF advance or centre is off (run `check`), or a fallback glyph earlier in the line |
 | steps off around one glyph | the same centre to centre residual next to different neighbours: a glyph Gravostyle sets differently from the model, correct it with `--adjust`; a residual on one pair only is optical kerning, leave it |
 | baseline off on every line | `FONT_SIZE_SCALE`, `LINE_HEIGHT_SCALE` or the ascent/descent split |

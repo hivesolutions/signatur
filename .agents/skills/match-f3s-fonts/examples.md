@@ -136,8 +136,8 @@ $PY measure.py --viewport before=$SCRATCH/run-before --viewport after=$SCRATCH/r
 
 | Viewport | Pass | Typical spacing mean | Notes |
 | --- | --- | --- | --- |
-| before | 1 / 75 | 0.12 to 4.18 mm | line widths up to 18.8 mm off |
-| after | 60 / 75 | 0.01 to 0.09 mm | the 15 FAIL: 6 trimmed old limits, 1 pipe emoji job (not in the URL), 8 `ç` fallbacks |
+| before | 0 / 75 | 0.12 to 4.18 mm | line widths up to 18.8 mm off |
+| after | 57 / 75 | 0.01 to 0.09 mm | the 18 FAIL: 6 trimmed old limits, 2 pipe emoji jobs (not in the URL, listed twice), 8 `ç` fallbacks, 2 glyphs not found (`7`, `õ`) |
 
 ## Pre-flight check output
 

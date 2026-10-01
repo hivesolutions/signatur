@@ -16,8 +16,10 @@ plate millimetres, and exports the evidence as an HTML report.
 For every case and viewport capture it reports the spacing error (glyph
 centre error after removing the mean offset of the line), the line width
 error (first to last glyph centre distance), the baseline error of every
-line, the absolute centre error (which also holds the line centring) and
-the template match score of the F3S strokes on the engraving.
+line, the absolute centre error (which also holds the line centring), the
+glyph height error (the median ratio of the viewport ink heights to the
+engraved ones) and the template match score of the F3S strokes on the
+engraving.
 
 Usage:
     python measure.py --viewport after=RUN_DIR --out REPORT_DIR
@@ -49,8 +51,17 @@ import f3s_model as M
 VIEWPORT_SCALE = 3.0
 
 THRESHOLDS = dict(
-    spacing_mean=0.10, spacing_max=0.30, width=0.35, baseline=0.30, match=0.60
+    spacing_mean=0.10,
+    spacing_max=0.30,
+    width=0.35,
+    baseline=0.30,
+    height=0.15,
+    match=0.60,
 )
+
+# the share of the font size under which the ink of a glyph is too low
+# to tell its size (dots, dashes and the other marks)
+HEIGHT_MIN = 0.3
 
 # the match score under which a located glyph is not trusted, its F3S
 # strokes not being found where expected on the engraving
@@ -350,7 +361,15 @@ def walk(shot, sub, line, font, mapping, size, baseline_px, vertical_px):
             stroke_left + (box[2] - template[3]) * unit_mm,
         )
         result.append(
-            dict(char=char, centre=centre, ink=ink, hit=float(hit), dy=dy, **flags)
+            dict(
+                char=char,
+                centre=centre,
+                ink=ink,
+                height=(box[3] - box[1]) * unit_mm,
+                hit=float(hit),
+                dy=dy,
+                **flags,
+            )
         )
         return x_px - offset_px
 
@@ -521,9 +540,9 @@ def gravostyle_lines(shot, payload, lines, font, mapping):
 
 def viewport_lines(entry, width_mm, font, f3s, root):
     """
-    Returns the viewport lines as per glyph centres and baselines (mm,
-    plate coordinates) from the character boxes and the TTF outlines,
-    plus the TTF files that rendered them.
+    Returns the viewport lines as per glyph centres, ink heights and
+    baselines (mm, plate coordinates) from the character boxes and the
+    TTF outlines, plus the TTF files that rendered them.
     """
 
     plate = entry["plate"]
@@ -553,7 +572,7 @@ def viewport_lines(entry, width_mm, font, f3s, root):
         ascent = os2.sTypoAscender if use_typo else face["hhea"].ascent
         descent = -(os2.sTypoDescender if use_typo else face["hhea"].descent)
         name = cmap.get(ord(span["char"].replace(" ", " ")))
-        centre = None
+        centre, height = None, None
         if name != None:
             glyph = glyf[name]
             glyph.recalcBounds(glyf)
@@ -562,6 +581,7 @@ def viewport_lines(entry, width_mm, font, f3s, root):
                     span["left"] + (glyph.xMin + glyph.xMax) / 2.0 * size_px / upm
                 )
                 centre = (centre_px - plate["left"]) / px_mm
+                height = (glyph.yMax - glyph.yMin) * size_px / upm / px_mm
         # the baseline sits half the leading below the top of the line
         # box plus the ascent, the leading being the line height minus
         # the content area (ascent plus descent) of the font
@@ -570,7 +590,7 @@ def viewport_lines(entry, width_mm, font, f3s, root):
         if lines[-1]["baseline"] == None:
             lines[-1]["baseline"] = (baseline_px - plate["top"]) / px_mm
         lines[-1]["glyphs"].append(
-            dict(char=span["char"], centre=centre, missing=name == None)
+            dict(char=span["char"], centre=centre, height=height, missing=name == None)
         )
     return lines, sorted(fonts)
 
@@ -597,11 +617,12 @@ def verify_fonts(paths, served):
     return entries
 
 
-def compare(gravo, view, expected):
+def compare(gravo, view, expected, size):
     shown = sum(len(line["glyphs"]) for line in view)
     if shown < expected:
         return dict(trimmed=True, shown=shown, expected=expected)
     absolute, spacing, widths, baselines, worst, steps = [], [], [], [], [], []
+    heights = []
     typing, overflow = [], []
     for index, (line_g, line_v) in enumerate(zip(gravo, view)):
         # leaves out the lines that run past the margin box, whose ink is
@@ -646,6 +667,15 @@ def compare(gravo, view, expected):
             - (pairs[-1][0]["centre"] - pairs[0][0]["centre"])
         )
         baselines.append(line_v["baseline"] - line_g["baseline"])
+
+        # the ink height of the viewport glyphs against the engraved ones,
+        # whose F3S strokes were found at the model size, leaving out the
+        # glyphs too low to tell a size
+        heights.extend(
+            v["height"] / g["height"]
+            for g, v in pairs
+            if v.get("height") and g.get("height", 0.0) >= HEIGHT_MIN * size
+        )
         worst.extend(
             (abs(value), g["char"], index + 1, value)
             for value, (g, _v) in zip(aligned, pairs)
@@ -704,6 +734,7 @@ def compare(gravo, view, expected):
         absolute_max=float(numpy.max(absolute)),
         widths=[float(value) for value in widths],
         baselines=[float(value) for value in baselines],
+        height=float(numpy.median(heights)) - 1.0 if heights else None,
         match=float(numpy.median(hits)) if hits else 0.0,
         match_min=float(numpy.min(hits)) if hits else 0.0,
         worst=[
@@ -768,9 +799,18 @@ def verdict(result, thresholds):
         reasons.append("line width %s mm" % signed(result["widths"]))
     if max(abs(value) for value in result["baselines"]) > thresholds["baseline"]:
         reasons.append("baseline %s mm" % signed(result["baselines"]))
-    if result["unmatched"] and len(result["unmatched"]) * 4 > result["glyphs"]:
+    if result["height"] != None and abs(result["height"]) > thresholds["height"]:
+        reasons.append("glyph height %+.1f%%" % (result["height"] * 100))
+
+    # a glyph whose F3S strokes are not found on the engraving is left
+    # out of the numbers, so the case does not prove that glyph
+    if result["unmatched"]:
         reasons.append(
-            "too many glyphs whose F3S strokes are not found on the engraving"
+            "not found on the engraving, not measured: %s"
+            % ", ".join(
+                "%r line %d" % (item["char"], item["line"])
+                for item in result["unmatched"]
+            )
         )
     if result["missing_in_ttf"]:
         reasons.append(
@@ -918,7 +958,7 @@ def measure_case(name, captures, gravo_dir, thresholds, scale_px, images):
             root,
         )
         fonts = verify_fonts(fonts, capture["meta"].get("fonts", dict()))
-        result = compare(gravo, view, expected)
+        result = compare(gravo, view, expected, payload["font_size"])
         status, reasons = verdict(result, thresholds)
         plate_path = os.path.join(directory, "%s-plate.png" % name)
         viewport_path = os.path.join(directory, "%s-viewport.png" % name)
@@ -1032,12 +1072,17 @@ def render(records, captures, checks, thresholds, title):
             result = view["result"]
             if not result.get("trimmed") and not result.get("empty"):
                 details = (
-                    "spacing mean %s mm, max %s mm &middot; line width %s mm &middot; baseline %s mm &middot; absolute mean %s mm &middot; F3S match %s (min %s)"
+                    "spacing mean %s mm, max %s mm &middot; line width %s mm &middot; baseline %s mm &middot; glyph height %s &middot; absolute mean %s mm &middot; F3S match %s (min %s)"
                     % (
                         fmt(result.get("spacing_mean")),
                         fmt(result.get("spacing_max")),
                         signed(result.get("widths", [])),
                         signed(result.get("baselines", [])),
+                        (
+                            "%+.1f%%" % (result["height"] * 100)
+                            if result.get("height") != None
+                            else "-"
+                        ),
                         fmt(result.get("absolute_mean")),
                         fmt(result.get("match")),
                         fmt(result.get("match_min")),
@@ -1162,12 +1207,13 @@ def render(records, captures, checks, thresholds, title):
         "{{date}}": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         "{{tallies}}": tallies,
         "{{thresholds}}": html.escape(
-            "spacing mean <= %.2f mm, spacing max <= %.2f mm, line width <= %.2f mm, baseline <= %.2f mm, F3S match >= %.2f, nothing trimmed"
+            "spacing mean <= %.2f mm, spacing max <= %.2f mm, line width <= %.2f mm, baseline <= %.2f mm, glyph height <= %.0f%%, F3S match >= %.2f, nothing trimmed"
             % (
                 thresholds["spacing_mean"],
                 thresholds["spacing_max"],
                 thresholds["width"],
                 thresholds["baseline"],
+                thresholds["height"] * 100,
                 thresholds["match"],
             )
         ),
