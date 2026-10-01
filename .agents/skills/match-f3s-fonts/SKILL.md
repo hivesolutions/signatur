@@ -37,7 +37,7 @@ The matching is proven only by comparing **the visible Signatur viewport** with 
 9. **Measure and report** with `measure.py`, passing every viewport run and the check JSONs. Open `report.html` and review every verdict against Reading failures.
 10. **Retry** every `RETRY` case: put those cases in a file, submit them again with `capture.js retry.json RUN --submit` (their jobs are replaced in the run), `gravo_job.py fetch RUN` and measure again; about one long case in six needs it.
 11. **Iterate** on the fonts: retune, capture the viewport again (no `--submit`) and measure against the same screenshots; new dry run jobs are only needed for new cases.
-12. **Report** to the user with the numbers and the report (publish it when asked), then, once approved, record the font in `fonts.json` (with any measured correction), write it with `make_f3s_ttf.py build`, wire it (Wiring a new font), update `CHANGELOG.md` and run `selftest.py`, `npm run build`, `npm run lint` and `npm test`.
+12. **Report** to the user with the numbers and the report (publish it when asked), then, once approved, record the font in `fonts.json` (with any measured correction and the `--scale` it was measured with), write it with `make_f3s_ttf.py build`, wire it (Wiring a new font), update `CHANGELOG.md` and run `selftest.py`, `npm run build`, `npm run lint` and `npm test`.
 
 ## Setup
 
@@ -103,7 +103,7 @@ Cases are a JSON list shared by every script ([examples.md](examples.md) has rea
 
 ## Determinism
 
-- `fonts.json` lists every generated font: the regular TTF stem, the F3S font, the SHA-256 of the F3S file and the measured corrections. `make_f3s_ttf.py build` regenerates all the `-f3s.ttf` fonts from it byte for byte (the head timestamp of the regular TTF is kept) and refuses an F3S file whose hash changed, as the corrections were measured with the old one; `build --verify` proves the committed fonts are its output.
+- `fonts.json` lists every generated font: the regular TTF stem, the F3S font, the SHA-256 of the F3S file, the measured corrections and, for a TTF whose cap is not 0.7 em, the outline `scale` (`"auto"` or the factor of `text --scale`). `make_f3s_ttf.py build` regenerates all the `-f3s.ttf` fonts from it byte for byte (the head timestamp of the regular TTF is kept) and refuses an F3S file whose hash changed, as the corrections were measured with the old one; `build --verify` proves the committed fonts are its output.
 - `capture.js` records the SHA-256 of every TTF the page loads and `measure.py` refuses to measure a TTF that is not one the browser rendered (a stale server, the wrong `--root` or a font the page never loaded).
 - `cases.py generate` packs the glyphs shared by the TTF and the F3S in code point order, so the same font always gives the same cases, and `cases.py check` predicts every overflow and fallback glyph before a job is sent (it flags exactly the 14 failing cases of the PR #79 evidence).
 - The measurement floor: on a 70 mm plate one screenshot pixel is about 0.08 mm and the same pair measured twice differs by about 0.06 mm (median), so differences below 0.1 mm are noise; text that fills the area gives the best relative precision.
@@ -151,7 +151,7 @@ The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared gly
 ## Wiring a new font
 
 - Regular TTF in `static/fonts/<stem>.ttf` with its `@font-face` in `static/css/layout.css`, the F3S in gravo-pilot (bundled) or uploaded through Settings > Fonts (`static/fonts/f3s/fonts/<stem>.f3s`, sent as `extra_fonts`).
-- An entry in `fonts.json` (stem, F3S name, F3S SHA-256, measured corrections), the tuned TTF written by `make_f3s_ttf.py build` as `static/fonts/<stem>-f3s.ttf` and the family in `F3S_FONTS` of `static/js/main.js` (family to stem), then `npm run build`.
+- An entry in `fonts.json` (stem, F3S name, F3S SHA-256, measured corrections, outline scale when needed), the tuned TTF written by `make_f3s_ttf.py build` as `static/fonts/<stem>-f3s.ttf` and the family in `F3S_FONTS` of `static/js/main.js` (family to stem), then `npm run build`.
 - `FontFace` families stay unquoted (Chromium takes quotes literally).
 - Deployments that persist `static/fonts` in a volume need the font seed sync to pick up new files (otherwise they 404).
 

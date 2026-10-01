@@ -7,9 +7,10 @@ like Gravostyle engraves their F3S counterparts.
 Modes:
     build  regenerates every `static/fonts/<stem>-f3s.ttf` from its
            regular TTF and its F3S font as listed in `fonts.json` (the
-           F3S files pinned by their SHA-256 and the measured per glyph
-           corrections), byte for byte reproducible, `--verify` comparing
-           the result with the committed fonts instead of writing them
+           F3S files pinned by their SHA-256, the measured per glyph
+           corrections and the outline scale of a TTF whose cap is not
+           0.7 em), byte for byte reproducible, `--verify` comparing the
+           result with the committed fonts instead of writing them
     text   respaces a text font: every glyph shared with the F3S font
            advances by -m[2] + m[6] and has its outline shifted so its
            ink centre lands on the F3S ink centre, ascent - descent is
@@ -241,7 +242,9 @@ def build_font(entry):
             % (path, sha256, entry["f3s_sha256"])
         )
     font = open_font(os.path.join(FONTS_DIR, "%s.ttf" % entry["stem"]))
-    tune_text(font, M.load_f3s(path), adjust=entry.get("adjust"))
+    tune_text(
+        font, M.load_f3s(path), scale=entry.get("scale"), adjust=entry.get("adjust")
+    )
     buffer = io.BytesIO()
     font.save(buffer)
     return buffer.getvalue()

@@ -514,6 +514,30 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertIn("manifest %s" % manifest[0]["f3s_sha256"], message)
         self.assertIn("measure it again", message)
 
+    def test_build_font_scale(self):
+        paths = self._fonts({"SMALL 4L": {"32": SPACE, "72": SMALL_H}})
+        self._ttf("helvetica4l")
+        with open(paths["SMALL 4L"], "rb") as file:
+            sha256 = hashlib.sha256(file.read()).hexdigest()
+        entry = dict(
+            stem="helvetica4l", f3s="Small 4L", f3s_sha256=sha256, adjust=dict()
+        )
+
+        # the capitals of the F3S are 0.9 of its size, so the outlines a
+        # text --scale auto measured are only built again with the scale
+        # the manifest records
+        font = TTFont(io.BytesIO(G.build_font(entry)))
+        self.assertEqual(self._bounds(font, "H"), (89, 0, 641, 700))
+        self.assertIn("fpgm", font)
+
+        for scale in ("auto", 0.9, "0.9"):
+            data = G.build_font(dict(entry, scale=scale))
+            font = TTFont(io.BytesIO(data))
+            self.assertEqual(self._bounds(font, "H"), (117, 0, 614, 630))
+            self.assertEqual(self._advance(font, "H"), (731, 117))
+            self.assertNotIn("fpgm", font)
+            self.assertEqual(G.build_font(dict(entry, scale=scale)), data)
+
     def test_build_font_manifest(self):
         native = os.path.join(M.GRAVO_NATIVE, "f3s_parser.py")
         pilot = os.path.join(M.GRAVO_PILOT, "src", "gravo_pilot")
