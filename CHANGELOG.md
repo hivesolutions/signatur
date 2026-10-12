@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Unit tests for the font matching skill and the font scripts, also run by the CI
 * Diamond tip depth on the machine of a profile, 0.5 when a profile sets none - [#81](https://github.com/hivesolutions/signatur/issues/81)
 * Depth row on the engraving confirmation, with the diamond tip depth the job is sent with - [#81](https://github.com/hivesolutions/signatur/issues/81)
+* Letters ñ and Ñ in the six text fonts, typed with a long press of the N key of the keyboard - [#84](https://github.com/hivesolutions/signatur/issues/84)
+* Self test and unit tests asserting that every text font draws the Portuguese letters of the keyboard - [#84](https://github.com/hivesolutions/signatur/issues/84)
+* Drawing of the accented letters a preview font lacks from its engraving font, in the font matching skill - [#84](https://github.com/hivesolutions/signatur/issues/84)
 
 ### Changed
 
@@ -25,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Profiles with a padding that is not a finite number are now refused
 * Emoji validation script failing with the current emoji mapping
 * Font metrics script drawing accented letters with a wrong box
+* Letters ç and Ç missing in the Roman 4L, Script 4L, Script 412 1L and Script Round 1L fonts, and Õ in Script Round 1L, which were previewed with another font - [#84](https://github.com/hivesolutions/signatur/issues/84)
 
 ## [1.5.0] - 2026-10-01
 
