@@ -293,6 +293,20 @@ describe("Profile", function() {
             assert.deepStrictEqual(errors, ["machine.depth must be a non-negative number"]);
         });
 
+        it("should reject non-finite machine depth", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                machine: JSON.parse('{"viewport_width": 100, "viewport_height": 50, "depth": 1e309}'),
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.deepStrictEqual(errors, ["machine.depth must be a non-negative number"]);
+        });
+
         it("should accept profile without shape (optional field)", () => {
             const errors = lib.validateProfile({
                 id: "test",
@@ -357,6 +371,21 @@ describe("Profile", function() {
                 left: 5
             });
             assert.strictEqual(true, errors.includes("padding.top must be a non-negative number"));
+        });
+
+        it("should reject non-finite padding values", () => {
+            const errors = lib.validatePadding({
+                top: Infinity,
+                right: -Infinity,
+                bottom: NaN,
+                left: JSON.parse("1e309")
+            });
+            assert.deepStrictEqual(errors, [
+                "padding.top must be a non-negative number",
+                "padding.right must be a non-negative number",
+                "padding.bottom must be a non-negative number",
+                "padding.left must be a non-negative number"
+            ]);
         });
 
         it("should reject non-object padding", () => {
@@ -680,6 +709,26 @@ describe("Profile", function() {
                 });
                 assert.deepStrictEqual(errors, ["machine.depth must be a non-negative number"]);
             }
+        });
+
+        it("should reject a depth that is not finite", () => {
+            for (const depth of [Infinity, -Infinity, NaN, JSON.parse("1e309")]) {
+                const errors = lib.validateMachine({
+                    viewport_width: 80,
+                    viewport_height: 100,
+                    depth: depth
+                });
+                assert.deepStrictEqual(errors, ["machine.depth must be a non-negative number"]);
+            }
+        });
+
+        it("should validate machine config with the largest finite depth", () => {
+            const errors = lib.validateMachine({
+                viewport_width: 80,
+                viewport_height: 100,
+                depth: Number.MAX_VALUE
+            });
+            assert.deepStrictEqual(errors, []);
         });
 
         it("should still require viewport dimensions with a depth", () => {

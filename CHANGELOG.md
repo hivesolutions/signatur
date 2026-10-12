@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Wide gap around the @ and slightly off tilde letters in the engraving matched fonts
 * Engraving jobs are now sent with a diamond tip depth instead of being engraved with a depth of zero - [#81](https://github.com/hivesolutions/signatur/issues/81)
+* Profiles with a padding that is not a finite number are now refused
 * Emoji validation script failing with the current emoji mapping
 * Font metrics script drawing accented letters with a wrong box
 
