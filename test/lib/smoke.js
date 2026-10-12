@@ -298,6 +298,13 @@ describe("Smoke", function() {
             assert.strictEqual(response.status, 200);
             assert.ok(response.body.includes("modal-check-path"));
         });
+
+        it("should render the Ñ as an accent of the N key of the keyboard", async () => {
+            const response = await request("GET", "/viewport");
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes('data-value="N" data-accents="Ñ"'));
+            assert.ok(response.body.includes('data-value="C" data-accents="Ç"'));
+        });
     });
 
     describe("#settings()", function() {
