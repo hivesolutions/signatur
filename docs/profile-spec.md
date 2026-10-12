@@ -104,12 +104,15 @@ Optional list of named sub-types of the profile (e.g. silver vs. gold finish) th
 
 ## machine
 
-Physical viewport of the engraving machine, used by the print pipeline to translate from profile coordinates.
+Physical viewport of the engraving machine, used by the print pipeline to translate from profile coordinates, and the depth its diamond tip is set to for the engraving job.
 
-| Field             | Type   | Required | Notes                                               |
-| ----------------- | ------ | :------: | --------------------------------------------------- |
-| `viewport_width`  | number |   yes    | Positive. Machine viewport width in machine units.  |
-| `viewport_height` | number |   yes    | Positive. Machine viewport height in machine units. |
+| Field             | Type   | Required | Notes                                                                                                    |
+| ----------------- | ------ | :------: | -------------------------------------------------------------------------------------------------------- |
+| `viewport_width`  | number |   yes    | Positive. Machine viewport width in machine units.                                                       |
+| `viewport_height` | number |   yes    | Positive. Machine viewport height in machine units.                                                      |
+| `depth`           | number |    no    | Non-negative. Depth of the diamond tip sent with the engraving job, in machine units. Defaults to `0.5`. |
+
+Every engraving job is sent with a depth, the one of the profile or `0.5` when the profile defines none (or has no `machine` at all), as the engraving software would otherwise engrave with a depth of zero, which leaves the diamond tip no travel to follow a surface that is not perfectly flat. A `depth` of `0` is sent as is.
 
 ## text
 

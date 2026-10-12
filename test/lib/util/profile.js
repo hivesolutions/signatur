@@ -265,6 +265,34 @@ describe("Profile", function() {
             );
         });
 
+        it("should accept valid machine depth", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                machine: { viewport_width: 100, viewport_height: 50, depth: 0.5 },
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject invalid machine depth", () => {
+            const errors = lib.validateProfile({
+                id: "test",
+                name: "Test",
+                width: 100,
+                height: 50,
+                unit: "mm",
+                orientation: "portrait",
+                machine: { viewport_width: 100, viewport_height: 50, depth: -0.5 },
+                font_size: { mode: "manual", default: 12, min: 8, max: 24, step: 1 }
+            });
+            assert.deepStrictEqual(errors, ["machine.depth must be a non-negative number"]);
+        });
+
         it("should accept profile without shape (optional field)", () => {
             const errors = lib.validateProfile({
                 id: "test",
@@ -614,6 +642,52 @@ describe("Profile", function() {
                 true,
                 errors.includes("machine.viewport_height must be a positive number")
             );
+        });
+
+        it("should validate machine config with a depth", () => {
+            const errors = lib.validateMachine({
+                viewport_width: 80,
+                viewport_height: 100,
+                depth: 0.5
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should validate machine config with a zero depth", () => {
+            const errors = lib.validateMachine({
+                viewport_width: 80,
+                viewport_height: 100,
+                depth: 0
+            });
+            assert.deepStrictEqual(errors, []);
+        });
+
+        it("should reject a negative depth", () => {
+            const errors = lib.validateMachine({
+                viewport_width: 80,
+                viewport_height: 100,
+                depth: -0.5
+            });
+            assert.deepStrictEqual(errors, ["machine.depth must be a non-negative number"]);
+        });
+
+        it("should reject a depth that is not a number", () => {
+            for (const depth of ["0.5", null, true, [0.5], { value: 0.5 }]) {
+                const errors = lib.validateMachine({
+                    viewport_width: 80,
+                    viewport_height: 100,
+                    depth: depth
+                });
+                assert.deepStrictEqual(errors, ["machine.depth must be a non-negative number"]);
+            }
+        });
+
+        it("should still require viewport dimensions with a depth", () => {
+            const errors = lib.validateMachine({ depth: 0.5 });
+            assert.deepStrictEqual(errors, [
+                "machine.viewport_width is required",
+                "machine.viewport_height is required"
+            ]);
         });
     });
 
