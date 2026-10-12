@@ -2,6 +2,7 @@
 
 import io
 import os
+import re
 import sys
 import json
 import shutil
@@ -208,6 +209,51 @@ class SelftestTest(unittest.TestCase):
 
         self.assertEqual(selftest.test_glyphs(), [])
 
+    def test_test_letters(self):
+        manifest = self._manifest()
+        for stem in ("fake1l", "fake4l"):
+            shutil.copy(TTF_PATH, os.path.join(G.FONTS_DIR, "%s.ttf" % stem))
+
+        # the regular and the tuned font of every entry draw the letters
+        with mock.patch.object(M, "load_manifest", return_value=manifest):
+            self.assertEqual(selftest.test_letters(), [])
+
+        # a letter with no glyph or with a glyph that draws nothing is
+        # missing, upper case first, in the font that lacks it only
+        font = TTFont(TTF_PATH)
+        for table in font["cmap"].tables:
+            table.cmap.pop(ord("Ç"), None)
+            table.cmap.pop(ord("ñ"), None)
+        font["glyf"]["a"] = font["glyf"]["space"]
+        path = os.path.join(G.FONTS_DIR, "fake4l.ttf")
+        font.save(path)
+        with mock.patch.object(M, "load_manifest", return_value=manifest):
+            failures = selftest.test_letters()
+        self.assertEqual(failures, ["%s does not draw Çañ" % path])
+
+    def test_test_letters_keyboard(self):
+        letters = "%s%s" % (selftest.LETTERS, selftest.LETTERS.lower())
+        self.assertEqual(len(letters), len(set(letters)))
+        for char in "ÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúçÑñ":
+            self.assertIn(char, letters)
+
+        # the letters are the ones of the keys of the viewport keyboard
+        # and of their accents, typed in upper case and in lower case
+        pattern = (
+            r'class="char letters" data-value="([^"]+)"(?: data-accents="([^"]*)")?'
+        )
+        for view in ("viewport.ejs", "viewport-pt_pt.ejs"):
+            with open(os.path.join(ROOT_DIR, "views", view), encoding="utf-8") as file:
+                keys = re.findall(pattern, file.read())
+            typed = set()
+            for value, accents in keys:
+                typed.add(value)
+                typed.update(accent for accent in accents.split(",") if accent)
+            self.assertEqual(sorted(typed), sorted(selftest.LETTERS))
+
+    def test_test_letters_committed(self):
+        self.assertEqual(selftest.test_letters(), [])
+
     def test_test_guard(self):
         self.assertEqual(selftest.test_guard(), [])
 
@@ -261,36 +307,45 @@ class SelftestTest(unittest.TestCase):
     def test_main(self):
         with mock.patch.object(selftest, "test_fonts", return_value=[]):
             with mock.patch.object(selftest, "test_glyphs", return_value=[]):
-                with mock.patch.object(selftest, "test_guard", return_value=[]):
-                    with mock.patch.object(selftest, "test_cases", return_value=[]):
-                        with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
-                            with self.assertRaises(SystemExit) as context:
-                                selftest.main()
+                with mock.patch.object(selftest, "test_letters", return_value=[]):
+                    with mock.patch.object(selftest, "test_guard", return_value=[]):
+                        with mock.patch.object(selftest, "test_cases", return_value=[]):
+                            with mock.patch.object(
+                                sys, "stdout", io.StringIO()
+                            ) as stdout:
+                                with self.assertRaises(SystemExit) as context:
+                                    selftest.main()
         self.assertEqual(context.exception.code, 0)
         self.assertEqual(
             stdout.getvalue().splitlines(),
-            ["fonts  ok", "glyphs ok", "guard  ok", "cases  ok"],
+            ["fonts   ok", "glyphs  ok", "letters ok", "guard   ok", "cases   ok"],
         )
 
     def test_main_failures(self):
         failures = ["first failure", "second failure"]
         with mock.patch.object(selftest, "test_fonts", return_value=[]):
             with mock.patch.object(selftest, "test_glyphs", return_value=["glyph"]):
-                with mock.patch.object(selftest, "test_guard", return_value=failures):
+                with mock.patch.object(selftest, "test_letters", return_value=[]):
                     with mock.patch.object(
-                        selftest, "test_cases", return_value=["third"]
+                        selftest, "test_guard", return_value=failures
                     ):
-                        with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
-                            with self.assertRaises(SystemExit) as context:
-                                selftest.main()
+                        with mock.patch.object(
+                            selftest, "test_cases", return_value=["third"]
+                        ):
+                            with mock.patch.object(
+                                sys, "stdout", io.StringIO()
+                            ) as stdout:
+                                with self.assertRaises(SystemExit) as context:
+                                    selftest.main()
         self.assertEqual(context.exception.code, 1)
         self.assertEqual(
             stdout.getvalue().splitlines(),
             [
-                "fonts  ok",
-                "glyphs FAILED",
-                "guard  FAILED",
-                "cases  FAILED",
+                "fonts   ok",
+                "glyphs  FAILED",
+                "letters ok",
+                "guard   FAILED",
+                "cases   FAILED",
                 "  glyph",
                 "  first failure",
                 "  second failure",
