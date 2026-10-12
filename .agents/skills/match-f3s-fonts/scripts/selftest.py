@@ -3,15 +3,17 @@
 """
 Offline self test of the skill, needing neither the engraving node nor a
 browser: the committed `-f3s.ttf` fonts must be the ones `fonts.json`
-builds (byte for byte) and pass the check, the dry run guard must refuse
-every payload that is not a dry run and the case validation must catch
-a text that overflows the area and a glyph missing in the TTF.
+builds (byte for byte) and pass the check, the regular fonts must hold
+the accented letters `fonts.json` draws as it draws them, the dry run
+guard must refuse every payload that is not a dry run and the case
+validation must catch a text that overflows the area and a glyph missing
+in the TTF.
 
 Usage:
     python selftest.py
 
 Requirements:
-    pip install fonttools numpy pillow scipy
+    pip install fonttools numpy pillow scipy skia-pathops
 """
 
 import os
@@ -39,6 +41,22 @@ def test_fonts():
         )
         if not report["passed"]:
             failures.append("%s fails the check" % path)
+    return failures
+
+
+def test_glyphs():
+    failures = []
+    for entry in M.load_manifest():
+        chars = "".join(sorted(entry.get("glyphs", dict())))
+        if not chars:
+            continue
+        path = os.path.join(G.FONTS_DIR, "%s.ttf" % entry["stem"])
+        different = G.different_glyphs(G.glyphs_font(entry), TTFont(path), chars)
+        if different:
+            failures.append(
+                "%s does not have the %s that fonts.json draws"
+                % (path, "".join(different))
+            )
     return failures
 
 
@@ -84,7 +102,7 @@ def test_cases():
         failures.append("a valid case was refused: %s" % C.validate(case))
     if not C.validate(dict(case, lines=["WWWWWWWWWWWWWWWW"])):
         failures.append("a line wider than the area was accepted")
-    if not C.validate(dict(case, font="Roman 4L", lines=["Conceição"])):
+    if not C.validate(dict(case, font="Roman 4L", lines=["Müller"])):
         failures.append("a glyph missing in the TTF was accepted")
     return failures
 
@@ -93,6 +111,7 @@ def main():
     failures = []
     for name, test in (
         ("fonts", test_fonts),
+        ("glyphs", test_glyphs),
         ("guard", test_guard),
         ("cases", test_cases),
     ):

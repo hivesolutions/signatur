@@ -389,7 +389,7 @@ class MakeF3STTFTest(unittest.TestCase):
         outlines = [
             name for name in font.getGlyphOrder() if glyf[name].numberOfContours
         ]
-        self.assertEqual(len(outlines), 125)
+        self.assertEqual(len(outlines), 127)
         for name in outlines:
             self.assertEqual(glyf[name].program.getBytecode(), b"")
         self.assertEqual(self._bounds(font, "H"), (70, 0, 622, 700))
@@ -464,7 +464,10 @@ class MakeF3STTFTest(unittest.TestCase):
         self._fonts({"HELVETICA 4L": TEXT_GLYPHS})
         font = self._open("helvetica4l")
         font["OS/2"].xAvgCharWidth = 0
-        self.assertIn("DSIG", font)
+
+        # the regular fonts lost their signature when their missing
+        # letters were drawn, a font that still has one loses it here
+        font["DSIG"] = newTable("DSIG")
 
         result = G.tune_text(font, M.load_f3s("Helvetica 4L"), adjust=ADJUST)
         self.assertEqual(
@@ -491,8 +494,9 @@ class MakeF3STTFTest(unittest.TestCase):
 
         # the average width is the one of every glyph with an advance
         widths = [width for width, _lsb in font["hmtx"].metrics.values() if width]
-        self.assertEqual(sum(widths) / float(len(widths)), 574.453125)
-        self.assertEqual(font["OS/2"].xAvgCharWidth, 574)
+        self.assertEqual(len(widths), 130)
+        self.assertAlmostEqual(sum(widths) / float(len(widths)), 575.4077, delta=1e-4)
+        self.assertEqual(font["OS/2"].xAvgCharWidth, 575)
         self.assertNotIn("DSIG", font)
 
         # without scaling the outlines keep their hinting
@@ -1211,7 +1215,7 @@ class MakeF3STTFTest(unittest.TestCase):
 
         # every printable TTF character but the three of the F3S
         missing = report["missing_in_f3s"]
-        self.assertEqual(len(missing), 122)
+        self.assertEqual(len(missing), 124)
         self.assertIn("A", missing)
         for char in ("@", "H", "I", " ", "\r"):
             self.assertNotIn(char, missing)
@@ -1249,6 +1253,7 @@ class MakeF3STTFTest(unittest.TestCase):
         self._fonts({"HELVETICA 4L": TEXT_GLYPHS})
         f3s = M.load_f3s("Helvetica 4L")
         font = self._open("helvetica4l")
+        font["DSIG"] = newTable("DSIG")
 
         report = G.check(font, f3s=f3s)
         self.assertEqual(report["passed"], False)
@@ -1358,7 +1363,9 @@ class MakeF3STTFTest(unittest.TestCase):
     def test_print_check_off(self):
         self._fonts({"HELVETICA 4L": TEXT_GLYPHS})
         f3s = M.load_f3s("Helvetica 4L")
-        report = G.check(self._open("helvetica4l"), f3s=f3s)
+        font = self._open("helvetica4l")
+        font["DSIG"] = newTable("DSIG")
+        report = G.check(font, f3s=f3s)
 
         # the glyphs off are listed worst first, up to the limit
         stdout = io.StringIO()

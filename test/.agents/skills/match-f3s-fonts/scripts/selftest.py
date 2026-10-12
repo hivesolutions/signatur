@@ -169,6 +169,45 @@ class SelftestTest(unittest.TestCase):
 
         self.assertEqual(selftest.test_fonts(), [])
 
+    def test_test_glyphs(self):
+        manifest = self._manifest()
+        manifest[0]["glyphs"] = {"ç": "f3s", "Ñ": "Ã"}
+        path = os.path.join(G.FONTS_DIR, "fake1l.ttf")
+        shutil.copy(TTF_PATH, path)
+
+        # only the fonts with glyphs to draw are drawn and compared with
+        # their regular font, for the characters of the manifest
+        drawn = TTFont(TTF_PATH)
+        with mock.patch.object(M, "load_manifest", return_value=manifest):
+            with mock.patch.object(G, "glyphs_font", return_value=drawn) as font:
+                with mock.patch.object(
+                    G, "different_glyphs", return_value=[]
+                ) as different:
+                    self.assertEqual(selftest.test_glyphs(), [])
+        self.assertEqual(font.call_args_list, [mock.call(manifest[0])])
+        self.assertEqual(different.call_count, 1)
+        first, second, chars = different.call_args.args
+        self.assertIs(first, drawn)
+        self.assertEqual(type(second), TTFont)
+        self.assertEqual(chars, "Ñç")
+
+        # a regular font without the glyphs as drawn is a failure
+        with mock.patch.object(M, "load_manifest", return_value=manifest):
+            with mock.patch.object(G, "glyphs_font", return_value=drawn):
+                with mock.patch.object(G, "different_glyphs", return_value=["ç"]):
+                    failures = selftest.test_glyphs()
+        self.assertEqual(
+            failures, ["%s does not have the ç that fonts.json draws" % path]
+        )
+
+    def test_test_glyphs_committed(self):
+        parser = os.path.join(M.GRAVO_NATIVE, "f3s_parser.py")
+        fonts = os.path.join(M.GRAVO_PILOT, "src", "gravo_pilot", "res", "fonts")
+        if not os.path.exists(parser) or not os.path.isdir(fonts):
+            self.skipTest("Skipping test: gravo-native or gravo-pilot unavailable")
+
+        self.assertEqual(selftest.test_glyphs(), [])
+
     def test_test_guard(self):
         self.assertEqual(selftest.test_guard(), [])
 
@@ -199,7 +238,7 @@ class SelftestTest(unittest.TestCase):
     def test_test_cases(self):
         helvetica = dict((ord(char), CAP) for char in "TiagoAV")
         helvetica[ord("W")] = WIDE
-        roman = dict((ord(char), CAP) for char in "Conceição")
+        roman = dict((ord(char), CAP) for char in "Müller")
         self._fonts({"HELVETICA 4L": helvetica, "ROMAN 4L": roman})
 
         self.assertEqual(selftest.test_cases(), [])
@@ -221,31 +260,38 @@ class SelftestTest(unittest.TestCase):
 
     def test_main(self):
         with mock.patch.object(selftest, "test_fonts", return_value=[]):
-            with mock.patch.object(selftest, "test_guard", return_value=[]):
-                with mock.patch.object(selftest, "test_cases", return_value=[]):
-                    with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
-                        with self.assertRaises(SystemExit) as context:
-                            selftest.main()
+            with mock.patch.object(selftest, "test_glyphs", return_value=[]):
+                with mock.patch.object(selftest, "test_guard", return_value=[]):
+                    with mock.patch.object(selftest, "test_cases", return_value=[]):
+                        with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
+                            with self.assertRaises(SystemExit) as context:
+                                selftest.main()
         self.assertEqual(context.exception.code, 0)
         self.assertEqual(
-            stdout.getvalue().splitlines(), ["fonts  ok", "guard  ok", "cases  ok"]
+            stdout.getvalue().splitlines(),
+            ["fonts  ok", "glyphs ok", "guard  ok", "cases  ok"],
         )
 
     def test_main_failures(self):
         failures = ["first failure", "second failure"]
         with mock.patch.object(selftest, "test_fonts", return_value=[]):
-            with mock.patch.object(selftest, "test_guard", return_value=failures):
-                with mock.patch.object(selftest, "test_cases", return_value=["third"]):
-                    with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
-                        with self.assertRaises(SystemExit) as context:
-                            selftest.main()
+            with mock.patch.object(selftest, "test_glyphs", return_value=["glyph"]):
+                with mock.patch.object(selftest, "test_guard", return_value=failures):
+                    with mock.patch.object(
+                        selftest, "test_cases", return_value=["third"]
+                    ):
+                        with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
+                            with self.assertRaises(SystemExit) as context:
+                                selftest.main()
         self.assertEqual(context.exception.code, 1)
         self.assertEqual(
             stdout.getvalue().splitlines(),
             [
                 "fonts  ok",
+                "glyphs FAILED",
                 "guard  FAILED",
                 "cases  FAILED",
+                "  glyph",
                 "  first failure",
                 "  second failure",
                 "  third",
