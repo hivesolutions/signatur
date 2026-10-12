@@ -2010,6 +2010,13 @@ const countLines = function(text) {
         }
     };
 
+    // depth of the diamond tip sent with the engraving job when the
+    // machine of the profile defines none, as the engraving software
+    // would otherwise engrave with no depth at all, leaving the tip
+    // no travel to follow a surface that is not perfectly flat; the
+    // viewport lists the same depth on the confirm specs
+    const DEFAULT_DEPTH = 0.5;
+
     /**
      * Modal overlay plugin that manages multiple modal types
      * including error messages, print confirmation with specs
@@ -2077,6 +2084,7 @@ const countLines = function(text) {
                     viewport: context.attr("data-label-viewport") || "Surface",
                     fontSize: context.attr("data-label-font-size") || "Font size",
                     margins: context.attr("data-label-margins") || "Margins",
+                    depth: context.attr("data-label-depth") || "Depth",
                     extraPadding: context.attr("data-label-extra-padding") || "Extra padding",
                     finalViewport: context.attr("data-label-final-viewport") || "Final surface",
                     node: context.attr("data-label-node") || "Node",
@@ -2152,6 +2160,9 @@ const countLines = function(text) {
                 }
                 if (specs.margins) {
                     html += buildRow(labels.margins, jQuery("<span>").text(specs.margins).html());
+                }
+                if (specs.depth) {
+                    html += buildRow(labels.depth, jQuery("<span>").text(specs.depth).html());
                 }
                 if (specs.extra_padding) {
                     html += buildRow(
@@ -2335,6 +2346,7 @@ const countLines = function(text) {
                 const printData = {
                     text: textPayload,
                     font: fontPayload,
+                    depth: DEFAULT_DEPTH,
                     debug: true,
                     dry_run: dryRun,
                     record: record,
@@ -2357,6 +2369,10 @@ const countLines = function(text) {
                             (machine.viewport_height || profile.height) +
                             (extraPadding.top || 0) +
                             (extraPadding.bottom || 0);
+                        // sends the depth defined by the machine of the profile
+                        // instead of the default one, a depth of zero included,
+                        // as it is a depth the profile asks to be engraved with
+                        if (machine.depth !== undefined) printData.depth = machine.depth;
                         // sends the font size as previewed and listed on the
                         // confirm specs, keeping its fractional part so that
                         // a size between whole units is not engraved smaller
@@ -6755,6 +6771,7 @@ jQuery(document).ready(function() {
             text: text || "(empty)",
             multifont: multifont,
             font: font || "(none)",
+            depth: String(DEFAULT_DEPTH),
             node: node
         };
         if (currentProfile) {
@@ -6775,6 +6792,8 @@ jQuery(document).ready(function() {
                 ", " +
                 margins.bottom +
                 (unit ? " " + unit : "");
+            const depth = machine.depth !== undefined ? machine.depth : DEFAULT_DEPTH;
+            specs.depth = depth + (unit ? " " + unit : "");
             const extraPadding = currentProfile.extra_padding;
             if (extraPadding) {
                 specs.extra_padding =
@@ -6825,6 +6844,11 @@ jQuery(document).ready(function() {
     // times the font size (1.76 * 0.7 = 1.232), kept fractional
     // so that small font sizes are not spaced by rounded pixels
     const LINE_HEIGHT_SCALE = 1.232;
+
+    // depth of the diamond tip listed on the confirm specs when the
+    // machine of the profile defines none, the same depth the confirm
+    // modal then sends with the engraving job
+    const DEFAULT_DEPTH = 0.5;
 
     // stores the currently selected profile and the loaded
     // profiles dictionary for later reference

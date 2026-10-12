@@ -143,6 +143,8 @@ The settings page exposes a `Printing` readout that shows the server side base v
 
 When the engraving job is submitted, the confirm modal walks the multifont array of the print payload, rewrites every `Cool Emojis` entry into the underlying engraving glyph name through the active `coolemojis.mapping.json` and then resolves the engraving `.f3s` payload of every referenced font through a `GET /settings/fonts/resolve?names=...` call. The resulting `{ name: base64 }` map is attached to the gravo print payload as the `extra_fonts` field that colony print plumbs through to gravo pilot on a per print job basis (see [hivesolutions/colony-print#20](https://github.com/hivesolutions/colony-print/issues/20) and [hivesolutions/gravo-pilot#22](https://github.com/hivesolutions/gravo-pilot/issues/22) for the receiving end).
 
+Every engraving job also carries the depth of the diamond tip as the `depth` field of the gravo print payload: the `machine.depth` of the selected profile, or `0.5` when the profile defines none, as the engraving software otherwise engraves with a depth of zero. The value is listed on the `Depth` row of the confirm modal and is only set on the machine by the colony print nodes that advertise the `gravo-depth` capability (a gravo pilot that supports the depth), the other nodes keep engraving with the depth of the engraving software.
+
 ### Configuration keys
 
 | `localStorage` key | Scenario | Server side fallback                            | Description                                                                         |

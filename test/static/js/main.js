@@ -61,7 +61,9 @@ const F3S_FONTS = {
 // profiles served to the viewport, a plate whose safe area is
 // 30 mm wide (90 px once scaled), a finer twin of it whose font
 // size slider moves in half unit steps, an automatically sized
-// twin that declares no step at all and a double sided twin
+// twin that declares no step at all, a double sided twin and two
+// twins whose machine sets the depth of the diamond tip, the
+// second one to zero
 const PROFILES = {
     plate: {
         id: "plate",
@@ -107,6 +109,30 @@ const PROFILES = {
         font_size: { mode: "manual", default: 2, min: 1, max: 8, step: 1 },
         text: { max_lines: 2 },
         double_sided: { enabled: true }
+    },
+    deep: {
+        id: "deep",
+        name: "Deep",
+        width: 30,
+        height: 10,
+        unit: "mm",
+        orientation: "landscape",
+        padding: { top: 0, right: 0, bottom: 0, left: 0 },
+        font_size: { mode: "manual", default: 2, min: 1, max: 8, step: 1 },
+        text: { max_lines: 2 },
+        machine: { viewport_width: 30, viewport_height: 10, depth: 0.3 }
+    },
+    flat: {
+        id: "flat",
+        name: "Flat",
+        width: 30,
+        height: 10,
+        unit: "mm",
+        orientation: "landscape",
+        padding: { top: 0, right: 0, bottom: 0, left: 0 },
+        font_size: { mode: "manual", default: 2, min: 1, max: 8, step: 1 },
+        text: { max_lines: 2 },
+        machine: { viewport_width: 30, viewport_height: 10, depth: 0 }
     }
 };
 
@@ -246,6 +272,27 @@ describe("Main", function() {
         return fonts.faces.map(face => face.family);
     };
 
+    // simulates the operator selecting the profile with the given
+    // identifier, or no profile at all when it is empty
+    const select = function(profile) {
+        jQuery(".profile-select").val(profile).trigger("change");
+    };
+
+    // simulates the operator asking to engrave, returning the rows
+    // the confirm modal then lists on its specs, as the value of
+    // each row keyed by its label
+    const confirm = function() {
+        jQuery(".button-print").click();
+        const rows = {};
+        jQuery(".modal-overlay-confirm .modal-spec").each(function() {
+            const row = jQuery(this);
+            rows[row.children(".modal-spec-label").text()] = row
+                .children(".modal-spec-value")
+                .text();
+        });
+        return rows;
+    };
+
     // simulates the document finishing loading its fonts, notifying
     // the viewport through the loading done event of its font set
     const loadingDone = function() {
@@ -349,6 +396,13 @@ describe("Main", function() {
         const faces = jQuery('<div class="viewport-faces"></div>').appendTo(body);
         faces.append('<div class="viewport-faces-thumbnails"></div>');
         body.append('<div class="toast"></div>');
+        const print = jQuery('<a class="button button-print"></a>').appendTo(body);
+        print.attr("data-url", "http://localhost:8080");
+        print.attr("data-node", "engraver");
+        print.attr("data-printer", "gravo");
+        print.attr("data-key", "secret");
+        const overlay = jQuery('<div class="modal-overlay modal-overlay-confirm"></div>');
+        overlay.append('<div class="modal-specs"></div>').appendTo(body);
         const build = jQuery('<div class="settings-group"></div>').appendTo(body);
         build.append(
             '<div class="settings-readout settings-build-date" data-timestamp="' +
@@ -385,6 +439,41 @@ describe("Main", function() {
         it("should keep the server rendered date when the timestamp is missing", () => {
             const buildDate = jQuery(".settings-build-date").eq(1);
             assert.strictEqual(buildDate.text(), "29/09/2026 10:19:08");
+        });
+    });
+
+    describe("#buttonPrint()", function() {
+        it("should list the default depth when the profile has no machine", () => {
+            assert.strictEqual(confirm().Depth, "0.5 mm");
+        });
+
+        it("should list the depth of the machine of the profile", () => {
+            select("deep");
+            assert.strictEqual(confirm().Depth, "0.3 mm");
+        });
+
+        it("should list a zero depth of the machine of the profile", () => {
+            select("flat");
+            assert.strictEqual(confirm().Depth, "0 mm");
+        });
+
+        it("should list the default depth again once the profile sets none", () => {
+            select("deep");
+            select("plate");
+            assert.strictEqual(confirm().Depth, "0.5 mm");
+        });
+
+        it("should list the default depth with no unit when no profile is selected", () => {
+            select("");
+            const rows = confirm();
+            assert.strictEqual(rows.Depth, "0.5");
+            assert.strictEqual("Profile" in rows, false);
+        });
+
+        it("should list the depth between the margins and the node", () => {
+            const rows = Object.keys(confirm());
+            assert.strictEqual(rows.indexOf("Depth"), rows.indexOf("Margins") + 1);
+            assert.strictEqual(rows.indexOf("Node"), rows.indexOf("Depth") + 1);
         });
     });
 

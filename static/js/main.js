@@ -484,6 +484,7 @@ jQuery(document).ready(function() {
             text: text || "(empty)",
             multifont: multifont,
             font: font || "(none)",
+            depth: String(DEFAULT_DEPTH),
             node: node
         };
         if (currentProfile) {
@@ -504,6 +505,8 @@ jQuery(document).ready(function() {
                 ", " +
                 margins.bottom +
                 (unit ? " " + unit : "");
+            const depth = machine.depth !== undefined ? machine.depth : DEFAULT_DEPTH;
+            specs.depth = depth + (unit ? " " + unit : "");
             const extraPadding = currentProfile.extra_padding;
             if (extraPadding) {
                 specs.extra_padding =
@@ -554,6 +557,11 @@ jQuery(document).ready(function() {
     // times the font size (1.76 * 0.7 = 1.232), kept fractional
     // so that small font sizes are not spaced by rounded pixels
     const LINE_HEIGHT_SCALE = 1.232;
+
+    // depth of the diamond tip listed on the confirm specs when the
+    // machine of the profile defines none, the same depth the confirm
+    // modal then sends with the engraving job
+    const DEFAULT_DEPTH = 0.5;
 
     // stores the currently selected profile and the loaded
     // profiles dictionary for later reference

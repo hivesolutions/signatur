@@ -97,6 +97,13 @@
         }
     };
 
+    // depth of the diamond tip sent with the engraving job when the
+    // machine of the profile defines none, as the engraving software
+    // would otherwise engrave with no depth at all, leaving the tip
+    // no travel to follow a surface that is not perfectly flat; the
+    // viewport lists the same depth on the confirm specs
+    const DEFAULT_DEPTH = 0.5;
+
     /**
      * Modal overlay plugin that manages multiple modal types
      * including error messages, print confirmation with specs
@@ -164,6 +171,7 @@
                     viewport: context.attr("data-label-viewport") || "Surface",
                     fontSize: context.attr("data-label-font-size") || "Font size",
                     margins: context.attr("data-label-margins") || "Margins",
+                    depth: context.attr("data-label-depth") || "Depth",
                     extraPadding: context.attr("data-label-extra-padding") || "Extra padding",
                     finalViewport: context.attr("data-label-final-viewport") || "Final surface",
                     node: context.attr("data-label-node") || "Node",
@@ -239,6 +247,9 @@
                 }
                 if (specs.margins) {
                     html += buildRow(labels.margins, jQuery("<span>").text(specs.margins).html());
+                }
+                if (specs.depth) {
+                    html += buildRow(labels.depth, jQuery("<span>").text(specs.depth).html());
                 }
                 if (specs.extra_padding) {
                     html += buildRow(
@@ -422,6 +433,7 @@
                 const printData = {
                     text: textPayload,
                     font: fontPayload,
+                    depth: DEFAULT_DEPTH,
                     debug: true,
                     dry_run: dryRun,
                     record: record,
@@ -444,6 +456,10 @@
                             (machine.viewport_height || profile.height) +
                             (extraPadding.top || 0) +
                             (extraPadding.bottom || 0);
+                        // sends the depth defined by the machine of the profile
+                        // instead of the default one, a depth of zero included,
+                        // as it is a depth the profile asks to be engraved with
+                        if (machine.depth !== undefined) printData.depth = machine.depth;
                         // sends the font size as previewed and listed on the
                         // confirm specs, keeping its fractional part so that
                         // a size between whole units is not engraved smaller
