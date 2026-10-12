@@ -34,6 +34,35 @@ FAMILY = dict(
     ],
 )
 
+# a letter drawn as three sides of a box and the same letter with a
+# curved accent above it, that stands apart from the letter
+U = dict(
+    metrics=[5000, 0, -300, 0, 0, 0, 3600, 0, 0, 3000, 3500],
+    strokes=[[["on", 0, 3500], ["on", 0, 0], ["on", 3000, 0], ["end", 3000, 3500]]],
+)
+
+U_TILDE = dict(
+    metrics=[5000, 0, -300, 0, 0, 0, 4600, 0, 0, 4000, 6500],
+    strokes=[
+        [["on", 0, 3500], ["on", 0, 0], ["on", 3000, 0], ["end", 3000, 3500]],
+        [["on", 2000, 6000], ["ctrl", 3000, 7000], ["end", 4000, 6000]],
+    ],
+)
+
+# a stem and the same stem with an accent below, that starts on it
+STEM = dict(
+    metrics=[5000, 0, -650, 0, 0, 0, 1300, 0, 0, 0, 5000],
+    strokes=[[["on", 0, 0], ["end", 0, 5000]]],
+)
+
+STEM_CEDILLA = dict(
+    metrics=[5000, 0, -150, 0, 1000, 0, 1300, 0, 0, 500, 6000],
+    strokes=[
+        [["on", 500, 1000], ["end", 500, 6000]],
+        [["on", 500, 1000], ["end", 0, 0]],
+    ],
+)
+
 LAYOUT_CSS = """@font-face {
     font-family: "Helvetica 4L";
     src: url(/static/fonts/helvetica4l.ttf);
@@ -282,6 +311,225 @@ class F3SModelTest(unittest.TestCase):
             ],
         )
         self.assertEqual(M.main_ink(glyph), (30, 20, 70, 60))
+
+    def _rounded(self, value):
+        """
+        Rounds every number of nested lists and tuples, so the curves
+        and points of the model can be compared with literals.
+        """
+
+        if isinstance(value, (list, tuple)):
+            return [self._rounded(item) for item in value]
+        return value if value == None else round(value, 6)
+
+    def test_pen_curves(self):
+        # straight steps relative to the pen on the baseline, in units of
+        # the font size, the first one carrying no control point either
+        self.assertEqual(
+            self._rounded(M.pen_curves(H)),
+            [
+                [[None, [0.13, 0.0]], [None, [0.13, 1.0]]],
+                [[None, [0.914, 0.0]], [None, [0.914, 1.0]]],
+                [[None, [0.13, 0.5]], [None, [0.914, 0.5]]],
+            ],
+        )
+        self.assertEqual(M.pen_curves(SPACE), [])
+
+        # a control point takes the point after it as the end of its curve
+        self.assertEqual(
+            self._rounded(M.pen_curves(U_TILDE)[1]),
+            [[None, [0.46, 1.2]], [[0.66, 1.4], [0.86, 1.2]]],
+        )
+
+        # the stored box of a glyph with an accent below starts under the
+        # baseline, which the vertical offset brings back
+        self.assertEqual(
+            self._rounded(M.pen_curves(STEM_CEDILLA)),
+            [
+                [[None, [0.13, 0.0]], [None, [0.13, 1.0]]],
+                [[None, [0.13, 0.0]], [None, [0.03, -0.2]]],
+            ],
+        )
+
+        # a point of an unknown kind ends the curve it is in, what is
+        # left of a single point being no curve
+        glyph = dict(
+            metrics=[1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            strokes=[
+                [
+                    ["on", 0, 0],
+                    ["on", 100, 0],
+                    ["op7", 5, 5],
+                    ["on", 200, 0],
+                    ["op7", 5, 5],
+                    ["on", 300, 0],
+                    ["end", 400, 0],
+                ],
+                [],
+            ],
+        )
+        self.assertEqual(
+            self._rounded(M.pen_curves(glyph)),
+            [
+                [[None, [0.0, 0.0]], [None, [0.1, 0.0]]],
+                [[None, [0.3, 0.0]], [None, [0.4, 0.0]]],
+            ],
+        )
+
+        # a control point with no point before or after it is a point
+        glyph = dict(
+            metrics=[1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            strokes=[[["ctrl", 0, 0], ["on", 100, 0], ["ctrl", 200, 100]]],
+        )
+        self.assertEqual(
+            self._rounded(M.pen_curves(glyph)),
+            [[[None, [0.0, 0.0]], [None, [0.1, 0.0]], [None, [0.2, 0.1]]]],
+        )
+
+    def test_flatten(self):
+        curve = [(None, (0.0, 0.0)), ((0.5, 1.0), (1.0, 0.0))]
+        self.assertEqual(
+            M.flatten(curve, steps=2), [(0.0, 0.0), (0.5, 0.5), (1.0, 0.0)]
+        )
+
+        points = M.flatten(curve)
+        self.assertEqual(len(points), 9)
+        self.assertEqual(points[0], (0.0, 0.0))
+        self.assertEqual(points[4], (0.5, 0.5))
+        self.assertEqual(points[-1], (1.0, 0.0))
+
+        # the straight steps are kept as they are
+        curve = [(None, (0, 0)), (None, (1, 1)), (None, (3, 1))]
+        self.assertEqual(M.flatten(curve), [(0, 0), (1, 1), (3, 1)])
+        self.assertEqual(M.flatten([]), [])
+
+        # a curve has no point before its first one to bend from, so
+        # a control point there is left out
+        curve = [((5, 5), (0, 0)), (None, (1, 0))]
+        self.assertEqual(M.flatten(curve), [(0, 0), (1, 0)])
+
+    def test_points_box(self):
+        self.assertEqual(M.points_box([(1, 5), (-2, 3), (4, -1)]), (-2, -1, 4, 5))
+        self.assertEqual(M.points_box([(3, 3)]), (3, 3, 3, 3))
+        self.assertEqual(
+            M.points_box(point for point in [(0, 0), (2, 1)]), (0, 0, 2, 1)
+        )
+
+    def test_lines_distance(self):
+        line = [(-1, 0), (1, 0)]
+        self.assertEqual(M.lines_distance((0, 1), [line]), 1.0)
+        self.assertEqual(M.lines_distance((0.5, 0), [line]), 0.0)
+
+        # past the end of a line the distance is the one to its end
+        self.assertEqual(M.lines_distance((3, 0), [line]), 2.0)
+        self.assertEqual(M.lines_distance((-4, 4), [line]), 5.0)
+
+        # the nearest of the lines counts, a line of no length being a point
+        self.assertEqual(M.lines_distance((0, 3), [line, [(0, 5), (0, 4)]]), 1.0)
+        self.assertEqual(M.lines_distance((2, 5), [[(2, 2), (2, 2)]]), 3.0)
+
+        self.assertEqual(M.lines_distance((0, 0), []), float("inf"))
+        self.assertEqual(M.lines_distance((0, 0), [[(1, 1)]]), float("inf"))
+
+    def test_accent_curves(self):
+        # an accent that stands apart from the letter, joined at no end
+        accents, letter = M.accent_curves(U_TILDE, U)
+        self.assertEqual(len(accents), 1)
+        curve, joined = accents[0]
+        self.assertEqual(
+            self._rounded(curve), [[None, [0.46, 1.2]], [[0.66, 1.4], [0.86, 1.2]]]
+        )
+        self.assertEqual(joined, (False, False))
+        self.assertEqual(
+            self._rounded(letter), [[0.06, 0.7], [0.06, 0.0], [0.66, 0.0], [0.66, 0.7]]
+        )
+
+        # an accent that starts on the letter is joined at its start, the
+        # point on the letter being both the join and a point of the letter
+        accents, letter = M.accent_curves(STEM_CEDILLA, STEM)
+        self.assertEqual(len(accents), 1)
+        curve, joined = accents[0]
+        self.assertEqual(
+            self._rounded(curve), [[None, [0.13, 0.0]], [None, [0.03, -0.2]]]
+        )
+        self.assertEqual(joined, (True, False))
+        self.assertEqual(self._rounded(letter), [[0.13, 0.0], [0.13, 1.0], [0.13, 0.0]])
+
+    def test_accent_curves_stroke(self):
+        # an accent that continues a stroke of the letter is taken from
+        # the last point of the stroke that is on the letter
+        glyph = dict(
+            metrics=[5000, 0, -150, 0, 1000, 0, 1300, 0, 0, 500, 6000],
+            strokes=[
+                [
+                    ["on", 500, 6000],
+                    ["on", 500, 1000],
+                    ["ctrl", 0, 1000],
+                    ["on", 0, 500],
+                    ["end", 250, 0],
+                ]
+            ],
+        )
+        accents, letter = M.accent_curves(glyph, STEM)
+        self.assertEqual(len(accents), 1)
+        curve, joined = accents[0]
+        self.assertEqual(
+            self._rounded(curve),
+            [
+                [None, [0.13, 0.0]],
+                [[0.03, 0.0], [0.03, -0.1]],
+                [None, [0.08, -0.2]],
+            ],
+        )
+        self.assertEqual(joined, (True, False))
+        self.assertEqual(self._rounded(letter[:2]), [[0.13, 1.0], [0.13, 0.0]])
+
+        # a run between two points of the letter is joined at both ends,
+        # its first step never carrying the control point of the slice
+        glyph = dict(
+            metrics=[5000, 0, -650, 0, 0, 0, 1300, 0, 0, 1000, 5000],
+            strokes=[
+                [
+                    ["on", 0, 5000],
+                    ["ctrl", 0, 4000],
+                    ["on", 0, 3000],
+                    ["on", 1000, 2500],
+                    ["end", 0, 2000],
+                ]
+            ],
+        )
+        accents, letter = M.accent_curves(glyph, STEM)
+        self.assertEqual(len(accents), 1)
+        curve, joined = accents[0]
+        self.assertEqual(
+            self._rounded(curve),
+            [[None, [0.13, 0.6]], [None, [0.33, 0.5]], [None, [0.13, 0.4]]],
+        )
+        self.assertEqual(joined, (True, True))
+
+    def test_accent_curves_distance(self):
+        # the points within the distance of the letter belong to it, so
+        # a wide enough distance leaves no accent
+        accents, letter = M.accent_curves(U_TILDE, U, distance=2.0)
+        self.assertEqual(accents, [])
+        self.assertEqual(len(letter), 13)
+
+        # a letter drawn 2% of the size apart is still the letter, a
+        # tighter distance taking the parts that leave it as accents
+        glyph = dict(U, metrics=[5000, 0, -400, 0, 0, 0, 3600, 0, 0, 3000, 3500])
+        accents, letter = M.accent_curves(glyph, U)
+        self.assertEqual(accents, [])
+        self.assertEqual(len(letter), 4)
+        accents, letter = M.accent_curves(glyph, U, distance=0.01)
+        self.assertEqual(
+            [(len(curve), joined) for curve, joined in accents],
+            [(2, (False, True)), (3, (True, False))],
+        )
+
+        # with no letter to compare with every curve is an accent
+        accents, letter = M.accent_curves(U_TILDE, SPACE)
+        self.assertEqual([len(curve) for curve, _joined in accents], [4, 2])
+        self.assertEqual(letter, [])
 
     def test_font_files(self):
         self._write(os.path.join("static", "css", "layout.css"), LAYOUT_CSS)

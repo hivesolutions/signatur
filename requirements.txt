@@ -2,3 +2,4 @@ fonttools
 numpy
 pillow
 scipy
+skia-pathops
