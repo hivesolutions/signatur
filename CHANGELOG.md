@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Agent skill to tune the preview fonts and prove they match the engraving
 * Unit tests for the font matching skill and the font scripts, also run by the CI
+* Diamond tip depth on the machine of a profile, 0.5 when a profile sets none - [#81](https://github.com/hivesolutions/signatur/issues/81)
+* Depth row on the engraving confirmation, with the diamond tip depth the job is sent with - [#81](https://github.com/hivesolutions/signatur/issues/81)
 
 ### Changed
 
@@ -19,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Wide gap around the @ and slightly off tilde letters in the engraving matched fonts
+* Engraving jobs are now sent with a diamond tip depth, which the engraving nodes that support it apply instead of engraving with a depth of zero - [#81](https://github.com/hivesolutions/signatur/issues/81)
+* Profiles with a padding that is not a finite number are now refused
 * Emoji validation script failing with the current emoji mapping
 * Font metrics script drawing accented letters with a wrong box
 

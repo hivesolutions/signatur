@@ -55,6 +55,35 @@ describe("Modal", function() {
         });
     };
 
+    // serves the small medal to the confirm modal with the given
+    // machine, the way a profile that declares its own machine does
+    const machine = function(value) {
+        const profile = Object.assign({}, PROFILES["small-medal"], { machine: value });
+        overlay.data("profiles", { "small-medal": profile });
+    };
+
+    // returns the labels of the rows listed on the specs of the
+    // confirm modal, in the order the operator reads them
+    const labels = function() {
+        return overlay
+            .find(".modal-spec-label")
+            .map(function() {
+                return jQuery(this).text();
+            })
+            .get();
+    };
+
+    // returns the value listed on the specs of the confirm modal
+    // for the row with the given label, null when there is none
+    const listed = function(label) {
+        const index = labels().indexOf(label);
+        if (index === -1) return null;
+        return overlay
+            .find(".modal-spec-value")
+            .eq(index)
+            .text();
+    };
+
     beforeEach(function() {
         const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
             url: "http://localhost/viewport",
@@ -102,6 +131,7 @@ describe("Modal", function() {
             margin.addClass("margin-" + side).appendTo(body);
         }
         overlay = jQuery('<div class="modal-overlay modal-overlay-confirm"></div>').appendTo(body);
+        overlay.append('<div class="modal-specs"></div>');
         overlay.append('<input class="modal-dry-run" type="checkbox" />');
         overlay.append('<input class="modal-record" type="checkbox" />');
         overlay.append('<input class="modal-check-path" type="checkbox" />');
@@ -115,6 +145,43 @@ describe("Modal", function() {
 
     afterEach(function() {
         window.close();
+    });
+
+    describe("#confirm()", function() {
+        it("should list the depth right after the margins", () => {
+            overlay.modal("confirm", {
+                text: "11.07.26",
+                font: "Helvetica",
+                margins: "2.94, 2.94, 2.94, 2.94 mm",
+                depth: "0.5 mm",
+                node: PRINT_NODE
+            });
+            assert.deepStrictEqual(labels(), ["Text", "Font", "Margins", "Depth", "Node"]);
+            assert.strictEqual(listed("Depth"), "0.5 mm");
+        });
+
+        it("should list a zero depth", () => {
+            overlay.modal("confirm", { text: "11.07.26", depth: "0 mm" });
+            assert.strictEqual(listed("Depth"), "0 mm");
+        });
+
+        it("should label the depth with the label of the locale", () => {
+            overlay.attr("data-label-depth", "Profundidade");
+            overlay.modal("confirm", { text: "11.07.26", depth: "0.5 mm" });
+            assert.strictEqual(listed("Profundidade"), "0.5 mm");
+            assert.strictEqual(listed("Depth"), null);
+        });
+
+        it("should leave the depth out of the specs that have none", () => {
+            overlay.modal("confirm", { text: "11.07.26", font: "Helvetica" });
+            assert.deepStrictEqual(labels(), ["Text", "Font"]);
+        });
+
+        it("should list the depth as plain text", () => {
+            overlay.modal("confirm", { text: "11.07.26", depth: "<b>0.5</b> mm" });
+            assert.strictEqual(listed("Depth"), "<b>0.5</b> mm");
+            assert.strictEqual(overlay.find(".modal-spec-value b").length, 0);
+        });
     });
 
     describe("#buttonEngrave()", function() {
@@ -153,6 +220,44 @@ describe("Modal", function() {
             profileSelect.val("");
             resize(2.75);
             const data = await engrave();
+            assert.strictEqual("font_size" in data, false);
+        });
+
+        it("should send the default depth when the profile has no machine", async () => {
+            const data = await engrave();
+            assert.strictEqual(data.depth, 0.5);
+        });
+
+        it("should send the default depth when the machine of the profile sets none", async () => {
+            machine({ viewport_width: 22, viewport_height: 20 });
+            const data = await engrave();
+            assert.strictEqual(data.depth, 0.5);
+            assert.strictEqual(data.width, 22);
+        });
+
+        it("should send the depth of the machine of the profile", async () => {
+            machine({ viewport_width: 22, viewport_height: 20, depth: 0.3 });
+            const data = await engrave();
+            assert.strictEqual(data.depth, 0.3);
+        });
+
+        it("should send a zero depth of the machine of the profile as is", async () => {
+            machine({ viewport_width: 22, viewport_height: 20, depth: 0 });
+            const data = await engrave();
+            assert.strictEqual(data.depth, 0);
+        });
+
+        it("should send the default depth when no profile is selected", async () => {
+            machine({ viewport_width: 22, viewport_height: 20, depth: 0.3 });
+            profileSelect.val("");
+            const data = await engrave();
+            assert.strictEqual(data.depth, 0.5);
+        });
+
+        it("should send the default depth when the selected profile is not served", async () => {
+            overlay.data("profiles", {});
+            const data = await engrave();
+            assert.strictEqual(data.depth, 0.5);
             assert.strictEqual("font_size" in data, false);
         });
     });
