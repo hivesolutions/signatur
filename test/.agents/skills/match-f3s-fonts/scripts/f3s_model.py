@@ -123,6 +123,16 @@ class F3SModelTest(unittest.TestCase):
                 json.dumps(glyphs),
             )
 
+    def _rounded(self, value):
+        """
+        Rounds every number of nested lists and tuples, so the curves
+        and points of the model can be compared with literals.
+        """
+
+        if isinstance(value, (list, tuple)):
+            return [self._rounded(item) for item in value]
+        return value if value == None else round(value, 6)
+
     def test_parser(self):
         if not os.path.exists(os.path.join(M.GRAVO_NATIVE, "f3s_parser.py")):
             self.skipTest("Skipping test: gravo-native unavailable")
@@ -311,16 +321,6 @@ class F3SModelTest(unittest.TestCase):
             ],
         )
         self.assertEqual(M.main_ink(glyph), (30, 20, 70, 60))
-
-    def _rounded(self, value):
-        """
-        Rounds every number of nested lists and tuples, so the curves
-        and points of the model can be compared with literals.
-        """
-
-        if isinstance(value, (list, tuple)):
-            return [self._rounded(item) for item in value]
-        return value if value == None else round(value, 6)
 
     def test_pen_curves(self):
         # straight steps relative to the pen on the baseline, in units of

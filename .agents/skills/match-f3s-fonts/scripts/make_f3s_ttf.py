@@ -571,8 +571,10 @@ def draw_glyph(font, f3s, char, source=F3S_SOURCE):
 def set_glyph(font, char, glyph, advance):
     """
     Sets the glyph of a character of the font, adding the character
-    when the font lacks it: its name to the glyph order and its code to
-    every character map (the Mac Roman one through its own encoding).
+    when the font lacks it: its name to the glyph order (unless the font
+    holds a glyph under that name already, which is then replaced) and
+    its code to every character map (the Mac Roman one through its own
+    encoding).
     """
 
     glyf = font["glyf"]
@@ -580,7 +582,8 @@ def set_glyph(font, char, glyph, advance):
     name = font.getBestCmap().get(ord(char))
     if name == None:
         name = agl.UV2AGL.get(ord(char), "uni%04X" % ord(char))
-        font.setGlyphOrder(font.getGlyphOrder() + [name])
+        if not name in font.getGlyphOrder():
+            font.setGlyphOrder(font.getGlyphOrder() + [name])
     glyf[name] = glyph
     glyph.recalcBounds(glyf)
     hmtx[name] = (advance, glyph.xMin)
@@ -616,7 +619,8 @@ def different_glyphs(font, other, chars, tolerance=GLYPH_TOLERANCE):
     """
     Returns the characters whose glyph differs between the two fonts,
     in its advance, its contours or any coordinate by more than the
-    tolerance, a character missing in one of them differing too.
+    tolerance, a character missing in one of them differing too, the
+    glyphs built from others being compared by the outline they draw.
     """
 
     different = []
@@ -626,14 +630,9 @@ def different_glyphs(font, other, chars, tolerance=GLYPH_TOLERANCE):
             name = item.getBestCmap().get(ord(char))
             if name == None:
                 break
-            glyph = item["glyf"][name]
-            glyphs.append(
-                (
-                    item["hmtx"][name][0],
-                    list(getattr(glyph, "endPtsOfContours", [])),
-                    list(getattr(glyph, "coordinates", [])),
-                )
-            )
+            glyf = item["glyf"]
+            points, ends, _flags = glyf[name].getCoordinates(glyf)
+            glyphs.append((item["hmtx"][name][0], list(ends), list(points)))
         if len(glyphs) < 2:
             different.append(char)
             continue

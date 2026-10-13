@@ -793,25 +793,25 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertEqual(joined[1:], curve)
         self.assertEqual(joined[0][0], None)
         self.assertEqual(joined[0][1][0], 50)
-        self.assertTrue(0 <= joined[0][1][1] <= 1)
+        self.assertLessEqual(abs(joined[0][1][1] - 0.5), 0.5)
         self.assertEqual(curve, [(None, (50, -10)), (None, (50, -60))])
 
         joined = G.join_curve(outline, curve[::-1], (False, True), 10)
         self.assertEqual(joined[:2], curve[::-1])
         self.assertEqual(joined[2][0], None)
         self.assertEqual(joined[2][1][0], 50)
-        self.assertTrue(0 <= joined[2][1][1] <= 1)
+        self.assertLessEqual(abs(joined[2][1][1] - 0.5), 0.5)
 
         # the direction is the one the curve ends with, its control point
         curve = [(None, (50, -10)), ((50, -30), (20, -60))]
         joined = G.join_curve(outline, curve, (True, False), 10)
         self.assertEqual(joined[0][1][0], 50)
-        self.assertTrue(0 <= joined[0][1][1] <= 1)
+        self.assertLessEqual(abs(joined[0][1][1] - 0.5), 0.5)
         curve = [(None, (20, -60)), ((50, -30), (50, -10))]
         joined = G.join_curve(outline, curve, (False, True), 10)
         self.assertEqual(joined[:2], curve)
         self.assertEqual(joined[2][1][0], 50)
-        self.assertTrue(0 <= joined[2][1][1] <= 1)
+        self.assertLessEqual(abs(joined[2][1][1] - 0.5), 0.5)
 
         # a curve between two points of the letter is extended at both
         # ends, each along its own direction
@@ -821,7 +821,7 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertEqual(len(joined), 5)
         for point, x in ((joined[0][1], 10), (joined[4][1], 90)):
             self.assertAlmostEqual(point[0], x, delta=1)
-            self.assertTrue(0 <= point[1] <= 1)
+            self.assertLessEqual(abs(point[1] - 0.5), 0.5)
 
         # the ends that are not joined, already in the outline or too far
         # from it (three line widths) are left as they are
@@ -873,7 +873,7 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertEqual(boxes[0], G.glyph_path(font, "u").bounds)
         self.assertEqual((boxes[0][0], boxes[0][2]), (70.0, 490.0))
         self._assert_box(boxes[1], (342.5, 832.5, 637.5, 917.5))
-        self.assertTrue(len(contours[1]) < 40)
+        self.assertLess(len(contours[1]), 40)
 
         # nothing is written to the font
         self.assertNotIn(ord("ũ"), font.getBestCmap())
@@ -990,11 +990,24 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertEqual(font["hmtx"]["H"], (700, 70))
         self.assertEqual(len(font.getGlyphOrder()), len(order) + 3)
 
+        # and so is a glyph that the font holds under the name of the
+        # character without mapping it, instead of being added twice
+        for table in font["cmap"].tables:
+            table.cmap.pop(ord("Ç"), None)
+            table.cmap.pop(0x82, None)
+        self.assertEqual(G.set_glyph(font, "Ç", glyph, advance), "Ccedilla")
+        self.assertEqual(font.getGlyphOrder().count("Ccedilla"), 1)
+        self.assertEqual(len(font.getGlyphOrder()), len(order) + 3)
+        for table in font["cmap"].tables:
+            self.assertEqual(
+                table.cmap[0xC7 if table.isUnicode() else 0x82], "Ccedilla"
+            )
+
         # the font is saved and read back with its new glyphs
         font = self._reload(font)
         self.assertEqual(font["maxp"].numGlyphs, len(order) + 3)
         self.assertEqual(font.getGlyphOrder()[-3:], ["utilde", "udieresis", "uni013C"])
-        for char in "ũüļH":
+        for char in "ũüļHÇ":
             self._assert_box(self._bounds(font, char), (70, -11, 637.5, 917.5))
         self.assertEqual(self._advance(font, "ũ"), (560, 70))
         self.assertEqual(self._bounds(font, "u"), (70, -11, 490, 474))
@@ -1101,6 +1114,18 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertEqual(G.different_glyphs(font, other, "ļũ"), ["ļ"])
         other["glyf"]["uni013C"] = other["glyf"]["utilde"]
         self.assertEqual(G.different_glyphs(font, other, "ļũ"), ["ļ"])
+
+        # a glyph built from another one is compared by what it draws,
+        # where it puts the other glyph and which glyph that is
+        self._composite(font, "I", "H", 50)
+        self._composite(other, "I", "H", 50)
+        self.assertEqual(G.different_glyphs(font, other, "I"), [])
+        self._composite(other, "I", "H", 51)
+        self.assertEqual(G.different_glyphs(font, other, "I"), [])
+        self._composite(other, "I", "H", 60)
+        self.assertEqual(G.different_glyphs(font, other, "I"), ["I"])
+        self._composite(other, "I", "A", 50)
+        self.assertEqual(G.different_glyphs(font, other, "I"), ["I"])
 
     def test_emoji_targets(self):
         self._fonts(dict())
