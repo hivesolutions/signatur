@@ -139,6 +139,42 @@ $PY measure.py --viewport before=$SCRATCH/run-before --viewport after=$SCRATCH/r
 | before | 0 / 75 | 0.12 to 4.18 mm | line widths up to 18.8 mm off |
 | after | 57 / 75 | 0.01 to 0.09 mm | the 18 FAIL: 6 trimmed old limits, 2 pipe emoji jobs (not in the URL, listed twice), 8 `ç` fallbacks, 2 glyphs not found (`7`, `õ`) |
 
+## Drawing missing letters (2026-10-12)
+
+`ç Ç` were missing in Roman 4L and the three script TTFs, `Õ` in Script Round 1L and `ñ Ñ` in the six, all of them in the F3S fonts. The `glyphs` of `fonts.json` list what to draw and from what:
+
+```json
+{"stem": "scriptround1l", "f3s": "Script Round 1L", "f3s_sha256": "8131d8f5...", "adjust": {},
+ "glyphs": {"Ç": "f3s", "Ñ": "f3s", "Õ": "Ã", "ç": "f3s", "ñ": "f3s"}}
+```
+
+```bash
+# in a scratch copy of the repository, served on its own port
+$PY make_f3s_ttf.py glyphs            # static/fonts/roman4l.ttf: drew ÇÑçñ (x6)
+$PY make_f3s_ttf.py build             # their -f3s.ttf
+$PY make_f3s_ttf.py glyphs --verify   # static/fonts/roman4l.ttf: the same ÇÑçñ (x6)
+$PY make_f3s_ttf.py check --ttf static/fonts/roman4l-f3s.ttf --f3s "Roman 4L"   # PASS
+```
+
+Looking at the glyphs enlarged, with their F3S lines over them, showed what `check` could not: the first build had the tildes taken from `ã` and `Ã` left where they sit over the `a` and the `A` (20 to 107 units from the F3S accent), and `check` passed it.
+
+33 cases (the words `Gonçalo Açor`, `Conceição`, `Niño señor`, `España año`, the letter between other letters as in `açb oçe uçi` and `HñH nñn`, 2.5 and 8 mm) were captured and submitted from the copy with the drawn letters, a `master` copy captured alongside:
+
+```bash
+$PY cases.py check cases.json --root $SCRATCH/candidate      # 33 cases, 0 problems
+node capture.js cases.json $SCRATCH/run-branch --base http://127.0.0.1:3124 --label branch \
+    --root $SCRATCH/candidate --submit
+node capture.js cases.json $SCRATCH/run-master --base http://127.0.0.1:3125 --label master \
+    --root $SCRATCH/master
+$PY gravo_job.py fetch $SCRATCH/run-branch
+$PY measure.py --viewport master=$SCRATCH/run-master --viewport branch=$SCRATCH/run-branch --out $SCRATCH/report
+```
+
+- `capture.js --submit` stopped at the 15th case: `Ço Aço MOÇA` in Script 412 1L passes `cases.py check` (59.11 mm of ink) and does not fit the viewport (60.18 mm of advances), which trimmed its last `A`. The line was shortened and the 19 cases left were run again into the same directory.
+- The first measurement gave 28 PASS, 3 RETRY and 2 FAIL for the drawn letters. Both FAIL were typing errors too, found by reading the engraved lines: `HñH nñ` had lost its last `n` and `Españñ año` had its `a` engraved as the `ñ` before it. The 5 cases submitted again passed.
+- The drawing changed after the dry runs (the letter is now copied point for point when its accent stands apart), so the fonts were built again in another copy, captured without `--submit` and measured against the same screenshots, as a third `--viewport`.
+- Final: drawn letters 33 of 33 PASS (spacing mean 0.01 to 0.07 mm, spacing max 0.21 mm, line width 0.23 mm), `master` 0 of 33 (a fallback font for every drawn letter, lines up to 6.19 mm off).
+
 ## Pre-flight check output
 
 The fonts of release 1.5.0, before the per glyph scale (`build` now gives 0.07% and PASS for all six):

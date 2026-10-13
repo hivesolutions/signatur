@@ -1,6 +1,6 @@
 ---
 name: match-f3s-fonts
-description: Tune and verify the Signatur TTF fonts so the viewport preview matches, in size and spacing, what Gravostyle engraves with their F3S counterparts, proving it with the Signatur viewport against gravo-pilot dry run screenshots. Use when adding or changing a text font or a Cool Emojis glyph, when the preview and the engraving disagree, or when asked for evidence of the matching.
+description: Tune and verify the Signatur TTF fonts so the viewport preview matches, in size and spacing, what Gravostyle engraves with their F3S counterparts, proving it with the Signatur viewport against gravo-pilot dry run screenshots. Use when adding or changing a text font or a Cool Emojis glyph, when a font lacks a letter that its F3S engraves, when the preview and the engraving disagree, or when asked for evidence of the matching.
 argument-hint: <font name, TTF path or "emojis">
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob
 ---
@@ -27,10 +27,10 @@ The matching is proven only by comparing **the visible Signatur viewport** with 
 ## Instructions
 
 1. **Scope** `$ARGUMENTS`: which font(s) or emojis, which F3S file (bundled in gravo-pilot or uploaded to Signatur), which characters matter. Ask when unclear.
-2. **Self test** with `selftest.py`: the committed `-f3s.ttf` fonts must be the build of `fonts.json`, pass the check, and the guards must hold. Fix any failure before measuring.
+2. **Self test** with `selftest.py`: the committed `-f3s.ttf` fonts must be the build of `fonts.json`, pass the check, every font must draw the letters of the viewport keyboard, and the guards must hold. Fix any failure before measuring.
 3. **Set up** Colony Print access and the local Signatur servers (see Setup).
 4. **Pre-flight** the current TTF with `make_f3s_ttf.py check` to see the spacing, size and coverage gaps.
-5. **Tune** into a scratch directory: `make_f3s_ttf.py text` for a text font (or `emoji` for Cool Emojis glyphs), then `check` the output (it must PASS).
+5. **Tune** into a scratch directory: `make_f3s_ttf.py text` for a text font (or `emoji` for Cool Emojis glyphs), then `check` the output (it must PASS). A letter that the F3S engraves and the regular TTF lacks is drawn first (Drawing a missing letter).
 6. **Serve** the candidate: copy the repo to a scratch root with the candidate fonts and run it on a second port next to the shipped one (and a copy of the released version, from `git archive`, when a before and after is wanted).
 7. **Write cases** with `cases.py generate` (or by hand, see Cases), validate them with `cases.py check`, then run `capture.js --submit` against one server (dry run jobs) plus `capture.js` without `--submit` against the others.
 8. **Fetch** the Gravostyle screenshots with `gravo_job.py fetch` (the node reports the whole batch at the end, about 45 s per job, so 35 cases take about 30 minutes).
@@ -72,7 +72,7 @@ ENGRAVE_NODE=gravo-gold-std ENGRAVE_PRINTER=gravo PORT=3123 HOST=127.0.0.1 node 
 - A released version for the before side: `git archive master | tar -x -C $SCRATCH/master`, symlink `node_modules`, copy `config/users.json`, run it on another port and capture it with `--root $SCRATCH/master`.
 - A capture keeps pointing at the root that served it: once the fonts of that root change, measure the old capture against a root with the fonts it rendered (edit `meta.root` of its `capture.json`), else `measure.py` stops on the font hash.
 - Playwright: `PLAYWRIGHT_PATH` (the module path, e.g. the mise install) and `CHROMIUM_PATH` (`/usr/bin/chromium`).
-- The Python scripts need `fonttools numpy pillow scipy` (`pip install -r requirements.txt` from the repository root) and a checkout of gravo-native (F3S parser) and gravo-pilot (bundled F3S fonts) next to this repo, or `GRAVO_NATIVE` and `GRAVO_PILOT`.
+- The Python scripts need `fonttools numpy pillow scipy skia-pathops` (`pip install -r requirements.txt` from the repository root) and a checkout of gravo-native (F3S parser) and gravo-pilot (bundled F3S fonts) next to this repo, or `GRAVO_NATIVE` and `GRAVO_PILOT`.
 
 ## The model
 
@@ -104,8 +104,9 @@ Cases are a JSON list shared by every script ([examples.md](examples.md) has rea
 ## Determinism
 
 - `fonts.json` lists every generated font: the regular TTF stem, the F3S font, the SHA-256 of the F3S file, the measured corrections and, for a TTF whose cap is not 0.7 em, the outline `scale` (`"auto"` or the factor of `text --scale`). `make_f3s_ttf.py build` regenerates all the `-f3s.ttf` fonts from it byte for byte (the head timestamp of the regular TTF is kept) and refuses an F3S file whose hash changed, as the corrections were measured with the old one; `build --verify` proves the committed fonts are its output.
+- `fonts.json` also lists, in the `glyphs` of a font, the accented letters drawn into its regular TTF, each with the source of its accent. `make_f3s_ttf.py glyphs` draws them again from the letters of the font and its F3S font, and `glyphs --verify` proves the committed fonts hold them as drawn (within a unit, the outlines coming from floating point path operations). `build` reads the regular fonts, so the letters are drawn before it.
 - `capture.js` records the SHA-256 of every TTF the page loads and `measure.py` refuses to measure a TTF that is not one the browser rendered (a stale server, the wrong `--root` or a font the page never loaded).
-- `cases.py generate` packs the glyphs shared by the TTF and the F3S in code point order, so the same font always gives the same cases, and `cases.py check` predicts every overflow and fallback glyph before a job is sent (it flags exactly the 14 failing cases of the PR #79 evidence).
+- `cases.py generate` packs the glyphs shared by the TTF and the F3S in code point order, so the same font always gives the same cases, and `cases.py check` predicts the overflow of the ink and every fallback glyph before a job is sent (it flags exactly the 14 failing cases of the PR #79 evidence), but not a line that the viewport trims by its advances (Gotchas).
 - The measurement floor: on a 70 mm plate one screenshot pixel is about 0.08 mm and the same pair measured twice differs by about 0.06 mm (median), so differences below 0.1 mm are noise; text that fills the area gives the best relative precision.
 
 ## Scripts
@@ -114,8 +115,9 @@ All under `scripts/`, run from that directory (Python with the requirements abov
 
 | Script | Use |
 | --- | --- |
-| `selftest.py` | offline self test: committed fonts against `fonts.json`, the check, the dry run guard and the case validation |
+| `selftest.py` | offline self test: committed fonts against `fonts.json` (the built `-f3s.ttf` and the drawn letters), the check, the letters of the viewport keyboard in every font, the dry run guard and the case validation |
 | `make_f3s_ttf.py build [--verify] [--output DIR]` | regenerate the `-f3s.ttf` fonts of `fonts.json` into `static/fonts` (or compare with them) |
+| `make_f3s_ttf.py glyphs [--verify] [--output DIR]` | draw the accented letters of the `glyphs` of `fonts.json` into the regular fonts of `static/fonts` (or compare with them) |
 | `make_f3s_ttf.py text --ttf IN --f3s NAME --output OUT [--scale auto] [--adjust JSON]` | respace a text font after its F3S font (decomposes composites, `--scale` resizes outlines whose cap is not 0.7 em, `--adjust` applies measured per glyph corrections) |
 | `make_f3s_ttf.py emoji --ttf coolemojis.ttf [--chars ...] --output OUT` | refit Cool Emojis glyphs (default: the ones off by more than the tolerance) |
 | `make_f3s_ttf.py check --ttf TTF (--f3s NAME or --emoji) [--adjust JSON] [--json OUT]` | offline pre-flight, exits 1 when a glyph spacing is off by more than 1.5% of the size |
@@ -131,16 +133,18 @@ All under `scripts/`, run from that directory (Python with the requirements abov
 
 Per case and viewport, measured in plate mm: spacing mean <= 0.10, spacing max <= 0.30, line width error <= 0.35, baseline error <= 0.30, glyph height (median viewport to engraved ink height) within 15%, median F3S match >= 0.60, every glyph found on the engraving, nothing trimmed, no fallback glyph, no line past the margin box. A case whose engraving lost, doubled or swapped a character gets `RETRY` instead: its other lines are measured, the dry run must be submitted again before it counts.
 
-The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared glyph of the six fonts at 5, 2.5 and 8 mm: spacing mean 0.02 to 0.09 mm, spacing max 0.23 mm, line width 0.26 mm, baseline 0.16 mm), the 1.5.0 ones 33 of 35 (the Helvetica 4L `@`), the regular TTFs with the old factors 0 of 75 (0.12 to 4.18 mm spacing mean).
+The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared glyph of the six fonts at 5, 2.5 and 8 mm: spacing mean 0.02 to 0.09 mm, spacing max 0.23 mm, line width 0.26 mm, baseline 0.16 mm), the 1.5.0 ones 33 of 35 (the Helvetica 4L `@`), the regular TTFs with the old factors 0 of 75 (0.12 to 4.18 mm spacing mean). The 21 letters drawn on 2026-10-12 pass 33 of 33 cases of their own (spacing mean 0.01 to 0.07 mm, spacing max 0.21 mm, line width 0.23 mm).
 
 ## Reading failures
 
 | Symptom | Meaning |
 | --- | --- |
 | RETRY, a character dropped, doubled or engraved as another | gravo-pilot typed the text wrong: it pastes every character from the clipboard and 6 of about 950 characters were lost or pasted stale on 2026-10-01 (`E` lost, `F` engraved as the `E` before it). Submit the dry run again, never tune a font on such a line |
+| a FAIL on one line only (line width, spacing or a glyph not found) | read the engraved line before the numbers: the measurement does not recognise every typing error, a last character that was lost is reported as not found and a character engraved as a similar one (an `a` as the `ñ` before it) as a line that is too wide. Submit the dry run again |
 | the engraving runs past the margin box | the text is wider than the area at that size (Gravostyle draws past it or resizes it), pick a smaller size |
 | viewport trims the text | the composition does not fit the viewport at that size, pick a smaller size |
-| previewed with a fallback font | the TTF lacks the glyph (Roman 4L and the script TTFs have no `ç`), the browser draws another font |
+| previewed with a fallback font | the TTF lacks the glyph (no TTF has `ü`), the browser draws another font; draw it when the F3S has it (Drawing a missing letter) |
+| `capture.js` stops with the viewport does not show the case | the viewport trimmed the text or changed its size, usually a line that does not fit by its advances; nothing was sent for that case, shorten the line and run the cases left |
 | low F3S match | Gravostyle engraved another font or size: overflow resize, wrong dropdown pick (internal F3S name order), or text that differs from the case (the pipe emoji that cannot travel in the URL) |
 | not found on the engraving, not measured | its F3S strokes differ from what Gravostyle drew, so the case does not prove that glyph; check the parser on that glyph |
 | glyph height off | the TTF outlines are drawn at another scale than the F3S glyphs (a cap that is not 0.7 em, or a `scale` missing from `fonts.json`); the outlines carry their stroke width, so up to +10% is normal (Script 4L) |
@@ -156,16 +160,31 @@ The fonts built from `fonts.json` pass 35 of 35 coverage cases (every shared gly
 - `FontFace` families stay unquoted (Chromium takes quotes literally).
 - Deployments that persist `static/fonts` in a volume need the font seed sync to pick up new files (otherwise they 404).
 
+## Drawing a missing letter
+
+A letter that the F3S engraves and the regular TTF lacks (`check` lists it as missing in the TTF and the viewport draws it with a fallback font) is drawn from what the font and the F3S already have, never by hand.
+
+- Add it to the `glyphs` of its font in `fonts.json` with the source of its accent. `"f3s"` draws the accent from the F3S lines of the glyph, 15 units of 1000 wide like the fonts draw a single F3S line, filling the loops and the holes narrower than a line and extending an accent that the F3S joins to the letter into its outline. A character of the font (`"ã"`) takes the accent the font already draws for it and centres it on the F3S accent.
+- Use a character only when its F3S accent is the same drawing as the one of the new letter. Compare them first: the tilde of `ñ` is a smooth curve where the one of `ã` is a zigzag in five of the six fonts.
+- The letter keeps the outline and the advance of its base letter (`c` for `ç`), point for point when the accent stands apart from it.
+- `make_f3s_ttf.py glyphs` writes the regular TTFs (in a scratch copy of the repository first), then `build` writes their `-f3s.ttf`.
+- Look at every drawn glyph enlarged, with its F3S lines over it, before any dry run. `check` only compares the box of a glyph, so it passes an accent that sits in the wrong place inside it.
+- Verify like any other glyph: real words, the letter next to different neighbours, a small and a large size, against the dry run screenshots.
+- The accent is placed against the outline of the letter, taking its curves as centred on the F3S ink. The fonts follow the F3S strokes within a few units (the Script Round 1L `O` least of all), which is how well the accent can be placed.
+
 ## Gotchas
 
 - Never derive spacing from dot or repeat pattern jobs: they include Gravostyle optical kerning; use the model and verify with real words.
 - Never measure overflowing compositions; Gravostyle resizes them and Signatur trims them.
-- The engraving is not always the text that was sent: check `RETRY` verdicts before reading any number, and look at the engraving image of a line that fails strangely (a lost `E`, an `F` engraved as `E`).
+- The engraving is not always the text that was sent: check `RETRY` verdicts before reading any number, and look at the engraving image of every line that fails, before explaining its numbers (a lost `E`, an `F` engraved as `E`, and on 2026-10-12 a line that failed by 0.44 mm in width because its `a` was engraved as the `ñ` before it, with no `RETRY`).
 - Accents of capitals and the markers of the family emojis stand apart from their line; `measure.py` merges them back into the expected number of lines, so a case must list every line it engraves.
 - `measure.py` already copes with what fooled earlier versions: a baseline guessed from the bottom of a crossbar (`T`) or of punctuation (it keeps the baseline under which the whole line matches best), a simple glyph matching inside a complex one (an `I` on the stem of an `H` is not a lost `H`, every typing hypothesis is checked on the next glyph too), text that fills the area up to the margin box (only glyphs past it, or cut by it, make an overflow) and the Gravostyle text cursor drawn after the last glyph.
 - The Engrave button of a long text sits below the window in the confirm modal; `capture.js` dispatches the click to it once Dry run is asserted.
 - The size figures of `make_f3s_ttf.py check` only inform for text fonts (outline thickness around the F3S centre lines, own accent drawings); spacing decides. For emojis they decide too.
 - `cases.py generate` pairs emojis two per line, gives a wide one its own line and leaves the pipe emoji out (it cannot travel in the viewport URL, use a `typed` line).
+- `cases.py check` predicts the overflow of the ink, but the viewport fits a line by the advances of its glyphs. A line of wide capitals can pass the check and be trimmed (`Ço Aço MOÇA` in Script 412 1L at 5 mm: 59.11 mm of ink and 60.18 mm of advances for a 60 mm area). `capture.js --submit` then stops at that case without sending it; the cases before it are submitted and stay in the run.
+- The box of a glyph in the font tables is the box of its points, control points included, and can be wider than its outline (32 units on the left of the Script Round 1L `O`). `build` and `check` centre a glyph on that box, the drawing of a missing letter on the outline.
+- A regular TTF can render a glyph away from its stored points: the left side bearing is not always the left edge (103 glyphs of `scriptround1l.ttf`) and the browser moves the outline to the bearing. Read the rendered outline, not the raw points; the `-f3s.ttf` fonts have both equal.
 - `report.html` with `--embed` is a single file but large (about 1 MB per case); the default writes `img/` (about 6 images and 300 KB per case).
 
 ## Maintaining the scripts

@@ -128,16 +128,16 @@ class CasesTest(unittest.TestCase):
         """
         Writes the fonts of most tests: an Helvetica 4L with capitals of
         4.3 mm (the W of 5 mm), a descender j, a tall @ and the space, a
-        Roman 4L with A and ç and the emojis of the test mapping.
+        Roman 4L with A and # and the emojis of the test mapping.
         """
 
-        helvetica = dict((ord(char), CAP) for char in "ABCDEFGHIJKLMNOPQRSTUVXYZç")
+        helvetica = dict((ord(char), CAP) for char in "#ABCDEFGHIJKLMNOPQRSTUVXYZç")
         helvetica.update({ord("W"): WIDE, ord("j"): DESCENDER, ord("@"): TALL})
         helvetica[ord(" ")] = SPACE
         self._fonts(
             {
                 "HELVETICA 4L": helvetica,
-                "ROMAN 4L": {ord("A"): CAP, ord("ç"): CAP},
+                "ROMAN 4L": {ord("A"): CAP, ord("#"): CAP},
                 "1101.coracao": {ord("a"): EMOJI},
                 "1102.estrela": {ord("a"): EMOJI},
                 "1103.infinito": {ord("a"): EMOJI},
@@ -160,7 +160,7 @@ class CasesTest(unittest.TestCase):
     def _root(self):
         """
         Writes a Signatur checkout whose Helvetica 4L face is a copy of
-        the Roman 4L TTF, that has no ç.
+        the Roman 4L TTF, that has no #.
         """
 
         self._write(os.path.join("root", "static", "css", "layout.css"), LAYOUT_CSS)
@@ -363,16 +363,16 @@ class CasesTest(unittest.TestCase):
             ["test: 'Ã' has no F3S glyph in Helvetica 4L"],
         )
 
-        # Roman 4L has no ç in its TTF, the regular as the tuned one
+        # Roman 4L has no # in its TTF, the regular as the tuned one
         path = M.ttf_for("Roman 4L", f3s=True)
         self.assertEqual(
             path, os.path.join(ROOT_DIR, "static", "fonts", "roman4l-f3s.ttf")
         )
-        case = self._case(font="Roman 4L", lines=["Aç"])
-        self.assertEqual(C.validate(case), ["test: 'ç' is not in %s" % path])
+        case = self._case(font="Roman 4L", lines=["A#"])
+        self.assertEqual(C.validate(case), ["test: '#' is not in %s" % path])
         path = os.path.join(ROOT_DIR, "static", "fonts", "roman4l.ttf")
-        case = self._case(font="Roman 4L", lines=["Aç"], f3s=False)
-        self.assertEqual(C.validate(case), ["test: 'ç' is not in %s" % path])
+        case = self._case(font="Roman 4L", lines=["A#"], f3s=False)
+        self.assertEqual(C.validate(case), ["test: '#' is not in %s" % path])
 
         # the spaces of a text font need no F3S glyph
         case = self._case(font="Roman 4L", lines=["A A"])
@@ -402,12 +402,12 @@ class CasesTest(unittest.TestCase):
         self._standard()
         root = self._root()
 
-        case = self._case(lines=["Aç"])
+        case = self._case(lines=["A#"])
         self.assertEqual(C.validate(case), [])
 
         # the TTF is the one of the checkout serving the case
         path = os.path.join(root, "static", "fonts", "helvetica4l.ttf")
-        self.assertEqual(C.validate(case, root=root), ["test: 'ç' is not in %s" % path])
+        self.assertEqual(C.validate(case, root=root), ["test: '#' is not in %s" % path])
 
     def test_validate_width(self):
         self._standard()
@@ -619,12 +619,12 @@ class CasesTest(unittest.TestCase):
     def test_main_check_root(self):
         self._standard()
         root = self._root()
-        path = self._write("cases.json", json.dumps([self._case(lines=["Aç"])]))
+        path = self._write("cases.json", json.dumps([self._case(lines=["A#"])]))
 
         code, output = self._main(["cases.py", "check", path, "--root", root])
         self.assertEqual(code, 1)
         self.assertEqual(
             output,
-            "test: 'ç' is not in %s\n1 cases, 1 problems\n"
+            "test: '#' is not in %s\n1 cases, 1 problems\n"
             % os.path.join(root, "static", "fonts", "helvetica4l.ttf"),
         )

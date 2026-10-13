@@ -28,6 +28,7 @@ import os
 import re
 import sys
 import json
+import math
 import hashlib
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -57,6 +58,11 @@ CAP_RATIO = 0.7
 # the line pitch of Gravostyle as a ratio of the font size, the source
 # of the LINE_HEIGHT_SCALE of `static/js/main.js` (1.76 * 0.7)
 LINE_PITCH = 1.76
+
+# the distance to the strokes of the base letter, as a ratio of the font
+# size, past which a point of an accented glyph belongs to its accent,
+# the letter being drawn up to 2% apart in the two glyphs (their m[0])
+ACCENT_DISTANCE = 0.03
 
 _PARSER = None
 _FONTS = dict()
@@ -230,6 +236,152 @@ def main_ink(glyph):
         max(xs) - metrics[2],
         max(ys) - metrics[4],
     )
+
+
+def pen_curves(glyph):
+    """
+    Returns the strokes of the glyph as curves relative to the pen on
+    the baseline, in units of the font size (the m[0] of the glyph):
+    each a list of (control, point) steps, the control being None for a
+    straight step, as for the first point, or the control point of a
+    quadratic curve.
+
+    Reads the strokes like the polylines of the F3S parser do: a control
+    point takes the point after it as the end of its curve and a point
+    of an unknown kind ends the curve it is in.
+    """
+
+    metrics = glyph["metrics"]
+    size = size_units(glyph)
+
+    def place(x, y):
+        return ((x - metrics[2]) / size, (y - metrics[4]) / size)
+
+    curves = []
+    for stroke in glyph["strokes"]:
+        steps = []
+        index = 0
+        while index < len(stroke):
+            kind, x, y = stroke[index]
+            if not kind in ("on", "ctrl", "end"):
+                if len(steps) > 1:
+                    curves.append(steps)
+                steps = []
+                index += 1
+                continue
+            if kind == "ctrl" and steps and index + 1 < len(stroke):
+                _kind, end_x, end_y = stroke[index + 1]
+                steps.append((place(x, y), place(end_x, end_y)))
+                index += 2
+                continue
+            steps.append((None, place(x, y)))
+            index += 1
+        if len(steps) > 1:
+            curves.append(steps)
+    return curves
+
+
+def flatten(curve, steps=8):
+    """
+    Returns the points of a curve as a polyline, every quadratic step
+    split in the provided number of straight ones.
+    """
+
+    points = []
+    for control, point in curve:
+        if control == None or not points:
+            points.append(point)
+            continue
+        start = points[-1]
+        for step in range(1, steps + 1):
+            ratio = step / float(steps)
+            inverse = 1 - ratio
+            points.append(
+                (
+                    inverse * inverse * start[0]
+                    + 2 * inverse * ratio * control[0]
+                    + ratio * ratio * point[0],
+                    inverse * inverse * start[1]
+                    + 2 * inverse * ratio * control[1]
+                    + ratio * ratio * point[1],
+                )
+            )
+    return points
+
+
+def points_box(points):
+    """
+    Returns the box (x_min, y_min, x_max, y_max) of the points.
+    """
+
+    points = list(points)
+    xs = [x for x, _y in points]
+    ys = [y for _x, y in points]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def lines_distance(point, lines):
+    """
+    Returns the distance from the point to the nearest of the polylines,
+    infinite when there is none.
+    """
+
+    best = float("inf")
+    for line in lines:
+        for (x_a, y_a), (x_b, y_b) in zip(line[:-1], line[1:]):
+            delta_x, delta_y = x_b - x_a, y_b - y_a
+            length = delta_x * delta_x + delta_y * delta_y
+            ratio = 0.0
+            if length:
+                ratio = (
+                    (point[0] - x_a) * delta_x + (point[1] - y_a) * delta_y
+                ) / length
+                ratio = max(0.0, min(1.0, ratio))
+            best = min(
+                best,
+                math.hypot(
+                    point[0] - x_a - ratio * delta_x, point[1] - y_a - ratio * delta_y
+                ),
+            )
+    return best
+
+
+def accent_curves(glyph, base, distance=ACCENT_DISTANCE):
+    """
+    Splits an accented glyph in the curves of its accent and the points
+    of its letter, both relative to the pen in units of the font size,
+    the base glyph being the one of the letter without the accent.
+
+    The accent is every run of points away from the strokes of the base
+    glyph, taken with the point before and the point after it, as an
+    accent may continue a stroke of the letter (the cedilla of the Roman
+    4L Ç is the end of one of the lines of its C), each curve coming
+    with the ends that are joined to the letter (start, end).
+    """
+
+    base_lines = [flatten(curve) for curve in pen_curves(base)]
+
+    def away(point):
+        return lines_distance(point, base_lines) > distance
+
+    accents, letter = [], []
+    for curve in pen_curves(glyph):
+        letter.extend(point for point in flatten(curve) if not away(point))
+        far = [away(point) for _control, point in curve]
+        index = 0
+        while index < len(curve):
+            if not far[index]:
+                index += 1
+                continue
+            end = index
+            while end + 1 < len(curve) and far[end + 1]:
+                end += 1
+            steps = curve[max(index - 1, 0) : end + 2]
+            steps = [(None, steps[0][1])] + steps[1:]
+            joined = (not away(steps[0][1]), not away(steps[-1][1]))
+            accents.append((steps, joined))
+            index = end + 1
+    return accents, letter
 
 
 def font_files(root=None):
