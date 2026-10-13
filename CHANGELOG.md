@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Emoji validation script failing with the current emoji mapping
 * Font metrics script drawing accented letters with a wrong box
 * Letters ç and Ç missing in the Roman 4L, Script 4L, Script 412 1L and Script Round 1L fonts, and Õ in Script Round 1L, which were previewed with another font - [#84](https://github.com/hivesolutions/signatur/issues/84)
+* Accented letters of a long pressed key of the keyboard are now shown in the selected font
 
 ## [1.5.0] - 2026-10-01
 
