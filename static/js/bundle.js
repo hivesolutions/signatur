@@ -1817,7 +1817,9 @@ const countLines = function(text) {
          * The popup is appended to the document body (instead of the
          * keyboard container) and positioned with fixed coordinates so
          * it is never clipped by the container's overflow handling, which
-         * would otherwise hide it for keys on the top keyboard row.
+         * would otherwise hide it for keys on the top keyboard row. As it
+         * then no longer inherits the font of the keyboard, that font is
+         * set on it, so the variants are drawn like the keys.
          *
          * @param {Element} context The keyboard container context.
          * @param {Element} element The key element that was long pressed.
@@ -1847,6 +1849,10 @@ const countLines = function(text) {
             }
 
             popup.append(arrow);
+
+            // draws the variants with the font of the keyboard, which the
+            // popup does not inherit as it is anchored to the body
+            popup.css("font-family", context.css("font-family"));
 
             // positions the popup using viewport coordinates and anchors it
             // to the body so it escapes the keyboard container's clipping
