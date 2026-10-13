@@ -618,9 +618,11 @@ def glyphs_font(entry):
 def different_glyphs(font, other, chars, tolerance=GLYPH_TOLERANCE):
     """
     Returns the characters whose glyph differs between the two fonts,
-    in its advance, its contours or any coordinate by more than the
-    tolerance, a character missing in one of them differing too, the
-    glyphs built from others being compared by the outline they draw.
+    in its advance, its contours, the flags of its points (which tell
+    the points of the outline from the control ones) or any coordinate
+    by more than the tolerance, a character missing in one of them
+    differing too, the glyphs built from others being compared by the
+    outline they draw.
     """
 
     different = []
@@ -631,13 +633,17 @@ def different_glyphs(font, other, chars, tolerance=GLYPH_TOLERANCE):
             if name == None:
                 break
             glyf = item["glyf"]
-            points, ends, _flags = glyf[name].getCoordinates(glyf)
-            glyphs.append((item["hmtx"][name][0], list(ends), list(points)))
+            points, ends, flags = glyf[name].getCoordinates(glyf)
+            glyphs.append(
+                (item["hmtx"][name][0], list(ends), list(flags), list(points))
+            )
         if len(glyphs) < 2:
             different.append(char)
             continue
-        (advance, ends, points), (other_advance, other_ends, other_points) = glyphs
+        advance, ends, flags, points = glyphs[0]
+        other_advance, other_ends, other_flags, other_points = glyphs[1]
         same = advance == other_advance and ends == other_ends
+        same = same and flags == other_flags
         same = same and len(points) == len(other_points)
         same = same and all(
             abs(x - other_x) <= tolerance and abs(y - other_y) <= tolerance

@@ -1114,6 +1114,14 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertEqual(G.different_glyphs(font, other, "ļũ"), ["ũ"])
         coordinates[0] = (x, y)
 
+        # the points must be of the same kind, a control point that
+        # becomes a point of the outline draws another letter
+        flags = other["glyf"]["utilde"].flags
+        index = list(flags).index(0)
+        flags[index] = 1
+        self.assertEqual(G.different_glyphs(font, other, "ļũ"), ["ũ"])
+        flags[index] = 0
+
         # the advance and the contours must be the same
         other["hmtx"]["utilde"] = (561, 70)
         self.assertEqual(G.different_glyphs(font, other, "ļũ"), ["ũ"])
@@ -1124,7 +1132,8 @@ class MakeF3STTFTest(unittest.TestCase):
         self.assertEqual(G.different_glyphs(font, other, "ļũ"), ["ļ"])
 
         # a glyph built from another one is compared by what it draws,
-        # where it puts the other glyph and which glyph that is
+        # where it puts the other glyph, which glyph that is and the
+        # kind of its points
         self._composite(font, "I", "H", 50)
         self._composite(other, "I", "H", 50)
         self.assertEqual(G.different_glyphs(font, other, "I"), [])
@@ -1133,6 +1142,9 @@ class MakeF3STTFTest(unittest.TestCase):
         self._composite(other, "I", "H", 60)
         self.assertEqual(G.different_glyphs(font, other, "I"), ["I"])
         self._composite(other, "I", "A", 50)
+        self.assertEqual(G.different_glyphs(font, other, "I"), ["I"])
+        self._composite(other, "I", "H", 50)
+        other["glyf"]["H"].flags[0] = 0
         self.assertEqual(G.different_glyphs(font, other, "I"), ["I"])
 
     def test_emoji_targets(self):
