@@ -878,6 +878,14 @@ class MakeF3STTFTest(unittest.TestCase):
         # nothing is written to the font
         self.assertNotIn(ord("ũ"), font.getBestCmap())
 
+        # a letter that the font renders away from its points, at its
+        # left side bearing, takes the accent where it is rendered
+        font["hmtx"]["u"] = (560, 100)
+        glyph, advance = G.draw_glyph(font, M.load_f3s("Helvetica 4L"), "ũ")
+        boxes = self._outlines(font, glyph)
+        self.assertEqual((boxes[0][0], boxes[0][2]), (100.0, 520.0))
+        self._assert_box(boxes[1], (372.5, 832.5, 667.5, 917.5))
+
     def test_draw_glyph_source(self):
         self._fonts({"HELVETICA 4L": DRAW_GLYPHS})
         font = self._open("helvetica4l")
