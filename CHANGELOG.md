@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [1.6.0] - 2026-10-16
+
+### Added
+
 * Agent skill to tune the preview fonts and prove they match the engraving
 * Unit tests for the font matching skill and the font scripts, also run by the CI
 * Diamond tip depth on the machine of a profile, 0.5 when a profile sets none - [#81](https://github.com/hivesolutions/signatur/issues/81)
