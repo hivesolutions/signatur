@@ -92,81 +92,6 @@ class GravoJobTest(unittest.TestCase):
         M.MAPPING_PATH = self._mapping_path
         shutil.rmtree(self.temp_dir)
 
-    def _offline(self, *args, **kwargs):
-        raise AssertionError("a test reached for the network with %r" % (args,))
-
-    def _write(self, path, data):
-        path = os.path.join(self.temp_dir, path)
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-        with open(path, "w", encoding="utf-8") as file:
-            file.write(data)
-        return path
-
-    def _read(self, path):
-        with open(os.path.join(self.temp_dir, path), "rb") as file:
-            return file.read()
-
-    def _fonts(self, fonts):
-        M._PARSER = FakeParser()
-        M.GRAVO_PILOT = self.temp_dir
-        for name, glyphs in fonts.items():
-            self._write(
-                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
-                json.dumps(glyphs),
-            )
-
-    def _mapping(self):
-        M.MAPPING_PATH = self._write("mapping.json", json.dumps(MAPPING))
-
-    def _json(self, value):
-        return json.dumps(value).encode("utf-8")
-
-    def _serve(self, responses):
-        """
-        Answers the Colony Print requests with the canned responses of
-        their path (a list being answered in order), recording the path
-        and the body of every request.
-        """
-
-        def request(path, data=None, timeout=60):
-            self.requests.append((path, data))
-            response = responses[path]
-            if isinstance(response, list):
-                response = response.pop(0)
-            return response
-
-        J.request = request
-
-    def _fields(self, body):
-        fields = dict(urllib.parse.parse_qsl(body.decode("utf-8")))
-        fields["data"] = json.loads(fields["data"])
-        return fields
-
-    def _case(self, **kwargs):
-        case = dict(
-            name="probe",
-            font="Helvetica 4L",
-            font_size=5,
-            lines=["AB"],
-            profile="plate",
-            width=70,
-            height=70,
-            margins=[5, 5, 5, 5],
-            f3s=True,
-        )
-        case.update(kwargs)
-        return case
-
-    def _main(self, argv):
-        with mock.patch.object(sys, "argv", argv):
-            with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
-                try:
-                    J.main()
-                except SystemExit as exception:
-                    return exception.code, stdout.getvalue()
-        return None, stdout.getvalue()
-
     def test_key(self):
         with mock.patch.dict(os.environ, {"PRINT_KEY": "secret"}):
             self.assertEqual(J.key(), "secret")
@@ -661,3 +586,78 @@ class GravoJobTest(unittest.TestCase):
         )
         self.assertEqual(submit.call_count, 0)
         self.assertEqual(self.requests, [])
+
+    def _offline(self, *args, **kwargs):
+        raise AssertionError("a test reached for the network with %r" % (args,))
+
+    def _write(self, path, data):
+        path = os.path.join(self.temp_dir, path)
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(data)
+        return path
+
+    def _read(self, path):
+        with open(os.path.join(self.temp_dir, path), "rb") as file:
+            return file.read()
+
+    def _fonts(self, fonts):
+        M._PARSER = FakeParser()
+        M.GRAVO_PILOT = self.temp_dir
+        for name, glyphs in fonts.items():
+            self._write(
+                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
+                json.dumps(glyphs),
+            )
+
+    def _mapping(self):
+        M.MAPPING_PATH = self._write("mapping.json", json.dumps(MAPPING))
+
+    def _json(self, value):
+        return json.dumps(value).encode("utf-8")
+
+    def _serve(self, responses):
+        """
+        Answers the Colony Print requests with the canned responses of
+        their path (a list being answered in order), recording the path
+        and the body of every request.
+        """
+
+        def request(path, data=None, timeout=60):
+            self.requests.append((path, data))
+            response = responses[path]
+            if isinstance(response, list):
+                response = response.pop(0)
+            return response
+
+        J.request = request
+
+    def _fields(self, body):
+        fields = dict(urllib.parse.parse_qsl(body.decode("utf-8")))
+        fields["data"] = json.loads(fields["data"])
+        return fields
+
+    def _case(self, **kwargs):
+        case = dict(
+            name="probe",
+            font="Helvetica 4L",
+            font_size=5,
+            lines=["AB"],
+            profile="plate",
+            width=70,
+            height=70,
+            margins=[5, 5, 5, 5],
+            f3s=True,
+        )
+        case.update(kwargs)
+        return case
+
+    def _main(self, argv):
+        with mock.patch.object(sys, "argv", argv):
+            with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
+                try:
+                    J.main()
+                except SystemExit as exception:
+                    return exception.code, stdout.getvalue()
+        return None, stdout.getvalue()

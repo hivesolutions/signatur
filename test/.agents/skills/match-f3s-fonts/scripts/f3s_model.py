@@ -106,33 +106,6 @@ class F3SModelTest(unittest.TestCase):
         M._PARSER = self._parser
         shutil.rmtree(self.temp_dir)
 
-    def _write(self, path, data):
-        path = os.path.join(self.temp_dir, path)
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-        with open(path, "w", encoding="utf-8") as file:
-            file.write(data)
-        return path
-
-    def _fonts(self, fonts):
-        M._PARSER = FakeParser()
-        M.GRAVO_PILOT = self.temp_dir
-        for name, glyphs in fonts.items():
-            self._write(
-                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
-                json.dumps(glyphs),
-            )
-
-    def _rounded(self, value):
-        """
-        Rounds every number of nested lists and tuples, so the curves
-        and points of the model can be compared with literals.
-        """
-
-        if isinstance(value, (list, tuple)):
-            return [self._rounded(item) for item in value]
-        return value if value == None else round(value, 6)
-
     def test_parser(self):
         if not os.path.exists(os.path.join(M.GRAVO_NATIVE, "f3s_parser.py")):
             self.skipTest("Skipping test: gravo-native unavailable")
@@ -604,3 +577,30 @@ class F3SModelTest(unittest.TestCase):
             [("Roman 4L", "A"), (M.EMOJI_FONT, "!"), (M.EMOJI_FONT, " ")],
         )
         self.assertEqual(M.elements("", "Roman 4L"), [])
+
+    def _write(self, path, data):
+        path = os.path.join(self.temp_dir, path)
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(data)
+        return path
+
+    def _fonts(self, fonts):
+        M._PARSER = FakeParser()
+        M.GRAVO_PILOT = self.temp_dir
+        for name, glyphs in fonts.items():
+            self._write(
+                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
+                json.dumps(glyphs),
+            )
+
+    def _rounded(self, value):
+        """
+        Rounds every number of nested lists and tuples, so the curves
+        and points of the model can be compared with literals.
+        """
+
+        if isinstance(value, (list, tuple)):
+            return [self._rounded(item) for item in value]
+        return value if value == None else round(value, 6)

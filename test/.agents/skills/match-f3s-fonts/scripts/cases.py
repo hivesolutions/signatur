@@ -107,105 +107,6 @@ class CasesTest(unittest.TestCase):
         C._CMAPS = self._cmaps
         shutil.rmtree(self.temp_dir)
 
-    def _write(self, path, data):
-        path = os.path.join(self.temp_dir, path)
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-        with open(path, "w", encoding="utf-8") as file:
-            file.write(data)
-        return path
-
-    def _fonts(self, fonts):
-        M._PARSER = FakeParser()
-        M.GRAVO_PILOT = self.temp_dir
-        for name, glyphs in fonts.items():
-            self._write(
-                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
-                json.dumps(glyphs),
-            )
-
-    def _standard(self):
-        """
-        Writes the fonts of most tests: an Helvetica 4L with capitals of
-        4.3 mm (the W of 5 mm), a descender j, a tall @ and the space, a
-        Roman 4L with A and # and the emojis of the test mapping.
-        """
-
-        helvetica = dict((ord(char), CAP) for char in "#ABCDEFGHIJKLMNOPQRSTUVXYZç")
-        helvetica.update({ord("W"): WIDE, ord("j"): DESCENDER, ord("@"): TALL})
-        helvetica[ord(" ")] = SPACE
-        self._fonts(
-            {
-                "HELVETICA 4L": helvetica,
-                "ROMAN 4L": {ord("A"): CAP, ord("#"): CAP},
-                "1101.coracao": {ord("a"): EMOJI},
-                "1102.estrela": {ord("a"): EMOJI},
-                "1103.infinito": {ord("a"): EMOJI},
-                "1406.camara": {ord("a"): EMOJI_WIDE},
-                "2105.special": {ord("a"): EMOJI},
-            }
-        )
-        M.MAPPING_PATH = self._write("mapping.json", json.dumps(MAPPING))
-
-    def _alphabet(self):
-        """
-        Writes an Helvetica 4L with the capitals and the ç of 4.3 mm,
-        the space and a snowman that the TTF does not have.
-        """
-
-        glyphs = dict((ord(char), CAP) for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZç")
-        glyphs.update({ord(" "): SPACE, ord("☃"): CAP})
-        self._fonts({"HELVETICA 4L": glyphs})
-
-    def _root(self):
-        """
-        Writes a Signatur checkout whose Helvetica 4L face is a copy of
-        the Roman 4L TTF, that has no #.
-        """
-
-        self._write(os.path.join("root", "static", "css", "layout.css"), LAYOUT_CSS)
-        path = os.path.join(self.temp_dir, "root", "static", "fonts", "helvetica4l.ttf")
-        os.makedirs(os.path.dirname(path))
-        shutil.copy(os.path.join(ROOT_DIR, "static", "fonts", "roman4l.ttf"), path)
-        return os.path.join(self.temp_dir, "root")
-
-    def _case(self, **kwargs):
-        case = dict(
-            name="test",
-            font="Helvetica 4L",
-            font_size=5,
-            lines=["AB"],
-            width=70,
-            height=70,
-            margins=[5, 5, 5, 5],
-            f3s=True,
-        )
-        case.update(kwargs)
-        return case
-
-    def _args(self, **kwargs):
-        args = dict(
-            font="Helvetica 4L",
-            size=5.0,
-            plate="70x70",
-            margins=5.0,
-            profile="plate",
-            chars=None,
-            lines=3,
-            prefix="cov",
-        )
-        args.update(kwargs)
-        return argparse.Namespace(**args)
-
-    def _main(self, argv):
-        with mock.patch.object(sys, "argv", argv):
-            with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
-                try:
-                    C.main()
-                except SystemExit as exception:
-                    return exception.code, stdout.getvalue()
-        return None, stdout.getvalue()
-
     def test_cmap(self):
         C._CMAPS = dict()
         path = M.ttf_for("Helvetica 4L", f3s=True)
@@ -628,3 +529,102 @@ class CasesTest(unittest.TestCase):
             "test: '#' is not in %s\n1 cases, 1 problems\n"
             % os.path.join(root, "static", "fonts", "helvetica4l.ttf"),
         )
+
+    def _write(self, path, data):
+        path = os.path.join(self.temp_dir, path)
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(data)
+        return path
+
+    def _fonts(self, fonts):
+        M._PARSER = FakeParser()
+        M.GRAVO_PILOT = self.temp_dir
+        for name, glyphs in fonts.items():
+            self._write(
+                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
+                json.dumps(glyphs),
+            )
+
+    def _standard(self):
+        """
+        Writes the fonts of most tests: an Helvetica 4L with capitals of
+        4.3 mm (the W of 5 mm), a descender j, a tall @ and the space, a
+        Roman 4L with A and # and the emojis of the test mapping.
+        """
+
+        helvetica = dict((ord(char), CAP) for char in "#ABCDEFGHIJKLMNOPQRSTUVXYZç")
+        helvetica.update({ord("W"): WIDE, ord("j"): DESCENDER, ord("@"): TALL})
+        helvetica[ord(" ")] = SPACE
+        self._fonts(
+            {
+                "HELVETICA 4L": helvetica,
+                "ROMAN 4L": {ord("A"): CAP, ord("#"): CAP},
+                "1101.coracao": {ord("a"): EMOJI},
+                "1102.estrela": {ord("a"): EMOJI},
+                "1103.infinito": {ord("a"): EMOJI},
+                "1406.camara": {ord("a"): EMOJI_WIDE},
+                "2105.special": {ord("a"): EMOJI},
+            }
+        )
+        M.MAPPING_PATH = self._write("mapping.json", json.dumps(MAPPING))
+
+    def _alphabet(self):
+        """
+        Writes an Helvetica 4L with the capitals and the ç of 4.3 mm,
+        the space and a snowman that the TTF does not have.
+        """
+
+        glyphs = dict((ord(char), CAP) for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZç")
+        glyphs.update({ord(" "): SPACE, ord("☃"): CAP})
+        self._fonts({"HELVETICA 4L": glyphs})
+
+    def _root(self):
+        """
+        Writes a Signatur checkout whose Helvetica 4L face is a copy of
+        the Roman 4L TTF, that has no #.
+        """
+
+        self._write(os.path.join("root", "static", "css", "layout.css"), LAYOUT_CSS)
+        path = os.path.join(self.temp_dir, "root", "static", "fonts", "helvetica4l.ttf")
+        os.makedirs(os.path.dirname(path))
+        shutil.copy(os.path.join(ROOT_DIR, "static", "fonts", "roman4l.ttf"), path)
+        return os.path.join(self.temp_dir, "root")
+
+    def _case(self, **kwargs):
+        case = dict(
+            name="test",
+            font="Helvetica 4L",
+            font_size=5,
+            lines=["AB"],
+            width=70,
+            height=70,
+            margins=[5, 5, 5, 5],
+            f3s=True,
+        )
+        case.update(kwargs)
+        return case
+
+    def _args(self, **kwargs):
+        args = dict(
+            font="Helvetica 4L",
+            size=5.0,
+            plate="70x70",
+            margins=5.0,
+            profile="plate",
+            chars=None,
+            lines=3,
+            prefix="cov",
+        )
+        args.update(kwargs)
+        return argparse.Namespace(**args)
+
+    def _main(self, argv):
+        with mock.patch.object(sys, "argv", argv):
+            with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
+                try:
+                    C.main()
+                except SystemExit as exception:
+                    return exception.code, stdout.getvalue()
+        return None, stdout.getvalue()

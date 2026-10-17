@@ -81,42 +81,6 @@ class SelftestTest(unittest.TestCase):
         M._PARSER = self._parser
         shutil.rmtree(self.temp_dir)
 
-    def _offline(self, *args, **kwargs):
-        raise AssertionError("a test reached for the network with %r" % (args,))
-
-    def _write(self, path, data):
-        path = os.path.join(self.temp_dir, path)
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-        with open(path, "w", encoding="utf-8") as file:
-            file.write(data)
-        return path
-
-    def _fonts(self, fonts):
-        M._PARSER = FakeParser()
-        M.GRAVO_PILOT = self.temp_dir
-        for name, glyphs in fonts.items():
-            self._write(
-                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
-                json.dumps(glyphs),
-            )
-
-    def _manifest(self):
-        """
-        Writes two fonts of a manifest, their committed `-f3s.ttf` being
-        copies of a public TTF, and their F3S fonts.
-        """
-
-        G.FONTS_DIR = os.path.join(self.temp_dir, "fonts")
-        os.makedirs(G.FONTS_DIR)
-        for stem in ("fake1l", "fake4l"):
-            shutil.copy(TTF_PATH, os.path.join(G.FONTS_DIR, "%s-f3s.ttf" % stem))
-        self._fonts({"FAKE 1L": {ord("A"): CAP}, "FAKE 4L": {ord("B"): CAP}})
-        return [
-            dict(stem="fake1l", f3s="Fake 1L", adjust={"A": {"left": -10}}),
-            dict(stem="fake4l", f3s="Fake 4L"),
-        ]
-
     def test_test_fonts(self):
         manifest = self._manifest()
         with open(TTF_PATH, "rb") as file:
@@ -352,3 +316,39 @@ class SelftestTest(unittest.TestCase):
                 "  third",
             ],
         )
+
+    def _offline(self, *args, **kwargs):
+        raise AssertionError("a test reached for the network with %r" % (args,))
+
+    def _write(self, path, data):
+        path = os.path.join(self.temp_dir, path)
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(data)
+        return path
+
+    def _fonts(self, fonts):
+        M._PARSER = FakeParser()
+        M.GRAVO_PILOT = self.temp_dir
+        for name, glyphs in fonts.items():
+            self._write(
+                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
+                json.dumps(glyphs),
+            )
+
+    def _manifest(self):
+        """
+        Writes two fonts of a manifest, their committed `-f3s.ttf` being
+        copies of a public TTF, and their F3S fonts.
+        """
+
+        G.FONTS_DIR = os.path.join(self.temp_dir, "fonts")
+        os.makedirs(G.FONTS_DIR)
+        for stem in ("fake1l", "fake4l"):
+            shutil.copy(TTF_PATH, os.path.join(G.FONTS_DIR, "%s-f3s.ttf" % stem))
+        self._fonts({"FAKE 1L": {ord("A"): CAP}, "FAKE 4L": {ord("B"): CAP}})
+        return [
+            dict(stem="fake1l", f3s="Fake 1L", adjust={"A": {"left": -10}}),
+            dict(stem="fake4l", f3s="Fake 4L"),
+        ]
