@@ -171,161 +171,6 @@ class MakeF3STTFTest(unittest.TestCase):
         G.FONTS_DIR = self._fonts_dir
         shutil.rmtree(self.temp_dir)
 
-    def _write(self, path, data):
-        path = os.path.join(self.temp_dir, path)
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-        with open(path, "w", encoding="utf-8") as file:
-            file.write(data)
-        return path
-
-    def _fonts(self, fonts):
-        M._PARSER = FakeParser()
-        M.GRAVO_PILOT = self.temp_dir
-        paths = dict()
-        for name, glyphs in fonts.items():
-            paths[name] = self._write(
-                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
-                json.dumps(glyphs),
-            )
-        return paths
-
-    def _emoji_fonts(self):
-        """
-        Writes the F3S fonts of the test mapping and the mapping itself,
-        returning its path and the mapping as Signatur loads it.
-        """
-
-        self._fonts(
-            {
-                "HELVETICA 4L": TEXT_GLYPHS,
-                "3007.filho-familia": {"97": FAMILY},
-                "1103.infinito": {"97": INFINITY},
-                "1105.aliancas": {"97": RINGS},
-                "1406.camara": {},
-            }
-        )
-        path = self._write("mapping.json", json.dumps(MAPPING))
-        return path, M.load_mapping(path)
-
-    def _ttf(self, stem):
-        path = os.path.join(G.FONTS_DIR, "%s.ttf" % stem)
-        shutil.copyfile(os.path.join(STATIC_FONTS_DIR, "%s.ttf" % stem), path)
-        return path
-
-    def _open(self, stem):
-        return G.open_font(self._ttf(stem))
-
-    def _reload(self, font):
-        buffer = io.BytesIO()
-        font.save(buffer)
-        return TTFont(io.BytesIO(buffer.getvalue()))
-
-    def _bounds(self, font, char):
-        glyf = font["glyf"]
-        glyph = glyf[font.getBestCmap()[ord(char)]]
-        glyph.recalcBounds(glyf)
-        return (glyph.xMin, glyph.yMin, glyph.xMax, glyph.yMax)
-
-    def _advance(self, font, char):
-        return font["hmtx"][font.getBestCmap()[ord(char)]]
-
-    def _composite(self, font, name, base, offset):
-        """
-        Replaces a glyph by a composite of another glyph moved by the
-        offset, as the fonts with accented letters built from parts.
-        """
-
-        pen = TTGlyphPen(font.getGlyphSet())
-        pen.addComponent(base, (1, 0, 0, 1, offset, 0))
-        font["glyf"][name] = pen.glyph()
-
-    def _manifest(self):
-        """
-        Writes a manifest of two fonts with their regular TTFs and F3S
-        fonts in the temporary directory, the hashes matching the files.
-        """
-
-        paths = self._fonts(
-            {"HELVETICA 4L": TEXT_GLYPHS, "ROMAN 4L": {"32": SPACE, "72": H}}
-        )
-        entries = []
-        for stem, name, adjust in (
-            ("helvetica4l", "Helvetica 4L", ADJUST),
-            ("roman4l", "Roman 4L", dict()),
-        ):
-            self._ttf(stem)
-            with open(paths[name.upper()], "rb") as file:
-                sha256 = hashlib.sha256(file.read()).hexdigest()
-            entries.append(dict(stem=stem, f3s=name, f3s_sha256=sha256, adjust=adjust))
-        return self._write("fonts.json", json.dumps(entries))
-
-    def _glyphs_manifest(self):
-        """
-        Writes a manifest of two fonts, the first one with two glyphs to
-        draw (one after its F3S lines, the other with the accent of a
-        character of the font) and the second one with none.
-        """
-
-        paths = self._fonts(
-            {"HELVETICA 4L": DRAW_GLYPHS, "ROMAN 4L": {"32": SPACE, "72": H}}
-        )
-        entries = []
-        for stem, name, glyphs in (
-            ("helvetica4l", "Helvetica 4L", {"ũ": "ã", "ļ": "f3s"}),
-            ("roman4l", "Roman 4L", None),
-        ):
-            self._ttf(stem)
-            with open(paths[name.upper()], "rb") as file:
-                sha256 = hashlib.sha256(file.read()).hexdigest()
-            entry = dict(stem=stem, f3s=name, f3s_sha256=sha256, adjust=dict())
-            if glyphs:
-                entry["glyphs"] = glyphs
-            entries.append(entry)
-        return self._write("fonts.json", json.dumps(entries))
-
-    def _contours(self, glyph):
-        """
-        Returns the points of a glyph contour by contour.
-        """
-
-        points = list(glyph.coordinates)
-        contours, start = [], 0
-        for end in glyph.endPtsOfContours:
-            contours.append(points[start : end + 1])
-            start = end + 1
-        return contours
-
-    def _outlines(self, font, glyph):
-        """
-        Returns the box of the outline of every contour of a glyph, the
-        one of its curves and not of their control points.
-        """
-
-        ops = G.pathops()
-        path = ops.Path()
-        glyph.draw(ops.PathPen(path), font["glyf"])
-        return [contour.bounds for contour in path.contours]
-
-    def _assert_box(self, box, expected, delta=1):
-        for value, other in zip(box, expected):
-            self.assertAlmostEqual(value, other, delta=delta)
-
-    def _main(self, *args):
-        """
-        Runs the command line with the provided arguments, returning the
-        exit code (None when it returns) and the standard output and error.
-        """
-
-        stdout, stderr, code = io.StringIO(), io.StringIO(), None
-        with mock.patch.object(sys, "argv", ["make_f3s_ttf.py", *args]):
-            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                try:
-                    G.main()
-                except SystemExit as exception:
-                    code = exception.code
-        return code, stdout.getvalue(), stderr.getvalue()
-
     def test_open_font(self):
         path = self._ttf("helvetica4l")
         modified = TTFont(path)["head"].modified
@@ -1764,3 +1609,158 @@ class MakeF3STTFTest(unittest.TestCase):
             stdout,
             "%s: DIFFERENT ļũ\n" % os.path.join(G.FONTS_DIR, "helvetica4l.ttf"),
         )
+
+    def _write(self, path, data):
+        path = os.path.join(self.temp_dir, path)
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(data)
+        return path
+
+    def _fonts(self, fonts):
+        M._PARSER = FakeParser()
+        M.GRAVO_PILOT = self.temp_dir
+        paths = dict()
+        for name, glyphs in fonts.items():
+            paths[name] = self._write(
+                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
+                json.dumps(glyphs),
+            )
+        return paths
+
+    def _emoji_fonts(self):
+        """
+        Writes the F3S fonts of the test mapping and the mapping itself,
+        returning its path and the mapping as Signatur loads it.
+        """
+
+        self._fonts(
+            {
+                "HELVETICA 4L": TEXT_GLYPHS,
+                "3007.filho-familia": {"97": FAMILY},
+                "1103.infinito": {"97": INFINITY},
+                "1105.aliancas": {"97": RINGS},
+                "1406.camara": {},
+            }
+        )
+        path = self._write("mapping.json", json.dumps(MAPPING))
+        return path, M.load_mapping(path)
+
+    def _ttf(self, stem):
+        path = os.path.join(G.FONTS_DIR, "%s.ttf" % stem)
+        shutil.copyfile(os.path.join(STATIC_FONTS_DIR, "%s.ttf" % stem), path)
+        return path
+
+    def _open(self, stem):
+        return G.open_font(self._ttf(stem))
+
+    def _reload(self, font):
+        buffer = io.BytesIO()
+        font.save(buffer)
+        return TTFont(io.BytesIO(buffer.getvalue()))
+
+    def _bounds(self, font, char):
+        glyf = font["glyf"]
+        glyph = glyf[font.getBestCmap()[ord(char)]]
+        glyph.recalcBounds(glyf)
+        return (glyph.xMin, glyph.yMin, glyph.xMax, glyph.yMax)
+
+    def _advance(self, font, char):
+        return font["hmtx"][font.getBestCmap()[ord(char)]]
+
+    def _composite(self, font, name, base, offset):
+        """
+        Replaces a glyph by a composite of another glyph moved by the
+        offset, as the fonts with accented letters built from parts.
+        """
+
+        pen = TTGlyphPen(font.getGlyphSet())
+        pen.addComponent(base, (1, 0, 0, 1, offset, 0))
+        font["glyf"][name] = pen.glyph()
+
+    def _manifest(self):
+        """
+        Writes a manifest of two fonts with their regular TTFs and F3S
+        fonts in the temporary directory, the hashes matching the files.
+        """
+
+        paths = self._fonts(
+            {"HELVETICA 4L": TEXT_GLYPHS, "ROMAN 4L": {"32": SPACE, "72": H}}
+        )
+        entries = []
+        for stem, name, adjust in (
+            ("helvetica4l", "Helvetica 4L", ADJUST),
+            ("roman4l", "Roman 4L", dict()),
+        ):
+            self._ttf(stem)
+            with open(paths[name.upper()], "rb") as file:
+                sha256 = hashlib.sha256(file.read()).hexdigest()
+            entries.append(dict(stem=stem, f3s=name, f3s_sha256=sha256, adjust=adjust))
+        return self._write("fonts.json", json.dumps(entries))
+
+    def _glyphs_manifest(self):
+        """
+        Writes a manifest of two fonts, the first one with two glyphs to
+        draw (one after its F3S lines, the other with the accent of a
+        character of the font) and the second one with none.
+        """
+
+        paths = self._fonts(
+            {"HELVETICA 4L": DRAW_GLYPHS, "ROMAN 4L": {"32": SPACE, "72": H}}
+        )
+        entries = []
+        for stem, name, glyphs in (
+            ("helvetica4l", "Helvetica 4L", {"ũ": "ã", "ļ": "f3s"}),
+            ("roman4l", "Roman 4L", None),
+        ):
+            self._ttf(stem)
+            with open(paths[name.upper()], "rb") as file:
+                sha256 = hashlib.sha256(file.read()).hexdigest()
+            entry = dict(stem=stem, f3s=name, f3s_sha256=sha256, adjust=dict())
+            if glyphs:
+                entry["glyphs"] = glyphs
+            entries.append(entry)
+        return self._write("fonts.json", json.dumps(entries))
+
+    def _contours(self, glyph):
+        """
+        Returns the points of a glyph contour by contour.
+        """
+
+        points = list(glyph.coordinates)
+        contours, start = [], 0
+        for end in glyph.endPtsOfContours:
+            contours.append(points[start : end + 1])
+            start = end + 1
+        return contours
+
+    def _outlines(self, font, glyph):
+        """
+        Returns the box of the outline of every contour of a glyph, the
+        one of its curves and not of their control points.
+        """
+
+        ops = G.pathops()
+        path = ops.Path()
+        glyph.draw(ops.PathPen(path), font["glyf"])
+        return [contour.bounds for contour in path.contours]
+
+    def _assert_box(self, box, expected, delta=1):
+        for value, other in zip(box, expected):
+            self.assertAlmostEqual(value, other, delta=delta)
+
+    def _main(self, *args):
+        """
+        Runs the command line with the provided arguments, returning the
+        exit code (None when it returns) and the standard output and error.
+        """
+
+        stdout, stderr, code = io.StringIO(), io.StringIO(), None
+        with mock.patch.object(sys, "argv", ["make_f3s_ttf.py", *args]):
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                try:
+                    G.main()
+                except SystemExit as exception:
+                    code = exception.code
+        return code, stdout.getvalue(), stderr.getvalue()

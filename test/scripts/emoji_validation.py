@@ -51,36 +51,6 @@ class EmojiValidationTest(unittest.TestCase):
         ImageFont.truetype = self._truetype
         shutil.rmtree(self.temp_dir)
 
-    def _label_truetype(self, font=None, size=10, *args, **kwargs):
-        if font == "arial.ttf":
-            font = LABEL_FONT
-        return self._truetype(font, size, *args, **kwargs)
-
-    def _mapping(self, mapping):
-        path = os.path.join(self.temp_dir, "mapping.json")
-        with open(path, "w", encoding="utf-8") as file:
-            json.dump(mapping, file)
-        emoji_validation.MAPPING_PATH = path
-
-    def _size(self, path):
-        with Image.open(path) as image:
-            return image.size
-
-    def _main(self):
-        """
-        Runs the script at a fixed time, returning what it printed and
-        the calls that drew text.
-        """
-
-        with mock.patch.object(emoji_validation, "datetime") as clock:
-            clock.datetime.now.return_value = datetime.datetime(2026, 10, 1, 12, 30)
-            with mock.patch.object(
-                ImageDraw.ImageDraw, "text", autospec=True, side_effect=self._text
-            ) as text:
-                with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
-                    emoji_validation.main()
-        return stdout.getvalue(), text.call_args_list
-
     def test_main(self):
         self._mapping(MAPPING)
 
@@ -149,3 +119,33 @@ class EmojiValidationTest(unittest.TestCase):
             ["Key: 'B'", "1001.coracao", "Key: 'A'", "2002.estrela"],
         )
         self.assertEqual(output.splitlines()[1], "Size: 2180x600, 2 glyphs")
+
+    def _label_truetype(self, font=None, size=10, *args, **kwargs):
+        if font == "arial.ttf":
+            font = LABEL_FONT
+        return self._truetype(font, size, *args, **kwargs)
+
+    def _mapping(self, mapping):
+        path = os.path.join(self.temp_dir, "mapping.json")
+        with open(path, "w", encoding="utf-8") as file:
+            json.dump(mapping, file)
+        emoji_validation.MAPPING_PATH = path
+
+    def _size(self, path):
+        with Image.open(path) as image:
+            return image.size
+
+    def _main(self):
+        """
+        Runs the script at a fixed time, returning what it printed and
+        the calls that drew text.
+        """
+
+        with mock.patch.object(emoji_validation, "datetime") as clock:
+            clock.datetime.now.return_value = datetime.datetime(2026, 10, 1, 12, 30)
+            with mock.patch.object(
+                ImageDraw.ImageDraw, "text", autospec=True, side_effect=self._text
+            ) as text:
+                with mock.patch.object(sys, "stdout", io.StringIO()) as stdout:
+                    emoji_validation.main()
+        return stdout.getvalue(), text.call_args_list

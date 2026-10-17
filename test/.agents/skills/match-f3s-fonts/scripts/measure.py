@@ -143,341 +143,6 @@ class MeasureTest(unittest.TestCase):
         measure._TTF = self._ttf
         shutil.rmtree(self.temp_dir)
 
-    def _write(self, path, data):
-        path = os.path.join(self.temp_dir, path)
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-        with open(path, "w", encoding="utf-8") as file:
-            file.write(data)
-        return path
-
-    def _fonts(self, fonts=None):
-        M._PARSER = FakeParser()
-        M.GRAVO_PILOT = self.temp_dir
-        if fonts == None:
-            fonts = {
-                "HELVETICA 4L": dict(
-                    (str(ord(char)), glyph) for char, glyph in GLYPHS.items()
-                )
-            }
-        for name, glyphs in fonts.items():
-            self._write(
-                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
-                json.dumps(glyphs),
-            )
-
-    def _root(self):
-        """
-        Creates a Signatur checkout in the temporary directory with the
-        stylesheet declaring the font faces and copies of the public TTF
-        fonts that the viewport renders.
-        """
-
-        root = os.path.join(self.temp_dir, "signatur")
-        self._write(os.path.join("signatur", "static", "css", "layout.css"), LAYOUT_CSS)
-        os.makedirs(os.path.join(root, "static", "fonts"))
-        for name in ("helvetica4l.ttf", "helvetica4l-f3s.ttf", "roman4l.ttf"):
-            shutil.copy(
-                os.path.join(ROOT_DIR, "static", "fonts", name),
-                os.path.join(root, "static", "fonts", name),
-            )
-        return root
-
-    def _layout(self, lines, size=SIZE, shift=None, glyphs=GLYPHS):
-        """
-        Lays out the lines like Gravostyle does (the F3S model): the pen
-        advancing by -m[2] + m[6] at size / m[0] mm per unit, every line
-        centred on its ink inside the margin box and the block centred
-        from the first cap top to the last baseline, the line pitch being
-        1.76 times the size; `shift` moves a line by that many mm.
-        """
-
-        left, right, top, bottom = MARGINS
-        pitch = M.LINE_PITCH * size
-        span = (len(lines) - 1) * pitch + size
-        cap_top = top + (PLATE[1] - top - bottom - span) / 2.0
-        layout = []
-        for index, text in enumerate(lines):
-            pen, placed = 0.0, []
-            for char in text:
-                glyph = glyphs[char]
-                unit = size / M.size_units(glyph)
-                placed.append(dict(char=char, glyph=glyph, pen=pen, unit=unit))
-                pen += M.advance(glyph) * unit
-            inks = []
-            for item in placed:
-                metrics = item["glyph"]["metrics"]
-                if item["glyph"]["strokes"]:
-                    ink_left = item["pen"] - metrics[2] * item["unit"]
-                    inks.extend([ink_left, ink_left + metrics[9] * item["unit"]])
-            area = PLATE[0] - left - right
-            offset = left + (area - (max(inks) - min(inks))) / 2.0 - min(inks)
-            offset += (shift or dict()).get(index, 0.0)
-            for item in placed:
-                item["pen"] += offset
-                item["centre"] = (
-                    item["pen"] + M.ink_centre(item["glyph"]) * item["unit"]
-                )
-            baseline = cap_top + size + index * pitch
-            layout.append(dict(text=text, baseline=baseline, glyphs=placed))
-        return layout
-
-    def _draw(self, draw, layout, scale, origin):
-        # draws the strokes of the laid out glyphs at `scale` px per mm,
-        # two pixels wide like the Gravostyle strokes
-        for line in layout:
-            for item in line["glyphs"]:
-                metrics, unit = item["glyph"]["metrics"], item["unit"]
-                for stroke in item["glyph"]["strokes"]:
-                    points = []
-                    for _kind, x, y in stroke:
-                        x_mm = item["pen"] + (x - metrics[2]) * unit
-                        y_mm = line["baseline"] - (y - metrics[4]) * unit
-                        points.append(
-                            (origin[0] + x_mm * scale, origin[1] + y_mm * scale)
-                        )
-                    draw.line(points, fill=(0, 0, 0), width=2)
-
-    def _composition(self, path, layout, blocks=()):
-        """
-        Writes a Gravostyle composition screenshot: the white plate with
-        its one pixel border on the dark background, the dashed margin
-        box and the strokes of the laid out glyphs (plus filled blocks
-        given as mm boxes), at PX_MM pixels per mm.
-        """
-
-        image = Image.new("RGB", IMAGE_SIZE, (74, 75, 75))
-        draw = ImageDraw.Draw(image)
-        width, height = PLATE[0] * PX_MM, PLATE[1] * PX_MM
-        draw.rectangle(
-            [BORDER[0], BORDER[1], BORDER[0] + width, BORDER[1] + height],
-            fill=(255, 255, 255),
-            outline=(0, 0, 0),
-        )
-        origin = (BORDER[0] + 0.5, BORDER[1] + 0.5)
-        left, right, top, bottom = (value * PX_MM for value in MARGINS)
-        x_a, y_a = origin[0] + left, origin[1] + top
-        x_b, y_b = origin[0] + width - right, origin[1] + height - bottom
-        for x in range(int(x_a), int(x_b), 6):
-            draw.line([(x, y_a), (x + 2, y_a)], fill=(0, 0, 0))
-            draw.line([(x, y_b), (x + 2, y_b)], fill=(0, 0, 0))
-        for y in range(int(y_a), int(y_b), 6):
-            draw.line([(x_a, y), (x_a, y + 2)], fill=(0, 0, 0))
-            draw.line([(x_b, y), (x_b, y + 2)], fill=(0, 0, 0))
-        for box in blocks:
-            corners = [
-                origin[index % 2] + value * PX_MM for index, value in enumerate(box)
-            ]
-            draw.rectangle(corners, fill=(0, 0, 0))
-        self._draw(draw, layout, PX_MM, origin)
-        image.save(path)
-        return path
-
-    def _shot(self, layout, blocks=()):
-        path = os.path.join(self.temp_dir, "composition.png")
-        self._composition(path, layout, blocks=blocks)
-        return measure.Screenshot(path, PLATE[0], PLATE[1])
-
-    def _bounds(self, path, char):
-        face = TTFont(path)
-        glyf = face["glyf"]
-        glyph = glyf[face.getBestCmap()[ord(char)]]
-        glyph.recalcBounds(glyf)
-        return glyph.xMin, glyph.xMax
-
-    def _entry(self, case, layout, root, zoom=2.0, payload=True):
-        """
-        Builds the capture.js entry of a case whose viewport draws every
-        glyph centred on the ink centre the layout gives it, placing the
-        character boxes from the outline bounds and the vertical metrics
-        of the TTF that renders them, the viewport zoomed by `zoom`.
-        """
-
-        face = TTFont(os.path.join(root, "static", "fonts", "helvetica4l-f3s.ttf"))
-        cmap, glyf = face.getBestCmap(), face["glyf"]
-        upm = float(face["head"].unitsPerEm)
-        ascent, descent = face["OS/2"].sTypoAscender, -face["OS/2"].sTypoDescender
-        px_mm = measure.VIEWPORT_SCALE * zoom
-        plate = dict(
-            left=100.0, top=50.0, width=PLATE[0] * px_mm, height=PLATE[1] * px_mm
-        )
-        font_size = case["font_size"] / M.CAP_RATIO * measure.VIEWPORT_SCALE
-        line_height = font_size * M.LINE_PITCH * M.CAP_RATIO
-        size_px, line_px = font_size * zoom, line_height * zoom
-        content = (ascent + descent) * size_px / upm
-        spans, text = [], []
-        for index, line in enumerate(layout):
-            if index > 0:
-                spans.append(
-                    dict(
-                        char="\n",
-                        font="",
-                        display="block",
-                        left=0.0,
-                        right=0.0,
-                        top=0.0,
-                        bottom=0.0,
-                    )
-                )
-                text.append([None, "\n"])
-            text.append([FONT, line["text"]])
-            top = (
-                plate["top"]
-                + line["baseline"] * px_mm
-                - (line_px - content) / 2.0
-                - ascent * size_px / upm
-            )
-            for glyph in line["glyphs"]:
-                left = plate["left"] + glyph["pen"] * px_mm
-                name = cmap.get(ord(glyph["char"]))
-                if name != None and glyf[name].numberOfContours:
-                    bounds = glyf[name]
-                    bounds.recalcBounds(glyf)
-                    left = (
-                        plate["left"]
-                        + glyph["centre"] * px_mm
-                        - (bounds.xMin + bounds.xMax) / 2.0 * size_px / upm
-                    )
-                spans.append(
-                    dict(
-                        char=glyph["char"],
-                        font=FONT,
-                        display="block",
-                        left=left,
-                        right=left + 10.0,
-                        top=top,
-                        bottom=top + line_px,
-                    )
-                )
-        entry = dict(
-            case=case,
-            plate=plate,
-            fontSize=font_size,
-            lineHeight=line_height,
-            fontFamily="Lato, sans-serif",
-            fontSizeInput=str(case["font_size"]),
-            spans=spans,
-        )
-        if payload:
-            entry["job"] = dict(id="job-%s" % case["name"], status="queued")
-            entry["payload"] = dict(
-                text=text,
-                font=FONT,
-                debug=True,
-                dry_run=True,
-                record=False,
-                check_path=False,
-                width=case["width"],
-                height=case["height"],
-                font_size=case["font_size"],
-                margins=case["margins"],
-            )
-        return entry
-
-    def _case(self, name, lines):
-        return dict(
-            name=name,
-            font=FONT,
-            font_size=SIZE,
-            lines=lines,
-            profile="plate",
-            width=PLATE[0],
-            height=PLATE[1],
-            margins=list(MARGINS),
-            f3s=True,
-        )
-
-    def _capture(
-        self, directory, root, cases, fonts=True, label="after", zoom=2.0, payload=True
-    ):
-        """
-        Writes a capture.js run of the cases (name and lines) in the
-        directory, the capture.json plus the plate and viewport images of
-        every case, the fonts loaded recorded unless `fonts` is false (a
-        capture made before the font hashes were recorded).
-        """
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        entries = dict()
-        scale = measure.VIEWPORT_SCALE * zoom * 2
-        size = (int(PLATE[0] * scale), int(PLATE[1] * scale))
-        for name, lines in cases:
-            layout = self._layout(lines)
-            entries[name] = self._entry(
-                self._case(name, lines), layout, root, zoom=zoom, payload=payload
-            )
-            for kind in ("plate", "viewport"):
-                image = Image.new("RGB", size, (255, 255, 255))
-                self._draw(ImageDraw.Draw(image), layout, scale, (0, 0))
-                image.save(os.path.join(directory, "%s-%s.png" % (name, kind)))
-        meta = dict(
-            label=label,
-            base_url="http://127.0.0.1:3123",
-            root=root,
-            date="2026-10-01T16:28:03.144Z",
-            device_scale_factor=2,
-        )
-        if fonts:
-            path = os.path.join(root, "static", "fonts", "helvetica4l-f3s.ttf")
-            meta["fonts"] = {"/static/fonts/helvetica4l-f3s.ttf": M.file_sha256(path)}
-        capture = dict(meta=meta, cases=entries)
-        path = os.path.join(directory, "capture.json")
-        with open(path, "w", encoding="utf-8") as file:
-            json.dump(capture, file)
-        return capture
-
-    def _gravo(self, directory, name, lines, shift=None):
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        path = os.path.join(directory, "%s-composition.png" % name)
-        return self._composition(path, self._layout(lines, shift=shift))
-
-    def _measure(self, name, captures, directory):
-        images = measure.Images(os.path.join(self.temp_dir, "report"))
-        return measure.measure_case(
-            name, captures, directory, measure.THRESHOLDS, 24, images
-        )
-
-    def _result(self, **values):
-        result = dict(
-            trimmed=False,
-            shown=7,
-            expected=7,
-            glyphs=7,
-            spacing_mean=0.02,
-            spacing_max=0.05,
-            absolute_mean=0.03,
-            absolute_max=0.08,
-            widths=[-0.01, 0.02],
-            baselines=[0.02, 0.10],
-            height=0.01,
-            match=0.98,
-            match_min=0.91,
-            worst=[
-                dict(char="O", line=1, error=0.05),
-                dict(char="X", line=2, error=-0.04),
-            ],
-            missing_in_ttf=[],
-            missing_in_f3s=[],
-            unmatched=[],
-            typing=[],
-            overflow=[],
-            steps_off=[],
-        )
-        result.update(values)
-        return result
-
-    def _main(self, *args):
-        stdout = io.StringIO()
-        argv = ["measure.py"]
-        argv.extend(args)
-        with mock.patch.object(sys, "argv", argv):
-            with mock.patch.object(measure, "git_head", return_value="abc1234"):
-                with contextlib.redirect_stdout(stdout):
-                    measure.main()
-        return stdout.getvalue().splitlines()
-
     def test_ttf(self):
         path = os.path.join(ROOT_DIR, "static", "fonts", "helvetica4l.ttf")
 
@@ -2396,3 +2061,338 @@ class MeasureTest(unittest.TestCase):
         self.assertIn(
             "--viewport takes LABEL=DIR, got %r" % directory, stderr.getvalue()
         )
+
+    def _write(self, path, data):
+        path = os.path.join(self.temp_dir, path)
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(data)
+        return path
+
+    def _fonts(self, fonts=None):
+        M._PARSER = FakeParser()
+        M.GRAVO_PILOT = self.temp_dir
+        if fonts == None:
+            fonts = {
+                "HELVETICA 4L": dict(
+                    (str(ord(char)), glyph) for char, glyph in GLYPHS.items()
+                )
+            }
+        for name, glyphs in fonts.items():
+            self._write(
+                os.path.join("src", "gravo_pilot", "res", "fonts", "%s.f3s" % name),
+                json.dumps(glyphs),
+            )
+
+    def _root(self):
+        """
+        Creates a Signatur checkout in the temporary directory with the
+        stylesheet declaring the font faces and copies of the public TTF
+        fonts that the viewport renders.
+        """
+
+        root = os.path.join(self.temp_dir, "signatur")
+        self._write(os.path.join("signatur", "static", "css", "layout.css"), LAYOUT_CSS)
+        os.makedirs(os.path.join(root, "static", "fonts"))
+        for name in ("helvetica4l.ttf", "helvetica4l-f3s.ttf", "roman4l.ttf"):
+            shutil.copy(
+                os.path.join(ROOT_DIR, "static", "fonts", name),
+                os.path.join(root, "static", "fonts", name),
+            )
+        return root
+
+    def _layout(self, lines, size=SIZE, shift=None, glyphs=GLYPHS):
+        """
+        Lays out the lines like Gravostyle does (the F3S model): the pen
+        advancing by -m[2] + m[6] at size / m[0] mm per unit, every line
+        centred on its ink inside the margin box and the block centred
+        from the first cap top to the last baseline, the line pitch being
+        1.76 times the size; `shift` moves a line by that many mm.
+        """
+
+        left, right, top, bottom = MARGINS
+        pitch = M.LINE_PITCH * size
+        span = (len(lines) - 1) * pitch + size
+        cap_top = top + (PLATE[1] - top - bottom - span) / 2.0
+        layout = []
+        for index, text in enumerate(lines):
+            pen, placed = 0.0, []
+            for char in text:
+                glyph = glyphs[char]
+                unit = size / M.size_units(glyph)
+                placed.append(dict(char=char, glyph=glyph, pen=pen, unit=unit))
+                pen += M.advance(glyph) * unit
+            inks = []
+            for item in placed:
+                metrics = item["glyph"]["metrics"]
+                if item["glyph"]["strokes"]:
+                    ink_left = item["pen"] - metrics[2] * item["unit"]
+                    inks.extend([ink_left, ink_left + metrics[9] * item["unit"]])
+            area = PLATE[0] - left - right
+            offset = left + (area - (max(inks) - min(inks))) / 2.0 - min(inks)
+            offset += (shift or dict()).get(index, 0.0)
+            for item in placed:
+                item["pen"] += offset
+                item["centre"] = (
+                    item["pen"] + M.ink_centre(item["glyph"]) * item["unit"]
+                )
+            baseline = cap_top + size + index * pitch
+            layout.append(dict(text=text, baseline=baseline, glyphs=placed))
+        return layout
+
+    def _draw(self, draw, layout, scale, origin):
+        # draws the strokes of the laid out glyphs at `scale` px per mm,
+        # two pixels wide like the Gravostyle strokes
+        for line in layout:
+            for item in line["glyphs"]:
+                metrics, unit = item["glyph"]["metrics"], item["unit"]
+                for stroke in item["glyph"]["strokes"]:
+                    points = []
+                    for _kind, x, y in stroke:
+                        x_mm = item["pen"] + (x - metrics[2]) * unit
+                        y_mm = line["baseline"] - (y - metrics[4]) * unit
+                        points.append(
+                            (origin[0] + x_mm * scale, origin[1] + y_mm * scale)
+                        )
+                    draw.line(points, fill=(0, 0, 0), width=2)
+
+    def _composition(self, path, layout, blocks=()):
+        """
+        Writes a Gravostyle composition screenshot: the white plate with
+        its one pixel border on the dark background, the dashed margin
+        box and the strokes of the laid out glyphs (plus filled blocks
+        given as mm boxes), at PX_MM pixels per mm.
+        """
+
+        image = Image.new("RGB", IMAGE_SIZE, (74, 75, 75))
+        draw = ImageDraw.Draw(image)
+        width, height = PLATE[0] * PX_MM, PLATE[1] * PX_MM
+        draw.rectangle(
+            [BORDER[0], BORDER[1], BORDER[0] + width, BORDER[1] + height],
+            fill=(255, 255, 255),
+            outline=(0, 0, 0),
+        )
+        origin = (BORDER[0] + 0.5, BORDER[1] + 0.5)
+        left, right, top, bottom = (value * PX_MM for value in MARGINS)
+        x_a, y_a = origin[0] + left, origin[1] + top
+        x_b, y_b = origin[0] + width - right, origin[1] + height - bottom
+        for x in range(int(x_a), int(x_b), 6):
+            draw.line([(x, y_a), (x + 2, y_a)], fill=(0, 0, 0))
+            draw.line([(x, y_b), (x + 2, y_b)], fill=(0, 0, 0))
+        for y in range(int(y_a), int(y_b), 6):
+            draw.line([(x_a, y), (x_a, y + 2)], fill=(0, 0, 0))
+            draw.line([(x_b, y), (x_b, y + 2)], fill=(0, 0, 0))
+        for box in blocks:
+            corners = [
+                origin[index % 2] + value * PX_MM for index, value in enumerate(box)
+            ]
+            draw.rectangle(corners, fill=(0, 0, 0))
+        self._draw(draw, layout, PX_MM, origin)
+        image.save(path)
+        return path
+
+    def _shot(self, layout, blocks=()):
+        path = os.path.join(self.temp_dir, "composition.png")
+        self._composition(path, layout, blocks=blocks)
+        return measure.Screenshot(path, PLATE[0], PLATE[1])
+
+    def _bounds(self, path, char):
+        face = TTFont(path)
+        glyf = face["glyf"]
+        glyph = glyf[face.getBestCmap()[ord(char)]]
+        glyph.recalcBounds(glyf)
+        return glyph.xMin, glyph.xMax
+
+    def _entry(self, case, layout, root, zoom=2.0, payload=True):
+        """
+        Builds the capture.js entry of a case whose viewport draws every
+        glyph centred on the ink centre the layout gives it, placing the
+        character boxes from the outline bounds and the vertical metrics
+        of the TTF that renders them, the viewport zoomed by `zoom`.
+        """
+
+        face = TTFont(os.path.join(root, "static", "fonts", "helvetica4l-f3s.ttf"))
+        cmap, glyf = face.getBestCmap(), face["glyf"]
+        upm = float(face["head"].unitsPerEm)
+        ascent, descent = face["OS/2"].sTypoAscender, -face["OS/2"].sTypoDescender
+        px_mm = measure.VIEWPORT_SCALE * zoom
+        plate = dict(
+            left=100.0, top=50.0, width=PLATE[0] * px_mm, height=PLATE[1] * px_mm
+        )
+        font_size = case["font_size"] / M.CAP_RATIO * measure.VIEWPORT_SCALE
+        line_height = font_size * M.LINE_PITCH * M.CAP_RATIO
+        size_px, line_px = font_size * zoom, line_height * zoom
+        content = (ascent + descent) * size_px / upm
+        spans, text = [], []
+        for index, line in enumerate(layout):
+            if index > 0:
+                spans.append(
+                    dict(
+                        char="\n",
+                        font="",
+                        display="block",
+                        left=0.0,
+                        right=0.0,
+                        top=0.0,
+                        bottom=0.0,
+                    )
+                )
+                text.append([None, "\n"])
+            text.append([FONT, line["text"]])
+            top = (
+                plate["top"]
+                + line["baseline"] * px_mm
+                - (line_px - content) / 2.0
+                - ascent * size_px / upm
+            )
+            for glyph in line["glyphs"]:
+                left = plate["left"] + glyph["pen"] * px_mm
+                name = cmap.get(ord(glyph["char"]))
+                if name != None and glyf[name].numberOfContours:
+                    bounds = glyf[name]
+                    bounds.recalcBounds(glyf)
+                    left = (
+                        plate["left"]
+                        + glyph["centre"] * px_mm
+                        - (bounds.xMin + bounds.xMax) / 2.0 * size_px / upm
+                    )
+                spans.append(
+                    dict(
+                        char=glyph["char"],
+                        font=FONT,
+                        display="block",
+                        left=left,
+                        right=left + 10.0,
+                        top=top,
+                        bottom=top + line_px,
+                    )
+                )
+        entry = dict(
+            case=case,
+            plate=plate,
+            fontSize=font_size,
+            lineHeight=line_height,
+            fontFamily="Lato, sans-serif",
+            fontSizeInput=str(case["font_size"]),
+            spans=spans,
+        )
+        if payload:
+            entry["job"] = dict(id="job-%s" % case["name"], status="queued")
+            entry["payload"] = dict(
+                text=text,
+                font=FONT,
+                debug=True,
+                dry_run=True,
+                record=False,
+                check_path=False,
+                width=case["width"],
+                height=case["height"],
+                font_size=case["font_size"],
+                margins=case["margins"],
+            )
+        return entry
+
+    def _case(self, name, lines):
+        return dict(
+            name=name,
+            font=FONT,
+            font_size=SIZE,
+            lines=lines,
+            profile="plate",
+            width=PLATE[0],
+            height=PLATE[1],
+            margins=list(MARGINS),
+            f3s=True,
+        )
+
+    def _capture(
+        self, directory, root, cases, fonts=True, label="after", zoom=2.0, payload=True
+    ):
+        """
+        Writes a capture.js run of the cases (name and lines) in the
+        directory, the capture.json plus the plate and viewport images of
+        every case, the fonts loaded recorded unless `fonts` is false (a
+        capture made before the font hashes were recorded).
+        """
+
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        entries = dict()
+        scale = measure.VIEWPORT_SCALE * zoom * 2
+        size = (int(PLATE[0] * scale), int(PLATE[1] * scale))
+        for name, lines in cases:
+            layout = self._layout(lines)
+            entries[name] = self._entry(
+                self._case(name, lines), layout, root, zoom=zoom, payload=payload
+            )
+            for kind in ("plate", "viewport"):
+                image = Image.new("RGB", size, (255, 255, 255))
+                self._draw(ImageDraw.Draw(image), layout, scale, (0, 0))
+                image.save(os.path.join(directory, "%s-%s.png" % (name, kind)))
+        meta = dict(
+            label=label,
+            base_url="http://127.0.0.1:3123",
+            root=root,
+            date="2026-10-01T16:28:03.144Z",
+            device_scale_factor=2,
+        )
+        if fonts:
+            path = os.path.join(root, "static", "fonts", "helvetica4l-f3s.ttf")
+            meta["fonts"] = {"/static/fonts/helvetica4l-f3s.ttf": M.file_sha256(path)}
+        capture = dict(meta=meta, cases=entries)
+        path = os.path.join(directory, "capture.json")
+        with open(path, "w", encoding="utf-8") as file:
+            json.dump(capture, file)
+        return capture
+
+    def _gravo(self, directory, name, lines, shift=None):
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        path = os.path.join(directory, "%s-composition.png" % name)
+        return self._composition(path, self._layout(lines, shift=shift))
+
+    def _measure(self, name, captures, directory):
+        images = measure.Images(os.path.join(self.temp_dir, "report"))
+        return measure.measure_case(
+            name, captures, directory, measure.THRESHOLDS, 24, images
+        )
+
+    def _result(self, **values):
+        result = dict(
+            trimmed=False,
+            shown=7,
+            expected=7,
+            glyphs=7,
+            spacing_mean=0.02,
+            spacing_max=0.05,
+            absolute_mean=0.03,
+            absolute_max=0.08,
+            widths=[-0.01, 0.02],
+            baselines=[0.02, 0.10],
+            height=0.01,
+            match=0.98,
+            match_min=0.91,
+            worst=[
+                dict(char="O", line=1, error=0.05),
+                dict(char="X", line=2, error=-0.04),
+            ],
+            missing_in_ttf=[],
+            missing_in_f3s=[],
+            unmatched=[],
+            typing=[],
+            overflow=[],
+            steps_off=[],
+        )
+        result.update(values)
+        return result
+
+    def _main(self, *args):
+        stdout = io.StringIO()
+        argv = ["measure.py"]
+        argv.extend(args)
+        with mock.patch.object(sys, "argv", argv):
+            with mock.patch.object(measure, "git_head", return_value="abc1234"):
+                with contextlib.redirect_stdout(stdout):
+                    measure.main()
+        return stdout.getvalue().splitlines()

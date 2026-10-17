@@ -35,71 +35,6 @@ class FontMetricsTest(unittest.TestCase):
         font_metrics.DEFAULT_OUTPUT = self._default_output
         shutil.rmtree(self.temp_dir)
 
-    def _polygon(self, points):
-        pen = TTGlyphPen(None)
-        pen.moveTo(points[0])
-        for point in points[1:]:
-            pen.lineTo(point)
-        pen.closePath()
-        return pen.glyph()
-
-    def _font(self):
-        """
-        Builds a TTF of 1000 units per em with a space, an A that draws
-        past its advance from a negative bearing, a B with a positive
-        bearing and an Á composed of the A and an acute accent.
-        """
-
-        glyphs = {
-            ".notdef": self._polygon([(50, 0), (50, 700), (450, 700), (450, 0)]),
-            "space": TTGlyphPen(None).glyph(),
-            "A": self._polygon([(-30, 0), (300, 700), (630, 0)]),
-            "B": self._polygon([(40, 0), (40, 700), (500, 700), (500, 0)]),
-            "acute": self._polygon([(200, 750), (300, 900), (350, 750)]),
-        }
-        pen = TTGlyphPen(glyphs)
-        pen.addComponent("A", (1, 0, 0, 1, 0, 0))
-        pen.addComponent("acute", (1, 0, 0, 1, 100, 0))
-        glyphs["Aacute"] = pen.glyph()
-
-        builder = FontBuilder(1000, isTTF=True)
-        builder.setupGlyphOrder(list(glyphs))
-        builder.setupCharacterMap({32: "space", 65: "A", 66: "B", 193: "Aacute"})
-        builder.setupGlyf(glyphs)
-        builder.setupHorizontalMetrics(
-            {
-                ".notdef": (500, 50),
-                "space": (250, 0),
-                "A": (600, -30),
-                "B": (560, 40),
-                "acute": (300, 200),
-                "Aacute": (600, -30),
-            }
-        )
-        builder.setupHorizontalHeader(ascent=800, descent=-200)
-        builder.setupNameTable(dict(familyName="Metrics", styleName="Regular"))
-        builder.setupOS2()
-        builder.setupPost()
-        path = os.path.join(self.temp_dir, "metrics.ttf")
-        builder.save(path)
-        return path
-
-    def _size(self, path):
-        with Image.open(path) as image:
-            return image.size
-
-    def _colors(self, path):
-        # leaves out the legend at the bottom, that shows every color
-        with Image.open(path) as image:
-            image = image.convert("RGB")
-        image = image.crop((0, 0, image.width, image.height - 35))
-        return set(
-            color for _count, color in image.getcolors(image.width * image.height)
-        )
-
-    def _texts(self, text):
-        return [call.args[2] for call in text.call_args_list]
-
     def test_get_glyph_metrics(self):
         ttfont = TTFont(self._font())
 
@@ -227,3 +162,68 @@ class FontMetricsTest(unittest.TestCase):
         self.assertEqual(
             stdout.getvalue().splitlines()[1], "Size: %dx344, 5 glyphs" % width
         )
+
+    def _polygon(self, points):
+        pen = TTGlyphPen(None)
+        pen.moveTo(points[0])
+        for point in points[1:]:
+            pen.lineTo(point)
+        pen.closePath()
+        return pen.glyph()
+
+    def _font(self):
+        """
+        Builds a TTF of 1000 units per em with a space, an A that draws
+        past its advance from a negative bearing, a B with a positive
+        bearing and an Á composed of the A and an acute accent.
+        """
+
+        glyphs = {
+            ".notdef": self._polygon([(50, 0), (50, 700), (450, 700), (450, 0)]),
+            "space": TTGlyphPen(None).glyph(),
+            "A": self._polygon([(-30, 0), (300, 700), (630, 0)]),
+            "B": self._polygon([(40, 0), (40, 700), (500, 700), (500, 0)]),
+            "acute": self._polygon([(200, 750), (300, 900), (350, 750)]),
+        }
+        pen = TTGlyphPen(glyphs)
+        pen.addComponent("A", (1, 0, 0, 1, 0, 0))
+        pen.addComponent("acute", (1, 0, 0, 1, 100, 0))
+        glyphs["Aacute"] = pen.glyph()
+
+        builder = FontBuilder(1000, isTTF=True)
+        builder.setupGlyphOrder(list(glyphs))
+        builder.setupCharacterMap({32: "space", 65: "A", 66: "B", 193: "Aacute"})
+        builder.setupGlyf(glyphs)
+        builder.setupHorizontalMetrics(
+            {
+                ".notdef": (500, 50),
+                "space": (250, 0),
+                "A": (600, -30),
+                "B": (560, 40),
+                "acute": (300, 200),
+                "Aacute": (600, -30),
+            }
+        )
+        builder.setupHorizontalHeader(ascent=800, descent=-200)
+        builder.setupNameTable(dict(familyName="Metrics", styleName="Regular"))
+        builder.setupOS2()
+        builder.setupPost()
+        path = os.path.join(self.temp_dir, "metrics.ttf")
+        builder.save(path)
+        return path
+
+    def _size(self, path):
+        with Image.open(path) as image:
+            return image.size
+
+    def _colors(self, path):
+        # leaves out the legend at the bottom, that shows every color
+        with Image.open(path) as image:
+            image = image.convert("RGB")
+        image = image.crop((0, 0, image.width, image.height - 35))
+        return set(
+            color for _count, color in image.getcolors(image.width * image.height)
+        )
+
+    def _texts(self, text):
+        return [call.args[2] for call in text.call_args_list]
