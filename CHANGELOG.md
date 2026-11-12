@@ -9,15 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Reason of an engraving job that was not completed, on its chip and on its details - [#90](https://github.com/hivesolutions/signatur/issues/90)
+* Message asking to check the machine and send the job again when the engraving machine is not found - [#90](https://github.com/hivesolutions/signatur/issues/90)
+* Unit tests for the status, the reason and the messages of the engraving jobs - [#90](https://github.com/hivesolutions/signatur/issues/90)
 
 ### Changed
 
 * Moved the test helper methods below the test cases
+* Engraving jobs that fail are now shown as not completed, with the time they ended - [#90](https://github.com/hivesolutions/signatur/issues/90)
 
 ### Fixed
 
-*
+* Engraving jobs whose machine was not found are no longer shown as completed - [#90](https://github.com/hivesolutions/signatur/issues/90)
 
 ## [1.6.0] - 2026-10-16
 

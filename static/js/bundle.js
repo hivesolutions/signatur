@@ -2568,6 +2568,17 @@ const countLines = function(text) {
             return null;
         };
 
+        // resolves the machine readable code of the error of a failed
+        // job (e.g. "machine_not_found" when the engraving software did
+        // not find the machine), returning null when the job did not
+        // fail or when colony-print reported no code for its error
+        const errorCode = function(job) {
+            const result = resultObject(job);
+            if (!result || !isFailed(job)) return null;
+            if (typeof result.error_code !== "string") return null;
+            return result.error_code;
+        };
+
         // formats the elapsed time between two unix timestamps in
         // seconds as a compact human readable string (e.g. "12s",
         // "3m 14s", "1h 02m") for the chip tooltip and the info tab
@@ -2721,7 +2732,7 @@ const countLines = function(text) {
                 printing: context.attr("data-label-printing") || "Printing",
                 finished: context.attr("data-label-finished") || "Finished",
                 cancelled: context.attr("data-label-cancelled") || "Cancelled",
-                failed: context.attr("data-label-failed") || "Failed",
+                failed: context.attr("data-label-failed") || "Not completed",
                 cancel: context.attr("data-label-cancel") || "Cancel",
                 dismiss: context.attr("data-label-dismiss") || "Dismiss",
                 printer: context.attr("data-label-printer") || "Printer",
@@ -2737,12 +2748,20 @@ const countLines = function(text) {
                 queuedAt: context.attr("data-label-queued-at") || "Queued at",
                 printingAt: context.attr("data-label-printing-at") || "Printing at",
                 finishedAt: context.attr("data-label-finished-at") || "Finished at",
+                failedAt: context.attr("data-label-failed-at") || "Ended at",
                 cancelledAt: context.attr("data-label-cancelled-at") || "Cancelled at",
+                reason: context.attr("data-label-reason") || "Reason",
+                reasonMachine:
+                    context.attr("data-label-reason-machine") || "Machine not found",
+                reasonError: context.attr("data-label-reason-error") || "Engraving error",
                 requestEmpty:
                     context.attr("data-label-request-empty") ||
                     "No request payload recorded for this job.",
                 failedToast:
                     context.attr("data-label-failed-toast") || "Engraving job failed.",
+                machineToast:
+                    context.attr("data-label-machine-toast") ||
+                    "The machine was not found. Check that it is switched on and that the USB cable is plugged in, then send it again.",
                 filesEmpty:
                     context.attr("data-label-files-empty") || "No files generated.",
                 download: context.attr("data-label-download") || "Download"
@@ -2768,13 +2787,26 @@ const countLines = function(text) {
                 context.data("_state", state);
             }
 
+            // resolves the localized reason of a failed job from the
+            // code of its error, falling back to the generic engraving
+            // error for the errors without a known code, and returning
+            // null for the jobs that did not fail
+            const failureReason = function(job) {
+                if (!isFailed(job)) return null;
+                if (errorCode(job) === "machine_not_found") return labels.reasonMachine;
+                return labels.reasonError;
+            };
+
             // builds the multi line tooltip text rendered through
             // the chip title attribute, surfacing the status, the
-            // printer, the node and the elapsed time the operator
-            // needs to identify a job at a glance
+            // reason of a failure, the printer, the node and the
+            // elapsed time the operator needs to identify a job at
+            // a glance
             const buildTooltip = function(job) {
                 const lines = [];
                 lines.push(labels[effectiveStatus(job)] || job.status);
+                const reason = failureReason(job);
+                if (reason) lines.push(labels.reason + ": " + reason);
                 if (job.printer) lines.push(labels.printer + ": " + job.printer);
                 if (job.node_id) lines.push(labels.node + ": " + job.node_id);
                 if (job.queued_time) {
@@ -2892,7 +2924,12 @@ const countLines = function(text) {
                 ) {
                     context.triggerHandler("terminal", [changed]);
                     if (isFailed(changed)) {
-                        jQuery(".toast").toast("show", labels.failedToast);
+                        jQuery(".toast").toast(
+                            "show",
+                            errorCode(changed) === "machine_not_found"
+                                ? labels.machineToast
+                                : labels.failedToast
+                        );
                     }
                 }
                 return changed;
@@ -3099,6 +3136,8 @@ const countLines = function(text) {
                 }
                 let html = "";
                 html += buildRow(labels.status, statusHtml);
+                const reason = failureReason(job);
+                if (reason) html += buildRow(labels.reason, escapeHtml(reason));
                 html += buildRow(labels.id, idHtml);
                 if (job.name && job.name !== job.id) {
                     html += buildRow(labels.name, escapeHtml(job.name));
@@ -3131,7 +3170,7 @@ const countLines = function(text) {
                 }
                 if (job.finish_time) {
                     html += buildRow(
-                        labels.finishedAt,
+                        isFailed(job) ? labels.failedAt : labels.finishedAt,
                         escapeHtml(formatTimestamp(job.finish_time))
                     );
                 }
