@@ -17,7 +17,7 @@ const PRINT_KEY = "secret";
 // the duration of the job until the error
 const MACHINE_NOT_FOUND = {
     result: "error",
-    error: "Machine not found after 30.0 seconds (A procurar a máquina ...)",
+    error: "Machine not found after 30.0 seconds",
     error_code: "machine_not_found",
     traceback: "gravo_pilot.errors.MachineNotFound: Machine not found",
     data: { duration: 68, files: [] }
