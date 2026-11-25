@@ -283,6 +283,14 @@ describe("Smoke", function() {
         });
     });
 
+    describe("#login()", function() {
+        it("should fall back to the default page for an unknown locale", async () => {
+            const response = await request("GET", "/login?locale=fr_fr", { skipAuth: true });
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes('name="username"'));
+        });
+    });
+
     describe("#gateway()", function() {
         it("should render the gateway view", async () => {
             const response = await request("GET", "/gateway");
@@ -296,6 +304,13 @@ describe("Smoke", function() {
             const response = await request("GET", "/welcome");
             assert.strictEqual(response.status, 200);
             assert.ok(response.body.includes("</html>"));
+        });
+    });
+
+    describe("#signature()", function() {
+        it("should fall back to the default page for an unknown locale", async () => {
+            const response = await request("GET", "/signature?locale=fr_fr");
+            assert.strictEqual(response.status, 200);
         });
     });
 
@@ -353,6 +368,14 @@ describe("Smoke", function() {
             assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
         });
 
+        it("should fall back to the default report for an unknown locale", async () => {
+            const response = await request("GET", "/report?locale=fr_fr&text=arial:a", {
+                headers: { Cookie: userSessionCookie }
+            });
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes('<span class="item"'));
+        });
+
         it("should escape the characters on the Portuguese report too", async () => {
             const text = encodeURIComponent("arial:<img src=x onerror=alert(1)>");
             const response = await request("GET", "/report?locale=pt_pt&text=" + text, {
@@ -361,6 +384,20 @@ describe("Smoke", function() {
             assert.strictEqual(response.status, 200);
             assert.ok(!response.body.includes("<img src=x"));
             assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+    });
+
+    describe("#console()", function() {
+        it("should fall back to the default page for an unknown locale", async () => {
+            const response = await request("GET", "/console?locale=fr_fr");
+            assert.strictEqual(response.status, 200);
+        });
+    });
+
+    describe("#components()", function() {
+        it("should fall back to the default page for an unknown locale", async () => {
+            const response = await request("GET", "/components?locale=fr_fr");
+            assert.strictEqual(response.status, 200);
         });
     });
 
@@ -387,6 +424,15 @@ describe("Smoke", function() {
             assert.strictEqual(response.status, 200);
             assert.ok(!response.body.includes("<img"));
             assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+
+        it("should not let the locale select another page", async () => {
+            const locale = encodeURIComponent("../layout");
+            const response = await request("GET", "/text?locale=" + locale + "&text=arial:a", {
+                skipAuth: true
+            });
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes('<span class="item"'));
         });
 
         it("should escape the characters on the Portuguese text page too", async () => {
@@ -459,6 +505,18 @@ describe("Smoke", function() {
             assert.ok(response.body.includes(">#" + commit.slice(0, 8) + "</a>"));
             assert.ok(response.body.includes('data-timestamp="' + buildDate + '"'));
         });
+        it("should store an unsupported locale as the default one", async () => {
+            const locale = encodeURIComponent("../layout");
+            const saveResponse = await request("POST", "/settings", {
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "locale=" + locale + "&home=gateway&show_options=1&viewport_mode=technical"
+            });
+            assert.strictEqual(saveResponse.status, 302);
+            const response = await request("GET", "/settings");
+            assert.strictEqual(response.status, 200);
+            assert.ok(/id="locale-default"[^>]*checked/.test(response.body));
+        });
+
     });
 
     describe("#settingsFontsResolve()", function() {
@@ -543,6 +601,13 @@ describe("Smoke", function() {
             assert.strictEqual(response.status, 400);
             const payload = JSON.parse(response.body);
             assert.strictEqual(payload.error, "invalid font name");
+        });
+    });
+
+    describe("#profilesManager()", function() {
+        it("should fall back to the default page for an unknown locale", async () => {
+            const response = await request("GET", "/profiles/manager?locale=fr_fr");
+            assert.strictEqual(response.status, 200);
         });
     });
 

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* Locale of a request limited to the supported ones, so an unknown one shows the default pages instead of an error and can no longer select another page
 * Receipt and image rendering, which failed on every request since the move to the built-in fetch
 * Characters of the text, report and editor pages escaped in every language, so a crafted text can no longer inject markup or scripts
 
