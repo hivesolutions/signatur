@@ -13,6 +13,7 @@ describe("Smoke", function() {
     const host = "127.0.0.1";
     const commit = "7fcb0702d0ee401710b24cf41eec3dca6f3a88a7";
     const buildDate = 1790677148;
+    const headlessKey = "smokekey";
     const usersPath = path.resolve(__dirname, "..", "..", "config", "users.json");
     const usersBackupPath = usersPath + ".bak";
     let child = null;
@@ -20,6 +21,8 @@ describe("Smoke", function() {
     let sessionCookie = null;
     let userSessionCookie = null;
     let hadExistingUsers = false;
+    let headless = null;
+    const headlessKeys = [];
 
     const findFreePort = function() {
         return new Promise((resolve, reject) => {
@@ -81,6 +84,15 @@ describe("Smoke", function() {
             ) + "\n",
             "utf8"
         );
+        // serves a fake headless service that records the key of
+        // every render request and answers with a tiny image, so the
+        // receipt and image routes can be exercised without a browser
+        headless = http.createServer((req, res) => {
+            headlessKeys.push(req.headers["x-headless-key"] || null);
+            res.writeHead(200, { "Content-Type": "image/png" });
+            res.end(Buffer.from("png"));
+        });
+        await new Promise(resolve => headless.listen(0, host, resolve));
         port = await findFreePort();
         const appPath = path.resolve(__dirname, "..", "..", "app.js");
         child = childProcess.spawn(process.execPath, [appPath], {
@@ -90,7 +102,9 @@ describe("Smoke", function() {
                 NODE_ENV: process.env.NODE_ENV || "test",
                 FEATURE_CHECK_PATH: "1",
                 GIT_COMMIT: commit,
-                BUILD_DATE: String(buildDate)
+                BUILD_DATE: String(buildDate),
+                HEADLESS_URL: "http://" + host + ":" + headless.address().port,
+                HEADLESS_KEY: headlessKey
             }),
             stdio: ["ignore", "pipe", "pipe"]
         });
@@ -132,6 +146,7 @@ describe("Smoke", function() {
     });
 
     after(function(done) {
+        if (headless) headless.close();
         const cleanup = () => {
             if (hadExistingUsers) {
                 try {
@@ -304,6 +319,25 @@ describe("Smoke", function() {
             assert.strictEqual(response.status, 200);
             assert.ok(response.body.includes('data-value="N" data-accents="Ñ"'));
             assert.ok(response.body.includes('data-value="C" data-accents="Ç"'));
+        });
+    });
+
+    describe("#receipt()", function() {
+        it("should send the headless key when rendering the receipt text", async () => {
+            headlessKeys.length = 0;
+            const response = await request("GET", "/receipt?text=arial:a");
+            assert.strictEqual(response.status, 200);
+            assert.deepStrictEqual(headlessKeys, [headlessKey]);
+        });
+    });
+
+    describe("#image()", function() {
+        it("should send the headless key and return the rendered image", async () => {
+            headlessKeys.length = 0;
+            const response = await request("GET", "/image?text=arial:a");
+            assert.strictEqual(response.status, 200);
+            assert.strictEqual(response.headers["content-type"], "image/png");
+            assert.deepStrictEqual(headlessKeys, [headlessKey]);
         });
     });
 

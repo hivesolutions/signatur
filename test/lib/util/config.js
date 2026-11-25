@@ -11,9 +11,9 @@ describe("Config", function() {
     // starts the library on a separate process with the given build
     // environment, so that neither the environment nor the logging
     // handlers set up by the start leak into the rest of the suite,
-    // returning the commit and the date of the running build it resolved,
-    // with a not a number value kept apart from null as the plain JSON
-    // serialization would turn one into the other
+    // returning the headless key, the commit and the date of the running
+    // build it resolved, with a not a number value kept apart from null
+    // as the plain JSON serialization would turn one into the other
     const startBuild = function(env) {
         const libPath = path.resolve(__dirname, "..", "..", "..", "lib");
         const script =
@@ -21,9 +21,11 @@ describe("Config", function() {
             JSON.stringify(libPath) +
             ");" +
             "lib.start().then(() => process.stdout.write(JSON.stringify({" +
-            "commit: lib.conf.GIT_COMMIT, buildDate: lib.conf.BUILD_DATE" +
+            "headlessKey: lib.conf.HEADLESS_KEY, commit: lib.conf.GIT_COMMIT, " +
+            "buildDate: lib.conf.BUILD_DATE" +
             "}, (key, value) => (Number.isNaN(value) ? 'NaN' : value))));";
         const environment = Object.assign({}, process.env);
+        delete environment.HEADLESS_KEY;
         delete environment.GIT_COMMIT;
         delete environment.BUILD_DATE;
         const output = childProcess.execFileSync(process.execPath, ["-e", script], {
@@ -53,6 +55,14 @@ describe("Config", function() {
 
     describe("#start()", function() {
         this.timeout(20000);
+
+        it("should read the key of the headless service", () => {
+            assert.strictEqual(startBuild({ HEADLESS_KEY: "secret" }).headlessKey, "secret");
+        });
+
+        it("should resolve a missing headless key to null", () => {
+            assert.strictEqual(startBuild({}).headlessKey, null);
+        });
 
         it("should read the commit of the running build", () => {
             assert.strictEqual(startBuild({ GIT_COMMIT: commit }).commit, commit);
