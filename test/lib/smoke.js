@@ -320,6 +320,28 @@ describe("Smoke", function() {
             assert.ok(response.body.includes('data-value="N" data-accents="Ñ"'));
             assert.ok(response.body.includes('data-value="C" data-accents="Ç"'));
         });
+
+        it("should escape the characters so they can not inject markup", async () => {
+            const text = encodeURIComponent("arial:<img src=x onerror=alert(1)>");
+            const response = await request("GET", "/viewport?text=" + text, {
+                headers: { Cookie: userSessionCookie }
+            });
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img src=x"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+    });
+
+    describe("#report()", function() {
+        it("should escape the characters so they can not inject markup", async () => {
+            const text = encodeURIComponent("arial:<img src=x onerror=alert(1)>");
+            const response = await request("GET", "/report?text=" + text, {
+                headers: { Cookie: userSessionCookie }
+            });
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img src=x"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
     });
 
     describe("#receipt()", function() {
@@ -328,6 +350,26 @@ describe("Smoke", function() {
             const response = await request("GET", "/receipt?text=arial:a");
             assert.strictEqual(response.status, 200);
             assert.deepStrictEqual(headlessKeys, [headlessKey]);
+        });
+    });
+
+    describe("#text()", function() {
+        it("should escape the characters so they can not inject markup", async () => {
+            const text = encodeURIComponent("arial:<img src=x onerror=alert(1)>");
+            const response = await request("GET", "/text?text=" + text, { skipAuth: true });
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+
+        it("should escape the characters on the Portuguese text page too", async () => {
+            const text = encodeURIComponent("arial:<img src=x onerror=alert(1)>");
+            const response = await request("GET", "/text?locale=pt_pt&text=" + text, {
+                skipAuth: true
+            });
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img src=x"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
         });
     });
 
