@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Support for the key the headless service requires, sent with every receipt and image render
 
 ### Changed
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Receipt and image rendering, which failed on every request since the move to the built-in fetch
 
 ## [1.7.0] - 2026-11-12
 

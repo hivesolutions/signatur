@@ -916,10 +916,11 @@ app.get("/receipt", (req, res, next) => {
             req.session.config.text
         )}`;
         const response = await fetch(
-            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${encodeURIComponent(remoteUrl)}`
+            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${encodeURIComponent(remoteUrl)}`,
+            { headers: lib.headlessHeaders() }
         );
         if (response.status !== 200) throw new Error("Not possible to retrieve remote image");
-        const imageBuffer = await response.buffer();
+        const imageBuffer = Buffer.from(await response.arrayBuffer());
         const imageBase64 = imageBuffer.toString("base64");
         res.render("receipt" + (locale ? `-${locale}` : ""), {
             config: req.session.config || {},
@@ -952,10 +953,11 @@ app.get("/image", (req, res, next) => {
             req.session.config.text
         )}`;
         const response = await fetch(
-            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${encodeURIComponent(remoteUrl)}`
+            `${lib.conf.HEADLESS_URL}/?full_page=0&trim=1&url=${encodeURIComponent(remoteUrl)}`,
+            { headers: lib.headlessHeaders() }
         );
         if (response.status !== 200) throw new Error("Not possible to retrieve remote image");
-        const imageBuffer = await response.buffer();
+        const imageBuffer = Buffer.from(await response.arrayBuffer());
         res.contentType("image/png");
         res.send(imageBuffer);
     }
