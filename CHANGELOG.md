@@ -9,11 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for the key the headless service requires, sent with every receipt and image render
+*
 
 ### Changed
 
 *
+
+### Fixed
+
+*
+
+## [0.7.3] - 2026-11-25
+
+### Added
+
+* Support for the key the headless service requires, sent with every receipt and image render
 
 ### Fixed
 
