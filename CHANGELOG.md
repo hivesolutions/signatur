@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Receipt and image rendering, which failed on every request since the move to the built-in fetch
-* Characters of the text page escaped, so a crafted text can no longer inject markup or scripts
+* Characters of the text, report and editor pages escaped in every language, so a crafted text can no longer inject markup or scripts
 
 ## [1.7.0] - 2026-11-12
 
