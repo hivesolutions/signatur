@@ -331,6 +331,16 @@ describe("Smoke", function() {
         });
     });
 
+    describe("#text()", function() {
+        it("should escape the characters so they can not inject markup", async () => {
+            const text = encodeURIComponent("arial:<img src=x onerror=alert(1)>");
+            const response = await request("GET", "/text?text=" + text, { skipAuth: true });
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+    });
+
     describe("#image()", function() {
         it("should send the headless key and return the rendered image", async () => {
             headlessKeys.length = 0;
