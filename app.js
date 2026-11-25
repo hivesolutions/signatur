@@ -55,7 +55,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get(["/", "/gateway"], (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.theme = theme;
     req.session.locale = locale;
     res.render("gateway" + (locale ? `-${locale}` : ""), {
@@ -116,7 +116,7 @@ app.get("/viewport", (req, res, next) => {
 app.get("/report", (req, res, next) => {
     const fullscreen = req.query.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.theme = theme;
     req.session.locale = locale;
     req.session.config = req.session.config || {};
@@ -142,7 +142,7 @@ app.get("/console", (req, res, next) => {
 
 app.get("/receipt", (req, res, next) => {
     async function clojure() {
-        const locale = req.query.locale || req.session.locale || "";
+        const locale = lib.resolveLocale(req.query.locale || req.session.locale);
         req.session.locale = locale;
         req.session.config = req.session.config || {};
         req.session.config.text = req.query.text || req.session.config.text || null;
@@ -177,7 +177,7 @@ app.get("/text", (req, res, next) => {
 
 app.get("/image", (req, res, next) => {
     async function clojure() {
-        const locale = req.query.locale || req.session.locale || "";
+        const locale = lib.resolveLocale(req.query.locale || req.session.locale);
         req.session.locale = locale;
         req.session.config = req.session.config || {};
         req.session.config.text = req.query.text || req.session.config.text || null;

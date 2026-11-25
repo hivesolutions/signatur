@@ -111,6 +111,13 @@ describe("Smoke", function() {
         child.kill("SIGTERM");
     });
 
+    describe("#gateway()", function() {
+        it("should fall back to the default page for an unknown locale", async () => {
+            const response = await request("GET", "/gateway?locale=fr_fr");
+            assert.strictEqual(response.status, 200);
+        });
+    });
+
     describe("#viewport()", function() {
         it("should escape the characters so they can not inject markup", async () => {
             const response = await request("GET", "/viewport?text=" + injection);
@@ -128,6 +135,19 @@ describe("Smoke", function() {
             assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
         });
 
+        it("should fall back to the default report for an unknown locale", async () => {
+            const response = await request("GET", "/report?locale=fr_fr&text=arial:a");
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes('<span class="item"'));
+        });
+
+        it("should not let the locale select another page", async () => {
+            const locale = encodeURIComponent("../layout");
+            const response = await request("GET", "/report?locale=" + locale + "&text=arial:a");
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes('<span class="item"'));
+        });
+
         it("should escape the characters on the Portuguese report too", async () => {
             const response = await request("GET", "/report?locale=pt_pt&text=" + injection);
             assert.strictEqual(response.status, 200);
@@ -142,6 +162,11 @@ describe("Smoke", function() {
             const response = await request("GET", "/receipt?text=arial:a");
             assert.strictEqual(response.status, 200);
             assert.deepStrictEqual(headlessKeys, [headlessKey]);
+        });
+
+        it("should fall back to the default receipt for an unknown locale", async () => {
+            const response = await request("GET", "/receipt?locale=fr_fr&text=arial:a");
+            assert.strictEqual(response.status, 200);
         });
     });
 
