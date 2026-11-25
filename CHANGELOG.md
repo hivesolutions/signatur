@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Support for the key the headless service requires, sent with every receipt and image render
 
 ### Changed
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Characters of the text page escaped, so a crafted text can no longer inject markup or scripts
 
 ## [0.7.2] - 2024-05-18
 

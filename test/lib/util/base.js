@@ -2,6 +2,33 @@ const assert = require("assert");
 const lib = require("../../../lib");
 
 describe("Base", function() {
+    describe("#headlessHeaders()", function() {
+        let keyBackup = null;
+
+        beforeEach(function() {
+            keyBackup = lib.conf.HEADLESS_KEY;
+        });
+
+        afterEach(function() {
+            lib.conf.HEADLESS_KEY = keyBackup;
+        });
+
+        it("should send no headers without a headless key", () => {
+            lib.conf.HEADLESS_KEY = null;
+            assert.deepStrictEqual(lib.headlessHeaders(), {});
+        });
+
+        it("should send no headers with an empty headless key", () => {
+            lib.conf.HEADLESS_KEY = "";
+            assert.deepStrictEqual(lib.headlessHeaders(), {});
+        });
+
+        it("should carry the headless key in its header", () => {
+            lib.conf.HEADLESS_KEY = "secret";
+            assert.deepStrictEqual(lib.headlessHeaders(), { "X-Headless-Key": "secret" });
+        });
+    });
+
     describe("#deserializeText()", function() {
         it("should deserialize simple text", () => {
             let result;
