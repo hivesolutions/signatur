@@ -164,7 +164,7 @@ app.get("/", (req, res, next) => {
 
 app.get("/login", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     const nextUrl = typeof req.query.next === "string" ? req.query.next : "";
     const error = typeof req.query.error === "string" ? req.query.error : "";
     res.render("login" + (locale ? `-${locale}` : ""), {
@@ -207,7 +207,7 @@ app.get("/gateway", (req, res, next) => {
             ? req.query.fullscreen === "1"
             : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
@@ -260,7 +260,7 @@ app.get("/settings", lib.requireAdmin, (req, res, next) => {
             ? req.query.fullscreen === "1"
             : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
@@ -290,7 +290,7 @@ app.get("/settings", lib.requireAdmin, (req, res, next) => {
 
 app.post("/settings", lib.requireAdmin, (req, res, next) => {
     const theme = req.body.theme || "";
-    const locale = req.body.locale || "";
+    const locale = lib.resolveLocale(req.body.locale);
     req.session.theme = theme;
     req.session.locale = locale;
     req.session.home = req.body.home === "welcome" ? "welcome" : "gateway";
@@ -798,7 +798,7 @@ app.get("/welcome", (req, res, next) => {
             ? req.query.fullscreen === "1"
             : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
@@ -821,7 +821,7 @@ app.get("/signature", (req, res, next) => {
             ? req.query.fullscreen === "1"
             : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
@@ -838,7 +838,7 @@ app.get("/viewport", (req, res, next) => {
             ? req.query.fullscreen === "1"
             : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
@@ -867,7 +867,7 @@ app.get("/report", (req, res, next) => {
             ? req.query.fullscreen === "1"
             : req.session.fullscreen === "1";
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.fullscreen = fullscreen ? "1" : "0";
     req.session.theme = theme;
     req.session.locale = locale;
@@ -888,7 +888,7 @@ app.get("/report", (req, res, next) => {
 
 app.get("/console", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.theme = theme;
     req.session.locale = locale;
     res.render("console" + (locale ? `-${locale}` : ""), {
@@ -898,7 +898,7 @@ app.get("/console", (req, res, next) => {
 
 app.get("/components", (req, res, next) => {
     const theme = req.query.theme || req.session.theme || "";
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.theme = theme;
     req.session.locale = locale;
     res.render("components", {
@@ -908,7 +908,7 @@ app.get("/components", (req, res, next) => {
 
 app.get("/receipt", (req, res, next) => {
     async function clojure() {
-        const locale = req.query.locale || req.session.locale || "";
+        const locale = lib.resolveLocale(req.query.locale || req.session.locale);
         req.session.locale = locale;
         req.session.config = req.session.config || {};
         req.session.config.text = req.query.text || req.session.config.text || null;
@@ -933,7 +933,7 @@ app.get("/receipt", (req, res, next) => {
 });
 
 app.get("/text", (req, res, next) => {
-    const locale = req.query.locale || req.session.locale || "";
+    const locale = lib.resolveLocale(req.query.locale || req.session.locale);
     req.session.locale = locale;
     req.session.config = req.session.config || {};
     req.session.config.text = req.query.text || req.session.config.text || null;
@@ -945,7 +945,7 @@ app.get("/text", (req, res, next) => {
 
 app.get("/image", (req, res, next) => {
     async function clojure() {
-        const locale = req.query.locale || req.session.locale || "";
+        const locale = lib.resolveLocale(req.query.locale || req.session.locale);
         req.session.locale = locale;
         req.session.config = req.session.config || {};
         req.session.config.text = req.query.text || req.session.config.text || null;
@@ -1049,7 +1049,7 @@ app.get("/profiles/manager", lib.requireAdmin, (req, res, next) => {
                 ? req.query.fullscreen === "1"
                 : req.session.fullscreen === "1";
         const theme = req.query.theme || req.session.theme || "";
-        const locale = req.query.locale || req.session.locale || "";
+        const locale = lib.resolveLocale(req.query.locale || req.session.locale);
         req.session.fullscreen = fullscreen ? "1" : "0";
         req.session.theme = theme;
         req.session.locale = locale;
