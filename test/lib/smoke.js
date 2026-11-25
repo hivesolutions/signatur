@@ -11,6 +11,7 @@ describe("Smoke", function() {
 
     const host = "127.0.0.1";
     const headlessKey = "smokekey";
+    const injection = encodeURIComponent("arial:<img src=x onerror=alert(1)>");
     const headlessKeys = [];
     let headless = null;
     let child = null;
@@ -21,37 +22,63 @@ describe("Smoke", function() {
             const probe = net.createServer();
             probe.unref();
             probe.on("error", reject);
-            probe.listen(0, host, () => {
+            probe.listen(0, "127.0.0.1", () => {
                 const chosen = probe.address().port;
                 probe.close(() => resolve(chosen));
             });
         });
     };
 
-    const request = function(requestPath) {
+    const waitForReady = function(timeoutMs) {
+        const started = Date.now();
         return new Promise((resolve, reject) => {
-            const req = http.request({ host: host, port: port, method: "GET", path: requestPath }, res => {
+            const tryOnce = function() {
+                const req = http.request(
+                    { host: host, port: port, method: "GET", path: "/" },
+                    res => {
+                        res.resume();
+                        resolve();
+                    }
+                );
+                req.on("error", () => {
+                    if (Date.now() - started > timeoutMs) {
+                        reject(new Error("server did not become ready"));
+                        return;
+                    }
+                    setTimeout(tryOnce, 200);
+                });
+                req.end();
+            };
+            tryOnce();
+        });
+    };
+
+    const request = function(method, requestPath, options = {}) {
+        return new Promise((resolve, reject) => {
+            const requestOptions = {
+                host: host,
+                port: port,
+                method: method,
+                path: requestPath,
+                headers: Object.assign({}, options.headers || {})
+            };
+            const req = http.request(requestOptions, res => {
                 let body = "";
                 res.on("data", chunk => {
                     body += chunk.toString();
                 });
-                res.on("end", () => resolve({ status: res.statusCode, headers: res.headers, body: body }));
+                res.on("end", () => {
+                    resolve({
+                        status: res.statusCode,
+                        headers: res.headers,
+                        body: body
+                    });
+                });
             });
             req.on("error", reject);
+            if (options.body) req.write(options.body);
             req.end();
         });
-    };
-
-    const waitForReady = async function(timeoutMs) {
-        const started = Date.now();
-        for (;;) {
-            try {
-                return await request("/text");
-            } catch (err) {
-                if (Date.now() - started > timeoutMs) throw new Error("server did not become ready");
-                await new Promise(resolve => setTimeout(resolve, 200));
-            }
-        }
     };
 
     before(async function() {
@@ -84,19 +111,66 @@ describe("Smoke", function() {
         child.kill("SIGTERM");
     });
 
+    describe("#viewport()", function() {
+        it("should escape the characters so they can not inject markup", async () => {
+            const response = await request("GET", "/viewport?text=" + injection);
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img src=x"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+    });
+
+    describe("#report()", function() {
+        it("should escape the characters so they can not inject markup", async () => {
+            const response = await request("GET", "/report?text=" + injection);
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img src=x"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+
+        it("should escape the characters on the Portuguese report too", async () => {
+            const response = await request("GET", "/report?locale=pt_pt&text=" + injection);
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img src=x"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
+        });
+    });
+
     describe("#receipt()", function() {
         it("should send the headless key when rendering the receipt text", async () => {
             headlessKeys.length = 0;
-            const response = await request("/receipt?text=arial:a");
+            const response = await request("GET", "/receipt?text=arial:a");
             assert.strictEqual(response.status, 200);
             assert.deepStrictEqual(headlessKeys, [headlessKey]);
+        });
+    });
+
+    describe("#text()", function() {
+        it("should render each character in its font", async () => {
+            const response = await request("GET", "/text?text=arial:a");
+            assert.strictEqual(response.status, 200);
+            const span = '<span class="item" style="font-family: \'arial\'">a</span>';
+            assert.ok(response.body.includes(span));
+        });
+
+        it("should render a space as a non breaking space", async () => {
+            const response = await request("GET", "/text?text=" + encodeURIComponent("arial: "));
+            assert.strictEqual(response.status, 200);
+            assert.ok(response.body.includes(">&nbsp;</span>"));
+        });
+
+        it("should escape the characters so they can not inject markup", async () => {
+            const response = await request("GET", "/text?text=" + injection);
+            assert.strictEqual(response.status, 200);
+            assert.ok(!response.body.includes("<img src=x"));
+            assert.ok(response.body.includes("&lt;img src=x onerror=alert(1)&gt;"));
         });
     });
 
     describe("#image()", function() {
         it("should send the headless key and return the rendered image", async () => {
             headlessKeys.length = 0;
-            const response = await request("/image?text=arial:a");
+            const response = await request("GET", "/image?text=arial:a");
             assert.strictEqual(response.status, 200);
             assert.strictEqual(response.headers["content-type"], "image/png");
             assert.deepStrictEqual(headlessKeys, [headlessKey]);
